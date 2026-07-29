@@ -46,6 +46,14 @@ COLUMNS = (
     "판정 메모",
 )
 
+# 이 문구만 적혀 있으면 공시·뉴스 블록에서 생략한다 (공백 제거 후 비교).
+NO_NEWS_PHRASES = frozenset({
+    "특이사항없음",
+    "특이사항무",
+    "해당없음",
+    "없음",
+})
+
 # ── 색상 ────────────────────────────────────────────────────
 C_BORDER = "#d5d5d5"
 C_HEAD_BG = "#f2f4f7"
@@ -89,6 +97,20 @@ def _stop_room_pct(res: HoldingResult) -> Optional[float]:
 
 def _is_stop(res: HoldingResult) -> bool:
     return res.verdict == "손절"
+
+
+def _has_news(inp: HoldingInput) -> bool:
+    """리포트에 실을 공시·뉴스가 있는지.
+
+    비어 있거나 "특이사항 없음" 류의 상투적인 문구뿐이면 False.
+    """
+    memo = (inp.news_memo or "").strip()
+    if not memo:
+        return False
+    normalized = memo.rstrip(" .。!?~-·").replace(" ", "")
+    if not normalized:      # "-", "." 같은 자리표시 문자뿐인 경우
+        return False
+    return normalized not in NO_NEWS_PHRASES
 
 
 def _news_stamp(inp: HoldingInput, today: date) -> str:
@@ -219,7 +241,7 @@ def _build_html(
     # 공시·뉴스 – 내용이 있는 종목만
     news_blocks = []
     for inp, res in rows:
-        if not inp.news_memo:
+        if not _has_news(inp):
             continue
         stamp = _news_stamp(inp, today)
         stamp_html = (
@@ -334,7 +356,7 @@ def _build_text(
             lines.append(f"  메모: {memo}")
         lines.append("")
 
-    news_rows = [(inp, res) for inp, res in rows if inp.news_memo]
+    news_rows = [(inp, res) for inp, res in rows if _has_news(inp)]
     if news_rows:
         lines.append("📰 공시·뉴스")
         lines.append("")
