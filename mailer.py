@@ -54,6 +54,8 @@ C_STOP_TEXT = "#c92a2a"
 C_PROFIT = "#c92a2a"       # 국내 관행: 상승 빨강
 C_LOSS = "#1c7ed6"         # 하락 파랑
 C_MUTED = "#868e96"
+C_EXIT_BG = "#fff4e6"      # 철수신호 요약 박스
+C_EXIT_LINE = "#e8590c"
 
 
 # ── 값 계산/포맷 유틸 ───────────────────────────────────────
@@ -87,6 +89,20 @@ def _stop_room_pct(res: HoldingResult) -> Optional[float]:
 
 def _is_stop(res: HoldingResult) -> bool:
     return res.verdict == "손절"
+
+
+def _news_stamp(inp: HoldingInput, today: date) -> str:
+    """공시·뉴스 기준일 표시. 오늘 기록이면 빈 문자열."""
+    if inp.news_date is None:
+        return "(확인일 없음)"
+    if inp.news_date == today:
+        return ""
+    delta = (today - inp.news_date).days
+    if delta == 1:
+        return "(어제 기준)"
+    if delta > 1:
+        return f"({delta}일 전 기준)"
+    return f"({inp.news_date.month}/{inp.news_date.day} 기준)"
 
 
 def build_subject(rows: Sequence[ReportRow], today: Optional[date] = None) -> str:
@@ -178,6 +194,60 @@ def _build_html(
         summary = "조치 필요 종목 없음 (전 종목 유지)"
         summary_color = "#2b8a3e"
 
+    # 철수신호 – 판정과 별개로 상단에 모아 보여준다
+    exits = [(inp, res) for inp, res in rows if inp.exit_signal]
+    if exits:
+        items = "".join(
+            f'<li style="margin:3px 0;">'
+            f'<b>{html.escape(inp.name)}</b> '
+            f'<span style="color:{C_MUTED};">({html.escape(inp.ticker)})</span>'
+            f' – 판정 {html.escape(res.verdict or "-")}'
+            f'</li>'
+            for inp, res in exits
+        )
+        exit_box = f"""
+  <div style="border:2px solid {C_EXIT_LINE};background-color:{C_EXIT_BG};
+  border-radius:6px;padding:10px 14px;margin:0 0 16px;">
+    <div style="font-weight:bold;color:{C_EXIT_LINE};margin-bottom:4px;">
+      ⛔ 철수신호 {len(exits)}건 – 판정과 별개로 검토 필요
+    </div>
+    <ul style="margin:0;padding-left:20px;">{items}</ul>
+  </div>"""
+    else:
+        exit_box = ""
+
+    # 공시·뉴스 – 내용이 있는 종목만
+    news_blocks = []
+    for inp, res in rows:
+        if not inp.news_memo:
+            continue
+        stamp = _news_stamp(inp, today)
+        stamp_html = (
+            f' <span style="color:{C_STOP_TEXT};font-size:12px;">'
+            f'{html.escape(stamp)}</span>'
+            if stamp
+            else ""
+        )
+        mark = "⛔ " if inp.exit_signal else ""
+        border = C_EXIT_LINE if inp.exit_signal else C_BORDER
+        body = html.escape(inp.news_memo).replace("\n", "<br>")
+        news_blocks.append(f"""
+  <div style="border-left:3px solid {border};padding:2px 0 2px 10px;
+  margin:0 0 12px;">
+    <div style="font-weight:bold;">{mark}{html.escape(inp.name)}
+      <span style="color:{C_MUTED};font-weight:normal;font-size:12px;">
+        ({html.escape(inp.ticker)})</span>{stamp_html}
+    </div>
+    <div style="margin-top:2px;">{body}</div>
+  </div>""")
+
+    news_section = (
+        f"""
+  <h3 style="margin:20px 0 10px;">📰 공시·뉴스</h3>{"".join(news_blocks)}"""
+        if news_blocks
+        else ""
+    )
+
     risk_color = C_STOP_TEXT if risk.risk_warning else "#212529"
     warn = " ⚠️ 6% 초과" if risk.risk_warning else ""
 
@@ -198,12 +268,13 @@ sans-serif;font-size:14px;color:#212529;line-height:1.5;">
   <p style="margin:0 0 12px;color:{summary_color};font-weight:bold;">
     {html.escape(summary)}
   </p>
-
+{exit_box}
   <table style="border-collapse:collapse;border:1px solid {C_BORDER};
   font-size:13px;">
     <thead><tr>{head_cells}</tr></thead>
     <tbody>{body_rows}</tbody>
   </table>
+{news_section}
 
   <table style="border-collapse:collapse;margin-top:16px;font-size:14px;">
     <tr>
@@ -236,6 +307,13 @@ def _build_text(
         "",
     ]
 
+    exits = [(inp, res) for inp, res in rows if inp.exit_signal]
+    if exits:
+        lines.append(f"⛔ 철수신호 {len(exits)}건 – 판정과 별개로 검토 필요")
+        for inp, res in exits:
+            lines.append(f"  - {inp.name} ({inp.ticker}) – 판정 {res.verdict or '-'}")
+        lines.append("")
+
     for inp, res in rows:
         mark = "[손절] " if _is_stop(res) else ""
         lines.append(f"{mark}{res.name} ({inp.ticker}) - {res.verdict or '-'}")
@@ -255,6 +333,19 @@ def _build_text(
         if memo:
             lines.append(f"  메모: {memo}")
         lines.append("")
+
+    news_rows = [(inp, res) for inp, res in rows if inp.news_memo]
+    if news_rows:
+        lines.append("📰 공시·뉴스")
+        lines.append("")
+        for inp, res in news_rows:
+            mark = "⛔ " if inp.exit_signal else ""
+            stamp = _news_stamp(inp, today)
+            head = f"{mark}{inp.name} ({inp.ticker})"
+            lines.append(f"{head} {stamp}".rstrip())
+            for memo_line in inp.news_memo.splitlines():
+                lines.append(f"  {memo_line}")
+            lines.append("")
 
     warn = " (6% 초과)" if risk.risk_warning else ""
     lines.append(

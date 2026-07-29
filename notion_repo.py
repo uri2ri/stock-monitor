@@ -56,6 +56,11 @@ def _select(prop: dict) -> str:
     return ""
 
 
+def _checkbox(prop: dict) -> bool:
+    """checkbox 프로퍼티에서 bool 추출. 없으면 False."""
+    return bool(prop.get("checkbox", False))
+
+
 def _date_val(prop: dict) -> Optional[date]:
     """date 프로퍼티에서 date 객체 추출."""
     d = prop.get("date")
@@ -107,6 +112,9 @@ def fetch_holdings() -> list[tuple[str, HoldingInput]]:
                     reeval_date=_date_val(props.get("재평가 기한", {})),
                     prev_trailing_high=_number(props.get("진입후 최고가", {})),
                     prev_stop_loss=_number(props.get("손절선", {})),
+                    news_memo=_text(props.get("공시·뉴스", {})).strip(),
+                    exit_signal=_checkbox(props.get("철수신호", {})),
+                    news_date=_date_val(props.get("뉴스 확인일", {})),
                 )
                 if not inp.ticker:
                     logger.warning("종목코드 없는 행 무시: page_id=%s", page_id)

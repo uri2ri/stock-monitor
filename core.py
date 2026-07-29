@@ -108,6 +108,10 @@ class HoldingInput:
     # 노션에 저장된 기존 값 (없으면 None)
     prev_trailing_high: Optional[float] = None  # 진입후 최고가
     prev_stop_loss: Optional[float] = None      # 손절선
+    # 공시·뉴스 (Cowork가 매일 07:00에 기록) – 계산에는 쓰지 않고 리포트에만 사용
+    news_memo: str = ""                      # 공시·뉴스
+    exit_signal: bool = False                # 철수신호
+    news_date: Optional[date] = None         # 뉴스 확인일
 
 
 @dataclass
