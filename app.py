@@ -25,8 +25,12 @@ CHART_PAD = 0.05                   # y축 여백 (표시 구간 최저~최고가
 CHASE_ATR_MULT = 0.5     # 돌파 후 이만큼 더 진행했으면 추격 구간으로 본다
 
 # ── AI 의견 설정 ────────────────────────────────────────────
-AI_MODEL = "claude-sonnet-5"
-AI_MAX_TOKENS = 1500
+AI_MODEL = "gemini-2.5-flash"
+# Gemini 2.5는 사고(thinking) 토큰도 max_output_tokens에 포함된다. 사고를 완전히
+# 끄면 손익분기 RR·ATR 비중 같은 계산이 흔들리므로, 사고에 512를 떼어주고
+# 본문 몫으로 1500 남짓을 남긴다.
+AI_MAX_OUTPUT_TOKENS = 2048
+AI_THINKING_BUDGET = 512
 AI_MAX_CALLS = 10        # 세션당 호출 한도
 
 AI_SYSTEM_PROMPT = """너는 터틀 트레이딩 규칙을 기준으로 종목 지표를
@@ -114,44 +118,73 @@ def build_ai_user_message(
     )
 
 
+def _grounding_sources(candidate) -> list[str]:
+    """Google 검색 그라운딩에 실제로 쓰인 출처 (제목 + 링크)."""
+    meta = getattr(candidate, "grounding_metadata", None)
+    if meta is None or not meta.grounding_chunks:
+        return []
+
+    sources, seen = [], set()
+    for chunk in meta.grounding_chunks:
+        web = getattr(chunk, "web", None)
+        if web is None or not web.uri or web.uri in seen:
+            continue
+        seen.add(web.uri)
+        sources.append(f"- [{web.title or web.domain or web.uri}]({web.uri})")
+    return sources
+
+
 def request_ai_opinion(user_message: str) -> str:
-    """Anthropic API 호출. 웹 검색 도구를 붙여 최근 뉴스·공시를 찾게 한다.
+    """Gemini API 호출. 구글 검색 도구를 붙여 최근 뉴스·공시를 찾게 한다.
 
     Raises:
-        RuntimeError: 키 미설정 / 거부 / 빈 응답
-        anthropic.APIError 등: 호출 실패는 그대로 전파 (호출부에서 처리)
+        RuntimeError: 키 미설정 / 차단 / 빈 응답
+        google.genai 예외: 호출 실패는 그대로 전파 (호출부에서 처리)
     """
-    import anthropic   # 미설치 환경에서도 나머지 화면은 뜨도록 지연 import
+    # 미설치 환경에서도 나머지 화면은 뜨도록 지연 import
+    from google import genai
+    from google.genai import types
 
-    api_key = read_secret("ANTHROPIC_API_KEY")
+    api_key = read_secret("GEMINI_API_KEY")
     if not api_key:
-        raise RuntimeError("ANTHROPIC_API_KEY가 설정되지 않았습니다.")
+        raise RuntimeError("GEMINI_API_KEY가 설정되지 않았습니다.")
 
-    client = anthropic.Anthropic(api_key=api_key)
-    response = client.messages.create(
+    client = genai.Client(api_key=api_key)
+    response = client.models.generate_content(
         model=AI_MODEL,
-        max_tokens=AI_MAX_TOKENS,
-        system=AI_SYSTEM_PROMPT,
-        # Sonnet 5는 thinking을 생략하면 adaptive가 켜지고, max_tokens가
-        # thinking과 본문을 함께 제한한다. 1500 안에서 본문을 확보하려고
-        # effort를 낮춰 사고 분량을 줄인다 (도구 사용은 유지).
-        thinking={"type": "adaptive"},
-        output_config={"effort": "low"},
-        tools=[{"type": "web_search_20260209", "name": "web_search"}],
-        messages=[{"role": "user", "content": user_message}],
+        contents=user_message,
+        config=types.GenerateContentConfig(
+            system_instruction=AI_SYSTEM_PROMPT,
+            max_output_tokens=AI_MAX_OUTPUT_TOKENS,
+            thinking_config=types.ThinkingConfig(
+                thinking_budget=AI_THINKING_BUDGET
+            ),
+            tools=[types.Tool(google_search=types.GoogleSearch())],
+        ),
     )
 
-    if response.stop_reason == "refusal":
-        raise RuntimeError("모델이 응답을 거부했습니다.")
+    if not response.candidates:
+        blocked = getattr(response, "prompt_feedback", None)
+        raise RuntimeError(f"응답이 차단되었습니다. ({blocked})")
 
-    text = "\n".join(
-        block.text for block in response.content if block.type == "text"
-    ).strip()
+    candidate = response.candidates[0]
+    finish = getattr(candidate.finish_reason, "name", str(candidate.finish_reason))
+
+    text = (response.text or "").strip()
     if not text:
-        raise RuntimeError("빈 응답을 받았습니다.")
+        # 사고 토큰만 쓰고 본문이 안 나온 경우가 여기에 해당한다
+        raise RuntimeError(f"빈 응답을 받았습니다. (종료 사유: {finish})")
 
-    if response.stop_reason == "max_tokens":
-        text += f"\n\n_(응답이 {AI_MAX_TOKENS} 토큰에서 잘렸습니다.)_"
+    if finish == "MAX_TOKENS":
+        text += (
+            f"\n\n_(응답이 {AI_MAX_OUTPUT_TOKENS} 토큰에서 잘렸습니다.)_"
+        )
+    elif finish not in ("STOP", "FINISH_REASON_UNSPECIFIED"):
+        text += f"\n\n_(종료 사유: {finish})_"
+
+    sources = _grounding_sources(candidate)
+    if sources:
+        text += "\n\n**검색 출처**\n" + "\n".join(sources)
     return text
 
 st.set_page_config(page_title="종목 진입 점검", page_icon="📊", layout="wide")

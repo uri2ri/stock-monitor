@@ -39,7 +39,7 @@ GitHub Actions(`.github/workflows/daily.yml`)는 KST 평일 07:00에 자동 실�
 
 웹앱은 노션·카카오를 쓰지 않고, AI 의견 기능에만 시크릿이 필요합니다.
 `.streamlit/secrets.toml.example`을 `secrets.toml`로 복사해 `APP_PASSWORD`(AI 버튼 잠금)와
-`ANTHROPIC_API_KEY`를 채우세요. Community Cloud에서는 앱 설정 → Secrets에 같은 내용을 넣습니다.
+`GEMINI_API_KEY`(Google AI Studio 발급)를 채우세요. Community Cloud에서는 앱 설정 → Secrets에 같은 내용을 넣습니다.
 `secrets.toml`은 커밋되지 않습니다. 조회·차트·계산은 비밀번호 없이 동작합니다.
 
 Gmail 앱 비밀번호는 [Google 계정 → 보안](https://myaccount.google.com/apppasswords)에서
