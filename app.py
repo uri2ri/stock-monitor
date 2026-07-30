@@ -21,6 +21,136 @@ import core
 CHART_DAYS = 60          # 차트에 그릴 거래일 수
 CHASE_ATR_MULT = 0.5     # 돌파 후 이만큼 더 진행했으면 추격 구간으로 본다
 
+# ── AI 의견 설정 ────────────────────────────────────────────
+AI_MODEL = "claude-sonnet-5"
+AI_MAX_TOKENS = 1500
+AI_MAX_CALLS = 10        # 세션당 호출 한도
+
+AI_SYSTEM_PROMPT = """너는 터틀 트레이딩 규칙을 기준으로 종목 지표를
+해석하는 분석가다. 매수나 매도를 권하지 않는다.
+숫자가 무슨 뜻인지 설명하는 것이 유일한 역할이다.
+
+아래 네 항목으로만 답한다. 소제목을 그대로 쓴다.
+
+■ 지표 해석
+- TE가 양수/음수인 것이 터틀 관점에서 뜻하는 바
+- 승률에 대응하는 손익분기 RR = (1-승률)/승률 을
+  계산해서, 실제 RR이 그보다 높은지 낮은지 명시
+- ATR이 현재가의 몇 %인지 계산하고,
+  변동성이 큰 편인지 작은 편인지
+3~4문장.
+
+■ 현재 국면
+- 20일 고가 대비 위치 → 터틀 진입 신호 관점에서 해석
+- 10일 저가 대비 여유 → 청산 신호까지의 거리
+- 최근 60일 흐름이 상승/하락/횡보 중 무엇인지
+2~3문장.
+
+■ 사업 맥락
+- 최근 3개월 뉴스와 공시 중 실적·사업 관련만
+- 주가가 올랐다/내렸다는 기사는 제외
+- 확인 안 되면 "확인된 정보 없음"이라고만 쓴다
+- 출처를 함께 표기
+3~5문장.
+
+■ 진입 체크리스트
+아래 세 항목에 O/X와 한 줄 근거:
+1. 상승 추세인가
+2. 20일 고가를 돌파했는가
+3. 진입 근거로 삼을 사업 논리가 있는가
+   (가격이 싸다는 건 근거가 아니다)
+
+[금지]
+- "매수 추천", "지금이 기회", "저점 매수",
+  "비중 확대" 같은 표현
+- 목표주가 제시
+- 다른 종목 언급이나 추천
+- 계산되지 않은 값을 추측으로 채우기
+- 네 항목 외의 내용"""
+
+
+def read_secret(name: str) -> str:
+    """st.secrets 조회. 설정 파일 자체가 없으면 빈 문자열."""
+    try:
+        return str(st.secrets[name]).strip()
+    except Exception:
+        return ""
+
+
+def build_ai_user_message(
+    name: str,
+    code: str,
+    price: float,
+    atr: float,
+    sig: core.TrendSignal,
+    edge,                 # core.Edge | None
+    pos: core.Position,
+    stop_loss: float,
+) -> str:
+    """core.py가 계산한 값을 그대로 넘긴다. AI가 다시 계산하지 않게 한다."""
+    if edge is None:
+        te = rr = win_rate = avg_win = avg_loss = "계산 불가"
+    else:
+        te = f"{edge.te:+.3f}%"
+        rr = f"{edge.rr:.2f}" if edge.rr is not None else "N/A"
+        win_rate = f"{edge.win_rate:.1f}%"
+        avg_win = f"{edge.avg_win:+.2f}%"
+        avg_loss = f"{edge.avg_loss:+.2f}%"
+
+    return (
+        f"종목: {name} ({code})\n"
+        f"현재가: {price:,.0f}원\n"
+        f"ATR(20, wilder): {atr:,.0f}원\n"
+        f"20일 고가: {sig.high_20_prev:,.0f}원 / "
+        f"10일 저가: {sig.low_10:,.0f}원\n"
+        f"돌파 여부: {'돌파' if sig.breakout else '미돌파'}\n"
+        f"TE: {te} / RR: {rr} / 승률: {win_rate}\n"
+        f"평균수익: {avg_win} / 평균손실: {avg_loss}\n"
+        f"1유닛: {pos.unit_shares:,}주 / 손절선: {stop_loss:,.0f}원\n"
+        f"1회 리스크액: {pos.risk_amount:,.0f}원"
+    )
+
+
+def request_ai_opinion(user_message: str) -> str:
+    """Anthropic API 호출. 웹 검색 도구를 붙여 최근 뉴스·공시를 찾게 한다.
+
+    Raises:
+        RuntimeError: 키 미설정 / 거부 / 빈 응답
+        anthropic.APIError 등: 호출 실패는 그대로 전파 (호출부에서 처리)
+    """
+    import anthropic   # 미설치 환경에서도 나머지 화면은 뜨도록 지연 import
+
+    api_key = read_secret("ANTHROPIC_API_KEY")
+    if not api_key:
+        raise RuntimeError("ANTHROPIC_API_KEY가 설정되지 않았습니다.")
+
+    client = anthropic.Anthropic(api_key=api_key)
+    response = client.messages.create(
+        model=AI_MODEL,
+        max_tokens=AI_MAX_TOKENS,
+        system=AI_SYSTEM_PROMPT,
+        # Sonnet 5는 thinking을 생략하면 adaptive가 켜지고, max_tokens가
+        # thinking과 본문을 함께 제한한다. 1500 안에서 본문을 확보하려고
+        # effort를 낮춰 사고 분량을 줄인다 (도구 사용은 유지).
+        thinking={"type": "adaptive"},
+        output_config={"effort": "low"},
+        tools=[{"type": "web_search_20260209", "name": "web_search"}],
+        messages=[{"role": "user", "content": user_message}],
+    )
+
+    if response.stop_reason == "refusal":
+        raise RuntimeError("모델이 응답을 거부했습니다.")
+
+    text = "\n".join(
+        block.text for block in response.content if block.type == "text"
+    ).strip()
+    if not text:
+        raise RuntimeError("빈 응답을 받았습니다.")
+
+    if response.stop_reason == "max_tokens":
+        text += f"\n\n_(응답이 {AI_MAX_TOKENS} 토큰에서 잘렸습니다.)_"
+    return text
+
 st.set_page_config(page_title="종목 진입 점검", page_icon="📊", layout="wide")
 
 
@@ -170,6 +300,23 @@ def build_chart(df, sig: core.TrendSignal, stop_loss: float, palette: dict):
 st.title("📊 종목 진입 점검")
 st.caption("신규 종목 조사 전용 · 터틀 트레이딩 규칙을 그대로 계산해 보여줍니다.")
 
+# 앱이 공개라 AI 호출만 비밀번호로 막는다. 조회·차트·계산은 누구나 쓸 수 있다.
+with st.sidebar:
+    st.subheader("🔐 접근")
+    _app_password = read_secret("APP_PASSWORD")
+    _entered = st.text_input(
+        "비밀번호", type="password",
+        help="AI 의견 기능에만 필요합니다.",
+    )
+    ai_unlocked = bool(_app_password) and _entered == _app_password
+
+    if ai_unlocked:
+        st.success("AI 의견 사용 가능")
+    elif not _app_password:
+        st.caption("APP_PASSWORD 미설정 — AI 의견을 쓸 수 없습니다.")
+    elif _entered:
+        st.error("비밀번호가 일치하지 않습니다.")
+
 col_code, col_cap, col_btn = st.columns([2, 2, 1])
 with col_code:
     code = st.text_input("종목코드 (6자리)", placeholder="예: 240550", max_chars=6)
@@ -263,6 +410,7 @@ try:
         f"100%가 되지 않을 수 있습니다)"
     )
 except ValueError as e:
+    edge = None          # AI 의견에 "계산 불가"로 넘긴다
     st.warning(f"기대값 계산 실패: {e}")
 
 # ── 포지션 ──────────────────────────────────────────────────
@@ -338,7 +486,47 @@ st.plotly_chart(
 
 # ── AI 의견 ─────────────────────────────────────────────────
 st.markdown("### ■ AI 의견")
-if st.button("AI 의견 보기"):
-    st.info("아직 연결되지 않았습니다. (버튼만 준비된 상태)")
+
+ai_cache = st.session_state.setdefault("ai_cache", {})
+ai_calls = st.session_state.setdefault("ai_calls", 0)
+# 총자본이 바뀌면 1유닛·리스크액도 달라지므로 캐시 키에 함께 넣는다.
+ai_key = (code, int(capital))
+quota_left = AI_MAX_CALLS - ai_calls
+
+if ai_key in ai_cache:
+    st.caption("이미 조회한 종목입니다. 저장된 결과를 보여줍니다.")
+elif not ai_unlocked:
+    st.info("AI 의견은 비밀번호 입력 후 사용 가능")
+elif quota_left <= 0:
+    st.warning(
+        f"이번 세션 호출 한도({AI_MAX_CALLS}회)를 모두 사용했습니다. "
+        "새로고침하면 초기화됩니다."
+    )
 else:
-    st.caption("버튼을 누를 때만 호출합니다.")
+    st.caption(f"버튼을 누를 때만 호출합니다. (남은 호출 {quota_left}회)")
+
+if st.button(
+    "AI 의견 보기",
+    disabled=(not ai_unlocked) or quota_left <= 0,
+    help=None if ai_unlocked else "AI 의견은 비밀번호 입력 후 사용 가능",
+):
+    if ai_key in ai_cache:
+        st.caption("캐시된 결과입니다. (API를 다시 호출하지 않았습니다)")
+    else:
+        with st.spinner("AI가 지표와 최근 뉴스·공시를 확인하는 중…"):
+            try:
+                ai_cache[ai_key] = request_ai_opinion(
+                    build_ai_user_message(
+                        name, code, price, atr, sig, edge, pos, stop_loss
+                    )
+                )
+                st.session_state["ai_calls"] = ai_calls + 1
+            except Exception as e:
+                # 실패해도 위쪽 리포트는 그대로 유지된다
+                st.error(f"AI 의견 실패: {e}")
+
+if ai_key in ai_cache:
+    st.markdown(ai_cache[ai_key])
+    st.caption(
+        "AI 해석입니다. 매매 판단은 노션에 정해둔 규칙과 손절선을 따르세요."
+    )
