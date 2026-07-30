@@ -10,7 +10,7 @@ import math
 import streamlit as st
 from pykrx import stock as krx
 
-from core import ATR_PERIOD, calc_atr
+from core import ATR_PERIOD, calc_atr, fetch_ohlcv, latest_close
 
 # ── 페이지 설정 ─────────────────────────────────────────────
 
@@ -144,7 +144,9 @@ if run_btn and ticker:
 
     with st.spinner("시세 조회 중…"):
         try:
-            atr, current_price = calc_atr(ticker)
+            _df = fetch_ohlcv(ticker)
+            atr = calc_atr(_df)
+            current_price = latest_close(_df)
         except Exception as e:
             st.error(f"조회 실패: {e}")
             st.stop()

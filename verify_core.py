@@ -3,7 +3,13 @@
 """
 
 from datetime import date
-from core import calc_atr, evaluate_holding, HoldingInput
+from core import (
+    calc_atr,
+    evaluate_holding,
+    fetch_ohlcv,
+    latest_close,
+    HoldingInput,
+)
 
 TICKER = "009150"
 TOTAL_CAPITAL = 100_000_000  # 1억 (예시)
@@ -14,10 +20,12 @@ print(f"총자산(예시): {TOTAL_CAPITAL:,.0f}원")
 print("=" * 60)
 
 # 1) ATR 단독 계산
-atr, current_price = calc_atr(TICKER)
+_df = fetch_ohlcv(TICKER)
+atr = calc_atr(_df)
+current_price = latest_close(_df)
 print(f"\n[ATR 계산]")
 print(f"  현재가(최근 종가): {current_price:,.0f}")
-print(f"  ATR(20일): {atr:,.2f}")
+print(f"  ATR(20일, wilder): {atr:,.2f}")
 print(f"  1유닛 주수: {int((TOTAL_CAPITAL * 0.01) / atr)} 주")
 
 # 2) 신규 진입 시뮬레이션 (노션 기존값 없음)
@@ -40,7 +48,8 @@ print(f"  매수단가: 130,000")
 print(f"  진입후 최고가: {result_new.trailing_high:,.0f}")
 print(f"    = max(매수단가 130,000, 현재가 {current_price:,.0f})")
 print(f"  손절선: {result_new.stop_loss:,.0f}")
-print(f"    = {result_new.trailing_high:,.0f} - 2×{atr:,.2f}")
+print(f"    = (130,000 - 2×{atr:,.2f}) "
+      f"+ ({result_new.trailing_high:,.0f} - 130,000)/2   [half 방식]")
 print(f"  종목 리스크액: {result_new.risk_amount:,.0f}")
 print(f"  현재 유닛수: {result_new.current_units}")
 print(f"  판정: {result_new.verdict}")
