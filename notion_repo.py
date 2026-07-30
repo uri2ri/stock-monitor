@@ -110,6 +110,12 @@ def fetch_holdings() -> list[tuple[str, HoldingInput]]:
                     take_profit_1=_number(props.get("1차 익절가", {})),
                     take_profit_2=_number(props.get("2차 익절가", {})),
                     reeval_date=_date_val(props.get("재평가 기한", {})),
+                    # 상관군: 텍스트 칸. 같은 값끼리 합산하며 비어 있으면
+                    # 상관군 없음. select로 만들었을 경우도 함께 처리한다.
+                    corr_group=(
+                        _text(props.get("상관군", {})).strip()
+                        or _select(props.get("상관군", {}))
+                    ),
                     prev_trailing_high=_number(props.get("진입후 최고가", {})),
                     prev_stop_loss=_number(props.get("손절선", {})),
                     news_memo=_text(props.get("공시·뉴스", {})).strip(),

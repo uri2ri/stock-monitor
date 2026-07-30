@@ -43,6 +43,7 @@ def _build_message(
     [M/D] 조치 N건
     · 삼성전기 손절 (1,268,000)
     리스크 4.2%
+    손절 대기 1건        ← 손절 판정이 있을 때만
     """
     today = date.today()
     header = f"[{today.month}/{today.day}]"
@@ -68,6 +69,11 @@ def _build_message(
     if risk.risk_warning:
         risk_line += " ⚠️초과"
     lines.append(risk_line)
+
+    # 손절 대기는 리스크 %와 별도로 표시한다.
+    # 손절선을 이미 깬 종목은 리스크 합계에서 0으로 잡히기 때문이다.
+    if risk.stop_pending:
+        lines.append(f"손절 대기 {risk.stop_pending}건")
 
     if has_errors:
         lines.append("⚠️일부 조회 실패")
@@ -145,10 +151,17 @@ def main() -> None:
 
     # 4) 리스크 요약
     risk = calc_portfolio_risk(results, total_capital)
+    groups = (
+        " | ".join(
+            f"{g} {pct:.2f}%" for g, pct in risk.group_risk_pct.items()
+        )
+        or "없음"
+    )
     logger.info(
-        "전체 리스크: %.2f%% | 반도체 상관군: %.2f%%",
+        "전체 리스크: %.2f%% | 손절 대기: %d건 | 상관군: %s",
         risk.total_risk_pct,
-        risk.semi_risk_pct,
+        risk.stop_pending,
+        groups,
     )
     if risk.risk_warning:
         logger.warning("⚠️ 전체 리스크 6%% 초과: %.2f%%", risk.total_risk_pct)

@@ -14,7 +14,7 @@ from __future__ import annotations
 
 import logging
 import math
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import date, timedelta
 from typing import Optional
 
@@ -23,20 +23,8 @@ from pykrx import stock as krx
 
 logger = logging.getLogger(__name__)
 
-# ── 상관군 상수 ─────────────────────────────────────────────
-SEMICONDUCTOR_GROUP: set[str] = {
-    "005930",  # 삼성전자
-    "000660",  # SK하이닉스
-    "042700",  # 한미반도체
-    "403870",  # HPSP
-    "036930",  # 주성엔지니어링
-    "460850",  # 한화비전
-    "058470",  # 리노공업
-    "357780",  # 솔브레인
-    "185750",  # 종근당
-    "222160",  # NPX반도체
-    "131970",  # 테스나
-}
+# 상관군은 하드코딩하지 않는다. 노션 '상관군' 칸의 텍스트를 그대로 읽어
+# 같은 값끼리 합산한다 (빈 값이면 상관군 없음).
 
 # ── 계산 상수 ───────────────────────────────────────────────
 
@@ -51,13 +39,15 @@ STOP_METHOD = "half"     # 기본 트레일링 방식 (half | 1to1)
 PYRAMID_ATR_STEP = 0.5   # 1/2 ATR 오를 때마다 1유닛 추가
 MAX_UNITS = 4            # 최대 유닛 수
 DEFAULT_CAPITAL = 10_000_000
+FETCH_DAYS = 120         # 기본 조회 거래일 – Wilder 재귀식 워밍업용
+MIN_TRADING_DAYS = 40    # 이보다 적으면 조회 실패로 본다
 
 
 # ── 시세 조회 (유일한 I/O) ──────────────────────────────────
 
 def fetch_ohlcv(
     code: str,
-    days: int = 60,
+    days: int = FETCH_DAYS,
     end: Optional[date] = None,
 ) -> pd.DataFrame:
     """pykrx로 최근 `days` 거래일의 OHLCV를 가져온다.
@@ -65,16 +55,19 @@ def fetch_ohlcv(
     거래일 수를 확보하려면 달력일로는 더 넓게 조회해야 하므로
     주말·공휴일을 감안해 넉넉히 요청한 뒤 뒤에서 days개만 남긴다.
 
+    상장한 지 얼마 안 된 종목처럼 `days`를 못 채우면 있는 만큼 쓰되,
+    MIN_TRADING_DAYS(40거래일) 미만이면 조회 실패로 처리한다.
+
     Args:
         code: 종목코드 6자리
-        days: 확보할 거래일 수 (기본 60)
+        days: 확보할 거래일 수 (기본 120 – Wilder 워밍업)
         end: 기준일 (기본 오늘). 과거 검증용으로 지정할 수 있다.
 
     Returns:
         DataFrame (컬럼: 시가/고가/저가/종가/거래량, 인덱스: 날짜)
 
     Raises:
-        ValueError: 데이터가 비었을 때
+        ValueError: 데이터가 비었거나 거래일이 40일 미만일 때
     """
     end = end or date.today()
     # 거래일 ≈ 달력일 × 0.68 → 여유 있게 1.7배 + 15일
@@ -93,7 +86,12 @@ def fetch_ohlcv(
     if df.empty:
         raise ValueError(f"[{code}] 유효한 거래일 데이터 없음")
 
-    return df.tail(days)
+    df = df.tail(days)
+    if len(df) < MIN_TRADING_DAYS:
+        raise ValueError(
+            f"[{code}] 거래일 부족: {len(df)}일 < 최소 {MIN_TRADING_DAYS}일"
+        )
+    return df
 
 
 def latest_close(df: pd.DataFrame) -> float:
@@ -501,6 +499,7 @@ class HoldingInput:
     take_profit_1: Optional[float] = None   # 1차 익절가
     take_profit_2: Optional[float] = None   # 2차 익절가
     reeval_date: Optional[date] = None      # 재평가 기한
+    corr_group: str = ""                    # 상관군 (빈 값이면 상관군 없음)
     # 노션에 저장된 기존 값 (없으면 None)
     prev_trailing_high: Optional[float] = None  # 진입후 최고가
     prev_stop_loss: Optional[float] = None      # 손절선
@@ -516,6 +515,7 @@ class HoldingResult:
 
     ticker: str
     name: str
+    corr_group: str = ""         # 노션 '상관군' 값 (빈 값이면 상관군 없음)
     current_price: float = 0.0
     atr: float = 0.0
     unit_shares: int = 0         # 1유닛 주수
@@ -537,7 +537,11 @@ def evaluate_holding(
     total_capital: float,
 ) -> HoldingResult:
     """한 종목을 평가한다. 예외 시 error가 채워진 Result를 반환."""
-    result = HoldingResult(ticker=inp.ticker, name=inp.name)
+    result = HoldingResult(
+        ticker=inp.ticker,
+        name=inp.name,
+        corr_group=inp.corr_group,
+    )
 
     try:
         df = fetch_ohlcv(inp.ticker)
@@ -621,33 +625,58 @@ class PortfolioRisk:
 
     total_risk_amount: float = 0.0
     total_risk_pct: float = 0.0
-    semi_risk_amount: float = 0.0
-    semi_risk_pct: float = 0.0
+    # 상관군 이름 → 리스크액 / 비중 (노션 '상관군' 값 기준, 빈 값은 제외)
+    group_risk_amount: dict[str, float] = field(default_factory=dict)
+    group_risk_pct: dict[str, float] = field(default_factory=dict)
     risk_warning: bool = False     # 6% 초과
-    semi_warning: bool = False     # 상관군 경고 (참고용)
+    stop_pending: int = 0          # 손절 판정이 난 종목 수 (리스크와 별개)
 
 
 def calc_portfolio_risk(
     results: list[HoldingResult],
     total_capital: float,
 ) -> PortfolioRisk:
-    """전체 리스크와 반도체 상관군 리스크를 계산한다."""
+    """전체 리스크와 상관군별 리스크를 계산한다.
+
+    종목 리스크액은 종목별로 max(0, (현재가-손절선)×수량)으로 본다.
+    이미 손절선을 깬 종목은 음수가 되는데, 그대로 더하면 다른 종목의
+    리스크를 상쇄해 여력이 있는 것처럼 보이기 때문이다. 손절 판정
+    자체는 건드리지 않고 집계에서만 0으로 끊는다 (건수는 stop_pending).
+    """
     pr = PortfolioRisk()
 
     for r in results:
         if r.error:
             continue
-        pr.total_risk_amount += r.risk_amount
-        if r.ticker in SEMICONDUCTOR_GROUP:
-            pr.semi_risk_amount += r.risk_amount
+
+        if r.verdict == "손절":
+            pr.stop_pending += 1
+
+        amount = max(0.0, r.risk_amount)
+        pr.total_risk_amount += amount
+
+        group = (r.corr_group or "").strip()
+        if group:
+            pr.group_risk_amount[group] = (
+                pr.group_risk_amount.get(group, 0.0) + amount
+            )
 
     if total_capital > 0:
         pr.total_risk_pct = round(
             (pr.total_risk_amount / total_capital) * 100, 2
         )
-        pr.semi_risk_pct = round(
-            (pr.semi_risk_amount / total_capital) * 100, 2
-        )
+        pr.group_risk_pct = {
+            g: round((amt / total_capital) * 100, 2)
+            for g, amt in pr.group_risk_amount.items()
+        }
+
+    # 리스크액이 큰 상관군부터
+    pr.group_risk_amount = dict(
+        sorted(pr.group_risk_amount.items(), key=lambda kv: -kv[1])
+    )
+    pr.group_risk_pct = {
+        g: pr.group_risk_pct.get(g, 0.0) for g in pr.group_risk_amount
+    }
 
     pr.risk_warning = pr.total_risk_pct > 6.0
     return pr
@@ -754,7 +783,8 @@ def main() -> int:
         help=f"총자본 (기본 {DEFAULT_CAPITAL:,})",
     )
     parser.add_argument(
-        "--days", type=int, default=60, help="조회 거래일 수 (기본 60)"
+        "--days", type=int, default=FETCH_DAYS,
+        help=f"조회 거래일 수 (기본 {FETCH_DAYS})",
     )
     parser.add_argument(
         "--end", default=None,

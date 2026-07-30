@@ -273,6 +273,35 @@ def _build_html(
     risk_color = C_STOP_TEXT if risk.risk_warning else "#212529"
     warn = " ⚠️ 6% 초과" if risk.risk_warning else ""
 
+    # 손절 대기는 리스크 %와 별개 항목이다. 손절선을 이미 깬 종목은
+    # 리스크 합계에서 0으로 잡히므로 건수로 따로 알려야 한다.
+    stop_pending_color = C_STOP_TEXT if risk.stop_pending else "#212529"
+    stop_pending_note = (
+        '<span style="font-weight:normal;color:#868e96;"> '
+        "– 손절선을 이미 깬 종목이라 리스크 합계에는 0으로 잡힘</span>"
+        if risk.stop_pending
+        else ""
+    )
+
+    if risk.group_risk_pct:
+        group_rows = "".join(
+            f"""    <tr>
+      <td style="padding:6px 12px 6px 0;color:{C_MUTED};">
+        상관군 · {html.escape(g)}</td>
+      <td style="padding:6px 0;font-weight:bold;">
+        {pct:.2f}% ({_fmt(risk.group_risk_amount.get(g, 0.0))}원)
+      </td>
+    </tr>
+"""
+            for g, pct in risk.group_risk_pct.items()
+        )
+    else:
+        group_rows = (
+            f'    <tr><td style="padding:6px 12px 6px 0;color:{C_MUTED};">'
+            f"상관군</td>"
+            f'<td style="padding:6px 0;color:{C_MUTED};">지정 없음</td></tr>'
+        )
+
     error_note = (
         f'<p style="color:{C_STOP_TEXT};margin:8px 0 0;">'
         "⚠️ 일부 종목의 시세 조회 또는 노션 갱신에 실패했습니다. "
@@ -306,11 +335,12 @@ sans-serif;font-size:14px;color:#212529;line-height:1.5;">
       </td>
     </tr>
     <tr>
-      <td style="padding:6px 12px 6px 0;color:{C_MUTED};">반도체 상관군 리스크</td>
-      <td style="padding:6px 0;font-weight:bold;">
-        {risk.semi_risk_pct:.2f}% ({_fmt(risk.semi_risk_amount)}원)
+      <td style="padding:6px 12px 6px 0;color:{C_MUTED};">손절 대기</td>
+      <td style="padding:6px 0;font-weight:bold;color:{stop_pending_color};">
+        {risk.stop_pending}건{stop_pending_note}
       </td>
     </tr>
+{group_rows}
   </table>
   {error_note}
 </div>"""
@@ -375,9 +405,21 @@ def _build_text(
         f"({_fmt(risk.total_risk_amount)}원){warn}"
     )
     lines.append(
-        f"반도체 상관군 리스크: {risk.semi_risk_pct:.2f}% "
-        f"({_fmt(risk.semi_risk_amount)}원)"
+        f"손절 대기: {risk.stop_pending}건"
+        + (
+            " (손절선을 이미 깬 종목이라 리스크 합계에는 0으로 잡힘)"
+            if risk.stop_pending
+            else ""
+        )
     )
+    if risk.group_risk_pct:
+        for g, pct in risk.group_risk_pct.items():
+            lines.append(
+                f"상관군 · {g}: {pct:.2f}% "
+                f"({_fmt(risk.group_risk_amount.get(g, 0.0))}원)"
+            )
+    else:
+        lines.append("상관군: 지정 없음")
 
     if has_errors:
         lines.append("")
