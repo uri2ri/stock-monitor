@@ -18,7 +18,10 @@ from pykrx import stock as krx
 
 import core
 
-CHART_DAYS = 60          # 차트에 그릴 거래일 수
+CHART_DAY_OPTIONS = (20, 30, 60)   # 차트에 그릴 거래일 선택지
+CHART_DAYS_DEFAULT = 30            # 신호가 20일·10일 기준이라 60일은 과하다
+CHART_HEIGHT = 400                 # 모바일 기준 고정 높이
+CHART_PAD = 0.05                   # y축 여백 (표시 구간 최저~최고가 ±5%)
 CHASE_ATR_MULT = 0.5     # 돌파 후 이만큼 더 진행했으면 추격 구간으로 본다
 
 # ── AI 의견 설정 ────────────────────────────────────────────
@@ -200,26 +203,31 @@ def entry_state(sig: core.TrendSignal, atr: float) -> tuple[str, str]:
 
 # ── 차트 ────────────────────────────────────────────────────
 
+CHART_BAND = "rgba(128,128,128,0.18)"    # 고가–저가 음영 밴드
+CHART_SIGNAL_BAND = "rgba(128,128,128,0.10)"   # 신호 계산 구간(최근 20거래일)
+CHART_GRID = "rgba(128,128,128,0.2)"     # 격자선
+CHART_HIGH = "#4ade80"                   # 20일 고가
+CHART_LOW = "#f87171"                    # 10일 저가
+CHART_STOP = "#fb923c"                   # 손절선
+
+
 def chart_palette(theme_type: str | None) -> dict[str, str]:
-    """차트 색. 다크 배경에서 검정 선은 보이지 않으므로 테마별로 나눈다."""
-    if theme_type == "dark":
-        return {
-            "close": "#f1f3f5",   # 종가 – 밝은 회백
-            "high": "#51cf66",
-            "low": "#ff8787",
-            "stop": "#ffa94d",
-            "text": "#e9ecef",
-            "grid": "rgba(255,255,255,0.14)",
-            "label_bg": "rgba(14,17,23,0.85)",
-        }
+    """차트 색.
+
+    수평선·음영은 양쪽 테마에서 그대로 보이는 값을 쓰고, 종가 실선과
+    글자만 테마 대비색으로 바꾼다 (다크=흰색, 라이트=검정).
+    """
+    dark = theme_type == "dark"
     return {
-        "close": "#000000",       # 종가 – 검정 실선
-        "high": "#2f9e44",
-        "low": "#e03131",
-        "stop": "#f76707",
-        "text": "#212529",
-        "grid": "rgba(0,0,0,0.12)",
-        "label_bg": "rgba(255,255,255,0.85)",
+        "template": "plotly_dark" if dark else "plotly_white",
+        "close": "#ffffff" if dark else "#000000",
+        "text": "#e9ecef" if dark else "#212529",
+        "band": CHART_BAND,
+        "signal_band": CHART_SIGNAL_BAND,
+        "grid": CHART_GRID,
+        "high": CHART_HIGH,
+        "low": CHART_LOW,
+        "stop": CHART_STOP,
     }
 
 
@@ -231,54 +239,89 @@ def current_theme() -> str | None:
         return None
 
 
-def build_chart(df, sig: core.TrendSignal, stop_loss: float, palette: dict):
-    """최근 60거래일 차트.
+def build_chart(
+    df,
+    sig: core.TrendSignal,
+    stop_loss: float,
+    palette: dict,
+    days: int = CHART_DAYS_DEFAULT,
+) -> tuple[go.Figure, bool]:
+    """표시 구간 `days` 거래일 차트.
 
-    모바일 화면을 기준으로 배치한다. 차트 안 제목은 넣지 않고(범례와 겹침),
-    범례는 아래로 내리며, 수평선 라벨은 그래프 안쪽에 둔다
-    (오른쪽 바깥에 두면 좁은 화면에서 잘리거나 여백을 잡아먹는다).
+    y축은 표시 구간의 가격 데이터(최저가~최고가 ±5%)로 잡는다. 손절선이
+    그 범위 밖이면 선을 그리지 않는다 — 손절선 하나 때문에 y축이 늘어나
+    가격 움직임이 눌리는 것을 막기 위해서다 (호출부가 캡션으로 알린다).
+
+    Returns:
+        (figure, 손절선을 차트에 그렸는지 여부)
     """
-    d = df.tail(CHART_DAYS)
+    d = df.tail(days)
     x = d.index
 
+    # y축 범위 – 가격 데이터 기준
+    low_min = float(d["저가"].min())
+    high_max = float(d["고가"].max())
+    y_low = low_min * (1 - CHART_PAD)
+    y_high = high_max * (1 + CHART_PAD)
+
     fig = go.Figure()
+
+    # 고가–저가 밴드: 저가를 먼저 깔고 고가에서 그 사이를 채운다
     fig.add_trace(go.Scatter(
-        x=x, y=d["고가"], name="High", mode="lines",
-        line=dict(color=palette["high"], width=1, dash="dot"),
-        hovertemplate="고가 %{y:,.0f}원<extra></extra>",
+        x=x, y=d["저가"], mode="lines", line=dict(width=0),
+        hovertemplate="저가 %{y:,.0f}원<extra></extra>",
+        showlegend=False, name="저가",
     ))
     fig.add_trace(go.Scatter(
-        x=x, y=d["저가"], name="Low", mode="lines",
-        line=dict(color=palette["low"], width=1, dash="dot"),
-        hovertemplate="저가 %{y:,.0f}원<extra></extra>",
+        x=x, y=d["고가"], mode="lines", line=dict(width=0),
+        fill="tonexty", fillcolor=palette["band"],
+        hovertemplate="고가 %{y:,.0f}원<extra></extra>",
+        name="고가–저가 범위",
     ))
     fig.add_trace(go.Scatter(
         x=x, y=d["종가"], name="종가", mode="lines",
         line=dict(color=palette["close"], width=2),
         hovertemplate="종가 %{y:,.0f}원<extra></extra>",
     ))
-
-    for value, color, label in (
-        (sig.high_20, palette["high"], f"20일 고가 {sig.high_20:,.0f}"),
-        (sig.low_10, palette["low"], f"10일 저가 {sig.low_10:,.0f}"),
-        (stop_loss, palette["stop"], f"손절선 {stop_loss:,.0f}"),
-    ):
-        fig.add_hline(
-            y=value, line=dict(color=color, width=1.5, dash="dash"),
-            annotation_text=label, annotation_position="top left",
-            annotation_font=dict(color=color, size=11),
-            annotation_bgcolor=palette["label_bg"],
-        )
-
     fig.add_trace(go.Scatter(
         x=[x[-1]], y=[sig.current_price], name="현재 종가", mode="markers",
-        marker=dict(color=palette["close"], size=11, symbol="circle",
-                    line=dict(color=palette["label_bg"], width=1)),
+        marker=dict(color=palette["close"], size=10, symbol="circle"),
         hovertemplate="현재 종가 %{y:,.0f}원<extra></extra>",
     ))
 
+    # 신호 계산에 쓰인 최근 20거래일 – 어디를 보고 판정했는지 표시
+    signal_start = x[-min(core.HIGH_PERIOD, len(d))]
+    fig.add_vrect(
+        x0=signal_start, x1=x[-1],
+        fillcolor=palette["signal_band"], line_width=0, layer="below",
+        annotation_text=f"신호 구간 {core.HIGH_PERIOD}일",
+        annotation_position="top left",
+        annotation_font=dict(color=palette["text"], size=10),
+    )
+
+    # 수평선 – 라벨은 배경 없이 선과 같은 색 글자로
+    lines = [
+        (sig.high_20, palette["high"], f"20일 고가 {sig.high_20:,.0f}", "top right"),
+        (sig.low_10, palette["low"], f"10일 저가 {sig.low_10:,.0f}", "bottom left"),
+    ]
+    stop_in_range = y_low <= stop_loss <= y_high
+    if stop_in_range:
+        # 라벨을 가운데에 둔다. 손절선이 20일 고가나 10일 저가에 가까울 때
+        # 좌·우 끝에 두면 그쪽 라벨과 겹쳐 읽을 수 없게 된다.
+        lines.append(
+            (stop_loss, palette["stop"], f"손절선 {stop_loss:,.0f}", "bottom")
+        )
+
+    for value, color, label, position in lines:
+        fig.add_hline(
+            y=value, line=dict(color=color, width=1.5, dash="dash"),
+            annotation_text=label, annotation_position=position,
+            annotation_font=dict(color=color, size=11),
+        )
+
     fig.update_layout(
-        height=440, hovermode="x unified",
+        template=palette["template"],
+        height=CHART_HEIGHT, hovermode="x unified",
         margin=dict(l=8, r=8, t=8, b=8),
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
@@ -288,11 +331,13 @@ def build_chart(df, sig: core.TrendSignal, stop_loss: float, palette: dict):
             bgcolor="rgba(0,0,0,0)",
         ),
         xaxis=dict(title=None, showgrid=False,
-                   linecolor=palette["grid"], tickfont=dict(size=11)),
-        yaxis=dict(title=None, tickformat=",.0f",
-                   gridcolor=palette["grid"], tickfont=dict(size=11)),
+                   gridcolor=palette["grid"], linecolor=palette["grid"],
+                   tickfont=dict(size=11)),
+        yaxis=dict(title=None, tickformat=",.0f", range=[y_low, y_high],
+                   gridcolor=palette["grid"], zeroline=False,
+                   tickfont=dict(size=11)),
     )
-    return fig
+    return fig, stop_in_range
 
 
 # ── 화면 ────────────────────────────────────────────────────
@@ -462,27 +507,39 @@ else:
 # ── 차트 ────────────────────────────────────────────────────
 st.markdown("### ■ 차트")
 
-chart_head, chart_theme = st.columns([3, 2])
-with chart_head:
-    st.caption(f"{name} · 최근 {min(len(df), CHART_DAYS)}거래일")
+chart_span, chart_theme = st.columns(2)
+with chart_span:
+    chart_days = st.radio(
+        "표시 기간",
+        CHART_DAY_OPTIONS,
+        index=CHART_DAY_OPTIONS.index(CHART_DAYS_DEFAULT),
+        format_func=lambda d: f"{d}일",
+        horizontal=True,
+    )
 with chart_theme:
     # 자동 감지가 비어 있는 환경(구버전 등)에서 선이 배경에 묻히는 것을
     # 사용자가 직접 되돌릴 수 있게 둔다.
     theme_choice = st.radio(
-        "차트 색", ("자동", "밝게", "어둡게"),
-        horizontal=True, label_visibility="collapsed",
+        "차트 색", ("자동", "밝게", "어둡게"), horizontal=True,
     )
 
 palette = chart_palette(
     {"자동": current_theme(), "밝게": "light", "어둡게": "dark"}[theme_choice]
 )
 
+fig, stop_in_range = build_chart(df, sig, stop_loss, palette, chart_days)
+
 # st.plotly_chart는 컨테이너 폭을 기본으로 채운다 (width 인자 없음).
 # 모바일에서는 모드바가 범례·라벨 위에 겹쳐 뜨므로 숨긴다.
-st.plotly_chart(
-    build_chart(df, sig, stop_loss, palette),
-    config={"displayModeBar": False, "displaylogo": False},
-)
+st.plotly_chart(fig, config={"displayModeBar": False, "displaylogo": False})
+
+st.caption(f"{name} · 최근 {min(len(df), chart_days)}거래일")
+if not stop_in_range:
+    gap_pct = (stop_loss - price) / price * 100 if price else 0.0
+    st.caption(
+        f"손절선 {stop_loss:,.0f} "
+        f"(현재가 대비 {gap_pct:+.1f}%, 차트 범위 밖)"
+    )
 
 # ── AI 의견 ─────────────────────────────────────────────────
 st.markdown("### ■ AI 의견")
