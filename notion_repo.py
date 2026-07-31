@@ -107,8 +107,8 @@ def fetch_holdings() -> list[tuple[str, HoldingInput]]:
                     market=_select(props.get("시장", {})),
                     buy_price=_number(props.get("매수단가", {})) or 0,
                     shares=int(_number(props.get("보유수량", {})) or 0),
-                    take_profit_1=_number(props.get("1차 익절가", {})),
-                    take_profit_2=_number(props.get("2차 익절가", {})),
+                    # 1차·2차 익절가는 읽지 않는다 (청산은 10일 저가 기준).
+                    # 노션 칸은 비교용으로 남겨두되 계산에 넣지 않는다.
                     reeval_date=_date_val(props.get("재평가 기한", {})),
                     # 상관군: 텍스트 칸. 같은 값끼리 합산하며 비어 있으면
                     # 상관군 없음. select로 만들었을 경우도 함께 처리한다.
@@ -121,6 +121,11 @@ def fetch_holdings() -> list[tuple[str, HoldingInput]]:
                     news_memo=_text(props.get("공시·뉴스", {})).strip(),
                     exit_signal=_checkbox(props.get("철수신호", {})),
                     news_date=_date_val(props.get("뉴스 확인일", {})),
+                    # 메일 카드용 – 사람이 적어두는 판단 근거 (읽기만 한다)
+                    buy_reason=_text(props.get("산 이유", {})).strip(),
+                    bull_case=_text(props.get("강세론", {})).strip(),
+                    bear_case=_text(props.get("약세론", {})).strip(),
+                    next_event=_text(props.get("다음 확인 이벤트", {})).strip(),
                 )
                 if not inp.ticker:
                     logger.warning("종목코드 없는 행 무시: page_id=%s", page_id)

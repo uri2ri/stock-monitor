@@ -496,8 +496,7 @@ class HoldingInput:
     market: str           # 시장 (KOSPI / KOSDAQ)
     buy_price: float      # 매수단가
     shares: int           # 보유수량
-    take_profit_1: Optional[float] = None   # 1차 익절가
-    take_profit_2: Optional[float] = None   # 2차 익절가
+    # 1차·2차 익절가는 노션에 두되 읽지 않는다. 청산은 10일 저가로 판정한다.
     reeval_date: Optional[date] = None      # 재평가 기한
     corr_group: str = ""                    # 상관군 (빈 값이면 상관군 없음)
     # 노션에 저장된 기존 값 (없으면 None)
@@ -507,6 +506,11 @@ class HoldingInput:
     news_memo: str = ""                      # 공시·뉴스
     exit_signal: bool = False                # 철수신호
     news_date: Optional[date] = None         # 뉴스 확인일
+    # 사람이 적어두는 판단 근거 – 메일 카드에만 쓴다 (계산에 쓰지 않음)
+    buy_reason: str = ""                     # 산 이유
+    bull_case: str = ""                      # 강세론
+    bear_case: str = ""                      # 약세론
+    next_event: str = ""                     # 다음 확인 이벤트
 
 
 @dataclass
@@ -523,6 +527,9 @@ class HoldingResult:
     stop_loss: float = 0.0       # 손절선 (갱신 후)
     risk_amount: float = 0.0     # 종목 리스크액
     current_units: float = 0.0   # 현재 유닛수
+    # 터틀 청산 신호 (웹앱과 같은 값)
+    low_10: float = 0.0            # 10일 저가 (당일 포함, 표시용)
+    dist_to_exit_pct: float = 0.0  # 현재가에서 10일 저가까지 남은 거리 %
     verdict: str = ""            # 판정
     verdict_memo: str = ""       # 판정 메모
     error: Optional[str] = None  # 조회 실패 시 메시지
@@ -590,21 +597,30 @@ def evaluate_holding(
     else:
         result.current_units = 0.0
 
+    # 터틀 청산 신호 – 웹앱과 같은 trend_signals()를 그대로 쓴다.
+    # 데이터가 모자라 신호를 못 내면 청산 판정만 건너뛴다 (손절·기한은 유효).
+    try:
+        sig = trend_signals(df)
+        result.low_10 = sig.low_10
+        result.dist_to_exit_pct = sig.dist_to_exit_pct
+        # 판정 기준은 '당일을 제외한' 직전 10일 저가다. 당일을 포함하면
+        # 종가는 항상 당일 저가 이상이라 청산이 사실상 발동하지 않는다
+        # (20일 고가 돌파 판정과 같은 이유).
+        exit_level: Optional[float] = sig.low_10_prev
+    except ValueError as e:
+        logger.warning("[%s] 청산 신호 계산 불가: %s", inp.ticker, e)
+        exit_level = None
+
     # ── 판정 (위에서부터 첫 번째로 걸리는 것) ──
     if current_price <= result.stop_loss:
         result.verdict = "손절"
         result.verdict_memo = (
             f"현재가 {current_price:,.0f} ≤ 손절선 {result.stop_loss:,.0f}"
         )
-    elif inp.take_profit_2 is not None and current_price >= inp.take_profit_2:
-        result.verdict = "분할익절 2차"
+    elif exit_level is not None and current_price <= exit_level:
+        result.verdict = "추세청산"
         result.verdict_memo = (
-            f"현재가 {current_price:,.0f} ≥ 2차 익절가 {inp.take_profit_2:,.0f}"
-        )
-    elif inp.take_profit_1 is not None and current_price >= inp.take_profit_1:
-        result.verdict = "분할익절 1차"
-        result.verdict_memo = (
-            f"현재가 {current_price:,.0f} ≥ 1차 익절가 {inp.take_profit_1:,.0f}"
+            f"현재가 {current_price:,.0f} ≤ 10일 저가 {exit_level:,.0f}"
         )
     elif inp.reeval_date is not None and inp.reeval_date < date.today():
         result.verdict = "기한도래"

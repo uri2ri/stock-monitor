@@ -32,27 +32,18 @@ SMTP_TIMEOUT = 30
 # (HoldingInput, HoldingResult) 한 쌍이 표의 한 행이 된다.
 ReportRow = tuple[HoldingInput, HoldingResult]
 
+# 상단 요약표 – 한눈에 훑는 용도. 자세한 값은 종목별 카드에 있다.
 COLUMNS = (
     "종목명",
-    "종목코드",
-    "매수단가",
+    "판정",
     "현재가",
     "손익률",
-    "ATR",
-    "손절선",
-    "진입후 최고가",
-    "손절선까지 여유%",
-    "판정",
-    "판정 메모",
+    "손절선 여유%",
+    "청산선 여유%",
 )
 
-# 이 문구만 적혀 있으면 공시·뉴스 블록에서 생략한다 (공백 제거 후 비교).
-NO_NEWS_PHRASES = frozenset({
-    "특이사항없음",
-    "특이사항무",
-    "해당없음",
-    "없음",
-})
+EMPTY = "-"                 # 노션 값이 비어 있을 때 (추측해서 채우지 않는다)
+NO_NEWS = "수집 없음"        # 공시·뉴스만 별도 문구
 
 # ── 색상 ────────────────────────────────────────────────────
 C_BORDER = "#d5d5d5"
@@ -64,6 +55,17 @@ C_LOSS = "#1c7ed6"         # 하락 파랑
 C_MUTED = "#868e96"
 C_EXIT_BG = "#fff4e6"      # 철수신호 요약 박스
 C_EXIT_LINE = "#e8590c"
+C_CARD_BG = "#fafafa"      # 카드 배경
+C_LABEL = "#495057"        # 카드 안 항목 이름
+
+# 판정별 배지 색 (배경, 글자)
+VERDICT_BADGE = {
+    "손절": ("#ffe3e3", "#c92a2a"),
+    "추세청산": ("#fff4e6", "#e8590c"),
+    "기한도래": ("#fff9db", "#e67700"),
+    "유지": ("#ebfbee", "#2b8a3e"),
+    "조회실패": ("#f1f3f5", "#868e96"),
+}
 
 
 # ── 값 계산/포맷 유틸 ───────────────────────────────────────
@@ -99,18 +101,14 @@ def _is_stop(res: HoldingResult) -> bool:
     return res.verdict == "손절"
 
 
-def _has_news(inp: HoldingInput) -> bool:
-    """리포트에 실을 공시·뉴스가 있는지.
+def _or_dash(value: str) -> str:
+    """노션 값이 비어 있으면 '-'. 절대 추측해서 채우지 않는다."""
+    return (value or "").strip() or EMPTY
 
-    비어 있거나 "특이사항 없음" 류의 상투적인 문구뿐이면 False.
-    """
-    memo = (inp.news_memo or "").strip()
-    if not memo:
-        return False
-    normalized = memo.rstrip(" .。!?~-·").replace(" ", "")
-    if not normalized:      # "-", "." 같은 자리표시 문자뿐인 경우
-        return False
-    return normalized not in NO_NEWS_PHRASES
+
+def _sorted_rows(rows: Sequence[ReportRow]) -> list[ReportRow]:
+    """조치 필요 종목을 위로. 그 안에서는 원래 순서를 유지한다."""
+    return sorted(rows, key=lambda r: not r[1].is_action_needed)
 
 
 def _news_stamp(inp: HoldingInput, today: date) -> str:
@@ -152,44 +150,132 @@ def _td(content: str, *, align: str = "right", color: str = "",
     return f'<td style="{style}">{content}</td>'
 
 
+def _badge_html(res: HoldingResult) -> str:
+    """판정 배지."""
+    bg, fg = VERDICT_BADGE.get(res.verdict, (C_HEAD_BG, C_LABEL))
+    return (
+        f'<span style="display:inline-block;padding:2px 10px;border-radius:10px;'
+        f'background-color:{bg};color:{fg};font-weight:bold;font-size:13px;'
+        f'white-space:nowrap;">{html.escape(res.verdict or EMPTY)}</span>'
+    )
+
+
 def _row_html(inp: HoldingInput, res: HoldingResult) -> str:
+    """요약표 한 행."""
     stop = _is_stop(res)
     bg = f"background-color:{C_STOP_BG};" if stop else ""
 
     pl = _profit_pct(inp, res)
     room = _stop_room_pct(res)
+    exit_room = res.dist_to_exit_pct if res.current_price else None
 
     pl_color = ""
     if pl is not None:
         pl_color = C_PROFIT if pl >= 0 else C_LOSS
 
-    room_color = C_STOP_TEXT if (room is not None and room <= 0) else ""
-
-    verdict = html.escape(res.verdict or "-")
-    if stop:
-        verdict = f"🔴 {verdict}"
-
-    memo = html.escape(res.verdict_memo or "")
-    if res.error:
-        memo = html.escape(f"조회 실패: {res.error}")
-
     cells = [
         _td(html.escape(inp.name), align="left",
             color=C_STOP_TEXT if stop else "", bold=stop),
-        _td(html.escape(inp.ticker), align="center"),
-        _td(_fmt(inp.buy_price)),
-        _td(_fmt(res.current_price) if res.current_price else "-"),
+        _td(_badge_html(res), align="center"),
+        _td(_fmt(res.current_price) if res.current_price else EMPTY),
         _td(_fmt_pct(pl), color=pl_color),
-        _td(_fmt(res.atr, 2) if res.atr else "-"),
-        _td(_fmt(res.stop_loss) if res.stop_loss else "-"),
-        _td(_fmt(res.trailing_high) if res.trailing_high else "-"),
-        _td(_fmt_pct(room), color=room_color),
-        _td(verdict, align="center",
-            color=C_STOP_TEXT if stop else "", bold=stop),
-        _td(memo or "-", align="left",
-            color=C_MUTED if not memo else "", nowrap=False),
+        _td(_fmt_pct(room),
+            color=C_STOP_TEXT if (room is not None and room <= 0) else ""),
+        _td(_fmt_pct(exit_room),
+            color=C_STOP_TEXT if (exit_room is not None and exit_room <= 0) else ""),
     ]
     return f'<tr style="{bg}">' + "".join(cells) + "</tr>"
+
+
+def _card_row(label: str, value: str, *, color: str = "",
+              nowrap: bool = False) -> str:
+    """카드 안의 한 줄 (항목 이름 + 값)."""
+    style = "padding:3px 0;vertical-align:top;"
+    val_style = style + (f"color:{color};" if color else "")
+    if nowrap:
+        val_style += "white-space:nowrap;"
+    return (
+        f'<tr>'
+        f'<td style="{style}width:96px;color:{C_LABEL};white-space:nowrap;">'
+        f"{html.escape(label)}</td>"
+        f'<td style="{val_style}">{value}</td>'
+        f"</tr>"
+    )
+
+
+def _card_html(inp: HoldingInput, res: HoldingResult, today: date) -> str:
+    """종목 카드 한 장. 노션 값이 비면 '-'로 두고 추측하지 않는다."""
+    stop = _is_stop(res)
+    border = C_STOP_TEXT if stop else C_BORDER
+
+    pl = _profit_pct(inp, res)
+    pl_color = "" if pl is None else (C_PROFIT if pl >= 0 else C_LOSS)
+    room = _stop_room_pct(res)
+    exit_room = res.dist_to_exit_pct if res.current_price else None
+
+    # 공시·뉴스: 노션 값 그대로. 비어 있을 때만 '수집 없음'.
+    memo = (inp.news_memo or "").strip()
+    if memo:
+        news = html.escape(memo).replace("\n", "<br>")
+        stamp = _news_stamp(inp, today)
+        if stamp:
+            news += (
+                f' <span style="color:{C_STOP_TEXT};font-size:12px;">'
+                f"{html.escape(stamp)}</span>"
+            )
+    else:
+        news = f'<span style="color:{C_MUTED};">{NO_NEWS}</span>'
+
+    exit_mark = (
+        f'<span style="color:{C_EXIT_LINE};font-weight:bold;">⛔ 있음</span>'
+        if inp.exit_signal
+        else f'<span style="color:{C_MUTED};">없음</span>'
+    )
+
+    body = "".join([
+        _card_row("현재가 / 매수단가",
+                  f"{_fmt(res.current_price) if res.current_price else EMPTY}원"
+                  f" / {_fmt(inp.buy_price)}원", nowrap=True),
+        _card_row("손익률", _fmt_pct(pl), color=pl_color, nowrap=True),
+        _card_row("ATR", f"{_fmt(res.atr, 2) if res.atr else EMPTY}원",
+                  nowrap=True),
+        _card_row("손절선",
+                  f"{_fmt(res.stop_loss) if res.stop_loss else EMPTY}원"
+                  f" (여유 {_fmt_pct(room)})", nowrap=True),
+        _card_row("10일 저가",
+                  f"{_fmt(res.low_10) if res.low_10 else EMPTY}원"
+                  f" (여유 {_fmt_pct(exit_room)})", nowrap=True),
+        _card_row("산 이유", html.escape(_or_dash(inp.buy_reason))),
+        _card_row("강세론", html.escape(_or_dash(inp.bull_case))),
+        _card_row("약세론", html.escape(_or_dash(inp.bear_case))),
+        _card_row("공시·뉴스", news),
+        _card_row("철수신호", exit_mark),
+        _card_row("다음 확인 이벤트", html.escape(_or_dash(inp.next_event))),
+    ])
+
+    memo_line = ""
+    note = res.verdict_memo or (f"조회 실패: {res.error}" if res.error else "")
+    if note:
+        memo_line = (
+            f'<div style="margin-top:6px;color:{C_MUTED};font-size:12px;">'
+            f"{html.escape(note)}</div>"
+        )
+
+    return f"""
+  <div style="border:1px solid {border};border-left:4px solid {border};
+  border-radius:6px;background-color:{C_CARD_BG};padding:12px 14px;
+  margin:0 0 12px;">
+    <div style="margin-bottom:8px;">
+      <span style="font-size:16px;font-weight:bold;">
+        {html.escape(inp.name)}</span>
+      <span style="color:{C_MUTED};font-size:12px;">
+        ({html.escape(inp.ticker)})</span>
+      &nbsp;{_badge_html(res)}
+    </div>
+    <table style="border-collapse:collapse;font-size:13px;width:100%;">
+      {body}
+    </table>{memo_line}
+  </div>"""
 
 
 def _build_html(
@@ -198,6 +284,8 @@ def _build_html(
     has_errors: bool,
     today: date,
 ) -> str:
+    rows = _sorted_rows(rows)      # 조치 필요 종목이 위로
+
     head_cells = "".join(
         f'<th style="padding:8px 10px;border:1px solid {C_BORDER};'
         f'background-color:{C_HEAD_BG};text-align:center;'
@@ -238,37 +326,10 @@ def _build_html(
     else:
         exit_box = ""
 
-    # 공시·뉴스 – 내용이 있는 종목만
-    news_blocks = []
-    for inp, res in rows:
-        if not _has_news(inp):
-            continue
-        stamp = _news_stamp(inp, today)
-        stamp_html = (
-            f' <span style="color:{C_STOP_TEXT};font-size:12px;">'
-            f'{html.escape(stamp)}</span>'
-            if stamp
-            else ""
-        )
-        mark = "⛔ " if inp.exit_signal else ""
-        border = C_EXIT_LINE if inp.exit_signal else C_BORDER
-        body = html.escape(inp.news_memo).replace("\n", "<br>")
-        news_blocks.append(f"""
-  <div style="border-left:3px solid {border};padding:2px 0 2px 10px;
-  margin:0 0 12px;">
-    <div style="font-weight:bold;">{mark}{html.escape(inp.name)}
-      <span style="color:{C_MUTED};font-weight:normal;font-size:12px;">
-        ({html.escape(inp.ticker)})</span>{stamp_html}
-    </div>
-    <div style="margin-top:2px;">{body}</div>
-  </div>""")
-
-    news_section = (
-        f"""
-  <h3 style="margin:20px 0 10px;">📰 공시·뉴스</h3>{"".join(news_blocks)}"""
-        if news_blocks
-        else ""
-    )
+    # 종목별 카드 – 표에 안 담기는 노션 값(산 이유·강세론·약세론·공시·뉴스 등)
+    cards = "".join(_card_html(inp, res, today) for inp, res in rows)
+    card_section = f"""
+  <h3 style="margin:20px 0 10px;">📋 종목별 상세</h3>{cards}"""
 
     risk_color = C_STOP_TEXT if risk.risk_warning else "#212529"
     warn = " ⚠️ 6% 초과" if risk.risk_warning else ""
@@ -325,7 +386,7 @@ sans-serif;font-size:14px;color:#212529;line-height:1.5;">
     <thead><tr>{head_cells}</tr></thead>
     <tbody>{body_rows}</tbody>
   </table>
-{news_section}
+{card_section}
 
   <table style="border-collapse:collapse;margin-top:16px;font-size:14px;">
     <tr>
@@ -354,6 +415,8 @@ def _build_text(
     has_errors: bool,
     today: date,
 ) -> str:
+    rows = _sorted_rows(rows)      # 조치 필요 종목이 위로
+
     lines = [
         f"📊 포트폴리오 점검 리포트 ({today.isoformat()} 기준)",
         "",
@@ -366,38 +429,59 @@ def _build_text(
             lines.append(f"  - {inp.name} ({inp.ticker}) – 판정 {res.verdict or '-'}")
         lines.append("")
 
+    # 요약
+    lines.append("[요약]")
     for inp, res in rows:
-        mark = "[손절] " if _is_stop(res) else ""
-        lines.append(f"{mark}{res.name} ({inp.ticker}) - {res.verdict or '-'}")
+        exit_room = res.dist_to_exit_pct if res.current_price else None
         lines.append(
-            f"  매수단가 {_fmt(inp.buy_price)} / "
-            f"현재가 {_fmt(res.current_price) if res.current_price else '-'} / "
-            f"손익률 {_fmt_pct(_profit_pct(inp, res))}"
+            f"  {res.verdict or EMPTY:<5} {inp.name} "
+            f"{_fmt(res.current_price) if res.current_price else EMPTY} "
+            f"({_fmt_pct(_profit_pct(inp, res))}) "
+            f"손절여유 {_fmt_pct(_stop_room_pct(res))} / "
+            f"청산여유 {_fmt_pct(exit_room)}"
         )
-        lines.append(
-            f"  ATR {_fmt(res.atr, 2) if res.atr else '-'} / "
-            f"손절선 {_fmt(res.stop_loss) if res.stop_loss else '-'} / "
-            f"진입후 최고가 "
-            f"{_fmt(res.trailing_high) if res.trailing_high else '-'} / "
-            f"여유 {_fmt_pct(_stop_room_pct(res))}"
-        )
-        memo = f"조회 실패: {res.error}" if res.error else res.verdict_memo
-        if memo:
-            lines.append(f"  메모: {memo}")
-        lines.append("")
+    lines.append("")
 
-    news_rows = [(inp, res) for inp, res in rows if _has_news(inp)]
-    if news_rows:
-        lines.append("📰 공시·뉴스")
-        lines.append("")
-        for inp, res in news_rows:
-            mark = "⛔ " if inp.exit_signal else ""
+    # 종목별 상세
+    lines.append("[종목별 상세]")
+    lines.append("")
+    for inp, res in rows:
+        exit_room = res.dist_to_exit_pct if res.current_price else None
+        lines.append(f"■ {inp.name} ({inp.ticker}) — {res.verdict or EMPTY}")
+        lines.append(
+            f"  현재가 {_fmt(res.current_price) if res.current_price else EMPTY}"
+            f" / 매수단가 {_fmt(inp.buy_price)}"
+            f" / 손익률 {_fmt_pct(_profit_pct(inp, res))}"
+        )
+        lines.append(
+            f"  ATR {_fmt(res.atr, 2) if res.atr else EMPTY}"
+            f" / 손절선 {_fmt(res.stop_loss) if res.stop_loss else EMPTY}"
+            f" (여유 {_fmt_pct(_stop_room_pct(res))})"
+        )
+        lines.append(
+            f"  10일 저가 {_fmt(res.low_10) if res.low_10 else EMPTY}"
+            f" (여유 {_fmt_pct(exit_room)})"
+        )
+        lines.append(f"  산 이유: {_or_dash(inp.buy_reason)}")
+        lines.append(f"  강세론: {_or_dash(inp.bull_case)}")
+        lines.append(f"  약세론: {_or_dash(inp.bear_case)}")
+
+        memo = (inp.news_memo or "").strip()
+        if memo:
             stamp = _news_stamp(inp, today)
-            head = f"{mark}{inp.name} ({inp.ticker})"
-            lines.append(f"{head} {stamp}".rstrip())
-            for memo_line in inp.news_memo.splitlines():
-                lines.append(f"  {memo_line}")
-            lines.append("")
+            lines.append(f"  공시·뉴스: {stamp}".rstrip())
+            for memo_line in memo.splitlines():
+                lines.append(f"    {memo_line}")
+        else:
+            lines.append(f"  공시·뉴스: {NO_NEWS}")
+
+        lines.append(f"  철수신호: {'있음' if inp.exit_signal else '없음'}")
+        lines.append(f"  다음 확인 이벤트: {_or_dash(inp.next_event)}")
+
+        note = res.verdict_memo or (f"조회 실패: {res.error}" if res.error else "")
+        if note:
+            lines.append(f"  메모: {note}")
+        lines.append("")
 
     warn = " (6% 초과)" if risk.risk_warning else ""
     lines.append(
