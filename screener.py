@@ -618,12 +618,19 @@ def _merge(cache: pd.DataFrame, chunks: list[pd.DataFrame]) -> pd.DataFrame:
 
 def prefilter_liquidity(
     hist: pd.DataFrame, tickers: list[str], days: list[str],
+    min_value: float = MIN_TRADING_VALUE,
+    min_days: int = MIN_LISTED_DAYS,
 ) -> Prefilter:
     """거래대금·거래정지·상장일수로 거른다.
 
     거래대금은 최근 TRADING_VALUE_DAYS 거래일 평균(종가 × 거래량)이다.
     유동성 자체를 보는 값이라 당일을 빼지 않는다 — 당일을 빼는 것은
     '오늘 급증했는가'를 보는 거래량 배수 쪽 이야기다.
+
+    Args:
+        min_value: 20일 평균 거래대금 하한. 기본은 스크리너 기준(10억).
+        min_days: 상장 거래일 하한. 기본은 ATR 워밍업까지 보는 120일.
+            scan_all.py는 원본 수치만 뽑으므로 더 낮은 값을 넘긴다.
     """
     scan_day = days[-1]
     sub = hist[hist["티커"].isin(tickers)]
@@ -632,8 +639,8 @@ def prefilter_liquidity(
     # 상장 거래일 – 종가가 있는 날만 센다
     traded = sub[sub["종가"] > 0]
     counts = traded.groupby("티커")["날짜"].nunique()
-    enough = set(counts[counts >= MIN_LISTED_DAYS].index)
-    dropped[f"거래일 {MIN_LISTED_DAYS}일 미만"] = len(tickers) - len(enough)
+    enough = set(counts[counts >= min_days].index)
+    dropped[f"거래일 {min_days}일 미만"] = len(tickers) - len(enough)
 
     # 기준일에 거래가 없었으면 거래정지로 본다
     today = traded[(traded["날짜"] == scan_day) & (traded["거래량"] > 0)]
@@ -646,8 +653,8 @@ def prefilter_liquidity(
     ].copy()
     window["거래대금"] = window["종가"] * window["거래량"]
     avg_value = window.groupby("티커")["거래대금"].mean()
-    liquid = set(avg_value[avg_value >= MIN_TRADING_VALUE].index)
-    dropped[f"평균 거래대금 {MIN_TRADING_VALUE // 100_000_000}억 미만"] = (
+    liquid = set(avg_value[avg_value >= min_value].index)
+    dropped[f"평균 거래대금 {int(min_value) // 100_000_000}억 미만"] = (
         len(active) - len(liquid)
     )
 

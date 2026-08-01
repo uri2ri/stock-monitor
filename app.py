@@ -19,16 +19,21 @@ import streamlit as st
 from pykrx import stock as krx
 
 import core
+import scan_all
 import screener
 
 TAB_ANALYSIS = "종목 분석"
 TAB_BREAKOUT = "오늘의 돌파"
+TAB_SCAN = "전종목 스캔"
 
 CHART_DAY_OPTIONS = (20, 30, 60)   # 차트에 그릴 거래일 선택지
 CHART_DAYS_DEFAULT = 30            # 신호가 20일·10일 기준이라 60일은 과하다
 CHART_HEIGHT = 400                 # 모바일 기준 고정 높이
 CHART_PAD = 0.05                   # y축 여백 (표시 구간 최저~최고가 ±5%)
-CHASE_ATR_MULT = 0.5     # 돌파 후 이만큼 더 진행했으면 추격 구간으로 본다
+
+# 추격 구간 판정선은 core에 있다. 장중 감시 스크립트(intraday_watch.py)가
+# 같은 값을 쓰므로, 여기서 다시 정의하면 두 곳이 갈라진다.
+CHASE_ATR_MULT = core.CHASE_ATR_MULT
 
 # ── AI 의견 설정 ────────────────────────────────────────────
 AI_MODEL = "gemini-2.5-flash"
@@ -1016,6 +1021,105 @@ def render_breakout(capital: float, ai_unlocked: bool) -> None:
     )
 
 
+# ── 전종목 스캔 ─────────────────────────────────────────────
+
+@st.cache_data(ttl=600, show_spinner=False)
+def load_scan(_mtime: float):
+    """scan_latest.csv. 인자는 캐시 키용 – 파일이 바뀌면 다시 읽는다."""
+    return scan_all.load_scan()
+
+
+def render_scan(capital: float) -> None:
+    """[전종목 스캔] 화면. scan_all.py가 저장한 CSV를 읽어 보여준다.
+
+    스캔을 여기서 돌리지 않는다. CSV에는 임계값을 적용하지 않은 전종목
+    원본 수치가 들어 있고, 이 화면은 슬라이더 값으로 마스크만 다시 건다.
+    기준을 바꿔도 재조회가 없으므로 즉시 반영된다.
+    """
+    if not scan_all.LATEST_PATH.exists():
+        st.info(
+            "**스캔 결과 없음** — `data/scan_latest.csv`가 없습니다.  \n"
+            "야간 스캔이 돌면 생깁니다 (GitHub Actions 평일 21:00 KST)."
+        )
+        return
+
+    frame = load_scan(scan_all.LATEST_PATH.stat().st_mtime)
+    if frame is None or frame.empty:
+        st.warning("스캔 결과가 비어 있습니다.")
+        return
+
+    st.subheader(f"스캔 기준일 {frame['scan_date'].iloc[0]}")
+    st.caption(
+        f"{len(frame):,}종목 · 임계값 없이 저장된 원본 수치입니다. "
+        "아래 슬라이더는 필터만 다시 겁니다 (재조회 없음)."
+    )
+
+    s1, s2 = st.columns(2)
+    gap_max = s1.slider(
+        "돌파 갭 상한 (×ATR)", 0.0, 2.0, core.CHASE_ATR_MULT, 0.05,
+        help="20일 고가를 넘은 폭. 이보다 더 벌어졌으면 추격 구간으로 봅니다.",
+    )
+    dist_max = s2.slider(
+        "임박 거리 상한 (×ATR)", 0.1, 3.0, 1.0, 0.1,
+        help="20일 고가까지 남은 거리. 좁을수록 돌파가 가깝습니다.",
+    )
+
+    # 1유닛 주수는 사이드바 금액으로 다시 낸다 — 스캔 시점 계좌와
+    # 다를 수 있고, ATR은 스캔값 그대로라 재조회가 아니다.
+    units = frame["atr20"].apply(
+        lambda a: core.calc_position(float(a), capital).unit_shares
+    )
+    frame = frame.assign(unit_shares=units)
+
+    broke = frame[
+        (frame["status"] == scan_all.STATUS_BREAKOUT)
+        & (frame["gap_atr"] <= gap_max)
+    ].sort_values("gap_atr")
+    near = frame[
+        (frame["status"] == scan_all.STATUS_NEAR)
+        & (frame["dist_atr"] <= dist_max)
+    ].sort_values("dist_atr")
+
+    st.markdown(f"### ■ 돌파 ({len(broke)}종목)")
+    if broke.empty:
+        st.info(f"갭 {gap_max:.2f}×ATR 이내로 돌파한 종목이 없습니다.")
+    else:
+        st.dataframe(
+            {
+                "종목명": broke["name"].tolist(),
+                "코드": broke["ticker"].tolist(),
+                "현재가": [f"{v:,.0f}" for v in broke["close"]],
+                "20일고가": [f"{v:,.0f}" for v in broke["high20"]],
+                "ATR": [f"{v:,.0f}" for v in broke["atr20"]],
+                "갭(×ATR)": [f"+{v:.2f}" for v in broke["gap_atr"]],
+                "1유닛 주수": [f"{v:,}주" for v in broke["unit_shares"]],
+            },
+            hide_index=True, width="stretch",
+        )
+
+    st.markdown(f"### ■ 임박 ({len(near)}종목)")
+    if near.empty:
+        st.info(f"20일 고가까지 {dist_max:.1f}×ATR 이내인 종목이 없습니다.")
+    else:
+        st.dataframe(
+            {
+                "종목명": near["name"].tolist(),
+                "코드": near["ticker"].tolist(),
+                "현재가": [f"{v:,.0f}" for v in near["close"]],
+                "20일고가": [f"{v:,.0f}" for v in near["high20"]],
+                "ATR": [f"{v:,.0f}" for v in near["atr20"]],
+                "거리(×ATR)": [f"{v:.2f}" for v in near["dist_atr"]],
+                "1유닛 주수": [f"{v:,}주" for v in near["unit_shares"]],
+            },
+            hide_index=True, width="stretch",
+        )
+
+    st.caption(
+        f"종가 기준입니다 — 장중 현재가가 아닙니다. 1유닛 주수는 사이드바 "
+        f"계좌 {capital:,.0f}원 기준으로 다시 계산했습니다."
+    )
+
+
 # ── 탭 ──────────────────────────────────────────────────────
 
 # st.tabs는 코드에서 다른 탭으로 넘길 수 없다. 돌파 목록에서 종목을
@@ -1023,11 +1127,14 @@ def render_breakout(capital: float, ai_unlocked: bool) -> None:
 # 탭 막대로 쓴다.
 st.session_state.setdefault("tab", TAB_ANALYSIS)
 _tab = st.segmented_control(
-    "화면", (TAB_ANALYSIS, TAB_BREAKOUT), key="tab", label_visibility="collapsed",
+    "화면", (TAB_ANALYSIS, TAB_BREAKOUT, TAB_SCAN), key="tab",
+    label_visibility="collapsed",
 )
 
 # 선택을 해제하면 None이 온다. 그때는 직전 탭을 유지한다.
 if _tab == TAB_BREAKOUT:
     render_breakout(capital, ai_unlocked)
+elif _tab == TAB_SCAN:
+    render_scan(capital)
 else:
     render_analysis(capital, ai_unlocked)

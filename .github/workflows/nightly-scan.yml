@@ -1,0 +1,86 @@
+name: Nightly Full Scan
+
+# 전종목의 20일 고가 대비 위치를 ATR 배수로 환산해 CSV로 남긴다.
+# 임계값 판정은 하지 않는다 – 스트림릿과 장중 감시가 이 원본 수치를 읽는다.
+# 노션·카톡·메일에 쓰지 않는다.
+
+on:
+  schedule:
+    # UTC 월~금 12:00 = KST 평일 21:00
+    # 시세 캐시는 16:30에 도는 Breakout Screener가 이미 채워둔다.
+    # 휴장일이면 기준일이 직전 거래일 그대로라 같은 결과가 다시 쓰인다.
+    - cron: "0 12 * * 1-5"
+  workflow_dispatch:
+    inputs:
+      end:
+        description: "기준일 YYYY-MM-DD (비우면 오늘)"
+        type: string
+        required: false
+
+# data/ohlcv_cache.parquet을 Breakout Screener와 공유한다. 갱신은
+# 스크리너(16:30) 쪽이 맡지만, 그쪽이 실패하면 이 워크플로가 기준일
+# 하루치를 보충하며 같은 파일에 쓴다. 그룹을 공유해 커밋이 겹치지 않게 한다.
+concurrency:
+  group: krx-data
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    # 평상시엔 캐시를 읽기만 해서 몇 분이면 끝난다. 스크리너가 실패해
+    # 보충 경로로 내려갈 때를 감안해 여유를 둔다.
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run full scan
+        env:
+          TOTAL_CAPITAL: ${{ secrets.TOTAL_CAPITAL }}
+          # pykrx는 import 시점에 로그인 세션을 만든다. 전종목 메타
+          # 조회가 로그인 뒤에 있어서 프로세스 시작 전에 있어야 한다.
+          KRX_ID: ${{ secrets.KRX_ID }}
+          KRX_PW: ${{ secrets.KRX_PW }}
+        run: |
+          if [ -n "${{ inputs.end }}" ]; then
+            python scan_all.py --end "${{ inputs.end }}"
+          else
+            python scan_all.py
+          fi
+
+      # 스캔이 중단되면 새 CSV가 없다 – 직전 scan_latest.csv를 그대로 둔다.
+      - name: Commit results
+        if: success()
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A data/
+          if git diff --cached --quiet; then
+            echo "변경 없음 – 커밋하지 않습니다."
+            exit 0
+          fi
+          git commit -m "chore(scan): $(date -u +%Y-%m-%d) 전종목 스캔 [skip ci]"
+          git pull --rebase --autostash origin ${{ github.ref_name }}
+          git push origin HEAD:${{ github.ref_name }}
+
+      - name: Upload data on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nightly-scan-data
+          path: data/
+          if-no-files-found: ignore
+          retention-days: 7

@@ -37,6 +37,7 @@ RISK_PER_TRADE = 0.01    # 1회 리스크 = 총자본의 1%
 STOP_ATR_MULT = 2.0      # 손절폭 = 2×ATR
 STOP_METHOD = "half"     # 기본 트레일링 방식 (half | 1to1)
 PYRAMID_ATR_STEP = 0.5   # 1/2 ATR 오를 때마다 1유닛 추가
+CHASE_ATR_MULT = 0.5     # 돌파 후 이만큼 더 진행했으면 추격 구간으로 본다
 MAX_UNITS = 4            # 최대 유닛 수
 DEFAULT_CAPITAL = 10_000_000
 FETCH_DAYS = 120         # 기본 조회 거래일 – Wilder 재귀식 워밍업용

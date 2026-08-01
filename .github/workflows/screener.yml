@@ -20,9 +20,11 @@ on:
         type: boolean
         default: false
 
-# 커밋이 겹치지 않게 한 번에 하나만 돈다
+# 커밋이 겹치지 않게 한 번에 하나만 돈다.
+# data/ohlcv_cache.parquet을 Nightly Full Scan과 공유하므로 그룹도 공유한다
+# (갱신 책임은 이쪽에 있고, 밤 스캔은 이쪽이 실패했을 때만 보충한다).
 concurrency:
-  group: screener
+  group: krx-data
   cancel-in-progress: false
 
 permissions:

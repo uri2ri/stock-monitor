@@ -1,0 +1,71 @@
+name: Intraday Breakout Watch
+
+# 야간 스캔이 뽑은 돌파 임박 종목이 장중에 실제로 20일 고가를 넘으면
+# 카톡으로 알린다. 노션·메일에 쓰지 않는다.
+
+on:
+  schedule:
+    # UTC 월~금 00:00~06:50 10분 간격 = KST 평일 09:00~15:50
+    # GitHub Actions 스케줄은 수 분 밀릴 수 있다. 정시를 보장하지 않으며,
+    # 밀려서 건너뛴 구간은 다음 실행이 그대로 이어받는다 (판정은 그 시점
+    # 현재가 기준이고, 이미 알린 종목은 alerted_*.json이 걸러낸다).
+    - cron: "*/10 0-6 * * 1-5"
+  workflow_dispatch:
+
+# 알림 이력(data/alerted_*.json)을 커밋하므로 겹쳐 돌면 안 된다.
+# 진행 중인 실행을 취소하지 않는다 – 카톡을 보낸 뒤 이력을 커밋하기
+# 전에 잘리면 그 종목을 다음 실행이 또 알린다. 타임아웃(8분)이 스케줄
+# 간격(10분)보다 짧아 어차피 겹치지 않는다.
+concurrency:
+  group: intraday
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  watch:
+    runs-on: ubuntu-latest
+    # 100종목을 20개씩 5배치로 받는다. 다음 스케줄(10분)을 넘기지 않게
+    # 짧게 끊는다 – 넘기면 concurrency가 다음 실행을 지운다.
+    timeout-minutes: 8
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Watch for breakouts
+        env:
+          KAKAO_REST_API_KEY: ${{ secrets.KAKAO_REST_API_KEY }}
+          KAKAO_CLIENT_SECRET: ${{ secrets.KAKAO_CLIENT_SECRET }}
+          KAKAO_REFRESH_TOKEN: ${{ secrets.KAKAO_REFRESH_TOKEN }}
+          TOTAL_CAPITAL: ${{ secrets.TOTAL_CAPITAL }}
+          # 워치리스트 거리 상한 (×ATR). 없으면 1.0
+          WATCH_THRESHOLD: ${{ vars.WATCH_THRESHOLD }}
+        run: python intraday_watch.py
+
+      # 알림 이력만 커밋한다. 다음 실행이 이 파일을 읽어 중복 발송을 막는다.
+      # 시세 캐시(parquet)는 이 워크플로가 건드리지 않는다.
+      - name: Commit alert log
+        if: success()
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          # 알림이 없으면 파일도 없다 – glob이 안 맞아도 넘어간다
+          git add data/alerted_*.json 2>/dev/null || true
+          if git diff --cached --quiet; then
+            echo "새 알림 없음 – 커밋하지 않습니다."
+            exit 0
+          fi
+          git commit -m "chore(intraday): 돌파 알림 $(TZ=Asia/Seoul date '+%Y-%m-%d %H:%M') [skip ci]"
+          git pull --rebase --autostash origin ${{ github.ref_name }}
+          git push origin HEAD:${{ github.ref_name }}
