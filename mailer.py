@@ -106,6 +106,19 @@ def _or_dash(value: str) -> str:
     return (value or "").strip() or EMPTY
 
 
+def _pyramid_line(res: HoldingResult) -> str:
+    """현재 유닛 / 다음 추가매수 지점 한 줄."""
+    units = f"{res.current_units:g}"
+    if res.next_add_price is None:
+        return f"{units}/4 · 추가매수 종료"
+
+    gap = ""
+    if res.current_price:
+        pct = (res.next_add_price - res.current_price) / res.current_price * 100
+        gap = f" (현재가 대비 {pct:+.1f}%)"
+    return f"{units}/4 · 다음 추가 지점 {_fmt(res.next_add_price)}원{gap}"
+
+
 def _sorted_rows(rows: Sequence[ReportRow]) -> list[ReportRow]:
     """조치 필요 종목을 위로. 그 안에서는 원래 순서를 유지한다."""
     return sorted(rows, key=lambda r: not r[1].is_action_needed)
@@ -245,6 +258,7 @@ def _card_html(inp: HoldingInput, res: HoldingResult, today: date) -> str:
         _card_row("10일 저가",
                   f"{_fmt(res.low_10) if res.low_10 else EMPTY}원"
                   f" (여유 {_fmt_pct(exit_room)})", nowrap=True),
+        _card_row("추가매수", html.escape(_pyramid_line(res)), nowrap=True),
         _card_row("산 이유", html.escape(_or_dash(inp.buy_reason))),
         _card_row("강세론", html.escape(_or_dash(inp.bull_case))),
         _card_row("약세론", html.escape(_or_dash(inp.bear_case))),
@@ -462,6 +476,7 @@ def _build_text(
             f"  10일 저가 {_fmt(res.low_10) if res.low_10 else EMPTY}"
             f" (여유 {_fmt_pct(exit_room)})"
         )
+        lines.append(f"  추가매수: {_pyramid_line(res)}")
         lines.append(f"  산 이유: {_or_dash(inp.buy_reason)}")
         lines.append(f"  강세론: {_or_dash(inp.bull_case)}")
         lines.append(f"  약세론: {_or_dash(inp.bear_case)}")

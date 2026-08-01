@@ -144,7 +144,7 @@ def main() -> None:
 
         # 3) 노션에 결과 기록
         try:
-            update_holding(page_id, result)
+            update_holding(page_id, result, inp)
         except Exception:
             logger.exception("[%s] 노션 업데이트 실패", inp.name)
             has_errors = True

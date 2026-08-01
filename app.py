@@ -118,6 +118,58 @@ def build_ai_user_message(
     )
 
 
+# ── 상관군 유닛 카운터 ──────────────────────────────────────
+MAX_UNITS_STOCK = 4       # 종목당
+MAX_UNITS_GROUP = 6       # 상관군당
+MAX_UNITS_TOTAL = 12      # 전체
+
+
+@st.cache_data(ttl=300, show_spinner=False)
+def load_corr_units(capital: int) -> tuple[dict[str, float], float, list[str]]:
+    """노션 보유 종목의 상관군별 누적 유닛수.
+
+    유닛은 진입 시점 기준이므로 '진입시 ATR'을 우선 쓰고, 없으면 노션의
+    ATR 칸(매일 갱신되는 값)으로 대신한다. 둘 다 없으면 셀 수 없으므로
+    건너뛰고 그 사실을 함께 돌려준다.
+
+    Returns:
+        (상관군별 유닛수, 전체 유닛수, 셀 수 없어 건너뛴 종목명)
+    """
+    import os
+
+    for key in ("NOTION_TOKEN", "NOTION_DB_ID"):
+        value = read_secret(key)
+        if value:
+            os.environ[key] = value
+
+    from notion_repo import fetch_holdings
+
+    groups: dict[str, float] = {}
+    total = 0.0
+    skipped: list[str] = []
+
+    for _, inp in fetch_holdings():
+        atr = inp.entry_atr or inp.notion_atr
+        if not atr:
+            skipped.append(f"{inp.name}(ATR 없음)")
+            continue
+        if not inp.shares:
+            skipped.append(f"{inp.name}(보유수량 없음)")
+            continue
+        unit_shares = core.calc_position(atr, capital).unit_shares
+        if unit_shares <= 0:
+            # 1ATR이 계좌 1%보다 커서 1유닛이 0주 — 계좌 규모에 안 맞는 종목
+            skipped.append(f"{inp.name}(1유닛 0주)")
+            continue
+        units = inp.shares / unit_shares
+        total += units
+        group = (inp.corr_group or "").strip()
+        if group:
+            groups[group] = groups.get(group, 0.0) + units
+
+    return groups, total, skipped
+
+
 def _grounding_sources(candidate) -> list[str]:
     """Google 검색 그라운딩에 실제로 쓰인 출처 (제목 + 링크)."""
     meta = getattr(candidate, "grounding_metadata", None)
@@ -395,15 +447,21 @@ with st.sidebar:
     elif _entered:
         st.error("비밀번호가 일치하지 않습니다.")
 
-col_code, col_cap, col_btn = st.columns([2, 2, 1])
+    st.divider()
+    st.subheader("💰 계좌")
+    # 종목을 바꿔도 값이 남도록 session_state로 유지한다.
+    # value=와 key=를 함께 주면 Streamlit이 경고하므로 초기값만 넣어둔다.
+    st.session_state.setdefault("capital", core.DEFAULT_CAPITAL)
+    capital = st.number_input(
+        "계좌 금액 (원)",
+        min_value=1_000_000, max_value=100_000_000_000,
+        step=1_000_000, format="%d", key="capital",
+    )
+    st.caption(f"1회 리스크 한도: {capital * core.RISK_PER_TRADE:,.0f}원 (1%)")
+
+col_code, col_btn = st.columns([4, 1])
 with col_code:
     code = st.text_input("종목코드 (6자리)", placeholder="예: 240550", max_chars=6)
-with col_cap:
-    capital = st.number_input(
-        "총자본 (원)",
-        min_value=1_000_000, max_value=100_000_000_000,
-        value=core.DEFAULT_CAPITAL, step=1_000_000, format="%d",
-    )
 with col_btn:
     st.write("")
     st.write("")
@@ -416,21 +474,24 @@ if run:
     if len(entered) != 6 or not entered.isdigit():
         st.error("종목코드는 숫자 6자리여야 합니다.")
         st.stop()
-    st.session_state["query"] = (entered, capital)
+    st.session_state["query"] = entered
 
 if "query" not in st.session_state:
     st.stop()
 
-code, capital = st.session_state["query"]
+# 계좌 금액은 사이드바 값을 그대로 쓴다 – 바꾸면 재조회 없이 즉시 반영된다
+code = st.session_state["query"]
 
 with st.spinner("시세 조회 중…"):
     try:
         df = load_ohlcv(code)
-        atr = core.calc_atr(df)
+        # ATR을 정수로 반올림한 뒤 모든 하위 계산을 수행한다 (지표·진행표·
+        # 노션 기록값이 항상 같아야 하므로).
+        atr = core.round_atr(core.calc_atr(df))
         price = core.latest_close(df)
         sig = core.trend_signals(df)
         pos = core.calc_position(atr, capital)
-        stop_loss = core.calc_stop(price, atr)
+        stop_loss = int(core.calc_stop(price, atr))
     except Exception as e:
         st.error(f"조회 실패: {e}")
         st.stop()
@@ -471,7 +532,7 @@ st.caption(
 )
 
 # ── 기대값 ──────────────────────────────────────────────────
-st.markdown(f"### ■ 기대값 (최근 {core.EDGE_DAYS}일)")
+st.markdown(f"### ■ 기대값 (종목 변동성 기준, 최근 {core.EDGE_DAYS}일)")
 
 try:
     edge = core.calc_edge(df)
@@ -487,6 +548,7 @@ try:
         f"승률 {edge.win_rate:.1f}% + 패율 {edge.loss_rate:.1f}%가 "
         f"100%가 되지 않을 수 있습니다)"
     )
+    st.caption("⚠️ 내 실제 매매 성적이 아님 — 종목의 최근 등락 분포입니다.")
 except ValueError as e:
     edge = None          # AI 의견에 "계산 불가"로 넘긴다
     st.warning(f"기대값 계산 실패: {e}")
@@ -500,14 +562,80 @@ p1.metric(f"ATR ({core.ATR_PERIOD}일)", f"{atr:,.0f}원",
 p2.metric("1유닛 주수", f"{pos.unit_shares:,}주")
 p3.metric("손절선 (진입 시)", f"{stop_loss:,.0f}원",
           delta=f"-{2 * atr:,.0f}원 (2×ATR)")
-p4.metric(f"1회 리스크액 ({core.RISK_PER_TRADE:.0%})",
-          f"{pos.risk_amount:,.0f}원")
+# 1N 움직였을 때의 손익이 아니라, 손절선에 닿았을 때 실제로 잃는 금액.
+# 유닛 진행표 1U 행의 손실액과 같은 값이어야 한다.
+unit_loss = pos.unit_shares * 2 * atr
+p4.metric("1유닛 손절 시", f"-{unit_loss:,.0f}원",
+          delta=f"계좌 {unit_loss / capital * 100:.2f}%" if capital else None,
+          delta_color="inverse")
+
+with p2:
+    st.caption(f"└ 계좌 1% ÷ 1ATR (터틀 원본)")
 
 if pos.unit_shares == 0:
     st.warning(
-        f"총자본 {capital:,.0f}원으로는 1유닛(ATR {atr:,.0f}원 기준)을 "
-        "1주도 만들 수 없습니다."
+        f"**진입 불가 — 1주도 리스크 한도 초과**  \n"
+        f"1ATR {atr:,.0f}원이 계좌 1%({capital * core.RISK_PER_TRADE:,.0f}원)보다 "
+        "큽니다. 이 종목은 현재 계좌 규모에 맞지 않습니다."
     )
+
+# ── 상관군 유닛 카운터 ──────────────────────────────────────
+st.markdown("### ■ 상관군 유닛")
+st.caption(
+    f"종목당 {MAX_UNITS_STOCK}유닛 · 상관군당 {MAX_UNITS_GROUP}유닛 · "
+    f"전체 {MAX_UNITS_TOTAL}유닛 상한"
+)
+
+# 노션 조회가 실패해도 이 섹션만 비고 나머지 화면은 그대로 남는다
+try:
+    corr_groups, corr_total, corr_skipped = load_corr_units(int(capital))
+except Exception as e:
+    st.info(f"보유 현황을 불러오지 못해 상관군 집계를 건너뜁니다. ({e})")
+else:
+    known = sorted(corr_groups)
+    pick_col, info_col = st.columns([1, 2])
+    with pick_col:
+        choice = st.selectbox(
+            "이 종목의 상관군", known + ["(직접 입력)", "(없음)"],
+            index=len(known) if known else 0,
+        )
+        group = (
+            st.text_input("상관군 이름", key="corr_manual").strip()
+            if choice == "(직접 입력)"
+            else ("" if choice == "(없음)" else choice)
+        )
+
+    with info_col:
+        used = corr_groups.get(group, 0.0) if group else 0.0
+        after = used + 1
+
+        if group:
+            st.metric(
+                f"{group} 상관군",
+                f"현재 {used:g}유닛 / {MAX_UNITS_GROUP}",
+                delta=f"1유닛 진입 시 {after:g}/{MAX_UNITS_GROUP}",
+                delta_color="off",
+            )
+            if used >= MAX_UNITS_GROUP:
+                st.error(f"상관군 상한 도달 — 이 종목은 진입 불가")
+            elif after >= MAX_UNITS_GROUP:
+                st.warning(
+                    f"이 종목 1유닛 진입 시 {after:g}/{MAX_UNITS_GROUP}, "
+                    "이후 추가 불가"
+                )
+        else:
+            st.caption("상관군을 고르면 누적 유닛을 확인할 수 있습니다.")
+
+        total_after = corr_total + 1
+        if corr_total >= MAX_UNITS_TOTAL:
+            st.error(f"전체 {corr_total:g}/{MAX_UNITS_TOTAL}유닛 — 상한 도달")
+        elif total_after > MAX_UNITS_TOTAL:
+            st.warning(f"전체 {corr_total:g}/{MAX_UNITS_TOTAL}유닛 — 1유닛 더 넣으면 초과")
+        else:
+            st.caption(f"전체 {corr_total:g}/{MAX_UNITS_TOTAL}유닛")
+
+    if corr_skipped:
+        st.caption("유닛을 셀 수 없어 제외: " + ", ".join(corr_skipped))
 
 # ── 유닛 진행표 ─────────────────────────────────────────────
 st.markdown("### ■ 유닛 진행표")

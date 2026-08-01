@@ -127,6 +127,17 @@ def true_ranges(df: pd.DataFrame) -> list[float]:
     return trs
 
 
+def round_atr(atr: float) -> int:
+    """ATR을 정수로 반올림한다.
+
+    화면 지표·유닛 진행표·노션 기록값이 항상 같아야 하므로, 이 시점부터
+    모든 하위 계산(손절선·추가매수가·손실액)을 정수 ATR로 수행한다.
+    실제 예약 주문과 매매일지에 들어가는 숫자라 소수점 차이가 남으면
+    나중에 R배수 검증이 어긋난다.
+    """
+    return int(round(atr))
+
+
 def calc_atr(
     df: pd.DataFrame,
     period: int = ATR_PERIOD,
@@ -397,13 +408,14 @@ def build_pyramid(
     buy_prices: list[float] = []
 
     for unit in range(1, max_units + 1):
-        buy_price = entry + (unit - 1) * PYRAMID_ATR_STEP * atr
+        # 실제 주문에 넣는 값이라 정수로 맞춘다 (round_atr 참고)
+        buy_price = round(entry + (unit - 1) * PYRAMID_ATR_STEP * atr)
         buy_prices.append(buy_price)
 
         # 추가매수 시점에는 최고가 = 그 매수가이므로 두 방식 모두
         # (마지막 매수가 - 2×ATR)로 같아진다. 방식 설정과 무관하게
         # 피라미딩 규칙을 그대로 쓴다.
-        stop = buy_price - STOP_ATR_MULT * atr
+        stop = round(buy_price - STOP_ATR_MULT * atr)
 
         cum_shares = unit_shares * unit
         cum_cost = sum(p * unit_shares for p in buy_prices)
@@ -502,6 +514,10 @@ class HoldingInput:
     # 노션에 저장된 기존 값 (없으면 None)
     prev_trailing_high: Optional[float] = None  # 진입후 최고가
     prev_stop_loss: Optional[float] = None      # 손절선
+    notion_atr: Optional[float] = None          # 노션 'ATR' 칸 (매일 갱신되는 참고값)
+    entry_atr: Optional[float] = None           # 진입시 ATR – 배치가 덮어쓰지 않는다
+    last_buy_price: Optional[float] = None      # 마지막 매수가 (추가매수 기준)
+    signal_first_date: Optional[date] = None    # 신호 최초 발생일
     # 공시·뉴스 (Cowork가 매일 07:00에 기록) – 계산에는 쓰지 않고 리포트에만 사용
     news_memo: str = ""                      # 공시·뉴스
     exit_signal: bool = False                # 철수신호
@@ -530,6 +546,14 @@ class HoldingResult:
     # 터틀 청산 신호 (웹앱과 같은 값)
     low_10: float = 0.0            # 10일 저가 (당일 포함, 표시용)
     dist_to_exit_pct: float = 0.0  # 현재가에서 10일 저가까지 남은 거리 %
+    # 진입시 고정값 / 추가매수
+    entry_atr: int = 0             # 트레일링 계산에 쓴 진입시 ATR
+    entry_atr_is_new: bool = False  # 노션에 처음 기록해야 하는가
+    last_buy_price: float = 0.0    # 마지막 매수가 (없으면 매수단가로 시작)
+    next_add_price: Optional[float] = None  # 다음 추가매수 지점 (4유닛이면 None)
+    # 신호 최초 발생일 – 값이 있으면 유지, 신호 해소 시 None
+    signal_first_date: Optional[date] = None
+    signal_active: bool = False    # 손절선/10일 저가 이탈 상태인가
     verdict: str = ""            # 판정
     verdict_memo: str = ""       # 판정 메모
     error: Optional[str] = None  # 조회 실패 시 메시지
@@ -561,11 +585,25 @@ def evaluate_holding(
         result.verdict_memo = f"시세 조회 실패: {e}"
         return result
 
-    result.atr = round(atr, 2)
+    # ATR을 정수로 반올림한 시점부터 모든 하위 계산을 정수로 수행한다 (A-3)
+    atr = round_atr(atr)
+    result.atr = atr
     result.current_price = current_price
 
-    # 1유닛 주수 (내림)
-    result.unit_shares = calc_position(atr, total_capital).unit_shares
+    # 진입시 ATR은 진입 때 1회만 기록하고 배치가 덮어쓰지 않는다 (B-1).
+    # 매일 갱신되는 ATR을 트레일링 첫 항에 쓰면 급등 시 ATR이 커지며
+    # 손절선이 내려가고, 1R(= 2 × 진입시ATR) 기준도 사라진다.
+    if inp.entry_atr:
+        result.entry_atr = round_atr(inp.entry_atr)
+    else:
+        result.entry_atr = atr
+        result.entry_atr_is_new = True
+
+    # 마지막 매수가 – 없으면 매수단가에서 시작한다 (1유닛 보유 상태)
+    result.last_buy_price = inp.last_buy_price or inp.buy_price
+
+    # 1유닛 주수 (내림). 유닛은 진입 시점 ATR로 산정된다.
+    result.unit_shares = calc_position(result.entry_atr, total_capital).unit_shares
 
     # 진입후 최고가
     if inp.prev_trailing_high is not None:
@@ -577,16 +615,22 @@ def evaluate_holding(
     # 기존값보다 낮아지지 않는다 – 우선순위는 resolve_stop() 참고.
     # 노션 '매수단가'를 현재 유닛 기준가(= 마지막 매수가)로 본다.
     # 추가매수 시에는 매수단가를 마지막 매수가로 갱신해야 값이 맞는다.
-    result.stop_loss = round(
-        resolve_stop(
-            entry=inp.buy_price,
-            atr=atr,
-            trailing_high=result.trailing_high,
-            last_buy_price=inp.buy_price,
-            prev_stop=inp.prev_stop_loss,
-        ),
-        2,
+    # 진입시 ATR을 쓰므로 1R(= 2 × 진입시ATR)이 보유 기간 내내 고정된다.
+    # resolve_stop 안에서 기존 손절선과 max를 취하므로 어떤 경로로도
+    # 손절선이 내려가지 않는다 (B-2).
+    new_stop = resolve_stop(
+        entry=inp.buy_price,
+        atr=result.entry_atr,
+        trailing_high=result.trailing_high,
+        last_buy_price=result.last_buy_price,
+        prev_stop=inp.prev_stop_loss,
     )
+    result.stop_loss = int(round(new_stop))
+    if inp.prev_stop_loss is not None:
+        # 기존값을 정수로 바꿀 때는 올림한다. 반올림하면 소수점이 있던
+        # 기존 손절선이 최대 0.5원 내려가는데, 손절선은 어떤 경우에도
+        # 내려가면 안 된다 (float → int 전환 때 1회 발생).
+        result.stop_loss = max(result.stop_loss, math.ceil(inp.prev_stop_loss))
 
     # 종목 리스크액
     result.risk_amount = (current_price - result.stop_loss) * inp.shares
@@ -628,6 +672,22 @@ def evaluate_holding(
     else:
         result.verdict = "유지"
         result.verdict_memo = ""
+
+    # ── 신호 최초 발생일 (B-3) ──
+    # 손절선/10일 저가를 처음 이탈한 날을 보존한다. 이미 값이 있으면
+    # 덮어쓰지 않고, 신호가 해소되면 비운다 (매매일지 지연일수 계산용).
+    result.signal_active = result.verdict in ("손절", "추세청산")
+    if result.signal_active:
+        result.signal_first_date = inp.signal_first_date or date.today()
+    else:
+        result.signal_first_date = None
+
+    # ── 다음 추가매수 지점 (B-4) ──
+    # 1/2 ATR 오를 때마다 1유닛, 최대 4유닛. 4유닛이면 추가매수 종료.
+    if result.current_units < MAX_UNITS and result.entry_atr > 0:
+        result.next_add_price = int(
+            round(result.last_buy_price + PYRAMID_ATR_STEP * result.entry_atr)
+        )
 
     return result
 

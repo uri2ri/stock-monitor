@@ -61,6 +61,17 @@ def _checkbox(prop: dict) -> bool:
     return bool(prop.get("checkbox", False))
 
 
+def _flag(prop: dict) -> bool:
+    """'철수신호'처럼 참/거짓을 나타내는 칸을 bool로 읽는다.
+
+    노션에서 select(미해당/해당/확인 불가)로 만들어져 있어 checkbox로
+    읽으면 항상 False가 된다. 두 타입을 모두 처리한다.
+    """
+    if prop.get("type") == "checkbox":
+        return _checkbox(prop)
+    return _select(prop) == "해당"
+
+
 def _date_val(prop: dict) -> Optional[date]:
     """date 프로퍼티에서 date 객체 추출."""
     d = prop.get("date")
@@ -118,8 +129,13 @@ def fetch_holdings() -> list[tuple[str, HoldingInput]]:
                     ),
                     prev_trailing_high=_number(props.get("진입후 최고가", {})),
                     prev_stop_loss=_number(props.get("손절선", {})),
+                    notion_atr=_number(props.get("ATR", {})),
+                    # 진입시 고정값 – 배치는 읽기만 하고 덮어쓰지 않는다
+                    entry_atr=_number(props.get("진입시 ATR", {})),
+                    last_buy_price=_number(props.get("마지막 매수가", {})),
+                    signal_first_date=_date_val(props.get("신호 최초 발생일", {})),
                     news_memo=_text(props.get("공시·뉴스", {})).strip(),
-                    exit_signal=_checkbox(props.get("철수신호", {})),
+                    exit_signal=_flag(props.get("철수신호", {})),
                     news_date=_date_val(props.get("뉴스 확인일", {})),
                     # 메일 카드용 – 사람이 적어두는 판단 근거 (읽기만 한다)
                     buy_reason=_text(props.get("산 이유", {})).strip(),
@@ -143,34 +159,85 @@ def fetch_holdings() -> list[tuple[str, HoldingInput]]:
 
 # ── 쓰기: 계산 결과 반영 ────────────────────────────────────
 
-def update_holding(page_id: str, result: HoldingResult) -> None:
-    """한 종목의 계산 결과를 노션에 기록한다.
+# 배치가 쓸 수 있는 칸은 이게 전부다. Cowork가 쓰는 칸
+# (공시·뉴스 / 철수신호 / 뉴스 확인일)과 사람이 쓰는 칸은 절대 건드리지 않는다.
+BATCH_WRITABLE = (
+    "ATR",
+    "진입시 ATR",          # 값이 없을 때 최초 1회만
+    "손절선",
+    "진입후 최고가",
+    "최근 판정",
+    "판정 메모",
+    "확인일",
+    "신호 최초 발생일",
+    "마지막 매수가",        # 값이 없을 때만 매수단가로 초기화
+)
 
-    갱신 필드: ATR, 손절선, 진입후 최고가, 최근 판정, 판정 메모, 확인일
+
+def _rich_text(value: str) -> dict:
+    return {"rich_text": [{"type": "text", "text": {"content": value[:2000]}}]}
+
+
+def _date_prop(value: Optional[date]) -> dict:
+    return {"date": {"start": value.isoformat()} if value else None}
+
+
+def update_holding(
+    page_id: str,
+    result: HoldingResult,
+    inp: Optional[HoldingInput] = None,
+) -> None:
+    """계산 결과를 노션에 기록한다.
+
+    BATCH_WRITABLE 목록 밖의 칸은 PATCH에 절대 넣지 않는다. 그리고 값이
+    실제로 바뀐 칸만 보낸다 — Cowork 예약작업(07:00)과 배치(07:30)가
+    같은 행을 건드리므로, 안 바뀐 칸까지 통째로 덮어쓰면 서로의 기록을
+    지우게 된다.
+
+    Args:
+        inp: 노션에서 읽어온 현재 값. 주면 변경분만 전송한다.
     """
     url = f"{NOTION_BASE}/pages/{page_id}"
+    today = date.today()
 
-    properties: dict[str, Any] = {
-        "ATR": {"number": result.atr if result.atr else None},
-        "손절선": {"number": result.stop_loss if result.stop_loss else None},
-        "진입후 최고가": {
-            "number": result.trailing_high if result.trailing_high else None
-        },
+    desired: dict[str, Any] = {
+        "ATR": {"number": result.atr or None},
+        "손절선": {"number": result.stop_loss or None},
+        "진입후 최고가": {"number": result.trailing_high or None},
         "최근 판정": {
             "select": {"name": result.verdict} if result.verdict else None
         },
-        "판정 메모": {
-            "rich_text": [
-                {
-                    "type": "text",
-                    "text": {"content": (result.verdict_memo or "")[:2000]},
-                }
-            ]
-        },
-        "확인일": {
-            "date": {"start": date.today().isoformat()}
-        },
+        "판정 메모": _rich_text(result.verdict_memo or ""),
+        "확인일": _date_prop(today),
+        "신호 최초 발생일": _date_prop(result.signal_first_date),
     }
+
+    # 진입시 ATR·마지막 매수가는 '비어 있을 때만' 채운다. 이미 값이 있으면
+    # 배치가 절대 덮어쓰지 않는다 (진입 시점 고정값이므로).
+    if inp is None or inp.entry_atr is None:
+        desired["진입시 ATR"] = {"number": result.entry_atr or None}
+    if inp is None or inp.last_buy_price is None:
+        desired["마지막 매수가"] = {"number": result.last_buy_price or None}
+
+    properties = {k: v for k, v in desired.items() if k in BATCH_WRITABLE}
+
+    # 변경분만 남긴다 (읽어온 값이 있을 때만 비교 가능)
+    if inp is not None:
+        unchanged = []
+        if inp.prev_stop_loss is not None and \
+                round(inp.prev_stop_loss) == result.stop_loss:
+            unchanged.append("손절선")
+        if inp.prev_trailing_high is not None and \
+                inp.prev_trailing_high == result.trailing_high:
+            unchanged.append("진입후 최고가")
+        if inp.signal_first_date == result.signal_first_date:
+            unchanged.append("신호 최초 발생일")
+        for key in unchanged:
+            properties.pop(key, None)
+
+    if not properties:
+        logger.info("[%s] 노션 변경 없음 – PATCH 생략", result.name)
+        return
 
     resp = requests.patch(
         url,
@@ -179,4 +246,6 @@ def update_holding(page_id: str, result: HoldingResult) -> None:
         timeout=30,
     )
     resp.raise_for_status()
-    logger.info("[%s] 노션 업데이트 완료", result.name)
+    logger.info(
+        "[%s] 노션 업데이트 완료 (%s)", result.name, ", ".join(properties)
+    )
