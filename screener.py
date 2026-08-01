@@ -107,6 +107,26 @@ class KrxUnavailable(RuntimeError):
     """재시도까지 실패 – 그날 스캔을 중단한다."""
 
 
+def check_krx_auth() -> Optional[str]:
+    """KRX 로그인 자격증명 확인. 없으면 안내 문구를 돌려준다.
+
+    KRX가 전종목 시세·시가총액·종목목록·업종지수를 로그인 뒤로 옮겼다.
+    개별종목 시세만 비로그인으로 열려 있어, 자격증명이 없으면 1순위
+    경로가 통째로 막히고 폴백으로 내려간다. 그때 원인이 '3회 실패'로만
+    보이지 않도록 미리 알린다.
+
+    pykrx는 import 시점에 로그인 세션을 만들므로, 이 값들은 프로세스가
+    뜨기 전에(GitHub Actions는 step env로) 설정돼 있어야 한다.
+    """
+    if os.environ.get("KRX_ID") and os.environ.get("KRX_PW"):
+        return None
+    return (
+        "KRX_ID/KRX_PW가 없습니다. KRX가 전종목·시가총액·종목목록·업종 조회를 "
+        "로그인 뒤로 옮겨서, 이 값이 없으면 전종목 일괄 조회와 업종 맵이 "
+        "실패하고 종목별 개별 조회로 내려갑니다. (pykrx 1.2 이상 필요)"
+    )
+
+
 # ── 호출 유틸 ───────────────────────────────────────────────
 
 def _sleep(seconds: Optional[float] = None) -> None:
@@ -875,6 +895,11 @@ def scan(
     deadline = started + TIME_BUDGET_SEC
     end = end or date.today()
     notes: list[str] = []
+
+    auth_warning = check_krx_auth()
+    if auth_warning:
+        logger.warning("%s", auth_warning)
+        notes.append(auth_warning)
 
     days = trading_days(end, SCAN_DAYS)
     scan_day = days[-1]

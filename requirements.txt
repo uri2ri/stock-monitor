@@ -1,4 +1,7 @@
-pykrx>=1.0.44
+# 1.2.x부터 KRX 로그인(KRX_ID/KRX_PW)을 지원한다. KRX가 전종목·시가총액·
+# 종목목록·지수 엔드포인트를 로그인 뒤로 옮겨서, 그 아래 버전으로는
+# screener.py의 전종목 조회가 빈 응답만 받는다. Python 3.10 이상 필요.
+pykrx>=1.2.8
 pandas>=2.0
 pyarrow>=15.0        # screener.py의 OHLCV 캐시(parquet)
 requests>=2.31

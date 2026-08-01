@@ -52,6 +52,9 @@ jobs:
       # 실패해도 스캔은 1순위 경로로 계속 진행한다.
       - name: Refresh ticker universe
         continue-on-error: true
+        env:
+          KRX_ID: ${{ secrets.KRX_ID }}
+          KRX_PW: ${{ secrets.KRX_PW }}
         run: |
           if [ "${{ inputs.refresh_universe }}" = "true" ]; then
             python build_universe.py
@@ -62,6 +65,10 @@ jobs:
       - name: Run screener
         env:
           TOTAL_CAPITAL: ${{ secrets.TOTAL_CAPITAL }}
+          # KRX가 전종목 조회를 로그인 뒤로 옮겼다. 없으면 폴백(종목별
+          # 개별 조회)으로 내려가고, universe.json마저 비어 있으면 중단한다.
+          KRX_ID: ${{ secrets.KRX_ID }}
+          KRX_PW: ${{ secrets.KRX_PW }}
         run: |
           if [ "${{ inputs.refresh_sectors }}" = "true" ]; then
             python screener.py --refresh-sectors

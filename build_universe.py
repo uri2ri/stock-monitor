@@ -24,7 +24,6 @@ from __future__ import annotations
 
 import json
 import logging
-import sys
 from datetime import date
 from typing import Optional
 
@@ -118,6 +117,10 @@ def main() -> int:
     parser.add_argument("--max-age", type=int, default=None,
                         help="이 일수 안에 만든 파일이 있으면 갱신하지 않는다")
     args = parser.parse_args()
+
+    warning = screener.check_krx_auth()
+    if warning:
+        logger.warning("%s", warning)
 
     if args.max_age is not None:
         age = _age_days(screener.UNIVERSE_PATH)
