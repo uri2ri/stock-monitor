@@ -1,5 +1,6 @@
 pykrx>=1.0.44
 pandas>=2.0
+pyarrow>=15.0        # screener.py의 OHLCV 캐시(parquet)
 requests>=2.31
 python-dotenv>=1.0
 streamlit>=1.49

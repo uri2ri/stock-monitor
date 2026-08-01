@@ -1,4 +1,5 @@
 .env
+.env.save
 .streamlit/secrets.toml
 .venv/
 __pycache__/

@@ -1,0 +1,94 @@
+name: Breakout Screener
+
+# daily.yml(아침 리포트)과 별개로 돈다. 장 마감 후 전종목을 스캔해
+# data/breakout_YYYYMMDD.json과 캐시를 저장소에 커밋한다.
+
+on:
+  schedule:
+    # UTC 월~금 07:30 = KST 16:30 (15:30 장 마감 후 1시간)
+    # 공휴일은 걸러지지 않지만, 휴장일이면 전종목 조회가 비어
+    # 스크리너가 직전 결과를 그대로 두고 끝낸다
+    - cron: "30 7 * * 1-5"
+  workflow_dispatch:
+    inputs:
+      refresh_universe:
+        description: "종목 목록(universe.json)을 강제로 다시 만든다"
+        type: boolean
+        default: false
+      refresh_sectors:
+        description: "업종 맵을 강제로 다시 만든다"
+        type: boolean
+        default: false
+
+# 커밋이 겹치지 않게 한 번에 하나만 돈다
+concurrency:
+  group: screener
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  screen:
+    runs-on: ubuntu-latest
+    # 폴백(종목별 개별 조회)은 첫 실행에 20분 넘게 걸릴 수 있다.
+    # 스크리너 자체 상한(30분)보다 넉넉히 잡는다.
+    timeout-minutes: 50
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      # 전종목 일괄 조회가 살아 있으면 스크리너가 이 파일을 쓰지 않는다.
+      # 실패해도 스캔은 1순위 경로로 계속 진행한다.
+      - name: Refresh ticker universe
+        continue-on-error: true
+        run: |
+          if [ "${{ inputs.refresh_universe }}" = "true" ]; then
+            python build_universe.py
+          else
+            python build_universe.py --max-age 7
+          fi
+
+      - name: Run screener
+        env:
+          TOTAL_CAPITAL: ${{ secrets.TOTAL_CAPITAL }}
+        run: |
+          if [ "${{ inputs.refresh_sectors }}" = "true" ]; then
+            python screener.py --refresh-sectors
+          else
+            python screener.py
+          fi
+
+      # 스캔이 중단되면 새 JSON이 없다. 그때는 커밋할 것도 없다.
+      - name: Commit results
+        if: always()
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A data/
+          if git diff --cached --quiet; then
+            echo "변경 없음 – 커밋하지 않습니다."
+            exit 0
+          fi
+          git commit -m "chore(screener): $(date -u +%Y-%m-%d) 스캔 결과"
+          git pull --rebase --autostash origin ${{ github.ref_name }}
+          git push origin HEAD:${{ github.ref_name }}
+
+      - name: Upload logs on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: screener-data
+          path: data/
+          if-no-files-found: ignore
+          retention-days: 7
