@@ -1097,6 +1097,25 @@ def render_scan(capital: float) -> None:
             hide_index=True, width="stretch",
         )
 
+        st.markdown("### ■ 종목 열기")
+        pick_col, btn_col = st.columns([3, 1])
+        with pick_col:
+            broke_labels = {
+                f"{n} ({t})": t
+                for n, t in zip(broke["name"], broke["ticker"])
+            }
+            broke_chosen = st.selectbox(
+                "리포트를 볼 종목", list(broke_labels),
+                key="scan_broke_pick",
+            )
+        with btn_col:
+            st.write("")
+            st.button(
+                "종목 분석에서 열기", type="primary", width="stretch",
+                key="scan_broke_open",
+                on_click=_open_analysis, args=(broke_labels[broke_chosen],),
+            )
+
     st.markdown(f"### ■ 임박 ({len(near)}종목)")
     if near.empty:
         st.info(f"20일 고가까지 {dist_max:.1f}×ATR 이내인 종목이 없습니다.")
@@ -1113,6 +1132,25 @@ def render_scan(capital: float) -> None:
             },
             hide_index=True, width="stretch",
         )
+
+        st.markdown("### ■ 종목 열기")
+        pick_col, btn_col = st.columns([3, 1])
+        with pick_col:
+            near_labels = {
+                f"{n} ({t})": t
+                for n, t in zip(near["name"], near["ticker"])
+            }
+            near_chosen = st.selectbox(
+                "리포트를 볼 종목", list(near_labels),
+                key="scan_near_pick",
+            )
+        with btn_col:
+            st.write("")
+            st.button(
+                "종목 분석에서 열기", type="primary", width="stretch",
+                key="scan_near_open",
+                on_click=_open_analysis, args=(near_labels[near_chosen],),
+            )
 
     st.caption(
         f"종가 기준입니다 — 장중 현재가가 아닙니다. 1유닛 주수는 사이드바 "
