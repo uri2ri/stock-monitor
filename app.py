@@ -516,14 +516,13 @@ with st.sidebar:
 # ── [종목 분석] 화면 ────────────────────────────────────────
 
 def render_analysis(capital: float, ai_unlocked: bool) -> None:
-    """[종목 분석] 화면. 종목코드 하나를 받아 전체 리포트를 그린다.
+    """[종목 분석] 화면. 종목코드를 직접 입력해 조회하는 수동 조회 전용 화면.
 
-    탭으로 나뉘면서 함수가 됐다. 예전에는 st.stop()으로 화면을 끊었는데,
-    탭 안에서 그러면 다른 탭까지 같이 멈추므로 return으로 바꿨다.
+    돌파·스캔 화면에서 종목을 고를 때는 여기로 넘어오지 않고
+    render_stock_report()를 모달(_stock_dialog)로 바로 띄운다.
     """
     col_code, col_btn = st.columns([4, 1])
     with col_code:
-        # key를 준 이유: 돌파 탭에서 종목을 고르면 콜백이 이 칸을 채운다
         code = st.text_input(
             "종목코드 (6자리)", placeholder="예: 240550", max_chars=6,
             key="code_input",
@@ -545,9 +544,17 @@ def render_analysis(capital: float, ai_unlocked: bool) -> None:
     if "query" not in st.session_state:
         return
 
-    # 계좌 금액은 사이드바 값을 그대로 쓴다 – 바꾸면 재조회 없이 즉시 반영된다
-    code = st.session_state["query"]
+    render_stock_report(st.session_state["query"], capital, ai_unlocked)
 
+
+def render_stock_report(code: str, capital: float, ai_unlocked: bool) -> None:
+    """종목 하나의 전체 리포트(진입 신호~AI 의견)를 그린다.
+
+    [종목 분석] 탭과 돌파·스캔 화면의 모달(_stock_dialog)이 이 함수를
+    공유한다. 요약 표에는 20일 고가·저가나 기대값 통계, 차트용 전체
+    시세가 없어 여기서 load_ohlcv()로 다시 계산한다 — 이 함수는 10분
+    캐시라 같은 종목을 반복해서 열어도 재조회하지 않는다.
+    """
     with st.spinner("시세 조회 중…"):
         try:
             df = load_ohlcv(code)
@@ -824,16 +831,15 @@ def render_analysis(capital: float, ai_unlocked: bool) -> None:
 BREAKOUT_STALE_DAYS = 5
 
 
-def _open_analysis(ticker: str) -> None:
-    """돌파 목록에서 고른 종목을 [종목 분석] 탭에서 연다.
+@st.dialog("종목 분석", width="large")
+def _stock_dialog(ticker: str, capital: float, ai_unlocked: bool) -> None:
+    """돌파·스캔 목록에서 고른 종목을 화면 이동 없이 모달로 보여준다.
 
-    on_click 콜백으로 부른다. 콜백은 스크립트가 다시 돌기 전에 실행되므로
-    위젯 key("tab", "code_input")를 여기서 바꿀 수 있다. 렌더링 중에
-    같은 값을 바꾸면 Streamlit이 예외를 던진다.
+    st.dialog는 st.fragment로 동작해 모달 내부 위젯 상호작용은 이
+    함수만 다시 그린다 — 뒤에 있는 스캔 화면의 슬라이더·스크롤 위치는
+    그대로 남는다.
     """
-    st.session_state["query"] = ticker
-    st.session_state["code_input"] = ticker
-    st.session_state["tab"] = TAB_ANALYSIS
+    render_stock_report(ticker, capital, ai_unlocked)
 
 
 def build_sector_user_message(result: dict) -> str:
@@ -953,7 +959,7 @@ def render_breakout(capital: float, ai_unlocked: bool) -> None:
         "[종목 분석] 탭에서 다시 계산됩니다."
     )
 
-    # ── 종목 선택 → [종목 분석] 탭 ─────────────────────────
+    # ── 종목 선택 → 모달로 리포트 ───────────────────────────
     st.markdown("### ■ 종목 열기")
     pick_col, btn_col = st.columns([3, 1])
     with pick_col:
@@ -964,10 +970,10 @@ def render_breakout(capital: float, ai_unlocked: bool) -> None:
         chosen = st.selectbox("리포트를 볼 종목", list(labels))
     with btn_col:
         st.write("")
-        st.button(
-            "종목 분석에서 열기", type="primary", width="stretch",
-            on_click=_open_analysis, args=(labels[chosen],),
-        )
+        if st.button("종목 분석 보기", type="primary", width="stretch"):
+            ticker = labels[chosen]
+            st.session_state["dialog_ticker"] = ticker
+            _stock_dialog(ticker, capital, ai_unlocked)
 
     # ── 섹터 해설 (AI) ─────────────────────────────────────
     st.markdown("### ■ 섹터 해설")
@@ -1029,7 +1035,7 @@ def load_scan(_mtime: float):
     return scan_all.load_scan()
 
 
-def render_scan(capital: float) -> None:
+def render_scan(capital: float, ai_unlocked: bool) -> None:
     """[전종목 스캔] 화면. scan_all.py가 저장한 CSV를 읽어 보여준다.
 
     스캔을 여기서 돌리지 않는다. CSV에는 임계값을 적용하지 않은 전종목
@@ -1110,11 +1116,13 @@ def render_scan(capital: float) -> None:
             )
         with btn_col:
             st.write("")
-            st.button(
-                "종목 분석에서 열기", type="primary", width="stretch",
+            if st.button(
+                "종목 분석 보기", type="primary", width="stretch",
                 key="scan_broke_open",
-                on_click=_open_analysis, args=(broke_labels[broke_chosen],),
-            )
+            ):
+                ticker = broke_labels[broke_chosen]
+                st.session_state["dialog_ticker"] = ticker
+                _stock_dialog(ticker, capital, ai_unlocked)
 
     st.markdown(f"### ■ 임박 ({len(near)}종목)")
     if near.empty:
@@ -1146,11 +1154,13 @@ def render_scan(capital: float) -> None:
             )
         with btn_col:
             st.write("")
-            st.button(
-                "종목 분석에서 열기", type="primary", width="stretch",
+            if st.button(
+                "종목 분석 보기", type="primary", width="stretch",
                 key="scan_near_open",
-                on_click=_open_analysis, args=(near_labels[near_chosen],),
-            )
+            ):
+                ticker = near_labels[near_chosen]
+                st.session_state["dialog_ticker"] = ticker
+                _stock_dialog(ticker, capital, ai_unlocked)
 
     st.caption(
         f"종가 기준입니다 — 장중 현재가가 아닙니다. 1유닛 주수는 사이드바 "
@@ -1160,9 +1170,8 @@ def render_scan(capital: float) -> None:
 
 # ── 탭 ──────────────────────────────────────────────────────
 
-# st.tabs는 코드에서 다른 탭으로 넘길 수 없다. 돌파 목록에서 종목을
-# 고르면 [종목 분석]으로 넘어가야 하므로, 상태를 가진 segmented_control을
-# 탭 막대로 쓴다.
+# st.tabs는 위젯 상호작용이 있으면 선택이 유지되지 않는다. 상태를 가진
+# segmented_control을 탭 막대로 써서 슬라이더 등을 조작해도 탭이 안 바뀐다.
 st.session_state.setdefault("tab", TAB_ANALYSIS)
 _tab = st.segmented_control(
     "화면", (TAB_ANALYSIS, TAB_BREAKOUT, TAB_SCAN), key="tab",
@@ -1173,6 +1182,6 @@ _tab = st.segmented_control(
 if _tab == TAB_BREAKOUT:
     render_breakout(capital, ai_unlocked)
 elif _tab == TAB_SCAN:
-    render_scan(capital)
+    render_scan(capital, ai_unlocked)
 else:
     render_analysis(capital, ai_unlocked)
