@@ -5,10 +5,11 @@ name: Breakout Screener
 
 on:
   schedule:
-    # UTC 월~금 07:30 = KST 16:30 (15:30 장 마감 후 1시간)
+    # UTC 월~금 07:37 = KST 16:37 (15:30 장 마감 후 1시간)
     # 공휴일은 걸러지지 않지만, 휴장일이면 전종목 조회가 비어
     # 스크리너가 직전 결과를 그대로 두고 끝낸다
-    - cron: "30 7 * * 1-5"
+    # 정각/30분은 러너 경합이 심해 7분 오프셋을 준다 (intraday의 3분과 겹치지 않게)
+    - cron: "37 7 * * 1-5"
   workflow_dispatch:
     inputs:
       refresh_universe:

@@ -6,10 +6,11 @@ name: Nightly Full Scan
 
 on:
   schedule:
-    # UTC 월~금 12:00 = KST 평일 21:00
+    # UTC 월~금 12:07 = KST 평일 21:07
     # 시세 캐시는 16:30에 도는 Breakout Screener가 이미 채워둔다.
     # 휴장일이면 기준일이 직전 거래일 그대로라 같은 결과가 다시 쓰인다.
-    - cron: "0 12 * * 1-5"
+    # 정각은 러너 경합이 심해 7분 오프셋을 준다 (screener.yml과 동일 규칙)
+    - cron: "7 12 * * 1-5"
   workflow_dispatch:
     inputs:
       end:
