@@ -455,7 +455,10 @@ class TrendSignal:
     low_10_prev: float = 0.0      # 직전 10일 저가 (당일 제외) – 청산 판정용
     breakout: bool = False        # 종가 > 직전 20일 고가
     exit_triggered: bool = False  # 종가 < 직전 10일 저가
-    dist_to_exit_pct: float = 0.0  # 현재가에서 10일 저가까지 남은 거리 %
+    # 현재가에서 '청산선'(= low_10_prev)까지 남은 거리 %. 청산을 실제로
+    # 발동시키는 선을 기준으로 재야 한다. 당일 포함 low_10으로 재면,
+    # 당일 저가가 10일 최저를 새로 찍은 날에 여유가 실제보다 넉넉해 보인다.
+    dist_to_exit_pct: float = 0.0
 
 
 def trend_signals(
@@ -492,7 +495,7 @@ def trend_signals(
     sig.breakout = current > sig.high_20_prev
     sig.exit_triggered = current < sig.low_10_prev
     sig.dist_to_exit_pct = (
-        (current - sig.low_10) / current * 100 if current > 0 else 0.0
+        (current - sig.low_10_prev) / current * 100 if current > 0 else 0.0
     )
     return sig
 
@@ -545,8 +548,8 @@ class HoldingResult:
     risk_amount: float = 0.0     # 종목 리스크액
     current_units: float = 0.0   # 현재 유닛수
     # 터틀 청산 신호 (웹앱과 같은 값)
-    low_10: float = 0.0            # 10일 저가 (당일 포함, 표시용)
-    dist_to_exit_pct: float = 0.0  # 현재가에서 10일 저가까지 남은 거리 %
+    exit_level: float = 0.0        # 청산선 = 직전 10일 저가 (당일 제외)
+    dist_to_exit_pct: float = 0.0  # 현재가에서 청산선까지 남은 거리 %
     # 진입시 고정값 / 추가매수
     entry_atr: int = 0             # 트레일링 계산에 쓴 진입시 ATR
     entry_atr_is_new: bool = False  # 노션에 처음 기록해야 하는가
@@ -646,12 +649,13 @@ def evaluate_holding(
     # 데이터가 모자라 신호를 못 내면 청산 판정만 건너뛴다 (손절·기한은 유효).
     try:
         sig = trend_signals(df)
-        result.low_10 = sig.low_10
-        result.dist_to_exit_pct = sig.dist_to_exit_pct
         # 판정 기준은 '당일을 제외한' 직전 10일 저가다. 당일을 포함하면
         # 종가는 항상 당일 저가 이상이라 청산이 사실상 발동하지 않는다
-        # (20일 고가 돌파 판정과 같은 이유).
+        # (20일 고가 돌파 판정과 같은 이유). 표시도 이 값으로 통일한다 —
+        # 판정선과 다른 값을 보여주면 여유 %가 선과 맞지 않는다.
         exit_level: Optional[float] = sig.low_10_prev
+        result.exit_level = sig.low_10_prev
+        result.dist_to_exit_pct = sig.dist_to_exit_pct
     except ValueError as e:
         logger.warning("[%s] 청산 신호 계산 불가: %s", inp.ticker, e)
         exit_level = None
@@ -823,10 +827,10 @@ def _print_report(
         print(f"  20일 고가     {sig.high_20:,.0f}원 (당일 포함)")
         print(f"  직전 20일고가 {sig.high_20_prev:,.0f}원 → 돌파 "
               f"{'O' if sig.breakout else 'X'}")
-        print(f"  10일 저가     {sig.low_10:,.0f}원 "
-              f"(청산선까지 {sig.dist_to_exit_pct:.1f}%)")
+        print(f"  10일 저가     {sig.low_10:,.0f}원 (당일 포함)")
         print(f"  직전 10일저가 {sig.low_10_prev:,.0f}원 → 청산 "
-              f"{'O' if sig.exit_triggered else 'X'}")
+              f"{'O' if sig.exit_triggered else 'X'} "
+              f"(청산선까지 {sig.dist_to_exit_pct:.1f}%)")
     except ValueError as e:
         print(f"  계산 실패: {e}")
 

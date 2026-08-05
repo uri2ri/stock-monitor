@@ -255,8 +255,8 @@ def _card_html(inp: HoldingInput, res: HoldingResult, today: date) -> str:
         _card_row("손절선",
                   f"{_fmt(res.stop_loss) if res.stop_loss else EMPTY}원"
                   f" (여유 {_fmt_pct(room)})", nowrap=True),
-        _card_row("10일 저가",
-                  f"{_fmt(res.low_10) if res.low_10 else EMPTY}원"
+        _card_row("청산선",
+                  f"{_fmt(res.exit_level) if res.exit_level else EMPTY}원"
                   f" (여유 {_fmt_pct(exit_room)})", nowrap=True),
         _card_row("추가매수", html.escape(_pyramid_line(res)), nowrap=True),
         _card_row("산 이유", html.escape(_or_dash(inp.buy_reason))),
@@ -473,7 +473,7 @@ def _build_text(
             f" (여유 {_fmt_pct(_stop_room_pct(res))})"
         )
         lines.append(
-            f"  10일 저가 {_fmt(res.low_10) if res.low_10 else EMPTY}"
+            f"  청산선 {_fmt(res.exit_level) if res.exit_level else EMPTY}"
             f" (여유 {_fmt_pct(exit_room)})"
         )
         lines.append(f"  추가매수: {_pyramid_line(res)}")
