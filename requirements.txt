@@ -7,5 +7,11 @@ pyarrow>=15.0        # screener.py의 OHLCV 캐시(parquet)
 requests>=2.31
 python-dotenv>=1.0
 streamlit>=1.49
+# starlette 1.4.0(2026-08-05)이 GZipResponder.__init__에 필수 키워드 인자
+# thread_minimum_size를 추가했는데, streamlit의 _MediaAwareGZipResponder가
+# 이를 넘기지 않아 요청이 들어오는 즉시 TypeError로 죽는다. streamlit이 선언한
+# 범위(starlette<2)로는 안 걸러지므로 여기서 직접 상한을 둔다.
+# streamlit이 1.4 대응 버전을 내면 이 줄을 지운다.
+starlette<1.4
 plotly>=5.20
 google-genai>=1.0
