@@ -59,8 +59,8 @@ logger = logging.getLogger(__name__)
 MIN_TRADING_VALUE = 1_000_000_000   # 20일 평균 거래대금 10억
 TRADING_VALUE_DAYS = 20             # 평균 거래대금 산정일 (당일 포함)
 
-VOL_MULT_MIN = 1.5                  # 오늘 거래량 / 직전 20일 평균 거래량
-VOL_AVG_DAYS = 20                   # 평균 거래량 산정일 (당일 제외)
+# 거래량배수 임계값·평균일수는 core.py에 있다 — scan_all.py도 같은
+# 정의를 써야 두 화면의 배수가 갈리지 않는다.
 MIN_LISTED_DAYS = 120               # 상장 거래일 – ATR 워밍업에 필요
 MAX_RESULTS = 30                    # 결과 상한
 SCAN_DAYS = 120                     # 캐시에 유지할 거래일 수
@@ -682,6 +682,7 @@ class Candidate:
     value_avg_20: float           # 20일 평균 거래대금
     atr: int
     atr_pct: float                # 현재가 대비 ATR %
+    gap_atr: float                # 돌파 갭 = (현재가 - 직전20일고가) / ATR
     unit_shares: int
     stop_loss: int
     risk_amount: float            # 1회 리스크액 (계좌 1%)
@@ -711,14 +712,10 @@ def evaluate(
     if len(hist) < MIN_LISTED_DAYS:
         return None
 
-    # 거래량 배수 – 당일을 뺀 직전 20거래일 평균과 비교한다.
-    # 당일을 평균에 넣으면 급증한 당일이 스스로 기준을 끌어올려
-    # 필터가 헐거워진다 (20일 고가 돌파를 당일 제외로 보는 것과 같은 이유).
-    volumes = hist["거래량"].tolist()
-    today_vol = float(volumes[-1])
-    prev = volumes[-VOL_AVG_DAYS - 1:-1]
-    vol_avg = sum(prev) / len(prev) if prev else 0.0
-    if vol_avg <= 0 or today_vol <= vol_avg * VOL_MULT_MIN:
+    # 거래량 배수 – core.calc_vol_mult()가 당일을 뺀 평균과 비교한다.
+    # scan_all.py도 같은 함수를 쓰므로 정의가 갈릴 일이 없다.
+    vol_mult_val = core.calc_vol_mult(hist)
+    if vol_mult_val is None or vol_mult_val <= core.VOL_MULT_MIN:
         return None
 
     sig = core.trend_signals(hist)
@@ -729,6 +726,11 @@ def evaluate(
     price = core.latest_close(hist)
     pos = core.calc_position(atr, capital)
     stop = int(core.calc_stop(price, atr))
+
+    # vol_mult_val = today_vol / vol_avg 이므로 today_vol만 다시 읽으면
+    # vol_avg를 나눗셈으로 되돌릴 수 있다 (평균 구간을 또 슬라이싱하지 않는다).
+    today_vol = float(hist["거래량"].iloc[-1])
+    vol_avg = today_vol / vol_mult_val
 
     tail = hist.tail(TRADING_VALUE_DAYS)
     value_avg = float((tail["종가"] * tail["거래량"]).mean())
@@ -748,10 +750,11 @@ def evaluate(
         price=price,
         volume=int(today_vol),
         vol_avg_20=round(vol_avg, 1),
-        vol_mult=round(today_vol / vol_avg, 2),
+        vol_mult=round(vol_mult_val, 2),
         value_avg_20=round(value_avg, 0),
         atr=atr,
-        atr_pct=round(atr / price * 100, 2) if price > 0 else 0.0,
+        atr_pct=round(core.calc_atr_pct(atr, price), 2),
+        gap_atr=round((price - sig.high_20_prev) / atr, 3) if atr > 0 else 0.0,
         unit_shares=pos.unit_shares,
         stop_loss=stop,
         risk_amount=pos.risk_amount,
@@ -1041,8 +1044,8 @@ def scan(
         "filters": {
             "min_trading_value": MIN_TRADING_VALUE,
             "trading_value_days": TRADING_VALUE_DAYS,
-            "vol_mult_min": VOL_MULT_MIN,
-            "vol_avg_days": VOL_AVG_DAYS,
+            "vol_mult_min": core.VOL_MULT_MIN,
+            "vol_avg_days": core.VOL_AVG_DAYS,
             "min_listed_days": MIN_LISTED_DAYS,
             "high_period": core.HIGH_PERIOD,
             "admin_filter_applied": meta.has_admin_flag,

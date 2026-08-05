@@ -54,9 +54,9 @@ TRADING_VALUE_DAYS = 20
 BACKFILL_BUDGET_SEC = 10 * 60
 
 SCAN_COLUMNS = [
-    "scan_date", "ticker", "name", "market", "close",
-    "atr20", "high20", "low10",
-    "gap", "gap_atr", "dist_to_break", "dist_atr",
+    "scan_date", "ticker", "name", "market", "sector", "close",
+    "atr20", "atr_pct", "high20", "low10",
+    "gap", "gap_atr", "dist_to_break", "dist_atr", "vol_mult",
     "unit_shares", "value_avg_20", "status",
 ]
 
@@ -136,6 +136,7 @@ def scan_row(
     hist: pd.DataFrame,
     name: str,
     market: str,
+    sector: str,
     capital: float,
     scan_day: str,
 ) -> Optional[dict]:
@@ -184,19 +185,26 @@ def scan_row(
     window = hist.tail(TRADING_VALUE_DAYS)
     value_avg = float((window["종가"] * window["거래량"]).mean())
 
+    # 거래량배수 – 오늘의 돌파(screener.py)와 같은 core.calc_vol_mult()를
+    # 쓴다. 데이터가 모자라 못 내면 None (표에서는 빈 값으로 둔다).
+    vol_mult = core.calc_vol_mult(hist)
+
     return {
         "scan_date": scan_day,
         "ticker": ticker,
         "name": name,
         "market": market,
+        "sector": sector,
         "close": round(close),
         "atr20": atr,
+        "atr_pct": round(core.calc_atr_pct(atr, close), 2),
         "high20": round(high20),
         "low10": round(sig.low_10_prev),
         "gap": round(gap),
         "gap_atr": round(gap / atr, 3),
         "dist_to_break": round(-gap),
         "dist_atr": round(-gap / atr, 3),
+        "vol_mult": round(vol_mult, 2) if vol_mult is not None else None,
         "unit_shares": core.calc_position(atr, capital).unit_shares,
         "value_avg_20": round(value_avg),
         "status": STATUS_BREAKOUT if sig.breakout else STATUS_NEAR,
@@ -253,6 +261,10 @@ def scan(
     )
     groups = dict(tuple(target.groupby("티커")))
 
+    # 오늘의 돌파(screener.py)가 이미 만들어 캐싱해둔 업종 맵을 그대로 쓴다.
+    # 여기서 다시 지수 구성종목을 조회하지 않는다.
+    sectors = screener.load_sector_map(scan_day)
+
     rows: list[dict] = []
     skipped = 0
     for ticker in pf.tickers:
@@ -266,6 +278,7 @@ def scan(
             group,
             name=str(info["종목명"]) if info is not None else ticker,
             market=str(info["시장"]) if info is not None else "",
+            sector=sectors.get(ticker, "미분류"),
             capital=capital,
             scan_day=scan_day,
         )

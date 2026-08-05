@@ -19,6 +19,7 @@ import zipfile
 import xml.etree.ElementTree as ET
 from datetime import date, datetime, timedelta
 
+import pandas as pd
 import plotly.graph_objects as go
 import requests
 import streamlit as st
@@ -36,10 +37,6 @@ CHART_DAY_OPTIONS = (20, 30, 60)   # 차트에 그릴 거래일 선택지
 CHART_DAYS_DEFAULT = 30            # 신호가 20일·10일 기준이라 60일은 과하다
 CHART_HEIGHT = 400                 # 모바일 기준 고정 높이
 CHART_PAD = 0.05                   # y축 여백 (표시 구간 최저~최고가 ±5%)
-
-# 추격 구간 판정선은 core에 있다. 장중 감시 스크립트(intraday_watch.py)가
-# 같은 값을 쓰므로, 여기서 다시 정의하면 두 곳이 갈라진다.
-CHASE_ATR_MULT = core.CHASE_ATR_MULT
 
 # ── AI 의견 설정 ────────────────────────────────────────────
 AI_MODEL = "gemini-2.5-flash"
@@ -507,21 +504,28 @@ def entry_state(sig: core.TrendSignal, atr: float) -> tuple[str, str]:
     ATR이 0으로 반올림되면(저가·저변동 종목) ATR 배수를 낼 수 없다.
     돌파 판정 자체는 가격 비교라 그대로 두고 배수 표기만 뺀다 — core가
     atr<=0에서 주수·진행표를 비우고 추정하지 않는 것과 같은 태도다.
+
+    라벨 판정 자체는 core.breakout_verdict()에 위임한다 — 오늘의 돌파·
+    전종목 스캔 표도 같은 함수로 판정해야 여기와 갈리지 않는다.
     """
     gap = sig.current_price - sig.high_20_prev
     mult = f", {gap / atr:.1f}×ATR" if atr > 0 else ""
+    state = (
+        core.breakout_verdict(gap / atr) if atr > 0
+        else ("진입가능" if sig.breakout else "대기")
+    )
 
-    if atr > 0 and gap > CHASE_ATR_MULT * atr:
-        return "추격금지", (
+    if state == "추격금지":
+        return state, (
             f"직전 20일 고가보다 {gap:,.0f}원 위 "
             f"({gap / atr:.1f}×ATR) — 돌파 시점에서 이미 벗어남"
         )
-    if sig.breakout:
-        return "진입가능", (
+    if state == "진입가능":
+        return state, (
             f"직전 20일 고가 {sig.high_20_prev:,.0f} 돌파 "
             f"(+{gap:,.0f}원{mult})"
         )
-    return "대기", (
+    return state, (
         f"직전 20일 고가 {sig.high_20_prev:,.0f}까지 "
         f"{-gap:,.0f}원 남음"
     )
@@ -823,7 +827,7 @@ def render_stock_report(code: str, capital: float, ai_unlocked: bool) -> None:
     # ── 포지션 ──────────────────────────────────────────────────
     st.markdown("### ■ 포지션")
 
-    p1, p2, p3, p4 = st.columns(4)
+    p1, p2, p3, p4, p5 = st.columns(5)
     p1.metric(f"ATR ({core.ATR_PERIOD}일)", f"{atr:,.0f}원",
               delta=f"현재가의 {atr / price * 100:.1f}%" if price else None)
     p2.metric("1유닛 주수", f"{pos.unit_shares:,}주")
@@ -836,8 +840,22 @@ def render_stock_report(code: str, capital: float, ai_unlocked: bool) -> None:
               delta=f"계좌 {unit_loss / capital * 100:.2f}%" if capital else None,
               delta_color="inverse")
 
+    # 거래대금 — [오늘의 돌파] 스크리너(screener.py)가 실제로 거르는
+    # 유동성 컷과 같은 기준(20일 평균, 10억)으로 통과 여부를 보여준다.
+    window = df.tail(screener.TRADING_VALUE_DAYS)
+    value_avg = float((window["종가"] * window["거래량"]).mean())
+    liquidity_ok = value_avg >= screener.MIN_TRADING_VALUE
+    p5.metric(
+        f"거래대금 ({screener.TRADING_VALUE_DAYS}일 평균)",
+        f"{value_avg:,.0f}원",
+        delta="유동성 컷 통과" if liquidity_ok else "유동성 컷 미달",
+        delta_color="off" if liquidity_ok else "inverse",
+    )
+
     with p2:
         st.caption(f"└ 계좌 1% ÷ 1ATR (터틀 원본)")
+    with p5:
+        st.caption(f"└ 기준 {screener.MIN_TRADING_VALUE / 1e8:.0f}억 ([오늘의 돌파] 필터와 동일)")
 
     if pos.unit_shares == 0:
         st.warning(
@@ -1027,6 +1045,73 @@ def render_stock_report(code: str, capital: float, ai_unlocked: bool) -> None:
         )
 
 
+# ── 통일 스캔 표 (오늘의 돌파 · 전종목 스캔 공유) ────────────
+#
+# 두 탭이 같은 판단을 하는데 표에 나오는 정보가 갈리면 안 되므로,
+# 컬럼 구성과 조건부 색상을 이 함수 하나로 통일한다.
+
+SCAN_TABLE_HIGHLIGHT = "background-color: rgba(74, 222, 128, 0.28); font-weight: bold"
+
+
+def render_scan_table(
+    rows: list[dict],
+    metric_label: str,
+    metric_signed: bool = True,
+    highlight_metric: bool = True,
+) -> None:
+    """오늘의 돌파·전종목 스캔이 공유하는 표.
+
+    rows의 각 dict는 name·code·sector·price·metric·atr_pct·vol_mult·verdict
+    키를 가진다 (metric·vol_mult는 계산 불가 시 None). 색상은 회색약
+    대비를 위해 배경색과 함께 볼드를 입힌다 — 색상만으로 구분되지
+    않게 한다.
+
+    Args:
+        metric_label: 갭(×ATR)/거리(×ATR) 등 세 번째 컬럼 이름
+        metric_signed: True면 +/- 부호를 표시 (갭), False면 절대값
+            그대로 표시 (거리 — 아직 돌파 전이라 부호가 항상 음수라
+            부호를 보여줄 이유가 없다)
+        highlight_metric: metric 컬럼에 색을 입힐지. '임박' 섹션처럼
+            아직 규칙을 통과하지 않은 값은 강조하지 않는다.
+    """
+    df = pd.DataFrame({
+        "종목명(코드)": [f"{r['name']} ({r['code']})" for r in rows],
+        "업종": [r["sector"] for r in rows],
+        "현재가": [r["price"] for r in rows],
+        metric_label: [r["metric"] for r in rows],
+        "ATR%": [r["atr_pct"] for r in rows],
+        "거래량배수": [r["vol_mult"] for r in rows],
+        "판정": [r["verdict"] for r in rows],
+    })
+
+    metric_fmt = (
+        (lambda v: f"{v:+.2f}" if pd.notna(v) else "-") if metric_signed
+        else (lambda v: f"{v:.2f}" if pd.notna(v) else "-")
+    )
+    styler = df.style.format({
+        "현재가": "{:,.0f}",
+        metric_label: metric_fmt,
+        "ATR%": lambda v: f"{v:.1f}%" if pd.notna(v) else "-",
+        "거래량배수": lambda v: f"{v:.1f}배" if pd.notna(v) else "-",
+    })
+
+    if highlight_metric:
+        styler = styler.map(
+            lambda v: SCAN_TABLE_HIGHLIGHT if pd.notna(v) and v <= core.CHASE_ATR_MULT else "",
+            subset=[metric_label],
+        )
+    styler = styler.map(
+        lambda v: SCAN_TABLE_HIGHLIGHT if pd.notna(v) and v >= core.SCAN_ATR_PCT_MIN else "",
+        subset=["ATR%"],
+    )
+    styler = styler.map(
+        lambda v: SCAN_TABLE_HIGHLIGHT if pd.notna(v) and v >= core.VOL_MULT_MIN else "",
+        subset=["거래량배수"],
+    )
+
+    st.dataframe(styler, hide_index=True, width="stretch")
+
+
 # ── [오늘의 돌파] 화면 ──────────────────────────────────────
 
 # 스캔 기준일이 이만큼 지나면 "최신 결과 없음"으로 안내한다.
@@ -1042,8 +1127,14 @@ def _stock_dialog(ticker: str, capital: float, ai_unlocked: bool) -> None:
     st.dialog는 st.fragment로 동작해 모달 내부 위젯 상호작용은 이
     함수만 다시 그린다 — 뒤에 있는 스캔 화면의 슬라이더·스크롤 위치는
     그대로 남는다.
+
+    맨 위 X 버튼 말고 맨 아래에도 닫기를 둔다 — 내용을 끝까지 본
+    다음 다시 위로 스크롤하지 않아도 되게.
     """
     render_stock_report(ticker, capital, ai_unlocked)
+    st.divider()
+    if st.button("닫기", width="stretch"):
+        st.rerun()
 
 
 def build_sector_user_message(result: dict) -> str:
@@ -1138,29 +1229,38 @@ def render_breakout(capital: float, ai_unlocked: bool) -> None:
     st.caption("종목 수가 많은 업종부터 — 어느 섹터에 돌파가 몰렸는지 봅니다.")
     st.write(" · ".join(f"**{sector}** {n}" for sector, n in order))
 
-    # ── 표 (업종별로 묶고, 종목 수 많은 업종을 위로) ────────
-    rank = {sector: i for i, (sector, _) in enumerate(order)}
-    rows = sorted(
-        stocks, key=lambda s: (rank[s["sector"]], -s["vol_mult"])
-    )
+    # ── 표 (갭(×ATR) 오름차순 — 아직 덜 뛴 = 추격위험 낮은 종목이 위로) ──
+    # 업종 분포 요약(위)은 업종별로 묶어서 보고, 종목 표는 갭 기준으로
+    # 다시 정렬한다. 둘의 정렬 기준이 다른 건 의도한 것이다.
+    def _gap_atr(s: dict) -> float:
+        # 예전 스캔 결과(gap_atr 필드 도입 전)와도 호환되게 필요하면
+        # 있는 값으로 계산한다.
+        if "gap_atr" in s:
+            return s["gap_atr"]
+        return (s["price"] - s["high_20_prev"]) / s["atr"] if s["atr"] else 0.0
+
+    rows = sorted(stocks, key=_gap_atr)
 
     st.markdown("### ■ 통과 종목")
-    st.dataframe(
-        {
-            "종목명": [s["name"] for s in rows],
-            "업종": [s["sector"] for s in rows],
-            "현재가": [f"{s['price']:,.0f}" for s in rows],
-            "거래량배수": [f"{s['vol_mult']:.1f}배" for s in rows],
-            "ATR%": [f"{s['atr_pct']:.1f}%" for s in rows],
-            "1유닛 주수": [f"{s['unit_shares']:,}주" for s in rows],
-            "손절선": [f"{s['stop_loss']:,}" for s in rows],
-        },
-        hide_index=True, width="stretch",
+    render_scan_table(
+        [
+            {
+                "name": s["name"],
+                "code": s["ticker"],
+                "sector": s["sector"],
+                "price": s["price"],
+                "metric": _gap_atr(s),
+                "atr_pct": s["atr_pct"],
+                "vol_mult": s["vol_mult"],
+                "verdict": core.breakout_verdict(_gap_atr(s)),
+            }
+            for s in rows
+        ],
+        metric_label="갭(×ATR)",
     )
     st.caption(
-        f"ATR%는 현재가 대비입니다. 1유닛·손절선은 스캔 시점 계좌 "
-        f"{result['capital']:,.0f}원 기준이라, 사이드바 금액과 다르면 "
-        "[종목 분석] 탭에서 다시 계산됩니다."
+        "ATR%는 현재가 대비, 거래량배수는 직전 20일 평균 대비입니다. "
+        "1유닛 주수·손절선 등은 종목을 열면 계좌 금액 기준으로 다시 계산됩니다."
     )
 
     # ── 종목 선택 → 모달로 리포트 ───────────────────────────
@@ -1264,6 +1364,26 @@ def render_scan(capital: float, ai_unlocked: bool) -> None:
         "아래 슬라이더는 필터만 다시 겁니다 (재조회 없음)."
     )
 
+    # 이 컬럼들이 도입되기 전에 저장된 스캔 결과와도 호환한다 — 다음
+    # 야간 스캔(scan_all.py)부터 채워진다.
+    missing_cols = [c for c in ("sector", "vol_mult") if c not in frame.columns]
+    if missing_cols:
+        frame = frame.assign(**{
+            "sector": frame.get("sector", "미확인"),
+            "vol_mult": frame.get("vol_mult", float("nan")),
+        })
+        st.caption(
+            f"⚠ 이전 스캔 결과라 {'·'.join(missing_cols)} 정보가 없습니다 "
+            "(다음 야간 스캔부터 채워집니다)."
+        )
+    # ATR%는 저장된 값에 기대지 않고 여기서 다시 낸다 — capital과
+    # 무관해 재계산 비용이 없고, 스키마 변화에도 흔들리지 않는다.
+    frame = frame.assign(
+        atr_pct=frame.apply(
+            lambda r: core.calc_atr_pct(float(r["atr20"]), float(r["close"])), axis=1
+        )
+    )
+
     s1, s2 = st.columns(2)
     gap_max = s1.slider(
         "돌파 갭 상한 (×ATR)", 0.0, 2.0, core.CHASE_ATR_MULT, 0.05,
@@ -1273,13 +1393,6 @@ def render_scan(capital: float, ai_unlocked: bool) -> None:
         "임박 거리 상한 (×ATR)", 0.1, 3.0, 1.0, 0.1,
         help="20일 고가까지 남은 거리. 좁을수록 돌파가 가깝습니다.",
     )
-
-    # 1유닛 주수는 사이드바 금액으로 다시 낸다 — 스캔 시점 계좌와
-    # 다를 수 있고, ATR은 스캔값 그대로라 재조회가 아니다.
-    units = frame["atr20"].apply(
-        lambda a: core.calc_position(float(a), capital).unit_shares
-    )
-    frame = frame.assign(unit_shares=units)
 
     broke = frame[
         (frame["status"] == scan_all.STATUS_BREAKOUT)
@@ -1294,17 +1407,21 @@ def render_scan(capital: float, ai_unlocked: bool) -> None:
     if broke.empty:
         st.info(f"갭 {gap_max:.2f}×ATR 이내로 돌파한 종목이 없습니다.")
     else:
-        st.dataframe(
-            {
-                "종목명": broke["name"].tolist(),
-                "코드": broke["ticker"].tolist(),
-                "현재가": [f"{v:,.0f}" for v in broke["close"]],
-                "20일고가": [f"{v:,.0f}" for v in broke["high20"]],
-                "ATR": [f"{v:,.0f}" for v in broke["atr20"]],
-                "갭(×ATR)": [f"+{v:.2f}" for v in broke["gap_atr"]],
-                "1유닛 주수": [f"{v:,}주" for v in broke["unit_shares"]],
-            },
-            hide_index=True, width="stretch",
+        render_scan_table(
+            [
+                {
+                    "name": r["name"],
+                    "code": r["ticker"],
+                    "sector": r["sector"],
+                    "price": r["close"],
+                    "metric": r["gap_atr"],
+                    "atr_pct": r["atr_pct"],
+                    "vol_mult": r["vol_mult"],
+                    "verdict": core.breakout_verdict(r["gap_atr"]),
+                }
+                for _, r in broke.iterrows()
+            ],
+            metric_label="갭(×ATR)",
         )
 
         st.markdown("### ■ 종목 열기")
@@ -1332,17 +1449,25 @@ def render_scan(capital: float, ai_unlocked: bool) -> None:
     if near.empty:
         st.info(f"20일 고가까지 {dist_max:.1f}×ATR 이내인 종목이 없습니다.")
     else:
-        st.dataframe(
-            {
-                "종목명": near["name"].tolist(),
-                "코드": near["ticker"].tolist(),
-                "현재가": [f"{v:,.0f}" for v in near["close"]],
-                "20일고가": [f"{v:,.0f}" for v in near["high20"]],
-                "ATR": [f"{v:,.0f}" for v in near["atr20"]],
-                "거리(×ATR)": [f"{v:.2f}" for v in near["dist_atr"]],
-                "1유닛 주수": [f"{v:,}주" for v in near["unit_shares"]],
-            },
-            hide_index=True, width="stretch",
+        # 아직 20일 고가를 못 넘은 종목들이라 판정은 항상 '대기'이고,
+        # 거리(×ATR)는 규칙 통과를 뜻하지 않으므로 색 강조도 안 입힌다.
+        render_scan_table(
+            [
+                {
+                    "name": r["name"],
+                    "code": r["ticker"],
+                    "sector": r["sector"],
+                    "price": r["close"],
+                    "metric": r["dist_atr"],
+                    "atr_pct": r["atr_pct"],
+                    "vol_mult": r["vol_mult"],
+                    "verdict": "대기",
+                }
+                for _, r in near.iterrows()
+            ],
+            metric_label="거리(×ATR)",
+            metric_signed=False,
+            highlight_metric=False,
         )
 
         st.markdown("### ■ 종목 열기")
@@ -1367,8 +1492,8 @@ def render_scan(capital: float, ai_unlocked: bool) -> None:
                 _stock_dialog(ticker, capital, ai_unlocked)
 
     st.caption(
-        f"종가 기준입니다 — 장중 현재가가 아닙니다. 1유닛 주수는 사이드바 "
-        f"계좌 {capital:,.0f}원 기준으로 다시 계산했습니다."
+        "종가 기준입니다 — 장중 현재가가 아닙니다. 1유닛 주수·손절선 등은 "
+        "종목을 열면 사이드바 계좌 금액 기준으로 다시 계산됩니다."
     )
 
 

@@ -43,6 +43,14 @@ DEFAULT_CAPITAL = 10_000_000
 FETCH_DAYS = 120         # 기본 조회 거래일 – Wilder 재귀식 워밍업용
 MIN_TRADING_DAYS = 40    # 이보다 적으면 조회 실패로 본다
 
+# ── 스크리너·스캔 공통 임계값 (표 색상 강조에도 쓰인다) ────────
+VOL_MULT_MIN = 1.5      # 오늘 거래량 / 직전 20일 평균 거래량
+VOL_AVG_DAYS = 20        # 거래량배수 계산에 쓰는 평균일수 (당일 제외)
+# 전종목 스캔 1,108종목(2026-08-05, 돌파+임박 합계) 기준 ATR% 10분위수가
+# 4.9%였다. 그보다 낮게 잡아 하위 ~5%만 회색 처리하는 넉넉한 초기값 —
+# 실데이터 더 쌓이면 조정한다.
+SCAN_ATR_PCT_MIN = 3.0
+
 
 # ── 시세 조회 (유일한 I/O) ──────────────────────────────────
 
@@ -498,6 +506,52 @@ def trend_signals(
         (current - sig.low_10_prev) / current * 100 if current > 0 else 0.0
     )
     return sig
+
+
+# ── 스크리너·스캔 지표 ──────────────────────────────────────
+#
+# 오늘의 돌파(screener.py)와 전종목 스캔(scan_all.py)이 같은 정의를
+# 쓰게 하려고 여기 모아둔다. 두 모듈이 각자 계산식을 다시 쓰면
+# 조용히 갈라질 수 있다 (예: 평균일수 하나만 달라도 배수가 어긋난다).
+
+def calc_vol_mult(hist: pd.DataFrame, avg_days: int = VOL_AVG_DAYS) -> Optional[float]:
+    """거래량배수 = 당일 거래량 / 직전 avg_days일 평균 거래량.
+
+    당일을 평균에서 뺀다 — 포함하면 급증한 당일이 스스로 기준을
+    끌어올려 배수가 실제보다 작게 나온다 (20일 고가 돌파를 당일
+    제외로 보는 것과 같은 이유).
+
+    Returns:
+        None: 데이터가 모자라거나 평균이 0 이하 (배수가 성립하지 않음)
+    """
+    volumes = hist["거래량"].tolist()
+    if len(volumes) < avg_days + 1:
+        return None
+    today_vol = float(volumes[-1])
+    prev = volumes[-avg_days - 1:-1]
+    vol_avg = sum(prev) / len(prev) if prev else 0.0
+    if vol_avg <= 0:
+        return None
+    return today_vol / vol_avg
+
+
+def calc_atr_pct(atr: float, price: float) -> float:
+    """ATR을 현재가 대비 %로. 원화 ATR은 종목 간 비교가 안 되므로 쓴다."""
+    return atr / price * 100 if price > 0 else 0.0
+
+
+def breakout_verdict(gap_atr: float, chase_mult: float = CHASE_ATR_MULT) -> str:
+    """갭(×ATR) 하나로 규칙 판정 라벨을 낸다. 수익 가능성 예측이 아니다.
+
+    - 대기: 아직 20일 고가를 못 넘음 (gap_atr <= 0)
+    - 진입가능: 막 넘어선 구간 (0 < gap_atr <= chase_mult)
+    - 추격금지: chase_mult를 넘게 더 진행 (돌파 시점에서 이미 벗어남)
+    """
+    if gap_atr <= 0:
+        return "대기"
+    if gap_atr <= chase_mult:
+        return "진입가능"
+    return "추격금지"
 
 
 # ── 보유 종목 판정 ──────────────────────────────────────────
