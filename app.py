@@ -12,9 +12,15 @@ app.py – 신규 종목 조사용 Streamlit 앱
 
 from __future__ import annotations
 
-from datetime import date
+import html
+import io
+import re
+import zipfile
+import xml.etree.ElementTree as ET
+from datetime import date, datetime, timedelta
 
 import plotly.graph_objects as go
+import requests
 import streamlit as st
 from pykrx import stock as krx
 
@@ -65,11 +71,16 @@ AI_SYSTEM_PROMPT = """너는 터틀 트레이딩 규칙을 기준으로 종목 �
 2~3문장.
 
 ■ 사업 맥락
-- 최근 3개월 뉴스와 공시 중 실적·사업 관련만
-- 주가가 올랐다/내렸다는 기사는 제외
-- 확인 안 되면 "확인된 정보 없음"이라고만 쓴다
-- 출처를 함께 표기
-3~5문장.
+두 부분으로 나눠 쓴다.
+(1) 회사 개요·업종: 이 회사가 무슨 사업을 하는지, 어느 업종인지는
+    네가 아는 일반 지식으로 1~2문장. 사업 구조는 시의성과 무관하다.
+(2) 최근 뉴스·공시: 사용자 메시지의 [최근 N일 뉴스]·[최근 N일 공시]
+    목록에 있는 내용만 근거로 쓴다. 실적·사업 관련만 남기고 주가
+    등락 기사는 제외한다. 인용할 때 목록의 날짜를 함께 적는다.
+    목록이 "확인된 뉴스/공시 없음"이면 그대로 "최근 N일간 확인된
+    뉴스·공시 없음"이라고 쓴다. 목록에 없는 내용을 추측하거나
+    학습된 지식(오래된 기사 포함)으로 채우지 않는다.
+두 부분 합쳐 3~5문장.
 
 ■ 진입 체크리스트
 아래 세 항목에 O/X와 한 줄 근거:
@@ -153,6 +164,183 @@ def build_ai_user_message(
     )
 
 
+# ── 최근 뉴스·공시 (AI 의견의 "사업 맥락" 소스 고정용) ────────
+#
+# google_search 그라운딩은 구글 전체를 검색해서 소스를 고를 수 없다.
+# 대신 네이버페이증권 종목뉴스 탭과 DART 공시 목록을 직접 스크래핑해서
+# "최근 N일 안에 실제로 있었던 뉴스·공시"만 프롬프트에 넣는다.
+
+RECENT_ACTIVITY_DAYS = 30
+
+NAVER_NEWS_URL = "https://finance.naver.com/item/news_news.naver"
+NAVER_NEWS_USER_AGENT = (
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 "
+    "(KHTML, like Gecko) Chrome/125.0 Safari/537.36"
+)
+NAVER_NEWS_MAX_PAGES = 5   # 30일 커버에 보통 1~2페이지, 안전판으로 상한
+NAVER_NEWS_ROW_RE = re.compile(
+    r'<a href="(/item/news_read\.naver\?[^"]+)" class="tit"[^>]*>([^<]+)</a>'
+    r'.*?<td class="info">([^<]*)</td>\s*<td class="date">\s*([^<]+)</td>',
+    re.S,
+)
+
+DART_API_KEY_NAME = "DART_API_KEY"
+DART_CORP_LIST_URL = "https://opendart.fss.or.kr/api/corpCode.xml"
+DART_DISCLOSURE_URL = "https://opendart.fss.or.kr/api/list.json"
+
+
+def fetch_naver_news(code: str, days: int = RECENT_ACTIVITY_DAYS) -> list[tuple[str, str, str]]:
+    """네이버페이증권 종목뉴스 탭에서 최근 N일 기사(날짜, 제목, 링크)를 가져온다.
+
+    이 URL은 Referer 없이 호출하면 빈 목록만 돌려준다 (iframe으로만 열리게
+    막아둔 것으로 보인다) — main.naver 페이지를 Referer로 넣어 우회한다.
+    기사는 최신순으로 오므로, 기준일보다 오래된 기사가 나오면 그 페이지까지만
+    쓰고 멈춘다.
+
+    Raises:
+        requests.RequestException: 호출 실패는 그대로 전파 (호출부에서 처리)
+    """
+    cutoff = datetime.now() - timedelta(days=days)
+    headers = {
+        "User-Agent": NAVER_NEWS_USER_AGENT,
+        "Referer": f"https://finance.naver.com/item/main.naver?code={code}",
+    }
+
+    articles: list[tuple[str, str, str]] = []
+    for page in range(1, NAVER_NEWS_MAX_PAGES + 1):
+        resp = requests.get(
+            NAVER_NEWS_URL, params={"code": code, "page": page},
+            headers=headers, timeout=5,
+        )
+        resp.encoding = "euc-kr"
+        matches = NAVER_NEWS_ROW_RE.findall(resp.text)
+        if not matches:
+            break
+
+        reached_cutoff = False
+        for href, title, source, date_str in matches:
+            try:
+                dt = datetime.strptime(date_str.strip(), "%Y.%m.%d %H:%M")
+            except ValueError:
+                continue
+            if dt < cutoff:
+                reached_cutoff = True
+                break
+            link = "https://finance.naver.com" + html.unescape(href)
+            articles.append((dt.strftime("%Y-%m-%d"), html.unescape(title.strip()), link))
+        if reached_cutoff:
+            break
+
+    return articles
+
+
+@st.cache_data(ttl=86_400, show_spinner=False)
+def _dart_corp_code_map(api_key: str) -> dict[str, str]:
+    """DART 종목코드→corp_code 매핑.
+
+    DART API는 종목코드로 바로 조회할 수 없고 자체 corp_code가 필요하다.
+    이 매핑은 전종목 목록(zip)으로만 받을 수 있어 24시간 캐싱한다.
+    """
+    resp = requests.get(DART_CORP_LIST_URL, params={"crtfc_key": api_key}, timeout=15)
+    resp.raise_for_status()
+
+    with zipfile.ZipFile(io.BytesIO(resp.content)) as zf:
+        xml_bytes = zf.read(zf.namelist()[0])
+
+    mapping: dict[str, str] = {}
+    for item in ET.fromstring(xml_bytes).iter("list"):
+        stock_code = (item.findtext("stock_code") or "").strip()
+        corp_code = (item.findtext("corp_code") or "").strip()
+        if stock_code:
+            mapping[stock_code] = corp_code
+    return mapping
+
+
+def fetch_dart_disclosures(
+    code: str, days: int = RECENT_ACTIVITY_DAYS,
+) -> list[tuple[str, str]] | None:
+    """DART 공시 목록(날짜, 제목) 중 최근 N일치.
+
+    Returns:
+        None: DART_API_KEY 미설정 (호출부가 "미조회"와 "결과 없음"을
+              구분해서 보여준다)
+        []: 키는 있으나 최근 N일 안에 공시가 없음
+
+    Raises:
+        requests.RequestException / RuntimeError: 호출 실패는 그대로 전파
+    """
+    api_key = read_secret(DART_API_KEY_NAME)
+    if not api_key:
+        return None
+
+    corp_code = _dart_corp_code_map(api_key).get(code)
+    if not corp_code:
+        return []
+
+    end = datetime.now()
+    start = end - timedelta(days=days)
+    resp = requests.get(
+        DART_DISCLOSURE_URL,
+        params={
+            "crtfc_key": api_key,
+            "corp_code": corp_code,
+            "bgn_de": start.strftime("%Y%m%d"),
+            "end_de": end.strftime("%Y%m%d"),
+            "page_count": 100,
+        },
+        timeout=10,
+    )
+    resp.raise_for_status()
+    data = resp.json()
+
+    if data.get("status") == "013":
+        return []          # "조회된 데이터가 없습니다" — 정상적인 빈 결과
+    if data.get("status") != "000":
+        raise RuntimeError(f"DART 조회 실패: {data.get('message')}")
+
+    return [
+        (datetime.strptime(item["rcept_dt"], "%Y%m%d").strftime("%Y-%m-%d"), item["report_nm"])
+        for item in data.get("list", [])
+    ]
+
+
+def build_recent_activity_block(
+    code: str, days: int = RECENT_ACTIVITY_DAYS,
+) -> tuple[str, datetime]:
+    """AI 프롬프트에 넣을 "최근 뉴스·공시" 블록과 조회 시각.
+
+    스크래핑 실패는 항목을 비우고 넘어간다 — 이 블록이 없다고 나머지
+    리포트(지표 해석·현재 국면·진입 체크리스트)까지 막을 이유는 없다.
+    """
+    fetched_at = datetime.now()
+
+    try:
+        news = fetch_naver_news(code, days=days)
+    except Exception:
+        news = []
+
+    try:
+        disclosures = fetch_dart_disclosures(code, days=days)
+    except Exception:
+        disclosures = []
+
+    lines = [f"[최근 {days}일 뉴스 — 네이버페이증권]"]
+    if news:
+        lines += [f"- {d} {t}" for d, t, _ in news]
+    else:
+        lines.append(f"- 최근 {days}일간 확인된 뉴스 없음")
+
+    lines.append(f"\n[최근 {days}일 공시 — DART]")
+    if disclosures is None:
+        lines.append("- DART_API_KEY 미설정으로 조회 안 함")
+    elif disclosures:
+        lines += [f"- {d} {t}" for d, t in disclosures]
+    else:
+        lines.append(f"- 최근 {days}일간 확인된 공시 없음")
+
+    return "\n".join(lines), fetched_at
+
+
 # ── 상관군 유닛 카운터 ──────────────────────────────────────
 MAX_UNITS_STOCK = 4       # 종목당
 MAX_UNITS_GROUP = 6       # 상관군당
@@ -222,13 +410,18 @@ def _grounding_sources(candidate) -> list[str]:
 
 
 def request_ai_opinion(
-    user_message: str, system_prompt: str = AI_SYSTEM_PROMPT,
+    user_message: str, system_prompt: str = AI_SYSTEM_PROMPT, use_search: bool = True,
 ) -> str:
-    """Gemini API 호출. 구글 검색 도구를 붙여 최근 뉴스·공시를 찾게 한다.
+    """Gemini API 호출.
 
     Args:
         user_message: core.py / screener.py가 계산한 값
         system_prompt: 종목 의견(기본)과 섹터 해설이 같은 호출부를 쓴다
+        use_search: True면 구글 검색 그라운딩 도구를 붙인다. 섹터 해설처럼
+            출처를 특정할 수 없는 폭넓은 조사에는 필요하지만, 종목 의견의
+            "사업 맥락"은 이미 네이버페이증권·DART에서 스크래핑한 자료를
+            user_message에 넣어 소스를 고정했으므로 False로 끈다 — 켜두면
+            그라운딩이 학습 지식·오래된 페이지를 다시 섞어 넣을 수 있다.
 
     Raises:
         RuntimeError: 키 미설정 / 차단 / 빈 응답
@@ -243,17 +436,18 @@ def request_ai_opinion(
         raise RuntimeError("GEMINI_API_KEY가 설정되지 않았습니다.")
 
     client = genai.Client(api_key=api_key)
+    config_kwargs = dict(
+        system_instruction=system_prompt,
+        max_output_tokens=AI_MAX_OUTPUT_TOKENS,
+        thinking_config=types.ThinkingConfig(thinking_budget=AI_THINKING_BUDGET),
+    )
+    if use_search:
+        config_kwargs["tools"] = [types.Tool(google_search=types.GoogleSearch())]
+
     response = client.models.generate_content(
         model=AI_MODEL,
         contents=user_message,
-        config=types.GenerateContentConfig(
-            system_instruction=system_prompt,
-            max_output_tokens=AI_MAX_OUTPUT_TOKENS,
-            thinking_config=types.ThinkingConfig(
-                thinking_budget=AI_THINKING_BUDGET
-            ),
-            tools=[types.Tool(google_search=types.GoogleSearch())],
-        ),
+        config=types.GenerateContentConfig(**config_kwargs),
     )
 
     if not response.candidates:
@@ -804,13 +998,20 @@ def render_stock_report(code: str, capital: float, ai_unlocked: bool) -> None:
         if ai_key in ai_cache:
             st.caption("캐시된 결과입니다. (API를 다시 호출하지 않았습니다)")
         else:
-            with st.spinner("AI가 지표와 최근 뉴스·공시를 확인하는 중…"):
+            with st.spinner("최근 뉴스·공시를 확인하는 중…"):
+                activity_block, fetched_at = build_recent_activity_block(code)
+            with st.spinner("AI가 지표를 해석하는 중…"):
                 try:
-                    ai_cache[ai_key] = request_ai_opinion(
+                    user_message = (
                         build_ai_user_message(
                             name, code, price, atr, sig, edge, pos, stop_loss
                         )
+                        + "\n\n" + activity_block
                     )
+                    # 사업 맥락은 위에서 스크래핑한 자료만 근거로 삼는다 —
+                    # google_search는 소스를 못 고르므로 여기서는 끈다.
+                    ai_cache[ai_key] = request_ai_opinion(user_message, use_search=False)
+                    st.session_state.setdefault("ai_fetched_at", {})[ai_key] = fetched_at
                     st.session_state["ai_calls"] = ai_calls + 1
                 except Exception as e:
                     # 실패해도 위쪽 리포트는 그대로 유지된다
@@ -818,6 +1019,9 @@ def render_stock_report(code: str, capital: float, ai_unlocked: bool) -> None:
 
     if ai_key in ai_cache:
         st.markdown(ai_cache[ai_key])
+        fetched_at = st.session_state.get("ai_fetched_at", {}).get(ai_key)
+        if fetched_at:
+            st.caption(f"최근 뉴스·공시 기준일: {fetched_at.strftime('%Y-%m-%d %H:%M')}")
         st.caption(
             "AI 해석입니다. 매매 판단은 노션에 정해둔 규칙과 손절선을 따르세요."
         )
