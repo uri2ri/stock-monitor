@@ -712,6 +712,28 @@ with st.sidebar:
     st.caption(f"1회 리스크 한도: {capital * core.RISK_PER_TRADE:,.0f}원 (1%)")
 
 
+def render_scroll_to_top_button() -> None:
+    """화면 우측 하단에 맨 위로(#stock-analysis-top) 이동하는 화살표를 띄운다.
+
+    세 탭(종목 분석·오늘의 돌파·전종목 스캔) 모두 아래로 한참 내려야
+    보이는 내용이 있어 공통으로 쓴다. 모달(_stock_dialog)은 닫기
+    버튼으로 충분해 대상에서 뺐다.
+    """
+    st.markdown(
+        """
+        <a href="#stock-analysis-top" title="맨 위로" style="
+            position: fixed; right: 24px; bottom: 72px; z-index: 9999;
+            width: 44px; height: 44px; border-radius: 50%;
+            background-color: #60a5fa; color: #0f172a;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 20px; text-decoration: none;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+        ">↑</a>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
 # ── [종목 분석] 화면 ────────────────────────────────────────
 
 def render_analysis(capital: float, ai_unlocked: bool) -> None:
@@ -744,22 +766,7 @@ def render_analysis(capital: float, ai_unlocked: bool) -> None:
         return
 
     render_stock_report(st.session_state["query"], capital, ai_unlocked)
-
-    # 리포트가 길어 AI 의견까지 보려면 한참 내려야 한다. 모달(_stock_dialog)은
-    # 닫기 버튼으로 충분하지만 이 탭은 스크롤해서 되돌아갈 수단이 없어 추가한다.
-    st.markdown(
-        """
-        <a href="#stock-analysis-top" title="맨 위로" style="
-            position: fixed; right: 24px; bottom: 72px; z-index: 9999;
-            width: 44px; height: 44px; border-radius: 50%;
-            background-color: #60a5fa; color: #0f172a;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 20px; text-decoration: none;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
-        ">↑</a>
-        """,
-        unsafe_allow_html=True,
-    )
+    render_scroll_to_top_button()
 
 
 def render_stock_report(code: str, capital: float, ai_unlocked: bool) -> None:
@@ -1346,6 +1353,7 @@ def render_breakout(capital: float, ai_unlocked: bool) -> None:
         "조건을 통과한 목록입니다. 진입 여부와 수량은 노션에 정해둔 "
         "리스크 한도를 따르세요."
     )
+    render_scroll_to_top_button()
 
 
 # ── 전종목 스캔 ─────────────────────────────────────────────
@@ -1512,6 +1520,7 @@ def render_scan(capital: float, ai_unlocked: bool) -> None:
         "종가 기준입니다 — 장중 현재가가 아닙니다. 1유닛 주수·손절선 등은 "
         "종목을 열면 사이드바 계좌 금액 기준으로 다시 계산됩니다."
     )
+    render_scroll_to_top_button()
 
 
 # ── 탭 ──────────────────────────────────────────────────────
