@@ -751,7 +751,7 @@ def render_analysis(capital: float, ai_unlocked: bool) -> None:
     st.markdown(
         """
         <a href="#stock-analysis-top" title="맨 위로" style="
-            position: fixed; right: 24px; bottom: 24px; z-index: 9999;
+            position: fixed; right: 24px; bottom: 72px; z-index: 9999;
             width: 44px; height: 44px; border-radius: 50%;
             background-color: #60a5fa; color: #0f172a;
             display: flex; align-items: center; justify-content: center;
