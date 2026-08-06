@@ -678,6 +678,7 @@ def build_chart(
 
 # ── 화면 ────────────────────────────────────────────────────
 
+st.markdown('<div id="stock-analysis-top"></div>', unsafe_allow_html=True)
 st.title("📊 종목 진입 점검")
 st.caption("신규 종목 조사 전용 · 터틀 트레이딩 규칙을 그대로 계산해 보여줍니다.")
 
@@ -719,8 +720,6 @@ def render_analysis(capital: float, ai_unlocked: bool) -> None:
     돌파·스캔 화면에서 종목을 고를 때는 여기로 넘어오지 않고
     render_stock_report()를 모달(_stock_dialog)로 바로 띄운다.
     """
-    st.markdown('<div id="stock-analysis-top"></div>', unsafe_allow_html=True)
-
     col_code, col_btn = st.columns([4, 1])
     with col_code:
         code = st.text_input(
