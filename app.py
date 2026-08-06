@@ -80,11 +80,14 @@ AI_SYSTEM_PROMPT = """너는 터틀 트레이딩 규칙을 기준으로 종목 �
 두 부분 합쳐 3~5문장.
 
 ■ 진입 체크리스트
-아래 세 항목에 O/X와 한 줄 근거:
+아래 네 항목에 O/X와 한 줄 근거:
 1. 상승 추세인가
 2. 20일 고가를 돌파했는가
 3. 진입 근거로 삼을 사업 논리가 있는가
    (가격이 싸다는 건 근거가 아니다)
+4. 추격 구간이 아닌가
+   (사용자 메시지의 "추격 판정" 값을 그대로 따른다. 대기·진입가능이면 O,
+   추격금지면 X. 스스로 판단하지 않는다)
 
 [금지]
 - "매수 추천", "지금이 기회", "저점 매수",
@@ -92,6 +95,53 @@ AI_SYSTEM_PROMPT = """너는 터틀 트레이딩 규칙을 기준으로 종목 �
 - 목표주가 제시
 - 다른 종목 언급이나 추천
 - 계산되지 않은 값을 추측으로 채우기
+- 네 항목 외의 내용"""
+
+AI_SYSTEM_PROMPT_ETF = """너는 터틀 트레이딩 규칙을 기준으로 ETF 지표를
+해석하는 분석가다. 매수나 매도를 권하지 않는다.
+숫자가 무슨 뜻인지 설명하는 것이 유일한 역할이다.
+
+아래 네 항목으로만 답한다. 소제목을 그대로 쓴다.
+
+■ 지표 해석
+- TE가 양수/음수인 것이 터틀 관점에서 뜻하는 바
+- 승률에 대응하는 손익분기 RR = (1-승률)/승률 을
+  계산해서, 실제 RR이 그보다 높은지 낮은지 명시
+- ATR이 현재가의 몇 %인지 계산하고,
+  변동성이 큰 편인지 작은 편인지
+3~4문장.
+
+■ 현재 국면
+- 20일 고가 대비 위치 → 터틀 진입 신호 관점에서 해석
+- 10일 저가 대비 여유 → 청산 신호까지의 거리
+- 최근 60일 흐름이 상승/하락/횡보 중 무엇인지
+2~3문장.
+
+■ 상품 개요
+ETF는 개별 기업이 아니라 DART 공시가 없고, 이 앱은 기초지수·추종자산·
+운용사 정보를 조회하지 않는다. "기초지수·추종자산·운용사 정보는 제공하지
+않음 — 운용사 홈페이지나 KRX 정보데이터시스템에서 확인하세요."라고만
+쓴다. 종목명으로 유추해서 채우거나 학습된 지식으로 대신 채우지 않는다.
+사용자 메시지의 [최근 N일 뉴스] 목록이 있으면 실적·사업 관련 없이
+가격 흐름과 관련된 것만 한 줄로 요약한다 (없으면 "확인된 뉴스 없음").
+
+■ 진입 체크리스트
+아래 네 항목에 O/X와 한 줄 근거:
+1. 상승 추세인가
+2. 20일 고가를 돌파했는가
+3. 진입 근거로 삼을 논리가 있는가
+   (가격이 싸다는 건 근거가 아니다)
+4. 추격 구간이 아닌가
+   (사용자 메시지의 "추격 판정" 값을 그대로 따른다. 대기·진입가능이면 O,
+   추격금지면 X. 스스로 판단하지 않는다)
+
+[금지]
+- "매수 추천", "지금이 기회", "저점 매수",
+  "비중 확대" 같은 표현
+- 목표주가 제시
+- 다른 종목 언급이나 추천
+- 계산되지 않은 값을 추측으로 채우기
+- 기초지수·운용사를 지어내기
 - 네 항목 외의 내용"""
 
 SECTOR_SYSTEM_PROMPT = """너는 돌파 스크리너를 통과한 종목 목록을 보고
@@ -136,8 +186,15 @@ def build_ai_user_message(
     edge,                 # core.Edge | None
     pos: core.Position,
     stop_loss: float,
+    chase_state: str,     # entry_state()가 낸 판정 (대기/진입가능/추격금지)
 ) -> str:
-    """core.py가 계산한 값을 그대로 넘긴다. AI가 다시 계산하지 않게 한다."""
+    """core.py가 계산한 값을 그대로 넘긴다. AI가 다시 계산하지 않게 한다.
+
+    chase_state는 체크리스트 "추격 구간이 아닌가" 항목을 AI가 스스로
+    판단하지 않고 이미 계산된 값을 그대로 따르게 하려고 넣는다 — 갭이
+    CHASE_ATR_MULT를 넘은 종목도 체크리스트가 전부 O로 나와 화면 상단의
+    추격금지 배너와 어긋나던 문제를 막는다.
+    """
     if edge is None:
         te = rr = win_rate = avg_win = avg_loss = "계산 불가"
     else:
@@ -154,6 +211,7 @@ def build_ai_user_message(
         f"직전 20일 고가: {sig.high_20_prev:,.0f}원 / "
         f"청산선(직전 10일 저가): {sig.low_10_prev:,.0f}원\n"
         f"돌파 여부: {'돌파' if sig.breakout else '미돌파'}\n"
+        f"추격 판정: {chase_state}\n"
         f"TE: {te} / RR: {rr} / 승률: {win_rate}\n"
         f"평균수익: {avg_win} / 평균손실: {avg_loss}\n"
         f"1유닛: {pos.unit_shares:,}주 / 손절선: {stop_loss:,.0f}원\n"
@@ -302,12 +360,15 @@ def fetch_dart_disclosures(
 
 
 def build_recent_activity_block(
-    code: str, days: int = RECENT_ACTIVITY_DAYS,
+    code: str, is_etf: bool = False, days: int = RECENT_ACTIVITY_DAYS,
 ) -> tuple[str, datetime]:
     """AI 프롬프트에 넣을 "최근 뉴스·공시" 블록과 조회 시각.
 
     스크래핑 실패는 항목을 비우고 넘어간다 — 이 블록이 없다고 나머지
     리포트(지표 해석·현재 국면·진입 체크리스트)까지 막을 이유는 없다.
+
+    ETF는 기업이 아니라 DART 공시가 없으므로 is_etf=True면 DART 조회
+    자체를 시도하지 않는다 (불필요한 호출·에러 방지).
     """
     fetched_at = datetime.now()
 
@@ -316,11 +377,6 @@ def build_recent_activity_block(
     except Exception:
         news = []
 
-    try:
-        disclosures = fetch_dart_disclosures(code, days=days)
-    except Exception:
-        disclosures = []
-
     lines = [f"[최근 {days}일 뉴스 — 네이버페이증권]"]
     if news:
         lines += [f"- {d} {t}" for d, t, _ in news]
@@ -328,12 +384,20 @@ def build_recent_activity_block(
         lines.append(f"- 최근 {days}일간 확인된 뉴스 없음")
 
     lines.append(f"\n[최근 {days}일 공시 — DART]")
-    if disclosures is None:
-        lines.append("- DART_API_KEY 미설정으로 조회 안 함")
-    elif disclosures:
-        lines += [f"- {d} {t}" for d, t in disclosures]
+    if is_etf:
+        lines.append("- ETF는 개별 기업이 아니므로 DART 공시를 조회하지 않음")
     else:
-        lines.append(f"- 최근 {days}일간 확인된 공시 없음")
+        try:
+            disclosures = fetch_dart_disclosures(code, days=days)
+        except Exception:
+            disclosures = []
+
+        if disclosures is None:
+            lines.append("- DART_API_KEY 미설정으로 조회 안 함")
+        elif disclosures:
+            lines += [f"- {d} {t}" for d, t in disclosures]
+        else:
+            lines.append(f"- 최근 {days}일간 확인된 공시 없음")
 
     return "\n".join(lines), fetched_at
 
@@ -482,11 +546,33 @@ def load_ohlcv(code: str):
 
 
 @st.cache_data(ttl=86_400, show_spinner=False)
-def load_name(code: str) -> str:
+def load_etf_map() -> dict[str, str]:
+    """ETF 코드→이름 전체. 조회 실패는 빈 맵으로 — is_etf()가 전부 False가
+    되어 기존 주식 조회 동작(krx.get_market_ticker_name)으로 자연히
+    떨어진다."""
     try:
-        return krx.get_market_ticker_name(code)
+        return core.fetch_etf_map()
+    except Exception:
+        return {}
+
+
+def is_etf(code: str) -> bool:
+    return code in load_etf_map()
+
+
+@st.cache_data(ttl=86_400, show_spinner=False)
+def load_name(code: str) -> str:
+    etf_map = load_etf_map()
+    if code in etf_map:
+        return etf_map[code]
+    try:
+        name = krx.get_market_ticker_name(code)
     except Exception:
         return code          # 이름 조회 실패는 계산에 영향 없음
+    # ETF·ETN 등 KOSPI/KOSDAQ 상장종목 목록에 없는 코드는 예외 없이 빈
+    # DataFrame을 돌려준다 (pykrx dataframe_empty_handler) — 문자열이
+    # 아니면 조회 실패로 본다.
+    return name if isinstance(name, str) and name else code
 
 
 # ── 진입 신호 판정 ──────────────────────────────────────────
@@ -792,7 +878,10 @@ def render_stock_report(code: str, capital: float, ai_unlocked: bool) -> None:
             return
 
     name = load_name(code)
+    etf = is_etf(code)
     st.subheader(f"{name} ({code})")
+    if etf:
+        st.badge("ETF", color="blue")
     st.caption(
         f"{df.index[0]:%Y-%m-%d} ~ {df.index[-1]:%Y-%m-%d} · {len(df)}거래일 · "
         f"ATR은 터틀 원본 방식(Wilder, {core.ATR_PERIOD}일)"
@@ -1041,18 +1130,21 @@ def render_stock_report(code: str, capital: float, ai_unlocked: bool) -> None:
             st.caption("캐시된 결과입니다. (API를 다시 호출하지 않았습니다)")
         else:
             with st.spinner("최근 뉴스·공시를 확인하는 중…"):
-                activity_block, fetched_at = build_recent_activity_block(code)
+                activity_block, fetched_at = build_recent_activity_block(code, is_etf=etf)
             with st.spinner("AI가 지표를 해석하는 중…"):
                 try:
                     user_message = (
                         build_ai_user_message(
-                            name, code, price, atr, sig, edge, pos, stop_loss
+                            name, code, price, atr, sig, edge, pos, stop_loss, state,
                         )
                         + "\n\n" + activity_block
                     )
                     # 사업 맥락은 위에서 스크래핑한 자료만 근거로 삼는다 —
                     # google_search는 소스를 못 고르므로 여기서는 끈다.
-                    ai_cache[ai_key] = request_ai_opinion(user_message, use_search=False)
+                    system_prompt = AI_SYSTEM_PROMPT_ETF if etf else AI_SYSTEM_PROMPT
+                    ai_cache[ai_key] = request_ai_opinion(
+                        user_message, system_prompt=system_prompt, use_search=False
+                    )
                     st.session_state.setdefault("ai_fetched_at", {})[ai_key] = fetched_at
                     st.session_state["ai_calls"] = ai_calls + 1
                 except Exception as e:

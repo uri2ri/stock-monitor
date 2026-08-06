@@ -52,7 +52,7 @@ VOL_AVG_DAYS = 20        # 거래량배수 계산에 쓰는 평균일수 (당일
 SCAN_ATR_PCT_MIN = 3.0
 
 
-# ── 시세 조회 (유일한 I/O) ──────────────────────────────────
+# ── 시세 조회·종목 메타 (I/O) ───────────────────────────────
 
 def fetch_ohlcv(
     code: str,
@@ -101,6 +101,22 @@ def fetch_ohlcv(
             f"[{code}] 거래일 부족: {len(df)}일 < 최소 {MIN_TRADING_DAYS}일"
         )
     return df
+
+
+def fetch_etf_map() -> dict[str, str]:
+    """상장 ETF 전체의 티커 → 종목명.
+
+    pykrx의 공식 ETF 함수(get_etf_ticker_list/get_etf_ticker_name)는 KRX가
+    로그인 뒤로 옮긴 전종목 통계 endpoint(MDCSTAT04601)를 쓴다. 이 앱은
+    KRX_ID/KRX_PW를 설정하지 않으므로 그 경로는 항상 "LOGOUT" 응답으로
+    실패한다 (screener.py가 전종목 조회에서 같은 문제를 겪는 것과 동일한
+    원인). 대신 로그인이 필요 없는 종목검색(파인더) endpoint를 직접 써서
+    ETF 코드→이름을 가져온다. 호출부가 캐시해서 매번 조회하지 않게 한다.
+    """
+    from pykrx.website.krx.etx.core import 상장종목검색
+
+    df = 상장종목검색().fetch(market="ETF")
+    return dict(zip(df["short_code"], df["codeName"]))
 
 
 def latest_close(df: pd.DataFrame) -> float:
