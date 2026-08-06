@@ -719,6 +719,8 @@ def render_analysis(capital: float, ai_unlocked: bool) -> None:
     돌파·스캔 화면에서 종목을 고를 때는 여기로 넘어오지 않고
     render_stock_report()를 모달(_stock_dialog)로 바로 띄운다.
     """
+    st.markdown('<div id="stock-analysis-top"></div>', unsafe_allow_html=True)
+
     col_code, col_btn = st.columns([4, 1])
     with col_code:
         code = st.text_input(
@@ -743,6 +745,22 @@ def render_analysis(capital: float, ai_unlocked: bool) -> None:
         return
 
     render_stock_report(st.session_state["query"], capital, ai_unlocked)
+
+    # 리포트가 길어 AI 의견까지 보려면 한참 내려야 한다. 모달(_stock_dialog)은
+    # 닫기 버튼으로 충분하지만 이 탭은 스크롤해서 되돌아갈 수단이 없어 추가한다.
+    st.markdown(
+        """
+        <a href="#stock-analysis-top" title="맨 위로" style="
+            position: fixed; right: 24px; bottom: 24px; z-index: 9999;
+            width: 44px; height: 44px; border-radius: 50%;
+            background-color: #60a5fa; color: #0f172a;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 20px; text-decoration: none;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+        ">↑</a>
+        """,
+        unsafe_allow_html=True,
+    )
 
 
 def render_stock_report(code: str, capital: float, ai_unlocked: bool) -> None:
