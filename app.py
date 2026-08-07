@@ -917,7 +917,10 @@ def render_analysis(capital: float, ai_unlocked: bool) -> None:
     """
     if not st.session_state.get("code_param_applied"):
         st.session_state["code_param_applied"] = True
-        param_code = (st.query_params.get("code") or "").strip()
+        # KRX 종목코드는 대문자가 표준이다(예: ETF "0000J0"). 소문자로
+        # 들어오면 이름·ETF맵 조회가 대소문자 불일치로 실패해, 시세는
+        # 맞는데 종목명이 코드 그대로 나오는 것처럼 보인다.
+        param_code = (st.query_params.get("code") or "").strip().upper()
         if param_code:
             if len(param_code) == 6 and param_code.isalnum():
                 st.session_state["code_input"] = param_code
@@ -939,7 +942,7 @@ def render_analysis(capital: float, ai_unlocked: bool) -> None:
     # 조회 결과를 세션에 남긴다. AI 의견 버튼처럼 다른 위젯을 눌러도
     # 스크립트가 처음부터 다시 실행되므로, 남겨두지 않으면 화면이 비워진다.
     if run:
-        entered = (code or "").strip()
+        entered = (code or "").strip().upper()
         if len(entered) != 6 or not entered.isalnum():
             st.error("종목코드는 숫자,알파벳 6자리여야 합니다.")
             return
