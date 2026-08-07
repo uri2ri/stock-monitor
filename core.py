@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import logging
 import math
+import os
 from dataclasses import dataclass, field
 from datetime import date, timedelta
 from typing import Optional
@@ -50,6 +51,20 @@ VOL_AVG_DAYS = 20        # 거래량배수 계산에 쓰는 평균일수 (당일
 # 4.9%였다. 그보다 낮게 잡아 하위 ~5%만 회색 처리하는 넉넉한 초기값 —
 # 실데이터 더 쌓이면 조정한다.
 SCAN_ATR_PCT_MIN = 3.0
+
+
+# ── 딥링크 ──────────────────────────────────────────────────
+
+def build_stock_link(code: str) -> str:
+    """스트림릿 종목분석 화면으로 바로 가는 URL. 카톡·메일이 공유한다.
+
+    STREAMLIT_APP_URL 미설정이면 빈 문자열 – 호출부는 링크 없이
+    표시해야 하며, 이 함수가 예외로 죽어서는 안 된다.
+    """
+    base = os.environ.get("STREAMLIT_APP_URL", "").strip().rstrip("/")
+    if not base:
+        return ""
+    return f"{base}/?code={code}"
 
 
 # ── 시세 조회·종목 메타 (I/O) ───────────────────────────────

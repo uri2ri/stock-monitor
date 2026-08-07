@@ -31,6 +31,7 @@ import pandas as pd
 import requests
 
 import core
+import kakao
 import scan_all
 
 logger = logging.getLogger(__name__)
@@ -57,10 +58,10 @@ USER_AGENT = (
     "(KHTML, like Gecko) Chrome/125.0 Safari/537.36"
 )
 
-# 카톡 한 통 200자 제한(kakao.MAX_TEXT_LEN). 한 줄 약 20자라 4종목이면
-# 헤더 포함 100자 안쪽이다. 넘치면 자르지 않고 여러 통으로 나눈다.
-PER_MESSAGE = 4
-MAX_MESSAGES = 5           # 그 이상은 "외 N종목"으로 접는다
+# 카톡 한 통 200자 제한(kakao.MAX_TEXT_LEN). 줄마다 종목분석 딥링크가
+# 붙어 종목당 글자 수가 들쭉날쭉하므로 고정 개수가 아니라 실제 글자
+# 수를 채워가며 나눈다 (build_messages 참고).
+MAX_MESSAGES = 5           # 통 자체가 이보다 많아지면 "외 N종목"으로 접는다
 
 STATUS_ENTER = "진입가능"
 STATUS_CHASE = "추격금지"
@@ -226,6 +227,13 @@ def build_messages(hits: list[dict], now: datetime) -> list[str]:
 
     20일 고가는 뺐다. 돌파했다는 사실 자체가 알림이고, 정확한 수치는
     스트림릿에서 본다.
+
+    줄마다 종목분석 딥링크(core.build_stock_link)를 붙인다. 카카오톡
+    리스트 템플릿은 image_url이 사실상 필수이고 기본템플릿 표시 개수가
+    문서와 실사용 후기가 엇갈려(3개 vs 5개) 텍스트 템플릿을 유지하기로
+    했다 — 링크는 카카오톡이 본문 URL을 자동으로 탭 가능하게 바꿔준다.
+    STREAMLIT_APP_URL이 없으면 build_stock_link()가 빈 문자열을 돌려주고
+    링크 없이 기존과 같은 줄로 나간다.
     """
     enterable = [h for h in hits if h["status"] == STATUS_ENTER]
     if not enterable:
@@ -234,20 +242,41 @@ def build_messages(hits: list[dict], now: datetime) -> list[str]:
     enterable.sort(key=lambda h: h["gap_atr"])
     header = f"[돌파]{now.strftime('%H:%M')}"
 
-    shown, overflow = enterable[:PER_MESSAGE * MAX_MESSAGES], 0
-    if len(enterable) > len(shown):
-        overflow = len(enterable) - len(shown)
+    lines: list[str] = []
+    for h in enterable:
+        line = f"{h['name']} {h['price']:,.0f} +{h['gap_atr']:.2f}N"
+        link = core.build_stock_link(h["ticker"])
+        if link:
+            line += f" {link}"
+        lines.append(line)
 
-    messages: list[str] = []
-    for i in range(0, len(shown), PER_MESSAGE):
-        chunk = shown[i:i + PER_MESSAGE]
-        lines = [
-            f"{h['name']} {h['price']:,.0f} +{h['gap_atr']:.2f}N"
-            for h in chunk
-        ]
-        if overflow and i + PER_MESSAGE >= len(shown):
-            lines.append(f"외 {overflow}종목")
-        messages.append("\n".join([header] + lines))
+    # 링크 유무로 종목당 글자 수가 들쭉날쭉해 고정 개수로는 못 묶는다.
+    # 200자를 실제로 채우는 만큼씩 그리디하게 묶는다.
+    batches: list[list[str]] = []
+    current: list[str] = []
+    current_len = len(header)
+    for line in lines:
+        extra = len(line) + 1        # 줄바꿈 포함
+        if current and current_len + extra > kakao.MAX_TEXT_LEN:
+            batches.append(current)
+            current, current_len = [], len(header)
+        current.append(line)
+        current_len += extra
+    if current:
+        batches.append(current)
+
+    overflow = 0
+    if len(batches) > MAX_MESSAGES:
+        overflow = sum(len(b) for b in batches[MAX_MESSAGES:])
+        batches = batches[:MAX_MESSAGES]
+
+    messages = ["\n".join([header] + b) for b in batches]
+    if overflow:
+        tail = f"외 {overflow}종목"
+        if len(messages[-1]) + 1 + len(tail) <= kakao.MAX_TEXT_LEN:
+            messages[-1] += f"\n{tail}"
+        else:
+            messages.append(f"{header}\n{tail}")
     return messages
 
 
@@ -303,9 +332,8 @@ def run(dry_run: bool = False) -> int:
         return 0
 
     if messages:
-        from kakao import send_kakao_message
         for msg in messages:
-            send_kakao_message(msg)
+            kakao.send_kakao_message(msg)
         logger.info("카톡 %d통 발송", len(messages))
 
     for h in hits:

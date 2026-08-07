@@ -52,6 +52,7 @@ jobs:
           TOTAL_CAPITAL: ${{ secrets.TOTAL_CAPITAL }}
           # 워치리스트 거리 상한 (×ATR). 없으면 1.0
           WATCH_THRESHOLD: ${{ vars.WATCH_THRESHOLD }}
+          STREAMLIT_APP_URL: ${{ secrets.STREAMLIT_APP_URL }}
         run: python intraday_watch.py
 
       # 알림 이력만 커밋한다. 다음 실행이 이 파일을 읽어 중복 발송을 막는다.

@@ -21,7 +21,7 @@ from datetime import date
 from email.message import EmailMessage
 from typing import Optional, Sequence
 
-from core import HoldingInput, HoldingResult, PortfolioRisk
+from core import HoldingInput, HoldingResult, PortfolioRisk, build_stock_link
 
 logger = logging.getLogger(__name__)
 
@@ -99,6 +99,26 @@ def _stop_room_pct(res: HoldingResult) -> Optional[float]:
 
 def _is_stop(res: HoldingResult) -> bool:
     return res.verdict == "손절"
+
+
+def _linked_name(inp: HoldingInput, *, color: str = "", bold: bool = False) -> str:
+    """종목명. STREAMLIT_APP_URL이 설정돼 있으면 종목분석 딥링크로 감싼다.
+
+    카톡과 core.build_stock_link()를 공유한다 (중복 구현 금지). 링크가
+    없으면(빈 문자열) 기존처럼 그냥 텍스트로 표시한다.
+    """
+    name = html.escape(inp.name)
+    style = f"color:{color};" if color else ""
+    if bold:
+        style += "font-weight:bold;"
+
+    link = build_stock_link(inp.ticker)
+    if link:
+        link_style = (style or "color:inherit;") + "text-decoration:underline;"
+        return f'<a href="{html.escape(link)}" style="{link_style}">{name}</a>'
+    if style:
+        return f'<span style="{style}">{name}</span>'
+    return name
 
 
 def _or_dash(value: str) -> str:
@@ -187,8 +207,8 @@ def _row_html(inp: HoldingInput, res: HoldingResult) -> str:
         pl_color = C_PROFIT if pl >= 0 else C_LOSS
 
     cells = [
-        _td(html.escape(inp.name), align="left",
-            color=C_STOP_TEXT if stop else "", bold=stop),
+        _td(_linked_name(inp, color=C_STOP_TEXT if stop else "", bold=stop),
+            align="left"),
         _td(_badge_html(res), align="center"),
         _td(_fmt(res.current_price) if res.current_price else EMPTY),
         _td(_fmt_pct(pl), color=pl_color),
@@ -280,8 +300,7 @@ def _card_html(inp: HoldingInput, res: HoldingResult, today: date) -> str:
   border-radius:6px;background-color:{C_CARD_BG};padding:12px 14px;
   margin:0 0 12px;">
     <div style="margin-bottom:8px;">
-      <span style="font-size:16px;font-weight:bold;">
-        {html.escape(inp.name)}</span>
+      <span style="font-size:16px;">{_linked_name(inp, bold=True)}</span>
       <span style="color:{C_MUTED};font-size:12px;">
         ({html.escape(inp.ticker)})</span>
       &nbsp;{_badge_html(res)}
@@ -323,7 +342,7 @@ def _build_html(
     if exits:
         items = "".join(
             f'<li style="margin:3px 0;">'
-            f'<b>{html.escape(inp.name)}</b> '
+            f'<b>{_linked_name(inp)}</b> '
             f'<span style="color:{C_MUTED};">({html.escape(inp.ticker)})</span>'
             f' – 판정 {html.escape(res.verdict or "-")}'
             f'</li>'

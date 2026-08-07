@@ -827,7 +827,21 @@ def render_analysis(capital: float, ai_unlocked: bool) -> None:
 
     돌파·스캔 화면에서 종목을 고를 때는 여기로 넘어오지 않고
     render_stock_report()를 모달(_stock_dialog)로 바로 띄운다.
+
+    카톡·메일 딥링크(?code=)로 들어온 경우 자동 조회한다. 세션당
+    한 번만 적용해, 이후 사용자가 직접 다른 종목을 검색해도 URL에
+    남은 code 파라미터가 매 렌더마다 그 값으로 되돌리지 않게 한다.
     """
+    if not st.session_state.get("code_param_applied"):
+        st.session_state["code_param_applied"] = True
+        param_code = (st.query_params.get("code") or "").strip()
+        if param_code:
+            if len(param_code) == 6 and param_code.isalnum():
+                st.session_state["code_input"] = param_code
+                st.session_state["query"] = param_code
+            else:
+                st.error("링크의 종목코드가 올바르지 않습니다 (6자리 영숫자).")
+
     col_code, col_btn = st.columns([4, 1])
     with col_code:
         code = st.text_input(
@@ -843,8 +857,8 @@ def render_analysis(capital: float, ai_unlocked: bool) -> None:
     # 스크립트가 처음부터 다시 실행되므로, 남겨두지 않으면 화면이 비워진다.
     if run:
         entered = (code or "").strip()
-        if len(entered) != 6 or not entered.isdigit():
-            st.error("종목코드는 숫자 6자리여야 합니다.")
+        if len(entered) != 6 or not entered.isalnum():
+            st.error("종목코드는 숫자,알파벳 6자리여야 합니다.")
             return
         st.session_state["query"] = entered
 
