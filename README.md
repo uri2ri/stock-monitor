@@ -37,10 +37,17 @@ GitHub Actions(`.github/workflows/daily.yml`)는 KST 평일 07:00에 자동 실�
 
 ## 웹앱 시크릿 (app.py)
 
-웹앱은 노션·카카오를 쓰지 않고, AI 의견 기능에만 시크릿이 필요합니다.
-`.streamlit/secrets.toml.example`을 `secrets.toml`로 복사해 `APP_PASSWORD`(AI 버튼 잠금)와
-`GEMINI_API_KEY`(Google AI Studio 발급)를 채우세요. Community Cloud에서는 앱 설정 → Secrets에 같은 내용을 넣습니다.
+`.streamlit/secrets.toml.example`을 `secrets.toml`로 복사해 값을 채우세요. Community Cloud에서는
+앱 설정 → Secrets에 같은 내용을 TOML 형식으로 넣습니다 — **리포지토리 GitHub Actions Secrets와는
+별개의 저장소**이므로 두 곳 모두 등록해야 합니다.
 `secrets.toml`은 커밋되지 않습니다. 조회·차트·계산은 비밀번호 없이 동작합니다.
+
+- `APP_PASSWORD` — AI 의견 버튼 잠금용. 비워두면 AI 기능만 잠긴 채 나머지는 정상 동작.
+- `GEMINI_API_KEY` — AI 의견 호출용 (Google AI Studio 발급).
+- `DART_API_KEY` — AI 의견의 "사업 맥락"용 (opendart.fss.or.kr 발급). 비워두면 공시 조회만 건너뜀.
+- `NOTION_TOKEN` / `NOTION_DB_ID` — 종목분석 페이지의 "■ 상관군 유닛" 카운터용 (`app.py`의
+  `load_corr_units`). 값이 없거나 잘못되면 이 섹션만 비고 나머지 화면은 정상 동작한다.
+  GitHub Actions Secrets에 등록된 값과 이름은 같지만 **Cloud Secrets에 별도로 넣어야 웹앱에 반영된다.**
 
 Gmail 앱 비밀번호는 [Google 계정 → 보안](https://myaccount.google.com/apppasswords)에서
 2단계 인증을 켠 뒤 "앱 비밀번호"를 생성해 나오는 16자리를 `GMAIL_APP_PASSWORD`에 넣는다.

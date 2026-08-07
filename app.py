@@ -412,15 +412,21 @@ MAX_UNITS_TOTAL = 12      # 전체
 
 
 @st.cache_data(ttl=300, show_spinner=False)
-def load_corr_units(capital: int) -> tuple[dict[str, float], float, list[str]]:
+def load_corr_units(
+    capital: int,
+) -> tuple[dict[str, float], float, list[str], list[str]]:
     """노션 보유 종목의 상관군별 누적 유닛수.
 
     유닛은 진입 시점 기준이므로 '진입시 ATR'을 우선 쓰고, 없으면 노션의
     ATR 칸(매일 갱신되는 값)으로 대신한다. 둘 다 없으면 셀 수 없으므로
     건너뛰고 그 사실을 함께 돌려준다.
 
+    상관군 이름 목록(반환값 4번째)은 ATR·보유수량 유무와 무관하게 노션에
+    실제로 쓰인 값을 전부 모은 것 — 드롭다운 선택지용이라 유닛 집계 여부에
+    영향받지 않아야 한다.
+
     Returns:
-        (상관군별 유닛수, 전체 유닛수, 셀 수 없어 건너뛴 종목명)
+        (상관군별 유닛수, 전체 유닛수, 셀 수 없어 건너뛴 종목명, 상관군 이름 목록)
     """
     import os
 
@@ -434,8 +440,13 @@ def load_corr_units(capital: int) -> tuple[dict[str, float], float, list[str]]:
     groups: dict[str, float] = {}
     total = 0.0
     skipped: list[str] = []
+    known_names: set[str] = set()
 
     for _, inp in fetch_holdings():
+        group = (inp.corr_group or "").strip()
+        if group:
+            known_names.add(group)
+
         atr = inp.entry_atr or inp.notion_atr
         if not atr:
             skipped.append(f"{inp.name}(ATR 없음)")
@@ -450,11 +461,10 @@ def load_corr_units(capital: int) -> tuple[dict[str, float], float, list[str]]:
             continue
         units = inp.shares / unit_shares
         total += units
-        group = (inp.corr_group or "").strip()
         if group:
             groups[group] = groups.get(group, 0.0) + units
 
-    return groups, total, skipped
+    return groups, total, skipped, sorted(known_names)
 
 
 def _grounding_sources(candidate) -> list[str]:
@@ -1090,15 +1100,15 @@ def render_stock_report(code: str, capital: float, ai_unlocked: bool) -> None:
 
     # 노션 조회가 실패해도 이 섹션만 비고 나머지 화면은 그대로 남는다
     try:
-        corr_groups, corr_total, corr_skipped = load_corr_units(int(capital))
+        corr_groups, corr_total, corr_skipped, corr_names = load_corr_units(int(capital))
     except Exception as e:
         st.info(f"보유 현황을 불러오지 못해 상관군 집계를 건너뜁니다. ({e})")
     else:
-        known = sorted(corr_groups)
+        known = corr_names
         pick_col, info_col = st.columns([1, 2])
         with pick_col:
             choice = st.selectbox(
-                "이 종목의 상관군", known + ["(직접 입력)", "(없음)"],
+                "이 종목의 상관군", known + ["(없음)", "(직접 입력)"],
                 index=len(known) if known else 0,
             )
             group = (

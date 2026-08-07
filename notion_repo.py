@@ -116,8 +116,8 @@ def fetch_holdings() -> list[tuple[str, HoldingInput]]:
                     ticker=_text(props.get("종목코드", {})).strip(),
                     name=_text(props.get("종목명", {})).strip(),
                     market=_select(props.get("시장", {})),
-                    buy_price=_number(props.get("매수단가", {})) or 0,
-                    shares=int(_number(props.get("보유수량", {})) or 0),
+                    buy_price=_number(props.get("✱ 매수단가", {})) or 0,
+                    shares=int(_number(props.get("✱ 보유수량", {})) or 0),
                     # 1차·2차 익절가는 읽지 않는다 (청산은 10일 저가 기준).
                     # 노션 칸은 비교용으로 남겨두되 계산에 넣지 않는다.
                     reeval_date=_date_val(props.get("재평가 기한", {})),
@@ -131,16 +131,16 @@ def fetch_holdings() -> list[tuple[str, HoldingInput]]:
                     prev_stop_loss=_number(props.get("손절선", {})),
                     notion_atr=_number(props.get("ATR", {})),
                     # 진입시 고정값 – 배치는 읽기만 하고 덮어쓰지 않는다
-                    entry_atr=_number(props.get("진입시 ATR", {})),
+                    entry_atr=_number(props.get("✱ 진입시 ATR", {})),
                     last_buy_price=_number(props.get("마지막 매수가", {})),
                     signal_first_date=_date_val(props.get("신호 최초 발생일", {})),
                     news_memo=_text(props.get("공시·뉴스", {})).strip(),
                     exit_signal=_flag(props.get("철수신호", {})),
                     news_date=_date_val(props.get("뉴스 확인일", {})),
                     # 메일 카드용 – 사람이 적어두는 판단 근거 (읽기만 한다)
-                    buy_reason=_text(props.get("산 이유", {})).strip(),
+                    buy_reason=_text(props.get("✱ 산 이유", {})).strip(),
                     bull_case=_text(props.get("강세론", {})).strip(),
-                    bear_case=_text(props.get("약세론", {})).strip(),
+                    bear_case=_text(props.get("✱ 약세론", {})).strip(),
                     next_event=_text(props.get("다음 확인 이벤트", {})).strip(),
                 )
                 if not inp.ticker:
@@ -163,7 +163,7 @@ def fetch_holdings() -> list[tuple[str, HoldingInput]]:
 # (공시·뉴스 / 철수신호 / 뉴스 확인일)과 사람이 쓰는 칸은 절대 건드리지 않는다.
 BATCH_WRITABLE = (
     "ATR",
-    "진입시 ATR",          # 값이 없을 때 최초 1회만
+    "✱ 진입시 ATR",          # 값이 없을 때 최초 1회만
     "손절선",
     "진입후 최고가",
     "최근 판정",
@@ -215,7 +215,7 @@ def update_holding(
     # 진입시 ATR·마지막 매수가는 '비어 있을 때만' 채운다. 이미 값이 있으면
     # 배치가 절대 덮어쓰지 않는다 (진입 시점 고정값이므로).
     if inp is None or inp.entry_atr is None:
-        desired["진입시 ATR"] = {"number": result.entry_atr or None}
+        desired["✱ 진입시 ATR"] = {"number": result.entry_atr or None}
     if inp is None or inp.last_buy_price is None:
         desired["마지막 매수가"] = {"number": result.last_buy_price or None}
 
