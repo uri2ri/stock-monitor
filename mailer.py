@@ -101,24 +101,29 @@ def _is_stop(res: HoldingResult) -> bool:
     return res.verdict == "손절"
 
 
-def _linked_name(inp: HoldingInput, *, color: str = "", bold: bool = False) -> str:
+def _linked(name: str, ticker: str, *, color: str = "", bold: bool = False) -> str:
     """종목명. STREAMLIT_APP_URL이 설정돼 있으면 종목분석 딥링크로 감싼다.
 
     카톡과 core.build_stock_link()를 공유한다 (중복 구현 금지). 링크가
-    없으면(빈 문자열) 기존처럼 그냥 텍스트로 표시한다.
+    없으면(빈 문자열) 기존처럼 그냥 텍스트로 표시한다. 보유종목·즐겨찾기
+    섹션이 이 함수를 함께 쓴다.
     """
-    name = html.escape(inp.name)
+    escaped = html.escape(name)
     style = f"color:{color};" if color else ""
     if bold:
         style += "font-weight:bold;"
 
-    link = build_stock_link(inp.ticker)
+    link = build_stock_link(ticker)
     if link:
         link_style = (style or "color:inherit;") + "text-decoration:underline;"
-        return f'<a href="{html.escape(link)}" style="{link_style}">{name}</a>'
+        return f'<a href="{html.escape(link)}" style="{link_style}">{escaped}</a>'
     if style:
-        return f'<span style="{style}">{name}</span>'
-    return name
+        return f'<span style="{style}">{escaped}</span>'
+    return escaped
+
+
+def _linked_name(inp: HoldingInput, *, color: str = "", bold: bool = False) -> str:
+    return _linked(inp.name, inp.ticker, color=color, bold=bold)
 
 
 def _or_dash(value: str) -> str:
@@ -311,11 +316,59 @@ def _card_html(inp: HoldingInput, res: HoldingResult, today: date) -> str:
   </div>"""
 
 
+def _build_favorites_html(favorites: Sequence[dict]) -> str:
+    """즐겨찾기 표. 비어 있으면 빈 문자열을 돌려줘 섹션 자체를 생략한다.
+
+    favorites의 각 dict는 notion_repo.fetch_favorites()가 주는 item과
+    같은 키를 쓴다 (ticker/name/category/current_price/gap_atr/atr_pct/
+    verdict). 계산 전(야간 배치가 아직 안 돈) 종목은 해당 칸이 None이라
+    '-'로 표시된다.
+    """
+    if not favorites:
+        return ""
+
+    head = "".join(
+        f'<th style="padding:8px 10px;border:1px solid {C_BORDER};'
+        f'background-color:{C_HEAD_BG};text-align:center;white-space:nowrap;">'
+        f"{html.escape(c)}</th>"
+        for c in ("종목명(코드)", "구분", "현재가", "갭(×ATR)", "ATR%", "판정")
+    )
+
+    def _row(item: dict) -> str:
+        name_cell = (
+            f'{_linked(item["name"], item["ticker"])} '
+            f'<span style="color:{C_MUTED};font-size:12px;">'
+            f'({html.escape(item["ticker"])})</span>'
+        )
+        gap = item.get("gap_atr")
+        atr_pct = item.get("atr_pct")
+        cells = [
+            _td(name_cell, align="left"),
+            _td(html.escape(item.get("category") or EMPTY), align="center"),
+            _td(_fmt(item.get("current_price"))
+                if item.get("current_price") else EMPTY),
+            _td(f"{gap:+.2f}" if gap is not None else EMPTY),
+            _td(f"{atr_pct:.1f}%" if atr_pct is not None else EMPTY),
+            _td(html.escape(item.get("verdict") or EMPTY), align="center"),
+        ]
+        return "<tr>" + "".join(cells) + "</tr>"
+
+    body = "".join(_row(item) for item in favorites)
+
+    return f"""
+  <h3 style="margin:20px 0 10px;">■ 즐겨찾기</h3>
+  <table style="border-collapse:collapse;border:1px solid {C_BORDER};font-size:13px;">
+    <thead><tr>{head}</tr></thead>
+    <tbody>{body}</tbody>
+  </table>"""
+
+
 def _build_html(
     rows: Sequence[ReportRow],
     risk: PortfolioRisk,
     has_errors: bool,
     today: date,
+    favorites: Sequence[dict] = (),
 ) -> str:
     rows = _sorted_rows(rows)      # 조치 필요 종목이 위로
 
@@ -363,6 +416,8 @@ def _build_html(
     cards = "".join(_card_html(inp, res, today) for inp, res in rows)
     card_section = f"""
   <h3 style="margin:20px 0 10px;">📋 종목별 상세</h3>{cards}"""
+
+    favorites_section = _build_favorites_html(favorites)
 
     risk_color = C_STOP_TEXT if risk.risk_warning else "#212529"
     warn = " ⚠️ 6% 초과" if risk.risk_warning else ""
@@ -420,6 +475,7 @@ sans-serif;font-size:14px;color:#212529;line-height:1.5;">
     <tbody>{body_rows}</tbody>
   </table>
 {card_section}
+{favorites_section}
 
   <table style="border-collapse:collapse;margin-top:16px;font-size:14px;">
     <tr>
@@ -442,11 +498,33 @@ sans-serif;font-size:14px;color:#212529;line-height:1.5;">
 
 # ── 텍스트 대체본 ───────────────────────────────────────────
 
+def _build_favorites_text(favorites: Sequence[dict]) -> list[str]:
+    """즐겨찾기 섹션 줄 목록. 비어 있으면 빈 리스트 (섹션 생략)."""
+    if not favorites:
+        return []
+
+    lines = ["[즐겨찾기]"]
+    for item in favorites:
+        price = item.get("current_price")
+        gap = item.get("gap_atr")
+        atr_pct = item.get("atr_pct")
+        lines.append(
+            f"  {item.get('verdict') or EMPTY:<5} {item['name']} "
+            f"({item['ticker']}) · {item.get('category') or EMPTY} "
+            f"{_fmt(price) if price else EMPTY} "
+            f"({f'{gap:+.2f}N' if gap is not None else EMPTY}) "
+            f"ATR% {f'{atr_pct:.1f}%' if atr_pct is not None else EMPTY}"
+        )
+    lines.append("")
+    return lines
+
+
 def _build_text(
     rows: Sequence[ReportRow],
     risk: PortfolioRisk,
     has_errors: bool,
     today: date,
+    favorites: Sequence[dict] = (),
 ) -> str:
     rows = _sorted_rows(rows)      # 조치 필요 종목이 위로
 
@@ -517,6 +595,8 @@ def _build_text(
             lines.append(f"  메모: {note}")
         lines.append("")
 
+    lines.extend(_build_favorites_text(favorites))
+
     warn = " (6% 초과)" if risk.risk_warning else ""
     lines.append(
         f"전체 리스크: {risk.total_risk_pct:.2f}% "
@@ -553,6 +633,7 @@ def send_report_mail(
     risk: PortfolioRisk,
     has_errors: bool = False,
     today: Optional[date] = None,
+    favorites: Sequence[dict] = (),
 ) -> bool:
     """상세 리포트를 Gmail SMTP로 발송한다.
 
@@ -561,6 +642,9 @@ def send_report_mail(
         risk: 포트폴리오 리스크 요약
         has_errors: 조회/갱신 실패가 있었는지
         today: 기준일 (기본값 오늘)
+        favorites: 노션 즐겨찾기 DB 조회 결과 (notion_repo.fetch_favorites()의
+            item dict 목록, page_id는 뺀 것). 비어 있으면 즐겨찾기 섹션 생략.
+            보유종목 섹션 로직에는 영향 없다.
 
     Returns:
         True  – 발송 완료
@@ -588,9 +672,9 @@ def send_report_mail(
     msg["From"] = sender
     msg["To"] = ", ".join(recipients)
 
-    msg.set_content(_build_text(rows, risk, has_errors, today))
+    msg.set_content(_build_text(rows, risk, has_errors, today, favorites))
     msg.add_alternative(
-        _build_html(rows, risk, has_errors, today), subtype="html"
+        _build_html(rows, risk, has_errors, today, favorites), subtype="html"
     )
     # 차트 추가 시:
     #   msg.get_payload()[1].add_related(png_bytes, "image", "png", cid="chart")

@@ -249,3 +249,133 @@ def update_holding(
     logger.info(
         "[%s] 노션 업데이트 완료 (%s)", result.name, ", ".join(properties)
     )
+
+
+# ── 즐겨찾기 모니터링 DB ────────────────────────────────────
+#
+# 보유종목 점검표 DB와 완전히 별개다. 서로의 칸을 읽거나 쓰지 않는다.
+#
+# 스키마 (실제 조회로 확인함):
+#   입력 칸 : 종목명(title) · 코드(rich_text) · 구분(select: 주식/ETF) · 메모(rich_text)
+#   계산 칸 : 현재가·ATR·ATR%·20일고가·갭(×ATR)·10일저가(number) ·
+#             판정(rich_text) · 확인일(date)
+#
+# "×"는 U+00D7(곱셈기호)다. 속성명을 손으로 다시 치지 말고 이 파일의
+# 상수를 참조할 것 — 알파벳 x로 잘못 치면 노션이 새 칸을 만들어버린다.
+
+FAVORITES_GAP_ATR_PROP = "갭(×ATR)"
+
+
+def fetch_favorites() -> list[tuple[str, dict]]:
+    """즐겨찾기 DB 전체 조회. (page_id, dict) 목록을 돌려준다.
+
+    dict 키: ticker, name, category, memo, current_price, atr, atr_pct,
+    high20, gap_atr, verdict, low10, checked_date.
+    계산 전 종목은 계산 칸이 전부 None이다 (아직 배치가 안 돈 것).
+    """
+    db_id = os.environ["NOTION_FAVORITES_DB_ID"]
+    url = f"{NOTION_BASE}/databases/{db_id}/query"
+
+    results: list[tuple[str, dict]] = []
+    has_more = True
+    start_cursor: Optional[str] = None
+    payload: dict[str, Any] = {"page_size": 100}
+
+    while has_more:
+        if start_cursor:
+            payload["start_cursor"] = start_cursor
+
+        resp = requests.post(url, headers=_headers(), json=payload, timeout=30)
+        resp.raise_for_status()
+        data = resp.json()
+
+        for page in data.get("results", []):
+            page_id = page["id"]
+            props = page.get("properties", {})
+            try:
+                item = {
+                    "ticker": _text(props.get("코드", {})).strip(),
+                    "name": _text(props.get("종목명", {})).strip(),
+                    "category": _select(props.get("구분", {})),
+                    "memo": _text(props.get("메모", {})).strip(),
+                    "current_price": _number(props.get("현재가", {})),
+                    "atr": _number(props.get("ATR", {})),
+                    "atr_pct": _number(props.get("ATR%", {})),
+                    "high20": _number(props.get("20일고가", {})),
+                    "gap_atr": _number(props.get(FAVORITES_GAP_ATR_PROP, {})),
+                    "verdict": _text(props.get("판정", {})).strip(),
+                    "low10": _number(props.get("10일저가", {})),
+                    "checked_date": _date_val(props.get("확인일", {})),
+                }
+                if not item["ticker"]:
+                    logger.warning("즐겨찾기: 코드 없는 행 무시 page_id=%s", page_id)
+                    continue
+                results.append((page_id, item))
+            except Exception:
+                logger.exception("즐겨찾기 행 파싱 실패: page_id=%s", page_id)
+
+        has_more = data.get("has_more", False)
+        start_cursor = data.get("next_cursor")
+
+    logger.info("노션에서 즐겨찾기 %d건 로드", len(results))
+    return results
+
+
+def add_favorite(ticker: str, name: str, category: str) -> str:
+    """즐겨찾기 페이지 생성. 계산 칸은 비워둔다 (야간 배치가 채운다).
+
+    Returns:
+        생성된 page_id
+    """
+    db_id = os.environ["NOTION_FAVORITES_DB_ID"]
+    payload = {
+        "parent": {"database_id": db_id},
+        "properties": {
+            "종목명": {"title": [{"type": "text", "text": {"content": name}}]},
+            "코드": {"rich_text": [{"type": "text", "text": {"content": ticker}}]},
+            "구분": {"select": {"name": category}},
+        },
+    }
+    resp = requests.post(f"{NOTION_BASE}/pages", headers=_headers(),
+                          json=payload, timeout=30)
+    resp.raise_for_status()
+    page_id = resp.json()["id"]
+    logger.info("즐겨찾기 추가: %s(%s) page_id=%s", name, ticker, page_id)
+    return page_id
+
+
+def remove_favorite(page_id: str) -> None:
+    """즐겨찾기 삭제. 노션 API는 진짜 삭제 대신 보관(archive) 처리한다."""
+    resp = requests.patch(
+        f"{NOTION_BASE}/pages/{page_id}",
+        headers=_headers(),
+        json={"archived": True},
+        timeout=30,
+    )
+    resp.raise_for_status()
+    logger.info("즐겨찾기 삭제: page_id=%s", page_id)
+
+
+def update_favorite_calc(page_id: str, calc: dict) -> None:
+    """야간 배치가 계산 칸만 갱신한다. 입력 칸(종목명·코드·구분·메모)은 건드리지 않는다.
+
+    calc 키: current_price, atr, atr_pct, high20, gap_atr, verdict, low10.
+    """
+    properties = {
+        "현재가": {"number": calc.get("current_price")},
+        "ATR": {"number": calc.get("atr")},
+        "ATR%": {"number": calc.get("atr_pct")},
+        "20일고가": {"number": calc.get("high20")},
+        FAVORITES_GAP_ATR_PROP: {"number": calc.get("gap_atr")},
+        "판정": _rich_text(calc.get("verdict") or ""),
+        "10일저가": {"number": calc.get("low10")},
+        "확인일": _date_prop(date.today()),
+    }
+    resp = requests.patch(
+        f"{NOTION_BASE}/pages/{page_id}",
+        headers=_headers(),
+        json={"properties": properties},
+        timeout=30,
+    )
+    resp.raise_for_status()
+    logger.info("즐겨찾기 계산 갱신 완료: page_id=%s", page_id)

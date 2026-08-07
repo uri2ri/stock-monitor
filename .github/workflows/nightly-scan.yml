@@ -77,6 +77,17 @@ jobs:
           git pull --rebase --autostash origin ${{ github.ref_name }}
           git push origin HEAD:${{ github.ref_name }}
 
+      # 전종목 스캔과 완전히 독립이다 – scan_latest.csv를 참조하지 않고
+      # 노션 즐겨찾기 목록을 개별 조회한다. 위 스캔이 실패해도(if: always())
+      # 즐겨찾기 계산은 시도하고, 반대로 이 단계가 실패해도 위의 스캔
+      # 커밋은 이미 끝난 뒤라 영향받지 않는다.
+      - name: Run favorites batch
+        if: always()
+        env:
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+          NOTION_FAVORITES_DB_ID: ${{ secrets.NOTION_FAVORITES_DB_ID }}
+        run: python favorites_batch.py
+
       - name: Upload data on failure
         if: failure()
         uses: actions/upload-artifact@v4

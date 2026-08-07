@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import html
 import io
+import logging
 import re
 import zipfile
 import xml.etree.ElementTree as ET
@@ -26,12 +27,14 @@ import streamlit as st
 from pykrx import stock as krx
 
 import core
+import notion_repo
 import scan_all
 import screener
 
 TAB_ANALYSIS = "종목 분석"
 TAB_BREAKOUT = "오늘의 돌파"
 TAB_SCAN = "전종목 스캔"
+TAB_FAVORITES = "즐겨찾기"
 
 CHART_DAY_OPTIONS = (20, 30, 60)   # 차트에 그릴 거래일 선택지
 CHART_DAYS_DEFAULT = 30            # 신호가 20일·10일 기준이라 60일은 과하다
@@ -575,6 +578,71 @@ def load_name(code: str) -> str:
     return name if isinstance(name, str) and name else code
 
 
+# ── 즐겨찾기 ────────────────────────────────────────────────
+#
+# 노션이 유일한 원본이다. 세션·로컬 파일에 목록을 저장하지 않는다 —
+# 스트림릿 클라우드는 재배포 시 초기화되므로 그때마다 목록이 사라진다.
+
+@st.cache_data(ttl=300, show_spinner=False)
+def load_favorites() -> list[tuple[str, dict]]:
+    """즐겨찾기 목록. 화면 이동마다 재조회하지 않도록 5분 캐시한다."""
+    try:
+        return notion_repo.fetch_favorites()
+    except Exception:
+        logging.exception("즐겨찾기 목록 조회 실패")
+        return []
+
+
+def _favorite_page_id(code: str) -> str | None:
+    for page_id, item in load_favorites():
+        if item["ticker"] == code:
+            return page_id
+    return None
+
+
+def _toggle_favorite(code: str, name: str, etf: bool,
+                      page_id: str | None) -> None:
+    """추가/삭제 실행 후 캐시를 비우고 다시 그린다."""
+    try:
+        if page_id:
+            notion_repo.remove_favorite(page_id)
+            st.toast(f"☆ {name} 즐겨찾기 삭제")
+        else:
+            notion_repo.add_favorite(code, name, "ETF" if etf else "주식")
+            st.toast(f"⭐ {name} 즐겨찾기 추가")
+    except Exception as e:
+        logging.exception("즐겨찾기 처리 실패: %s(%s)", name, code)
+        st.error(f"즐겨찾기 처리 실패: {e}")
+        return
+    load_favorites.clear()
+    st.rerun()
+
+
+def render_favorite_toggle(code: str, name: str, etf: bool) -> None:
+    """별표 버튼. APP_PASSWORD가 설정돼 있으면 통과 전까지 팝오버로 막는다.
+
+    한 번 통과하면 session_state["unlocked"]가 켜져 사이드바의 AI 잠금도
+    같이 풀린다 — 두 기능이 같은 비밀번호·같은 잠금 상태를 공유한다.
+    """
+    page_id = _favorite_page_id(code)
+    label = "⭐" if page_id else "☆"
+    app_password = read_secret("APP_PASSWORD")
+
+    if not app_password or st.session_state.get("unlocked"):
+        if st.button(label, key=f"fav_{code}", help="즐겨찾기 추가/삭제"):
+            _toggle_favorite(code, name, etf, page_id)
+        return
+
+    with st.popover(label, help="즐겨찾기 추가/삭제 (비밀번호 필요)"):
+        entered = st.text_input("비밀번호", type="password", key=f"fav_pw_{code}")
+        if st.button("확인", key=f"fav_pw_btn_{code}"):
+            if entered == app_password:
+                st.session_state["unlocked"] = True
+                _toggle_favorite(code, name, etf, page_id)
+            else:
+                st.error("비밀번호가 일치하지 않습니다.")
+
+
 # ── 진입 신호 판정 ──────────────────────────────────────────
 
 def entry_state(sig: core.TrendSignal, atr: float) -> tuple[str, str]:
@@ -768,22 +836,37 @@ st.markdown('<div id="stock-analysis-top"></div>', unsafe_allow_html=True)
 st.title("📊 종목 진입 점검")
 st.caption("신규 종목 조사 전용 · 터틀 트레이딩 규칙을 그대로 계산해 보여줍니다.")
 
-# 앱이 공개라 AI 호출만 비밀번호로 막는다. 조회·차트·계산은 누구나 쓸 수 있다.
+# 앱이 공개라 AI 호출·즐겨찾기 쓰기만 비밀번호로 막는다. 조회·차트·계산과
+# ?code= 딥링크 진입은 누구나 쓸 수 있다 — 카톡 인앱 브라우저는 세션이
+# 매번 새로 뜰 수 있어, 앱 전체를 게이트하면 그 진입 동선이 깨진다.
+# session_state["unlocked"]는 이 사이드바와 종목분석 화면의 별표 버튼
+# (즐겨찾기 추가/삭제 팝오버)이 함께 쓴다 — 어느 쪽에서 통과해도 나머지
+# 잠긴 기능이 같이 풀린다.
+st.session_state.setdefault("unlocked", False)
+
 with st.sidebar:
     st.subheader("🔐 접근")
     _app_password = read_secret("APP_PASSWORD")
-    _entered = st.text_input(
-        "비밀번호", type="password",
-        help="AI 의견 기능에만 필요합니다.",
-    )
-    ai_unlocked = bool(_app_password) and _entered == _app_password
+    if _app_password and not st.session_state["unlocked"]:
+        _entered = st.text_input(
+            "비밀번호", type="password",
+            help="AI 의견·즐겨찾기 추가/삭제에 필요합니다.",
+        )
+        if _entered:
+            if _entered == _app_password:
+                st.session_state["unlocked"] = True
+            else:
+                st.error("비밀번호가 일치하지 않습니다.")
 
-    if ai_unlocked:
-        st.success("AI 의견 사용 가능")
+    if st.session_state["unlocked"]:
+        st.success("AI 의견 · 즐겨찾기 사용 가능")
     elif not _app_password:
-        st.caption("APP_PASSWORD 미설정 — AI 의견을 쓸 수 없습니다.")
-    elif _entered:
-        st.error("비밀번호가 일치하지 않습니다.")
+        st.caption(
+            "APP_PASSWORD 미설정 — AI 의견을 쓸 수 없습니다 "
+            "(즐겨찾기는 잠금 없이 사용 가능합니다)."
+        )
+
+    ai_unlocked = st.session_state["unlocked"]
 
     st.divider()
     st.subheader("💰 계좌")
@@ -893,9 +976,13 @@ def render_stock_report(code: str, capital: float, ai_unlocked: bool) -> None:
 
     name = load_name(code)
     etf = is_etf(code)
-    st.subheader(f"{name} ({code})")
-    if etf:
-        st.badge("ETF", color="blue")
+    col_title, col_star = st.columns([6, 1])
+    with col_title:
+        st.subheader(f"{name} ({code})")
+        if etf:
+            st.badge("ETF", color="blue")
+    with col_star:
+        render_favorite_toggle(code, name, etf)
     st.caption(
         f"{df.index[0]:%Y-%m-%d} ~ {df.index[-1]:%Y-%m-%d} · {len(df)}거래일 · "
         f"ATR은 터틀 원본 방식(Wilder, {core.ATR_PERIOD}일)"
@@ -1188,8 +1275,10 @@ def render_scan_table(
     metric_label: str,
     metric_signed: bool = True,
     highlight_metric: bool = True,
+    category_label: str = "업종",
+    show_vol_mult: bool = True,
 ) -> None:
-    """오늘의 돌파·전종목 스캔이 공유하는 표.
+    """오늘의 돌파·전종목 스캔·즐겨찾기가 공유하는 표.
 
     rows의 각 dict는 name·code·sector·price·metric·atr_pct·vol_mult·verdict
     키를 가진다 (metric·vol_mult는 계산 불가 시 None). 색상은 회색약
@@ -1203,27 +1292,38 @@ def render_scan_table(
             부호를 보여줄 이유가 없다)
         highlight_metric: metric 컬럼에 색을 입힐지. '임박' 섹션처럼
             아직 규칙을 통과하지 않은 값은 강조하지 않는다.
+        category_label: 두 번째 컬럼 이름. 즐겨찾기 표는 업종 데이터가
+            없어 "구분"(주식/ETF)을 대신 넣는다 — 이때 rows의 sector
+            키에 그 값을 담아 넘긴다.
+        show_vol_mult: 거래량배수 컬럼 표시 여부. 즐겨찾기는 이 값을
+            계산하지 않아 컬럼 자체를 뺀다.
     """
-    df = pd.DataFrame({
+    columns = {
         "종목명(코드)": [f"{r['name']} ({r['code']})" for r in rows],
-        "업종": [r["sector"] for r in rows],
+        category_label: [r["sector"] for r in rows],
         "현재가": [r["price"] for r in rows],
         metric_label: [r["metric"] for r in rows],
         "ATR%": [r["atr_pct"] for r in rows],
-        "거래량배수": [r["vol_mult"] for r in rows],
-        "판정": [r["verdict"] for r in rows],
-    })
+    }
+    if show_vol_mult:
+        columns["거래량배수"] = [r["vol_mult"] for r in rows]
+    columns["판정"] = [r["verdict"] for r in rows]
+    df = pd.DataFrame(columns)
 
     metric_fmt = (
         (lambda v: f"{v:+.2f}" if pd.notna(v) else "-") if metric_signed
         else (lambda v: f"{v:.2f}" if pd.notna(v) else "-")
     )
-    styler = df.style.format({
-        "현재가": "{:,.0f}",
+    format_dict = {
+        # 즐겨찾기는 야간 배치 전이면 현재가가 비어 있을 수 있어(None→NaN)
+        # 고정 포맷 문자열 대신 NaN-safe 람다를 쓴다.
+        "현재가": lambda v: f"{v:,.0f}" if pd.notna(v) else "-",
         metric_label: metric_fmt,
         "ATR%": lambda v: f"{v:.1f}%" if pd.notna(v) else "-",
-        "거래량배수": lambda v: f"{v:.1f}배" if pd.notna(v) else "-",
-    })
+    }
+    if show_vol_mult:
+        format_dict["거래량배수"] = lambda v: f"{v:.1f}배" if pd.notna(v) else "-"
+    styler = df.style.format(format_dict)
 
     if highlight_metric:
         styler = styler.map(
@@ -1234,10 +1334,11 @@ def render_scan_table(
         lambda v: SCAN_TABLE_HIGHLIGHT if pd.notna(v) and v >= core.SCAN_ATR_PCT_MIN else "",
         subset=["ATR%"],
     )
-    styler = styler.map(
-        lambda v: SCAN_TABLE_HIGHLIGHT if pd.notna(v) and v >= core.VOL_MULT_MIN else "",
-        subset=["거래량배수"],
-    )
+    if show_vol_mult:
+        styler = styler.map(
+            lambda v: SCAN_TABLE_HIGHLIGHT if pd.notna(v) and v >= core.VOL_MULT_MIN else "",
+            subset=["거래량배수"],
+        )
 
     st.dataframe(styler, hide_index=True, width="stretch")
 
@@ -1629,13 +1730,83 @@ def render_scan(capital: float, ai_unlocked: bool) -> None:
     render_scroll_to_top_button()
 
 
+# ── [즐겨찾기] 화면 ─────────────────────────────────────────
+
+def render_favorites(capital: float, ai_unlocked: bool) -> None:
+    """[즐겨찾기] 화면. 노션 "즐겨찾기 모니터링" DB를 읽어 보여준다.
+
+    여기서는 계산하지 않는다 — 매일 밤 favorites_batch.py가 종가 기준
+    으로 계산해 노션에 써둔 값을 그대로 읽는다 (scan_latest.csv와는
+    무관한 별도 계산 경로 — 유동성 컷에 걸린 종목도 여기엔 항상 있다).
+    """
+    favorites = load_favorites()
+    if not favorites:
+        st.info(
+            "즐겨찾기한 종목이 없습니다. [종목 분석]에서 별표(⭐)를 눌러 "
+            "추가하세요."
+        )
+        return
+
+    checked_dates = {
+        item["checked_date"] for _, item in favorites if item["checked_date"]
+    }
+    if checked_dates:
+        st.caption(
+            f"배치 기준일: {max(checked_dates).isoformat()} "
+            "(매일 밤 종가 기준으로 계산됩니다)"
+        )
+    uncalculated = sum(1 for _, item in favorites if item["checked_date"] is None)
+    if uncalculated:
+        st.caption(
+            f"⚠ {uncalculated}종목은 아직 계산 전입니다 "
+            "(다음 야간 배치에서 채워집니다)."
+        )
+
+    render_scan_table(
+        [
+            {
+                "name": item["name"],
+                "code": item["ticker"],
+                "sector": item.get("category") or "-",
+                "price": item["current_price"],
+                "metric": item["gap_atr"],
+                "atr_pct": item["atr_pct"],
+                "vol_mult": None,
+                "verdict": item.get("verdict") or "-",
+            }
+            for _, item in favorites
+        ],
+        metric_label="갭(×ATR)",
+        category_label="구분",
+        show_vol_mult=False,
+    )
+
+    st.markdown("### ■ 종목 열기")
+    pick_col, btn_col = st.columns([3, 1])
+    with pick_col:
+        labels = {
+            f"{item['name']} ({item['ticker']})": item["ticker"]
+            for _, item in favorites
+        }
+        chosen = st.selectbox("리포트를 볼 종목", list(labels), key="fav_pick")
+    with btn_col:
+        st.write("")
+        if st.button("종목 분석 보기", type="primary", width="stretch",
+                     key="fav_open"):
+            ticker = labels[chosen]
+            st.session_state["dialog_ticker"] = ticker
+            _stock_dialog(ticker, capital, ai_unlocked)
+
+    render_scroll_to_top_button()
+
+
 # ── 탭 ──────────────────────────────────────────────────────
 
 # st.tabs는 위젯 상호작용이 있으면 선택이 유지되지 않는다. 상태를 가진
 # segmented_control을 탭 막대로 써서 슬라이더 등을 조작해도 탭이 안 바뀐다.
 st.session_state.setdefault("tab", TAB_ANALYSIS)
 _tab = st.segmented_control(
-    "화면", (TAB_ANALYSIS, TAB_BREAKOUT, TAB_SCAN), key="tab",
+    "화면", (TAB_ANALYSIS, TAB_BREAKOUT, TAB_SCAN, TAB_FAVORITES), key="tab",
     label_visibility="collapsed",
 )
 
@@ -1644,5 +1815,7 @@ if _tab == TAB_BREAKOUT:
     render_breakout(capital, ai_unlocked)
 elif _tab == TAB_SCAN:
     render_scan(capital, ai_unlocked)
+elif _tab == TAB_FAVORITES:
+    render_favorites(capital, ai_unlocked)
 else:
     render_analysis(capital, ai_unlocked)

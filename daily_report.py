@@ -22,7 +22,7 @@ except ImportError:
 from core import HoldingInput, HoldingResult, calc_portfolio_risk, evaluate_holding
 from kakao import send_kakao_message
 from mailer import send_report_mail
-from notion_repo import fetch_holdings, update_holding
+from notion_repo import fetch_favorites, fetch_holdings, update_holding
 
 logging.basicConfig(
     level=logging.INFO,
@@ -36,6 +36,7 @@ def _build_message(
     results: list[HoldingResult],
     total_capital: float,
     has_errors: bool,
+    favorites: list[dict] | None = None,
 ) -> str:
     """카카오톡 메시지를 200자 이내로 생성한다.
 
@@ -44,6 +45,10 @@ def _build_message(
     · 삼성전기 손절 (1,268,000)
     리스크 4.2%
     손절 대기 1건        ← 손절 판정이 있을 때만
+    즐겨찾기 진입가능 N건  ← 즐겨찾기 중 진입가능 판정이 있을 때만
+
+    즐겨찾기는 200자 제한 탓에 종목 내용은 넣지 않고 건수 한 줄만
+    붙인다. 딥링크도 넣지 않는다 – 자세한 내용은 메일에서 본다.
     """
     today = date.today()
     header = f"[{today.month}/{today.day}]"
@@ -77,6 +82,12 @@ def _build_message(
 
     if has_errors:
         lines.append("⚠️일부 조회 실패")
+
+    fav_enterable = sum(
+        1 for f in (favorites or []) if f.get("verdict") == "진입가능"
+    )
+    if fav_enterable:
+        lines.append(f"즐겨찾기 진입가능 {fav_enterable}건")
 
     msg = "\n".join(lines)
 
@@ -166,8 +177,16 @@ def main() -> None:
     if risk.risk_warning:
         logger.warning("⚠️ 전체 리스크 6%% 초과: %.2f%%", risk.total_risk_pct)
 
+    # 4.5) 즐겨찾기 (보유종목 점검표와 완전히 별개 DB). 실패해도 아침
+    # 리포트 전체를 막지 않는다 – 빈 목록으로 진행한다.
+    try:
+        favorites = [item for _, item in fetch_favorites()]
+    except Exception:
+        logger.exception("즐겨찾기 조회 실패")
+        favorites = []
+
     # 5) 카카오톡 전송
-    msg = _build_message(results, total_capital, has_errors)
+    msg = _build_message(results, total_capital, has_errors, favorites)
     logger.info("카카오톡 메시지:\n%s", msg)
 
     try:
@@ -178,7 +197,7 @@ def main() -> None:
 
     # 6) 상세 리포트 메일 전송 (실패해도 전체 실행은 계속)
     try:
-        send_report_mail(rows, risk, has_errors)
+        send_report_mail(rows, risk, has_errors, favorites=favorites)
     except Exception:
         logger.exception("메일 발송 실패")
 
