@@ -7,10 +7,12 @@ GitHub Actions: workflow에서 직접 실행
 
 from __future__ import annotations
 
+import json
 import logging
 import os
 import sys
 from datetime import date
+from pathlib import Path
 
 # .env 지원 (로컬 테스트용, 없으면 무시)
 try:
@@ -19,10 +21,16 @@ try:
 except ImportError:
     pass
 
+import core
 from core import HoldingInput, HoldingResult, calc_portfolio_risk, evaluate_holding
 from kakao import send_kakao_message
 from mailer import send_report_mail
 from notion_repo import fetch_favorites, fetch_holdings, update_holding
+
+# intraday_watch.py가 10분마다 읽는다. 장중에 노션을 매번 조회하지 않게
+# 아침 배치가 하루 한 번 계산해 파일로 남긴다.
+DATA_DIR = Path(__file__).resolve().parent / "data"
+CORR_UNITS_PATH = DATA_DIR / "corr_units.json"
 
 logging.basicConfig(
     level=logging.INFO,
@@ -32,11 +40,34 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
+def _write_corr_units(holdings: list[HoldingInput], total_capital: float) -> None:
+    """상관군별 누적 유닛을 파일로 저장한다 (intraday_watch.py 공용).
+
+    실패해도 아침 리포트 전체를 막지 않는다 – 로그만 남기고 직전
+    파일을 그대로 둔다 (scan_latest.csv와 같은 태도).
+    """
+    corr = core.calc_corr_units(holdings, total_capital)
+    payload = {
+        "date": date.today().isoformat(),
+        "total_units": round(corr.total_units, 3),
+        "groups": {g: round(u, 3) for g, u in corr.group_units.items()},
+    }
+    DATA_DIR.mkdir(parents=True, exist_ok=True)
+    CORR_UNITS_PATH.write_text(
+        json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8"
+    )
+    logger.info(
+        "상관군 유닛 저장: 전체 %.2f · 상관군 %d개",
+        corr.total_units, len(corr.group_units),
+    )
+
+
 def _build_message(
     results: list[HoldingResult],
     total_capital: float,
     has_errors: bool,
     favorites: list[dict] | None = None,
+    stop_updates: list[tuple[HoldingInput, HoldingResult]] | None = None,
 ) -> str:
     """카카오톡 메시지를 200자 이내로 생성한다.
 
@@ -45,6 +76,7 @@ def _build_message(
     · 삼성전기 손절 (1,268,000)
     리스크 4.2%
     손절 대기 1건        ← 손절 판정이 있을 때만
+    손절선 갱신 N건: 종목1 종목2  ← 갱신 알림 대상이 있을 때만
     즐겨찾기 진입가능 N건  ← 즐겨찾기 중 진입가능 판정이 있을 때만
 
     즐겨찾기는 200자 제한 탓에 종목 내용은 넣지 않고 건수 한 줄만
@@ -79,6 +111,10 @@ def _build_message(
     # 손절선을 이미 깬 종목은 리스크 합계에서 0으로 잡히기 때문이다.
     if risk.stop_pending:
         lines.append(f"손절 대기 {risk.stop_pending}건")
+
+    if stop_updates:
+        names = " ".join(res.name for _, res in stop_updates)
+        lines.append(f"손절선 갱신 {len(stop_updates)}건: {names}")
 
     if has_errors:
         lines.append("⚠️일부 조회 실패")
@@ -185,8 +221,26 @@ def main() -> None:
         logger.exception("즐겨찾기 조회 실패")
         favorites = []
 
+    # 4.6) 손절선 갱신 알림 대상 – evaluate_holding이 종목별로 이미 판정했다.
+    # 메일 표에 '기존' 값(inp.last_alerted_stop)이 필요해 쌍으로 들고 다닌다.
+    stop_updates = [(inp, res) for inp, res in rows if res.stop_update_alert]
+    if stop_updates:
+        logger.info(
+            "손절선 갱신 알림 %d건: %s",
+            len(stop_updates), ", ".join(res.name for _, res in stop_updates),
+        )
+
+    # 4.7) 상관군 유닛 저장 (intraday_watch.py가 장중에 읽는다). 실패해도
+    # 아침 리포트 전체를 막지 않는다 – 로그만 남기고 계속한다.
+    try:
+        _write_corr_units([inp for inp, _ in rows], total_capital)
+    except Exception:
+        logger.exception("상관군 유닛 파일 저장 실패")
+
     # 5) 카카오톡 전송
-    msg = _build_message(results, total_capital, has_errors, favorites)
+    msg = _build_message(
+        results, total_capital, has_errors, favorites, stop_updates
+    )
     logger.info("카카오톡 메시지:\n%s", msg)
 
     try:
@@ -197,7 +251,9 @@ def main() -> None:
 
     # 6) 상세 리포트 메일 전송 (실패해도 전체 실행은 계속)
     try:
-        send_report_mail(rows, risk, has_errors, favorites=favorites)
+        send_report_mail(
+            rows, risk, has_errors, favorites=favorites, stop_updates=stop_updates
+        )
     except Exception:
         logger.exception("메일 발송 실패")
 

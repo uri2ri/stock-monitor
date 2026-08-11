@@ -9,6 +9,14 @@ on:
     - cron: "37 22 * * 0-4"
   workflow_dispatch:
 
+# data/corr_units.json을 커밋한다 (intraday_watch.py가 장중에 읽는 캐시).
+# 실행 시각(07:37 KST)이 nightly-scan(21:07)·screener(16:37)·
+# intraday(09:03~15:53)와 겹치지 않아 커밋 충돌 가능성은 낮지만,
+# 같은 브랜치에 push하는 워크플로가 넷이 되므로 pull --rebase 패턴을
+# 나머지 세 워크플로와 동일하게 맞춘다.
+permissions:
+  contents: write
+
 jobs:
   report:
     runs-on: ubuntu-latest
@@ -39,3 +47,20 @@ jobs:
           GMAIL_TO: ${{ secrets.GMAIL_TO }}
           STREAMLIT_APP_URL: ${{ secrets.STREAMLIT_APP_URL }}
         run: python daily_report.py
+
+      # data/corr_units.json만 커밋한다. nightly-scan.yml·intraday.yml과
+      # 같은 패턴 – 리포트가 실패하면(예: 노션 조회 실패로 sys.exit(1))
+      # 파일도 못 만들었을 것이므로 커밋을 시도하지 않는다.
+      - name: Commit correlation units
+        if: success()
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/corr_units.json 2>/dev/null || true
+          if git diff --cached --quiet; then
+            echo "변경 없음 – 커밋하지 않습니다."
+            exit 0
+          fi
+          git commit -m "chore(daily): $(date -u +%Y-%m-%d) 상관군 유닛 갱신 [skip ci]"
+          git pull --rebase --autostash origin ${{ github.ref_name }}
+          git push origin HEAD:${{ github.ref_name }}

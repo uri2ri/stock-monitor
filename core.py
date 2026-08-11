@@ -39,8 +39,11 @@ STOP_ATR_MULT = 2.0      # 손절폭 = 2×ATR
 STOP_METHOD = "half"     # 기본 트레일링 방식 (half | 1to1)
 PYRAMID_ATR_STEP = 0.5   # 1/2 ATR 오를 때마다 1유닛 추가
 CHASE_ATR_MULT = 0.5     # 돌파 후 이만큼 더 진행했으면 추격 구간으로 본다
-MAX_UNITS = 4            # 최대 유닛 수
+MAX_UNITS = 4            # 종목당 최대 유닛 수
+MAX_UNITS_GROUP = 6      # 상관군당 최대 유닛 수
+MAX_UNITS_TOTAL = 12     # 전체 포트폴리오 최대 유닛 수
 DEFAULT_CAPITAL = 10_000_000
+STOP_UPDATE_ATR_MULT = 0.5   # 손절선 갱신 알림 임계값 (× 진입시 ATR)
 FETCH_DAYS = 120         # 기본 조회 거래일 – Wilder 재귀식 워밍업용
 MIN_TRADING_DAYS = 40    # 이보다 적으면 조회 실패로 본다
 
@@ -607,6 +610,7 @@ class HoldingInput:
     entry_atr: Optional[float] = None           # 진입시 ATR – 배치가 덮어쓰지 않는다
     last_buy_price: Optional[float] = None      # 마지막 매수가 (추가매수 기준)
     signal_first_date: Optional[date] = None    # 신호 최초 발생일
+    last_alerted_stop: Optional[float] = None   # 마지막으로 갱신 알림을 보낸 손절선
     # 공시·뉴스 (Cowork가 매일 07:00에 기록) – 계산에는 쓰지 않고 리포트에만 사용
     news_memo: str = ""                      # 공시·뉴스
     exit_signal: bool = False                # 철수신호
@@ -646,6 +650,12 @@ class HoldingResult:
     verdict: str = ""            # 판정
     verdict_memo: str = ""       # 판정 메모
     error: Optional[str] = None  # 조회 실패 시 메시지
+    # 손절선 갱신 알림 – stop_update_alert가 True일 때만 카톡·메일에 노출
+    stop_update_alert: bool = False
+    # 노션 '마지막 알린 손절선'에 쓸 새 값. None이면 그 칸을 건드리지 않는다
+    # (임계값 미달로 알리지 않은 경우, 값을 남겨두면 차이가 계속 리셋돼
+    # 영원히 임계값에 도달하지 못한다).
+    last_alerted_stop: Optional[float] = None
 
     @property
     def is_action_needed(self) -> bool:
@@ -779,6 +789,21 @@ def evaluate_holding(
             round(result.last_buy_price + PYRAMID_ATR_STEP * result.entry_atr)
         )
 
+    # ── 손절선 갱신 알림 ──
+    # entry_atr이 진입 시점에 고정된 값이 아니면(= inp.entry_atr이 비어
+    # 이번에 처음 잡힌 값이면) R배수 기준이 아직 안정적이지 않으므로
+    # 대상에서 제외한다.
+    if inp.entry_atr is None:
+        logger.info("[%s] 진입시 ATR 없음 – 손절선 갱신 알림 대상 제외", inp.name)
+    elif inp.last_alerted_stop is None:
+        # 신규 편입 – 알리지 않고 현재 손절선으로 초기화만 한다
+        result.last_alerted_stop = result.stop_loss
+    else:
+        diff = result.stop_loss - inp.last_alerted_stop
+        if diff >= STOP_UPDATE_ATR_MULT * result.entry_atr:
+            result.stop_update_alert = True
+            result.last_alerted_stop = result.stop_loss
+
     return result
 
 
@@ -846,6 +871,65 @@ def calc_portfolio_risk(
 
     pr.risk_warning = pr.total_risk_pct > 6.0
     return pr
+
+
+# ── 상관군 유닛 집계 ────────────────────────────────────────
+#
+# app.py(진입 점검 화면)와 daily_report.py(장중 감시용 파일 저장)가
+# 같은 정의를 공유한다. 유닛은 진입 시점 ATR 기준이므로 '진입시 ATR'을
+# 우선 쓰고, 없으면 노션 'ATR' 칸(매일 갱신되는 값)으로 대신한다.
+
+
+@dataclass
+class CorrUnits:
+    """보유 종목의 상관군별 누적 유닛수."""
+
+    group_units: dict[str, float] = field(default_factory=dict)
+    total_units: float = 0.0
+    skipped: list[str] = field(default_factory=list)   # 유닛을 셀 수 없었던 종목명
+    known_groups: list[str] = field(default_factory=list)  # 노션에 실제 쓰인 상관군 이름
+
+
+def calc_corr_units(holdings: list[HoldingInput], capital: float) -> CorrUnits:
+    """상관군 이름 목록은 유닛 집계 성패와 무관하게 노션에 실제 쓰인 값을
+    전부 모은 것이다 (드롭다운 선택지·참고 표시용). 그래서 그 이름들은
+    유닛이 하나도 안 잡혀도 0.0으로 결과에 포함된다.
+    """
+    known: set[str] = set()
+    for inp in holdings:
+        group = (inp.corr_group or "").strip()
+        if group:
+            known.add(group)
+
+    group_units: dict[str, float] = {g: 0.0 for g in known}
+    total = 0.0
+    skipped: list[str] = []
+
+    for inp in holdings:
+        group = (inp.corr_group or "").strip()
+        atr = inp.entry_atr or inp.notion_atr
+        if not atr:
+            skipped.append(f"{inp.name}(ATR 없음)")
+            continue
+        if not inp.shares:
+            skipped.append(f"{inp.name}(보유수량 없음)")
+            continue
+        unit_shares = calc_position(atr, capital).unit_shares
+        if unit_shares <= 0:
+            # 1ATR이 계좌 1%보다 커서 1유닛이 0주 – 계좌 규모에 안 맞는 종목
+            skipped.append(f"{inp.name}(1유닛 0주)")
+            continue
+        units = inp.shares / unit_shares
+        total += units
+        if group:
+            group_units[group] = group_units.get(group, 0.0) + units
+
+    return CorrUnits(
+        group_units=group_units,
+        total_units=total,
+        skipped=skipped,
+        known_groups=sorted(known),
+    )
 
 
 # ── CLI 테스트 ──────────────────────────────────────────────

@@ -134,6 +134,7 @@ def fetch_holdings() -> list[tuple[str, HoldingInput]]:
                     entry_atr=_number(props.get("✱ 진입시 ATR", {})),
                     last_buy_price=_number(props.get("마지막 매수가", {})),
                     signal_first_date=_date_val(props.get("신호 최초 발생일", {})),
+                    last_alerted_stop=_number(props.get("마지막 알린 손절선", {})),
                     news_memo=_text(props.get("공시·뉴스", {})).strip(),
                     exit_signal=_flag(props.get("철수신호", {})),
                     news_date=_date_val(props.get("뉴스 확인일", {})),
@@ -171,6 +172,7 @@ BATCH_WRITABLE = (
     "확인일",
     "신호 최초 발생일",
     "마지막 매수가",        # 값이 없을 때만 매수단가로 초기화
+    "마지막 알린 손절선",   # 갱신 알림을 보냈을 때만 (evaluate_holding이 결정)
 )
 
 
@@ -219,6 +221,13 @@ def update_holding(
     if inp is None or inp.last_buy_price is None:
         desired["마지막 매수가"] = {"number": result.last_buy_price or None}
 
+    # 마지막 알린 손절선은 evaluate_holding이 갱신이 필요하다고 판단했을
+    # 때(알림을 보냈거나, 신규 편입이라 초기화가 필요할 때)만 값이 있다.
+    # None이면 이 칸을 아예 건드리지 않는다 – 값을 남겨두면 다음 비교
+    # 기준이 계속 리셋돼 임계값에 영원히 도달하지 못한다.
+    if result.last_alerted_stop is not None:
+        desired["마지막 알린 손절선"] = {"number": result.last_alerted_stop}
+
     properties = {k: v for k, v in desired.items() if k in BATCH_WRITABLE}
 
     # 변경분만 남긴다 (읽어온 값이 있을 때만 비교 가능)
@@ -232,6 +241,9 @@ def update_holding(
             unchanged.append("진입후 최고가")
         if inp.signal_first_date == result.signal_first_date:
             unchanged.append("신호 최초 발생일")
+        if inp.last_alerted_stop is not None and \
+                inp.last_alerted_stop == result.last_alerted_stop:
+            unchanged.append("마지막 알린 손절선")
         for key in unchanged:
             properties.pop(key, None)
 

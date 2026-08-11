@@ -406,9 +406,9 @@ def build_recent_activity_block(
 
 
 # ── 상관군 유닛 카운터 ──────────────────────────────────────
-MAX_UNITS_STOCK = 4       # 종목당
-MAX_UNITS_GROUP = 6       # 상관군당
-MAX_UNITS_TOTAL = 12      # 전체
+# 상한값은 core.py에 있다 (daily_report.py의 corr_units.json 저장과
+# intraday_watch.py의 표시가 같은 값을 써야 하므로 여기서 다시 정의하지
+# 않는다). 종목당 상한은 core.MAX_UNITS.
 
 
 @st.cache_data(ttl=300, show_spinner=False)
@@ -417,13 +417,8 @@ def load_corr_units(
 ) -> tuple[dict[str, float], float, list[str], list[str]]:
     """노션 보유 종목의 상관군별 누적 유닛수.
 
-    유닛은 진입 시점 기준이므로 '진입시 ATR'을 우선 쓰고, 없으면 노션의
-    ATR 칸(매일 갱신되는 값)으로 대신한다. 둘 다 없으면 셀 수 없으므로
-    건너뛰고 그 사실을 함께 돌려준다.
-
-    상관군 이름 목록(반환값 4번째)은 ATR·보유수량 유무와 무관하게 노션에
-    실제로 쓰인 값을 전부 모은 것 — 드롭다운 선택지용이라 유닛 집계 여부에
-    영향받지 않아야 한다.
+    집계 로직 자체는 core.calc_corr_units()에 있다 (daily_report.py와
+    공유 – 다시 구현하지 않는다). 여기서는 노션 조회만 담당한다.
 
     Returns:
         (상관군별 유닛수, 전체 유닛수, 셀 수 없어 건너뛴 종목명, 상관군 이름 목록)
@@ -437,34 +432,9 @@ def load_corr_units(
 
     from notion_repo import fetch_holdings
 
-    groups: dict[str, float] = {}
-    total = 0.0
-    skipped: list[str] = []
-    known_names: set[str] = set()
-
-    for _, inp in fetch_holdings():
-        group = (inp.corr_group or "").strip()
-        if group:
-            known_names.add(group)
-
-        atr = inp.entry_atr or inp.notion_atr
-        if not atr:
-            skipped.append(f"{inp.name}(ATR 없음)")
-            continue
-        if not inp.shares:
-            skipped.append(f"{inp.name}(보유수량 없음)")
-            continue
-        unit_shares = core.calc_position(atr, capital).unit_shares
-        if unit_shares <= 0:
-            # 1ATR이 계좌 1%보다 커서 1유닛이 0주 — 계좌 규모에 안 맞는 종목
-            skipped.append(f"{inp.name}(1유닛 0주)")
-            continue
-        units = inp.shares / unit_shares
-        total += units
-        if group:
-            groups[group] = groups.get(group, 0.0) + units
-
-    return groups, total, skipped, sorted(known_names)
+    holdings = [inp for _, inp in fetch_holdings()]
+    result = core.calc_corr_units(holdings, capital)
+    return result.group_units, result.total_units, result.skipped, result.known_groups
 
 
 def _grounding_sources(candidate) -> list[str]:
@@ -1094,8 +1064,8 @@ def render_stock_report(code: str, capital: float, ai_unlocked: bool) -> None:
     # ── 상관군 유닛 카운터 ──────────────────────────────────────
     st.markdown("### ■ 상관군 유닛")
     st.caption(
-        f"종목당 {MAX_UNITS_STOCK}유닛 · 상관군당 {MAX_UNITS_GROUP}유닛 · "
-        f"전체 {MAX_UNITS_TOTAL}유닛 상한"
+        f"종목당 {core.MAX_UNITS}유닛 · 상관군당 {core.MAX_UNITS_GROUP}유닛 · "
+        f"전체 {core.MAX_UNITS_TOTAL}유닛 상한"
     )
 
     # 노션 조회가 실패해도 이 섹션만 비고 나머지 화면은 그대로 남는다
@@ -1124,27 +1094,27 @@ def render_stock_report(code: str, capital: float, ai_unlocked: bool) -> None:
             if group:
                 st.metric(
                     f"{group} 상관군",
-                    f"현재 {used:g}유닛 / {MAX_UNITS_GROUP}",
-                    delta=f"1유닛 진입 시 {after:g}/{MAX_UNITS_GROUP}",
+                    f"현재 {used:g}유닛 / {core.MAX_UNITS_GROUP}",
+                    delta=f"1유닛 진입 시 {after:g}/{core.MAX_UNITS_GROUP}",
                     delta_color="off",
                 )
-                if used >= MAX_UNITS_GROUP:
+                if used >= core.MAX_UNITS_GROUP:
                     st.error(f"상관군 상한 도달 — 이 종목은 진입 불가")
-                elif after >= MAX_UNITS_GROUP:
+                elif after >= core.MAX_UNITS_GROUP:
                     st.warning(
-                        f"이 종목 1유닛 진입 시 {after:g}/{MAX_UNITS_GROUP}, "
+                        f"이 종목 1유닛 진입 시 {after:g}/{core.MAX_UNITS_GROUP}, "
                         "이후 추가 불가"
                     )
             else:
                 st.caption("상관군을 고르면 누적 유닛을 확인할 수 있습니다.")
 
             total_after = corr_total + 1
-            if corr_total >= MAX_UNITS_TOTAL:
-                st.error(f"전체 {corr_total:g}/{MAX_UNITS_TOTAL}유닛 — 상한 도달")
-            elif total_after > MAX_UNITS_TOTAL:
-                st.warning(f"전체 {corr_total:g}/{MAX_UNITS_TOTAL}유닛 — 1유닛 더 넣으면 초과")
+            if corr_total >= core.MAX_UNITS_TOTAL:
+                st.error(f"전체 {corr_total:g}/{core.MAX_UNITS_TOTAL}유닛 — 상한 도달")
+            elif total_after > core.MAX_UNITS_TOTAL:
+                st.warning(f"전체 {corr_total:g}/{core.MAX_UNITS_TOTAL}유닛 — 1유닛 더 넣으면 초과")
             else:
-                st.caption(f"전체 {corr_total:g}/{MAX_UNITS_TOTAL}유닛")
+                st.caption(f"전체 {corr_total:g}/{core.MAX_UNITS_TOTAL}유닛")
 
         if corr_skipped:
             st.caption("유닛을 셀 수 없어 제외: " + ", ".join(corr_skipped))

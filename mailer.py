@@ -316,6 +316,51 @@ def _card_html(inp: HoldingInput, res: HoldingResult, today: date) -> str:
   </div>"""
 
 
+def _build_stop_updates_html(stop_updates: Sequence[ReportRow]) -> str:
+    """손절선 갱신 필요 표. 대상이 없으면 섹션 자체를 생략한다.
+
+    core.evaluate_holding()이 (마지막 알린 손절선 대비 0.5×진입시ATR
+    이상 상승)일 때만 stop_update_alert를 세우므로, 여기 들어오는 종목은
+    inp.last_alerted_stop이 항상 값을 갖는다.
+    """
+    if not stop_updates:
+        return ""
+
+    head = "".join(
+        f'<th style="padding:8px 10px;border:1px solid {C_BORDER};'
+        f'background-color:{C_HEAD_BG};text-align:center;white-space:nowrap;">'
+        f"{html.escape(c)}</th>"
+        for c in ("종목명(코드)", "기존", "신규", "차이(×ATR)")
+    )
+
+    def _row(inp: HoldingInput, res: HoldingResult) -> str:
+        name_cell = (
+            f'{_linked_name(inp)} '
+            f'<span style="color:{C_MUTED};font-size:12px;">'
+            f'({html.escape(inp.ticker)})</span>'
+        )
+        old_stop = inp.last_alerted_stop or 0.0
+        atr_mult = (
+            (res.stop_loss - old_stop) / res.entry_atr if res.entry_atr else None
+        )
+        cells = [
+            _td(name_cell, align="left"),
+            _td(f"{_fmt(old_stop)}원"),
+            _td(f"{_fmt(res.stop_loss)}원", bold=True),
+            _td(f"{atr_mult:+.2f}" if atr_mult is not None else EMPTY),
+        ]
+        return "<tr>" + "".join(cells) + "</tr>"
+
+    body = "".join(_row(inp, res) for inp, res in stop_updates)
+
+    return f"""
+  <h3 style="margin:20px 0 10px;">🔺 손절선 갱신 필요 ({len(stop_updates)}건)</h3>
+  <table style="border-collapse:collapse;border:1px solid {C_BORDER};font-size:13px;">
+    <thead><tr>{head}</tr></thead>
+    <tbody>{body}</tbody>
+  </table>"""
+
+
 def _build_favorites_html(favorites: Sequence[dict]) -> str:
     """즐겨찾기 표. 비어 있으면 빈 문자열을 돌려줘 섹션 자체를 생략한다.
 
@@ -369,6 +414,7 @@ def _build_html(
     has_errors: bool,
     today: date,
     favorites: Sequence[dict] = (),
+    stop_updates: Sequence[ReportRow] = (),
 ) -> str:
     rows = _sorted_rows(rows)      # 조치 필요 종목이 위로
 
@@ -411,6 +457,8 @@ def _build_html(
   </div>"""
     else:
         exit_box = ""
+
+    stop_updates_section = _build_stop_updates_html(stop_updates)
 
     # 종목별 카드 – 표에 안 담기는 노션 값(산 이유·강세론·약세론·공시·뉴스 등)
     cards = "".join(_card_html(inp, res, today) for inp, res in rows)
@@ -469,6 +517,7 @@ sans-serif;font-size:14px;color:#212529;line-height:1.5;">
     {html.escape(summary)}
   </p>
 {exit_box}
+{stop_updates_section}
   <table style="border-collapse:collapse;border:1px solid {C_BORDER};
   font-size:13px;">
     <thead><tr>{head_cells}</tr></thead>
@@ -519,12 +568,33 @@ def _build_favorites_text(favorites: Sequence[dict]) -> list[str]:
     return lines
 
 
+def _build_stop_updates_text(stop_updates: Sequence[ReportRow]) -> list[str]:
+    """손절선 갱신 필요 섹션 줄 목록. 비어 있으면 빈 리스트 (섹션 생략)."""
+    if not stop_updates:
+        return []
+
+    lines = [f"🔺 손절선 갱신 필요 {len(stop_updates)}건"]
+    for inp, res in stop_updates:
+        old_stop = inp.last_alerted_stop or 0.0
+        atr_mult = (
+            (res.stop_loss - old_stop) / res.entry_atr if res.entry_atr else None
+        )
+        lines.append(
+            f"  - {inp.name} ({inp.ticker}) "
+            f"{_fmt(old_stop)} → {_fmt(res.stop_loss)}원 "
+            f"({f'{atr_mult:+.2f}×ATR' if atr_mult is not None else EMPTY})"
+        )
+    lines.append("")
+    return lines
+
+
 def _build_text(
     rows: Sequence[ReportRow],
     risk: PortfolioRisk,
     has_errors: bool,
     today: date,
     favorites: Sequence[dict] = (),
+    stop_updates: Sequence[ReportRow] = (),
 ) -> str:
     rows = _sorted_rows(rows)      # 조치 필요 종목이 위로
 
@@ -539,6 +609,8 @@ def _build_text(
         for inp, res in exits:
             lines.append(f"  - {inp.name} ({inp.ticker}) – 판정 {res.verdict or '-'}")
         lines.append("")
+
+    lines.extend(_build_stop_updates_text(stop_updates))
 
     # 요약
     lines.append("[요약]")
@@ -634,6 +706,7 @@ def send_report_mail(
     has_errors: bool = False,
     today: Optional[date] = None,
     favorites: Sequence[dict] = (),
+    stop_updates: Sequence[ReportRow] = (),
 ) -> bool:
     """상세 리포트를 Gmail SMTP로 발송한다.
 
@@ -645,6 +718,9 @@ def send_report_mail(
         favorites: 노션 즐겨찾기 DB 조회 결과 (notion_repo.fetch_favorites()의
             item dict 목록, page_id는 뺀 것). 비어 있으면 즐겨찾기 섹션 생략.
             보유종목 섹션 로직에는 영향 없다.
+        stop_updates: 손절선 갱신 알림 대상 (HoldingInput, HoldingResult) 쌍.
+            rows의 부분집합이며, res.stop_update_alert가 True인 것들이다.
+            비어 있으면 "손절선 갱신 필요" 섹션을 생략한다.
 
     Returns:
         True  – 발송 완료
@@ -672,9 +748,12 @@ def send_report_mail(
     msg["From"] = sender
     msg["To"] = ", ".join(recipients)
 
-    msg.set_content(_build_text(rows, risk, has_errors, today, favorites))
+    msg.set_content(
+        _build_text(rows, risk, has_errors, today, favorites, stop_updates)
+    )
     msg.add_alternative(
-        _build_html(rows, risk, has_errors, today, favorites), subtype="html"
+        _build_html(rows, risk, has_errors, today, favorites, stop_updates),
+        subtype="html",
     )
     # 차트 추가 시:
     #   msg.get_payload()[1].add_related(png_bytes, "image", "png", cid="chart")

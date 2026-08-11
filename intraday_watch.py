@@ -71,6 +71,25 @@ def alerted_path(day: str) -> Path:
     return DATA_DIR / f"alerted_{day}.json"
 
 
+# daily_report.py가 아침에 한 번 계산해 남긴다. 장중에 노션을 매번
+# 조회하지 않기 위한 캐시라 여기서는 읽기만 한다.
+CORR_UNITS_PATH = DATA_DIR / "corr_units.json"
+
+
+def load_corr_units() -> Optional[dict]:
+    """상관군별 누적 유닛 캐시. 없거나 깨졌으면 None (로그만 남기고 계속)."""
+    if not CORR_UNITS_PATH.exists():
+        logger.warning("%s가 없습니다 (아침 배치를 아직 안 돌렸을 수 있습니다) "
+                       "– 유닛 여유 표시를 생략합니다.", CORR_UNITS_PATH.name)
+        return None
+    try:
+        return json.loads(CORR_UNITS_PATH.read_text(encoding="utf-8"))
+    except Exception as e:                  # noqa: BLE001
+        logger.warning("%s를 읽지 못했습니다 (%s) – 유닛 여유 표시를 생략합니다.",
+                       CORR_UNITS_PATH.name, e)
+        return None
+
+
 # ── 워치리스트 ──────────────────────────────────────────────
 
 def load_watchlist(threshold: float = WATCH_THRESHOLD,
@@ -206,6 +225,7 @@ def judge(row: pd.Series, price: float) -> Optional[dict]:
     return {
         "ticker": str(row["ticker"]),
         "name": str(row["name"]),
+        "sector": str(row.get("sector", "") or "").strip(),
         "price": price,
         "high20": high20,
         "atr20": atr,
@@ -218,7 +238,35 @@ def judge(row: pd.Series, price: float) -> Optional[dict]:
 
 # ── 카톡 메시지 ─────────────────────────────────────────────
 
-def build_messages(hits: list[dict], now: datetime) -> list[str]:
+def _unit_suffix(hit: dict, corr: Optional[dict]) -> str:
+    """'전체 8/12 · 반도체 5/6(추정)' 같은 유닛 여유 표시.
+
+    돌파 알림 시점의 종목은 아직 보유 전이라 어느 상관군에 속할지
+    시스템이 알 수 없다 (상관군은 사용자가 직접 판단해 넣는 값이지
+    업종에서 자동으로 결정되지 않는다). 그래서:
+      - 전체 유닛은 항상 정확하므로 그대로 표시
+      - 상관군은 종목 업종명이 기존 상관군 이름과 정확히 일치할 때만
+        참고용으로 붙이고, 추정임을 표기한다. 일치하지 않으면 생략.
+    """
+    if not corr:
+        return ""
+
+    total = corr.get("total_units", 0) or 0
+    suffix = f" 전체 {total:g}/{core.MAX_UNITS_TOTAL}"
+    if total >= core.MAX_UNITS_TOTAL:
+        suffix += "⚠상한"
+
+    sector = hit.get("sector", "")
+    group_units = corr.get("groups", {}) or {}
+    if sector and sector in group_units:
+        suffix += f" · {sector} {group_units[sector]:g}/{core.MAX_UNITS_GROUP}(추정)"
+
+    return suffix
+
+
+def build_messages(
+    hits: list[dict], now: datetime, corr: Optional[dict] = None,
+) -> list[str]:
     """진입가능 종목만 한 줄씩. 200자를 넘기지 않게 여러 통으로 나눈다.
 
     추격금지는 넣지 않는다 — 어차피 사지 않을 종목이라 알림으로서
@@ -248,6 +296,7 @@ def build_messages(hits: list[dict], now: datetime) -> list[str]:
         link = core.build_stock_link(h["ticker"])
         if link:
             line += f" {link}"
+        line += _unit_suffix(h, corr)
         lines.append(line)
 
     # 링크 유무로 종목당 글자 수가 들쭉날쭉해 고정 개수로는 못 묶는다.
@@ -318,7 +367,8 @@ def run(dry_run: bool = False) -> int:
                     h["name"], h["ticker"], f"{h['price']:,.0f}",
                     h["status"], h["gap_atr"])
 
-    messages = build_messages(hits, now)
+    corr = load_corr_units()
+    messages = build_messages(hits, now, corr)
     if not messages:
         # 전부 추격금지 – 카톡은 보내지 않지만 이력에는 남긴다.
         # 남기지 않으면 10분 뒤 같은 종목을 또 판정하게 된다.
