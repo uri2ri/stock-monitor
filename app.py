@@ -1141,64 +1141,70 @@ def render_stock_report(code: str, capital: float, ai_unlocked: bool) -> None:
     except Exception as e:
         st.info(f"보유 현황을 불러오지 못해 상관군 집계를 건너뜁니다. ({e})")
 
-    if corr_loaded and holding is not None:
-        # 보유중이면 이미 배정된 상관군을 읽기 전용으로 보여준다 —
-        # 미보유 종목처럼 '어디에 넣을지' 고를 대상이 아니다.
-        group = (holding.corr_group or "").strip()
-        if group:
-            used = corr_groups.get(group, 0.0)
-            st.metric(f"{group} 상관군 누적 유닛", f"{used:g}/{core.MAX_UNITS_GROUP}")
-        else:
-            st.caption("이 종목엔 상관군이 지정돼 있지 않습니다.")
-        if corr_total >= core.MAX_UNITS_TOTAL:
-            st.error(f"전체 {corr_total:g}/{core.MAX_UNITS_TOTAL}유닛 — 상한 도달")
-        else:
-            st.caption(f"전체 {corr_total:g}/{core.MAX_UNITS_TOTAL}유닛")
-    elif corr_loaded:
-        known = corr_names
-        pick_col, info_col = st.columns([1, 2])
-        with pick_col:
-            choice = st.selectbox(
-                "이 종목의 상관군", known + ["(없음)", "(직접 입력)"],
-                index=len(known) if known else 0,
-            )
-            group = (
-                st.text_input("상관군 이름", key="corr_manual").strip()
-                if choice == "(직접 입력)"
-                else ("" if choice == "(없음)" else choice)
-            )
-
-        with info_col:
-            used = corr_groups.get(group, 0.0) if group else 0.0
-            after = used + 1
-
+    # 집계 자체는 성공했더라도 표시 단계에서 예상 못 한 값(예: 노션에 잘못
+    # 입력된 상관군·수량 조합)을 만나면 여기서만 죽고 나머지 화면은
+    # 살아있어야 한다 — 위 노션 조회 실패 처리와 같은 태도.
+    try:
+        if corr_loaded and holding is not None:
+            # 보유중이면 이미 배정된 상관군을 읽기 전용으로 보여준다 —
+            # 미보유 종목처럼 '어디에 넣을지' 고를 대상이 아니다.
+            group = (holding.corr_group or "").strip()
             if group:
-                st.metric(
-                    f"{group} 상관군",
-                    f"현재 {used:g}유닛 / {core.MAX_UNITS_GROUP}",
-                    delta=f"1유닛 진입 시 {after:g}/{core.MAX_UNITS_GROUP}",
-                    delta_color="off",
-                )
-                if used >= core.MAX_UNITS_GROUP:
-                    st.error(f"상관군 상한 도달 — 이 종목은 진입 불가")
-                elif after >= core.MAX_UNITS_GROUP:
-                    st.warning(
-                        f"이 종목 1유닛 진입 시 {after:g}/{core.MAX_UNITS_GROUP}, "
-                        "이후 추가 불가"
-                    )
+                used = corr_groups.get(group, 0.0)
+                st.metric(f"{group} 상관군 누적 유닛", f"{used:g}/{core.MAX_UNITS_GROUP}")
             else:
-                st.caption("상관군을 고르면 누적 유닛을 확인할 수 있습니다.")
-
-            total_after = corr_total + 1
+                st.caption("이 종목엔 상관군이 지정돼 있지 않습니다.")
             if corr_total >= core.MAX_UNITS_TOTAL:
                 st.error(f"전체 {corr_total:g}/{core.MAX_UNITS_TOTAL}유닛 — 상한 도달")
-            elif total_after > core.MAX_UNITS_TOTAL:
-                st.warning(f"전체 {corr_total:g}/{core.MAX_UNITS_TOTAL}유닛 — 1유닛 더 넣으면 초과")
             else:
                 st.caption(f"전체 {corr_total:g}/{core.MAX_UNITS_TOTAL}유닛")
+        elif corr_loaded:
+            known = corr_names
+            pick_col, info_col = st.columns([1, 2])
+            with pick_col:
+                choice = st.selectbox(
+                    "이 종목의 상관군", known + ["(없음)", "(직접 입력)"],
+                    index=len(known) if known else 0,
+                )
+                group = (
+                    st.text_input("상관군 이름", key="corr_manual").strip()
+                    if choice == "(직접 입력)"
+                    else ("" if choice == "(없음)" else choice)
+                )
 
-        if corr_skipped:
-            st.caption("유닛을 셀 수 없어 제외: " + ", ".join(corr_skipped))
+            with info_col:
+                used = corr_groups.get(group, 0.0) if group else 0.0
+                after = used + 1
+
+                if group:
+                    st.metric(
+                        f"{group} 상관군",
+                        f"현재 {used:g}유닛 / {core.MAX_UNITS_GROUP}",
+                        delta=f"1유닛 진입 시 {after:g}/{core.MAX_UNITS_GROUP}",
+                        delta_color="off",
+                    )
+                    if used >= core.MAX_UNITS_GROUP:
+                        st.error(f"상관군 상한 도달 — 이 종목은 진입 불가")
+                    elif after >= core.MAX_UNITS_GROUP:
+                        st.warning(
+                            f"이 종목 1유닛 진입 시 {after:g}/{core.MAX_UNITS_GROUP}, "
+                            "이후 추가 불가"
+                        )
+                else:
+                    st.caption("상관군을 고르면 누적 유닛을 확인할 수 있습니다.")
+
+                total_after = corr_total + 1
+                if corr_total >= core.MAX_UNITS_TOTAL:
+                    st.error(f"전체 {corr_total:g}/{core.MAX_UNITS_TOTAL}유닛 — 상한 도달")
+                elif total_after > core.MAX_UNITS_TOTAL:
+                    st.warning(f"전체 {corr_total:g}/{core.MAX_UNITS_TOTAL}유닛 — 1유닛 더 넣으면 초과")
+                else:
+                    st.caption(f"전체 {corr_total:g}/{core.MAX_UNITS_TOTAL}유닛")
+
+            if corr_skipped:
+                st.caption("유닛을 셀 수 없어 제외: " + ", ".join(corr_skipped))
+    except Exception as e:
+        st.info(f"상관군 집계를 표시하지 못했습니다. ({e})")
 
     # ── 유닛 진행표 ─────────────────────────────────────────────
     st.markdown("### ■ 유닛 진행표")
@@ -1209,64 +1215,69 @@ def render_stock_report(code: str, capital: float, ai_unlocked: bool) -> None:
             "현재가가 바뀌어도 이 표는 바뀌지 않습니다."
         )
 
-        # 개별 유닛의 실제 매수가는 1U(✱매수단가)와 마지막 유닛(마지막매수가)
-        # 말고는 노션에 남아있지 않다. 그래서 1U만 ✱매수단가를 그대로 쓰고
-        # (표시용, 다른 행 계산에는 안 씀) 나머지 전 구간(이미 산 유닛 포함)은
-        # 마지막매수가를 축으로 0.5×ATR 간격으로 채운다 — 아직 안 산 유닛은
-        # 이 축에서 앞으로, 이미 산 유닛은 뒤로 되짚는 값이다.
-        anchor_units = max(1, min(round(held_current_units) or 1, core.MAX_UNITS))
-        held_buy_prices = [round(holding.buy_price)]
-        for unit in range(2, core.MAX_UNITS + 1):
-            held_buy_prices.append(
-                round(
-                    held_last_buy_price
-                    + (unit - anchor_units) * core.PYRAMID_ATR_STEP * held_atr
+        # 노션에 남은 값이 예상 밖 조합(예: 유닛 계산이 애매한 소수 유닛)일
+        # 때도 이 표만 비고 아래 차트·AI 의견은 그대로 렌더링돼야 한다.
+        try:
+            # 개별 유닛의 실제 매수가는 1U(✱매수단가)와 마지막 유닛(마지막매수가)
+            # 말고는 노션에 남아있지 않다. 그래서 1U만 ✱매수단가를 그대로 쓰고
+            # (표시용, 다른 행 계산에는 안 씀) 나머지 전 구간(이미 산 유닛 포함)은
+            # 마지막매수가를 축으로 0.5×ATR 간격으로 채운다 — 아직 안 산 유닛은
+            # 이 축에서 앞으로, 이미 산 유닛은 뒤로 되짚는 값이다.
+            anchor_units = max(1, min(round(held_current_units) or 1, core.MAX_UNITS))
+            held_buy_prices = [round(holding.buy_price)]
+            for unit in range(2, core.MAX_UNITS + 1):
+                held_buy_prices.append(
+                    round(
+                        held_last_buy_price
+                        + (unit - anchor_units) * core.PYRAMID_ATR_STEP * held_atr
+                    )
                 )
-            )
 
-        held_steps = core.build_pyramid_from_prices(
-            held_buy_prices, held_atr, held_unit_shares, capital
-        )
-        if not held_steps:
-            st.info("1유닛 주수가 0이라 진행표를 만들 수 없습니다.")
-        else:
-            st.dataframe(
-                {
-                    "매수": ["✅" if s.unit <= anchor_units else "" for s in held_steps],
-                    "단계": [f"{s.unit}U" for s in held_steps],
-                    "매수가": [f"{s.buy_price:,.0f}" for s in held_steps],
-                    "손절선": [f"{s.stop_loss:,.0f}" for s in held_steps],
-                    "누적 주수": [f"{s.cum_shares:,}" for s in held_steps],
-                    "누적 투입": [f"{s.cum_cost:,.0f}" for s in held_steps],
-                    "누적 투입비중": [f"{s.cum_weight_pct:.1f}%" for s in held_steps],
-                    "손절 시 총손실": [f"{s.loss_if_stopped:,.0f}" for s in held_steps],
-                    "총자본 대비": [f"{s.loss_pct:.2f}%" for s in held_steps],
-                },
-                hide_index=True, width="stretch",
+            held_steps = core.build_pyramid_from_prices(
+                held_buy_prices, held_atr, held_unit_shares, capital
             )
-
-            if anchor_units >= core.MAX_UNITS:
-                st.success(f"✅ 추가매수 완료 ({core.MAX_UNITS}/{core.MAX_UNITS}유닛)")
+            if not held_steps:
+                st.info("1유닛 주수가 0이라 진행표를 만들 수 없습니다.")
             else:
-                # held_buy_prices는 0-index라 unit=anchor_units+1의 값은
-                # index=anchor_units에 있다.
-                next_price = held_buy_prices[anchor_units]
-                st.metric(
-                    f"다음 매수가 ({anchor_units + 1}U)", f"{next_price:,.0f}원",
-                    delta=f"+{core.PYRAMID_ATR_STEP}×ATR", delta_color="off",
+                st.dataframe(
+                    {
+                        "매수": ["✅" if s.unit <= anchor_units else "" for s in held_steps],
+                        "단계": [f"{s.unit}U" for s in held_steps],
+                        "매수가": [f"{s.buy_price:,.0f}" for s in held_steps],
+                        "손절선": [f"{s.stop_loss:,.0f}" for s in held_steps],
+                        "누적 주수": [f"{s.cum_shares:,}" for s in held_steps],
+                        "누적 투입": [f"{s.cum_cost:,.0f}" for s in held_steps],
+                        "누적 투입비중": [f"{s.cum_weight_pct:.1f}%" for s in held_steps],
+                        "손절 시 총손실": [f"{s.loss_if_stopped:,.0f}" for s in held_steps],
+                        "총자본 대비": [f"{s.loss_pct:.2f}%" for s in held_steps],
+                    },
+                    hide_index=True, width="stretch",
                 )
 
-            actual_stop_txt = (
-                f"{holding.prev_stop_loss:,.0f}원"
-                if holding.prev_stop_loss is not None
-                else "아직 계산되지 않음 (다음 아침 배치 이후 반영)"
-            )
-            st.caption(
-                f"표의 '손절선'은 그 유닛을 살 때 적용됐을(될) 값입니다. "
-                f"실제로 지금 적용되는 손절선은 {actual_stop_txt}입니다 — 더 "
-                "높다면 진입후최고가 갱신에 따른 트레일링 때문입니다 "
-                "(손절선은 래칫이라 내려가지 않습니다)."
-            )
+                if anchor_units >= core.MAX_UNITS:
+                    st.success(f"✅ 추가매수 완료 ({core.MAX_UNITS}/{core.MAX_UNITS}유닛)")
+                else:
+                    # held_buy_prices는 0-index라 unit=anchor_units+1의 값은
+                    # index=anchor_units에 있다.
+                    next_price = held_buy_prices[anchor_units]
+                    st.metric(
+                        f"다음 매수가 ({anchor_units + 1}U)", f"{next_price:,.0f}원",
+                        delta=f"+{core.PYRAMID_ATR_STEP}×ATR", delta_color="off",
+                    )
+
+                actual_stop_txt = (
+                    f"{holding.prev_stop_loss:,.0f}원"
+                    if holding.prev_stop_loss is not None
+                    else "아직 계산되지 않음 (다음 아침 배치 이후 반영)"
+                )
+                st.caption(
+                    f"표의 '손절선'은 그 유닛을 살 때 적용됐을(될) 값입니다. "
+                    f"실제로 지금 적용되는 손절선은 {actual_stop_txt}입니다 — 더 "
+                    "높다면 진입후최고가 갱신에 따른 트레일링 때문입니다 "
+                    "(손절선은 래칫이라 내려가지 않습니다)."
+                )
+        except Exception as e:
+            st.info(f"유닛 진행표를 표시하지 못했습니다. ({e})")
     else:
         steps = core.build_pyramid(price, atr, pos.unit_shares, capital)
         if not steps:
