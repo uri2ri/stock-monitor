@@ -35,6 +35,11 @@ TAB_ANALYSIS = "종목 분석"
 TAB_BREAKOUT = "오늘의 돌파"
 TAB_SCAN = "전종목 스캔"
 TAB_FAVORITES = "즐겨찾기"
+TAB_CALCULATOR = "계산기"
+
+# [계산기] 오타 방지 경고 임계값 – 계산을 막지는 않고 문구만 띄운다.
+CALC_DROP_RATIO = 0.1     # 진입후최고가가 매수가의 이 비율 이하면 오타 의심
+CALC_RISE_MULT = 3.0      # 진입후최고가가 매수가의 이 배수 이상이면 오타 의심
 
 CHART_DAY_OPTIONS = (20, 30, 60)   # 차트에 그릴 거래일 선택지
 CHART_DAYS_DEFAULT = 30            # 신호가 20일·10일 기준이라 60일은 과하다
@@ -1783,13 +1788,155 @@ def render_favorites(capital: float, ai_unlocked: bool) -> None:
     render_scroll_to_top_button()
 
 
+# ── [계산기] 화면 ────────────────────────────────────────────
+
+def render_calculator(capital: float) -> None:
+    """숫자를 직접 입력해 손절선·추가매수가·유닛 진행표를 계산한다.
+
+    [종목 분석]과 달리 시세를 조회하지 않는다 — 종목이 시스템에 없어도
+    즉석 계산이 가능해야 하기 때문. 계산은 전부 core.py의 기존 함수를
+    그대로 쓴다 (resolve_stop·calc_position·build_pyramid). 노션에
+    아무것도 쓰지 않는다.
+
+    core.resolve_stop()의 entry 인자는 '1유닛 진입가'가 아니라 '현재
+    유닛 기준가(=마지막 매수가)'다 (calc_stop 독스트링 참고 — 추가매수
+    하면 트레일링 기준 자체가 마지막 매수가로 넘어간다). 그래서 여기서도
+    resolve_stop에는 마지막매수가를 entry로 넘긴다. 매수가(1U)는 유닛
+    진행표 미리보기의 기준으로만 쓴다.
+    """
+    st.caption(
+        "종목이 시스템에 없어도 숫자만으로 즉석 계산합니다. "
+        "시세 조회·노션 저장 없음 — 값을 바꾸면 바로 다시 계산됩니다."
+    )
+
+    c1, c2 = st.columns(2)
+    with c1:
+        first_unit_price = st.number_input(
+            "매수가 (1유닛 진입가, 원)", min_value=0, step=100, format="%d",
+            value=10_000, key="calc_first_unit_price",
+        )
+    with c2:
+        atr = st.number_input(
+            "ATR (진입시 ATR, 원)", min_value=0, step=10, format="%d",
+            value=300, key="calc_atr",
+        )
+
+    c3, c4 = st.columns(2)
+    with c3:
+        # 키를 매수가에 연동해, 매수가가 바뀌면 기본값도 그 값으로
+        # 다시 맞춰진다 ('비우면 매수가와 같다고 간주'). 매수가가
+        # 그대로인 동안 사용자가 고친 값은 재실행에도 유지된다.
+        trailing_high = st.number_input(
+            "진입후최고가 (원, 선택)", min_value=0, step=100, format="%d",
+            value=int(first_unit_price), key=f"calc_trailing_{first_unit_price}",
+            help="비워두면(=건드리지 않으면) 매수가와 같다고 봅니다.",
+        )
+    with c4:
+        units = st.radio(
+            "유닛수", list(range(1, core.MAX_UNITS + 1)),
+            horizontal=True, key="calc_units",
+        )
+
+    last_buy_price = float(first_unit_price)
+    if units >= 2:
+        estimated = first_unit_price + (units - 1) * core.PYRAMID_ATR_STEP * atr
+        last_buy_price = st.number_input(
+            f"마지막매수가 ({units}유닛째 매수가, 원)",
+            min_value=0, step=100, format="%d",
+            value=int(round(estimated)),
+            key=f"calc_last_buy_{first_unit_price}_{atr}_{units}",
+            help="비워두면 0.5×ATR 간격 추정치를 씁니다. "
+                 "실제 매수가가 다르면 고쳐서 입력하세요.",
+        )
+
+    # ── 오타 방지 경고 (계산은 그대로 진행) ──
+    if first_unit_price > 0:
+        if trailing_high <= first_unit_price * CALC_DROP_RATIO:
+            st.warning(
+                "⚠️ 입력값이 비정상적으로 벌어져 있습니다. 자릿수를 확인하세요. "
+                f"(진입후최고가가 매수가의 {CALC_DROP_RATIO:.0%} 이하)"
+            )
+        elif trailing_high >= first_unit_price * CALC_RISE_MULT:
+            st.warning(
+                "⚠️ 입력값이 비정상적으로 벌어져 있습니다. 자릿수를 확인하세요. "
+                f"(진입후최고가가 매수가의 {CALC_RISE_MULT:.0f}배 이상)"
+            )
+
+    if first_unit_price <= 0 or atr <= 0:
+        st.info("매수가와 ATR을 입력하면 계산 결과가 표시됩니다.")
+        return
+
+    # ── 계산 (core.py 기존 함수 재사용, 새 계산식 없음) ──
+    stop_loss = core.resolve_stop(
+        entry=last_buy_price,
+        atr=atr,
+        trailing_high=trailing_high,
+        last_buy_price=last_buy_price,
+        prev_stop=None,
+    )
+    pos = core.calc_position(atr, capital)
+
+    st.markdown("### ■ 계산 결과")
+    r1, r2, r3 = st.columns(3)
+    r1.metric(
+        "현재 손절선", f"{stop_loss:,.0f}원",
+        delta=f"마지막매수가 대비 {stop_loss - last_buy_price:+,.0f}원",
+    )
+    r2.metric("1유닛 주수", f"{pos.unit_shares:,}주")
+    with r2:
+        st.caption("└ 계좌 1% ÷ ATR (사이드바 계좌 금액 기준)")
+    if units < core.MAX_UNITS:
+        next_add = round(last_buy_price + core.PYRAMID_ATR_STEP * atr)
+        r3.metric(
+            f"다음 유닛({units + 1}U) 매수가", f"{next_add:,.0f}원",
+            delta=f"+{core.PYRAMID_ATR_STEP}×ATR", delta_color="off",
+        )
+    else:
+        r3.metric("추가매수", "종료", delta=f"{core.MAX_UNITS}유닛 도달",
+                  delta_color="off")
+
+    if pos.unit_shares == 0:
+        st.warning(
+            f"**1유닛 주수 0 — 계좌 규모에 안 맞는 ATR**  \n"
+            f"1ATR {atr:,.0f}원이 계좌 1%({capital * core.RISK_PER_TRADE:,.0f}원)"
+            "보다 큽니다."
+        )
+
+    st.markdown("### ■ 유닛 진행표")
+    steps = core.build_pyramid(first_unit_price, atr, pos.unit_shares, capital)
+    if not steps:
+        st.info("1유닛 주수가 0이라 진행표를 만들 수 없습니다.")
+    else:
+        st.dataframe(
+            {
+                "단계": [f"{s.unit}U" for s in steps],
+                "매수가": [f"{s.buy_price:,.0f}" for s in steps],
+                "손절선": [f"{s.stop_loss:,.0f}" for s in steps],
+                "누적 주수": [f"{s.cum_shares:,}" for s in steps],
+                "누적 투입": [f"{s.cum_cost:,.0f}" for s in steps],
+                "누적 투입비중": [f"{s.cum_weight_pct:.1f}%" for s in steps],
+                "손절 시 총손실": [f"{s.loss_if_stopped:,.0f}" for s in steps],
+                "총자본 대비": [f"{s.loss_pct:.2f}%" for s in steps],
+            },
+            hide_index=True, width="stretch",
+        )
+        st.caption(
+            f"매수가(1U)를 진입가로 놓고 {core.PYRAMID_ATR_STEP}×ATR "
+            f"({core.PYRAMID_ATR_STEP * atr:,.0f}원)마다 1유닛씩 "
+            f"최대 {core.MAX_UNITS}유닛까지 쌓은 계획표입니다. 위 '현재 손절선'과"
+            " 달리 마지막매수가·진입후최고가 입력값과 무관한 이론상 미리보기입니다."
+        )
+
+
 # ── 탭 ──────────────────────────────────────────────────────
 
 # st.tabs는 위젯 상호작용이 있으면 선택이 유지되지 않는다. 상태를 가진
 # segmented_control을 탭 막대로 써서 슬라이더 등을 조작해도 탭이 안 바뀐다.
 st.session_state.setdefault("tab", TAB_ANALYSIS)
 _tab = st.segmented_control(
-    "화면", (TAB_ANALYSIS, TAB_BREAKOUT, TAB_SCAN, TAB_FAVORITES), key="tab",
+    "화면",
+    (TAB_ANALYSIS, TAB_BREAKOUT, TAB_SCAN, TAB_FAVORITES, TAB_CALCULATOR),
+    key="tab",
     label_visibility="collapsed",
 )
 
@@ -1800,5 +1947,7 @@ elif _tab == TAB_SCAN:
     render_scan(capital, ai_unlocked)
 elif _tab == TAB_FAVORITES:
     render_favorites(capital, ai_unlocked)
+elif _tab == TAB_CALCULATOR:
+    render_calculator(capital)
 else:
     render_analysis(capital, ai_unlocked)
