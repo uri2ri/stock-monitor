@@ -421,48 +421,47 @@ class PyramidStep:
     loss_pct: float              # 총손실액의 총자본 대비 %
 
 
-def build_pyramid(
-    entry: float,
+def build_pyramid_from_prices(
+    buy_prices: list[float],
     atr: float,
     unit_shares: int,
     capital: float = DEFAULT_CAPITAL,
-    max_units: int = MAX_UNITS,
 ) -> list[PyramidStep]:
-    """1/2 ATR 오를 때마다 1유닛씩 max_units까지 쌓는 계획표.
+    """지정된 매수가 목록으로 유닛 진행표를 만든다.
+
+    build_pyramid()의 하위 구현이다. 표준 0.5×ATR 그리드(진입가 하나에서
+    전부 파생)가 아니라 실제/추정 매수가를 섞어 써야 할 때(예: 보유중인
+    종목은 1U만 매수단가를 쓰고 나머지는 마지막매수가 기준으로 계산)
+    이 함수를 직접 쓴다 — 계산 로직(손절선·누적 주수·누적 투입·손실액)은
+    build_pyramid()와 완전히 동일하다.
 
     추가매수할 때마다 손절선을 (마지막 매수가 - 2×ATR)로 함께 올리므로,
     이미 산 유닛들의 손절선도 같이 올라간다. 각 단계의 총손실액은
     그 단계 손절선을 전체 유닛에 적용해 계산한다.
 
     Args:
-        entry: 1유닛 진입가
+        buy_prices: 단계별 매수가 목록 (1번째가 1유닛)
         atr: ATR
         unit_shares: 1유닛 주수
         capital: 총자본 (투입비중·손실비중 계산용)
-        max_units: 최대 유닛 수
 
     Returns:
-        단계별 PyramidStep 목록. ATR이 0 이하면 빈 목록.
+        단계별 PyramidStep 목록. ATR이 0 이하거나 목록이 비면 빈 목록.
     """
-    if atr <= 0 or unit_shares <= 0 or max_units <= 0:
+    if atr <= 0 or unit_shares <= 0 or not buy_prices:
         return []
 
     steps: list[PyramidStep] = []
-    buy_prices: list[float] = []
 
-    for unit in range(1, max_units + 1):
-        # 실제 주문에 넣는 값이라 정수로 맞춘다 (round_atr 참고)
-        buy_price = round(entry + (unit - 1) * PYRAMID_ATR_STEP * atr)
-        buy_prices.append(buy_price)
+    for unit, buy_price in enumerate(buy_prices, start=1):
+        # 추가매수 시점에는 최고가 = 그 매수가이므로 calc_stop()의
+        # half 방식이 곧 (매수가 - 2×ATR)와 같아진다 (trailing_high 생략).
+        stop = round(calc_stop(buy_price, atr))
 
-        # 추가매수 시점에는 최고가 = 그 매수가이므로 두 방식 모두
-        # (마지막 매수가 - 2×ATR)로 같아진다. 방식 설정과 무관하게
-        # 피라미딩 규칙을 그대로 쓴다.
-        stop = round(buy_price - STOP_ATR_MULT * atr)
-
+        cum_prices = buy_prices[:unit]
         cum_shares = unit_shares * unit
-        cum_cost = sum(p * unit_shares for p in buy_prices)
-        loss_if_stopped = sum((p - stop) * unit_shares for p in buy_prices)
+        cum_cost = sum(p * unit_shares for p in cum_prices)
+        loss_if_stopped = sum((p - stop) * unit_shares for p in cum_prices)
 
         steps.append(
             PyramidStep(
@@ -481,6 +480,39 @@ def build_pyramid(
         )
 
     return steps
+
+
+def build_pyramid(
+    entry: float,
+    atr: float,
+    unit_shares: int,
+    capital: float = DEFAULT_CAPITAL,
+    max_units: int = MAX_UNITS,
+) -> list[PyramidStep]:
+    """1/2 ATR 오를 때마다 1유닛씩 max_units까지 쌓는 계획표.
+
+    표준 0.5×ATR 그리드를 만들어 build_pyramid_from_prices()에 넘긴다.
+    계산 로직 자체는 그쪽에 있다 (재사용 — 다시 구현하지 않는다).
+
+    Args:
+        entry: 1유닛 진입가
+        atr: ATR
+        unit_shares: 1유닛 주수
+        capital: 총자본 (투입비중·손실비중 계산용)
+        max_units: 최대 유닛 수
+
+    Returns:
+        단계별 PyramidStep 목록. ATR이 0 이하면 빈 목록.
+    """
+    if atr <= 0 or unit_shares <= 0 or max_units <= 0:
+        return []
+
+    # 실제 주문에 넣는 값이라 정수로 맞춘다 (round_atr 참고)
+    buy_prices = [
+        round(entry + (unit - 1) * PYRAMID_ATR_STEP * atr)
+        for unit in range(1, max_units + 1)
+    ]
+    return build_pyramid_from_prices(buy_prices, atr, unit_shares, capital)
 
 
 # ── 추세 신호 ───────────────────────────────────────────────

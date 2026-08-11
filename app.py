@@ -19,6 +19,7 @@ import re
 import zipfile
 import xml.etree.ElementTree as ET
 from datetime import date, datetime, timedelta
+from typing import Optional
 
 import pandas as pd
 import plotly.graph_objects as go
@@ -417,16 +418,14 @@ def build_recent_activity_block(
 
 
 @st.cache_data(ttl=300, show_spinner=False)
-def load_corr_units(
-    capital: int,
-) -> tuple[dict[str, float], float, list[str], list[str]]:
-    """노션 보유 종목의 상관군별 누적 유닛수.
+def load_holdings() -> list[core.HoldingInput]:
+    """노션 보유 종목(구분="보유") 전체를 조회한다 (5분 캐시).
 
-    집계 로직 자체는 core.calc_corr_units()에 있다 (daily_report.py와
-    공유 – 다시 구현하지 않는다). 여기서는 노션 조회만 담당한다.
-
-    Returns:
-        (상관군별 유닛수, 전체 유닛수, 셀 수 없어 건너뛴 종목명, 상관군 이름 목록)
+    load_corr_units()와 종목분석의 보유중 자동 인식(find_holding)이
+    이 캐시를 공유한다 — 한 화면에서 둘 다 쓰여도 노션 API는 1회만
+    호출된다. 실패하면 예외를 그대로 던진다 (호출부가 각자의 방식으로
+    처리 — load_corr_units는 섹션을 비우고, find_holding은 미보유로
+    간주한다).
     """
     import os
 
@@ -437,9 +436,39 @@ def load_corr_units(
 
     from notion_repo import fetch_holdings
 
-    holdings = [inp for _, inp in fetch_holdings()]
-    result = core.calc_corr_units(holdings, capital)
+    return [inp for _, inp in fetch_holdings()]
+
+
+def load_corr_units(
+    capital: int,
+) -> tuple[dict[str, float], float, list[str], list[str]]:
+    """노션 보유 종목의 상관군별 누적 유닛수.
+
+    집계 로직 자체는 core.calc_corr_units()에 있다 (daily_report.py와
+    공유 – 다시 구현하지 않는다). 여기서는 캐시된 노션 조회를 넘길 뿐이다.
+
+    Returns:
+        (상관군별 유닛수, 전체 유닛수, 셀 수 없어 건너뛴 종목명, 상관군 이름 목록)
+    """
+    result = core.calc_corr_units(load_holdings(), capital)
     return result.group_units, result.total_units, result.skipped, result.known_groups
+
+
+def find_holding(code: str) -> Optional[core.HoldingInput]:
+    """code가 보유중이면 그 HoldingInput, 아니면 None.
+
+    노션 조회 실패도 조용히 None으로 처리한다 — 종목분석 화면이 이
+    실패로 죽지 않고 미보유 경로로 정상 동작해야 하기 때문.
+    """
+    try:
+        holdings = load_holdings()
+    except Exception:
+        logging.warning("[%s] 보유종목 조회 실패 – 미보유로 간주", code, exc_info=True)
+        return None
+    for inp in holdings:
+        if inp.ticker == code:
+            return inp
+    return None
 
 
 def _grounding_sources(candidate) -> list[str]:
@@ -962,6 +991,23 @@ def render_stock_report(code: str, capital: float, ai_unlocked: bool) -> None:
             st.error(f"조회 실패: {e}")
             return
 
+    # 보유중 자동 인식 – 노션 조회 실패는 find_holding()이 삼켜 None으로
+    # 돌려준다 (미보유 취급, 이 화면은 항상 정상 렌더링된다).
+    holding = find_holding(code)
+    held_atr = 0
+    held_unit_shares = 0
+    held_current_units = 0.0
+    held_last_buy_price = 0.0
+    if holding is not None:
+        # 진입시 ATR이 고정값 – 매일 갱신되는 노션 'ATR'로 대체하지 않는다.
+        # 둘 다 없으면(아직 배치가 한 번도 안 돈 신규 편입) 방금 조회한
+        # 현재 ATR로 최후 폴백한다 (core.calc_corr_units와 같은 태도).
+        held_atr = core.round_atr(holding.entry_atr or holding.notion_atr or atr)
+        held_unit_shares = core.calc_position(held_atr, capital).unit_shares
+        if held_unit_shares > 0:
+            held_current_units = round(holding.shares / held_unit_shares, 2)
+        held_last_buy_price = holding.last_buy_price or holding.buy_price
+
     name = load_name(code)
     etf = is_etf(code)
     col_title, col_star = st.columns([6, 1])
@@ -969,6 +1015,8 @@ def render_stock_report(code: str, capital: float, ai_unlocked: bool) -> None:
         st.subheader(f"{name} ({code})")
         if etf:
             st.badge("ETF", color="blue")
+        if holding is not None:
+            st.badge(f"보유중 · {held_current_units:g}유닛", color="green")
     with col_star:
         render_favorite_toggle(code, name, etf)
     st.caption(
@@ -1033,8 +1081,16 @@ def render_stock_report(code: str, capital: float, ai_unlocked: bool) -> None:
     p1.metric(f"ATR ({core.ATR_PERIOD}일)", f"{atr:,.0f}원",
               delta=f"현재가의 {atr / price * 100:.1f}%" if price else None)
     p2.metric("1유닛 주수", f"{pos.unit_shares:,}주")
-    p3.metric("손절선 (진입 시)", f"{stop_loss:,.0f}원",
-              delta=f"-{2 * atr:,.0f}원 (2×ATR)")
+    if holding is not None and holding.prev_stop_loss is not None:
+        # 보유중이면 새로 계산하지 않고 daily 배치가 노션에 저장한 값을
+        # 그대로 쓴다 — 이 화면에서 다시 계산한 값과 다를 수 있다
+        # (트레일링·래칫). 아래 '유닛 진행표'에서 그 차이를 설명한다.
+        p3.metric("실제 적용 손절선", f"{holding.prev_stop_loss:,.0f}원")
+        with p3:
+            st.caption("└ 노션에 저장된 값 (여기서 재계산하지 않음)")
+    else:
+        p3.metric("손절선 (진입 시)", f"{stop_loss:,.0f}원",
+                  delta=f"-{2 * atr:,.0f}원 (2×ATR)")
     # 1N 움직였을 때의 손익이 아니라, 손절선에 닿았을 때 실제로 잃는 금액.
     # 유닛 진행표 1U 행의 손실액과 같은 값이어야 한다.
     unit_loss = pos.unit_shares * 2 * atr
@@ -1074,11 +1130,31 @@ def render_stock_report(code: str, capital: float, ai_unlocked: bool) -> None:
     )
 
     # 노션 조회가 실패해도 이 섹션만 비고 나머지 화면은 그대로 남는다
+    corr_groups: dict[str, float] = {}
+    corr_total = 0.0
+    corr_skipped: list[str] = []
+    corr_names: list[str] = []
+    corr_loaded = False
     try:
         corr_groups, corr_total, corr_skipped, corr_names = load_corr_units(int(capital))
+        corr_loaded = True
     except Exception as e:
         st.info(f"보유 현황을 불러오지 못해 상관군 집계를 건너뜁니다. ({e})")
-    else:
+
+    if corr_loaded and holding is not None:
+        # 보유중이면 이미 배정된 상관군을 읽기 전용으로 보여준다 —
+        # 미보유 종목처럼 '어디에 넣을지' 고를 대상이 아니다.
+        group = (holding.corr_group or "").strip()
+        if group:
+            used = corr_groups.get(group, 0.0)
+            st.metric(f"{group} 상관군 누적 유닛", f"{used:g}/{core.MAX_UNITS_GROUP}")
+        else:
+            st.caption("이 종목엔 상관군이 지정돼 있지 않습니다.")
+        if corr_total >= core.MAX_UNITS_TOTAL:
+            st.error(f"전체 {corr_total:g}/{core.MAX_UNITS_TOTAL}유닛 — 상한 도달")
+        else:
+            st.caption(f"전체 {corr_total:g}/{core.MAX_UNITS_TOTAL}유닛")
+    elif corr_loaded:
         known = corr_names
         pick_col, info_col = st.columns([1, 2])
         with pick_col:
@@ -1127,30 +1203,95 @@ def render_stock_report(code: str, capital: float, ai_unlocked: bool) -> None:
     # ── 유닛 진행표 ─────────────────────────────────────────────
     st.markdown("### ■ 유닛 진행표")
 
-    steps = core.build_pyramid(price, atr, pos.unit_shares, capital)
-    if not steps:
-        st.info("1유닛 주수가 0이라 진행표를 만들 수 없습니다.")
-    else:
-        st.dataframe(
-            {
-                "단계": [f"{s.unit}U" for s in steps],
-                "매수가": [f"{s.buy_price:,.0f}" for s in steps],
-                "손절선": [f"{s.stop_loss:,.0f}" for s in steps],
-                "누적 주수": [f"{s.cum_shares:,}" for s in steps],
-                "누적 투입": [f"{s.cum_cost:,.0f}" for s in steps],
-                "누적 투입비중": [f"{s.cum_weight_pct:.1f}%" for s in steps],
-                "손절 시 총손실": [f"{s.loss_if_stopped:,.0f}" for s in steps],
-                "총자본 대비": [f"{s.loss_pct:.2f}%" for s in steps],
-            },
-            hide_index=True, width="stretch",
-        )
+    if holding is not None:
         st.caption(
-            f"현재가를 1U 진입가로 놓고 {core.PYRAMID_ATR_STEP}×ATR "
-            f"({core.PYRAMID_ATR_STEP * atr:,.0f}원)마다 1유닛씩 "
-            f"최대 {core.MAX_UNITS}유닛까지 쌓은 계획표입니다. "
-            "추가매수할 때마다 전체 유닛의 손절선이 (마지막 매수가 − 2×ATR)로 "
-            "함께 올라갑니다."
+            "보유중 — ✱매수단가(1U)·✱진입시ATR 기준의 고정값입니다. "
+            "현재가가 바뀌어도 이 표는 바뀌지 않습니다."
         )
+
+        # 개별 유닛의 실제 매수가는 1U(✱매수단가)와 마지막 유닛(마지막매수가)
+        # 말고는 노션에 남아있지 않다. 그래서 1U만 ✱매수단가를 그대로 쓰고
+        # (표시용, 다른 행 계산에는 안 씀) 나머지 전 구간(이미 산 유닛 포함)은
+        # 마지막매수가를 축으로 0.5×ATR 간격으로 채운다 — 아직 안 산 유닛은
+        # 이 축에서 앞으로, 이미 산 유닛은 뒤로 되짚는 값이다.
+        anchor_units = max(1, min(round(held_current_units) or 1, core.MAX_UNITS))
+        held_buy_prices = [round(holding.buy_price)]
+        for unit in range(2, core.MAX_UNITS + 1):
+            held_buy_prices.append(
+                round(
+                    held_last_buy_price
+                    + (unit - anchor_units) * core.PYRAMID_ATR_STEP * held_atr
+                )
+            )
+
+        held_steps = core.build_pyramid_from_prices(
+            held_buy_prices, held_atr, held_unit_shares, capital
+        )
+        if not held_steps:
+            st.info("1유닛 주수가 0이라 진행표를 만들 수 없습니다.")
+        else:
+            st.dataframe(
+                {
+                    "매수": ["✅" if s.unit <= anchor_units else "" for s in held_steps],
+                    "단계": [f"{s.unit}U" for s in held_steps],
+                    "매수가": [f"{s.buy_price:,.0f}" for s in held_steps],
+                    "손절선": [f"{s.stop_loss:,.0f}" for s in held_steps],
+                    "누적 주수": [f"{s.cum_shares:,}" for s in held_steps],
+                    "누적 투입": [f"{s.cum_cost:,.0f}" for s in held_steps],
+                    "누적 투입비중": [f"{s.cum_weight_pct:.1f}%" for s in held_steps],
+                    "손절 시 총손실": [f"{s.loss_if_stopped:,.0f}" for s in held_steps],
+                    "총자본 대비": [f"{s.loss_pct:.2f}%" for s in held_steps],
+                },
+                hide_index=True, width="stretch",
+            )
+
+            if anchor_units >= core.MAX_UNITS:
+                st.success(f"✅ 추가매수 완료 ({core.MAX_UNITS}/{core.MAX_UNITS}유닛)")
+            else:
+                # held_buy_prices는 0-index라 unit=anchor_units+1의 값은
+                # index=anchor_units에 있다.
+                next_price = held_buy_prices[anchor_units]
+                st.metric(
+                    f"다음 매수가 ({anchor_units + 1}U)", f"{next_price:,.0f}원",
+                    delta=f"+{core.PYRAMID_ATR_STEP}×ATR", delta_color="off",
+                )
+
+            actual_stop_txt = (
+                f"{holding.prev_stop_loss:,.0f}원"
+                if holding.prev_stop_loss is not None
+                else "아직 계산되지 않음 (다음 아침 배치 이후 반영)"
+            )
+            st.caption(
+                f"표의 '손절선'은 그 유닛을 살 때 적용됐을(될) 값입니다. "
+                f"실제로 지금 적용되는 손절선은 {actual_stop_txt}입니다 — 더 "
+                "높다면 진입후최고가 갱신에 따른 트레일링 때문입니다 "
+                "(손절선은 래칫이라 내려가지 않습니다)."
+            )
+    else:
+        steps = core.build_pyramid(price, atr, pos.unit_shares, capital)
+        if not steps:
+            st.info("1유닛 주수가 0이라 진행표를 만들 수 없습니다.")
+        else:
+            st.dataframe(
+                {
+                    "단계": [f"{s.unit}U" for s in steps],
+                    "매수가": [f"{s.buy_price:,.0f}" for s in steps],
+                    "손절선": [f"{s.stop_loss:,.0f}" for s in steps],
+                    "누적 주수": [f"{s.cum_shares:,}" for s in steps],
+                    "누적 투입": [f"{s.cum_cost:,.0f}" for s in steps],
+                    "누적 투입비중": [f"{s.cum_weight_pct:.1f}%" for s in steps],
+                    "손절 시 총손실": [f"{s.loss_if_stopped:,.0f}" for s in steps],
+                    "총자본 대비": [f"{s.loss_pct:.2f}%" for s in steps],
+                },
+                hide_index=True, width="stretch",
+            )
+            st.caption(
+                f"현재가를 1U 진입가로 놓고 {core.PYRAMID_ATR_STEP}×ATR "
+                f"({core.PYRAMID_ATR_STEP * atr:,.0f}원)마다 1유닛씩 "
+                f"최대 {core.MAX_UNITS}유닛까지 쌓은 계획표입니다. "
+                "추가매수할 때마다 전체 유닛의 손절선이 (마지막 매수가 − 2×ATR)로 "
+                "함께 올라갑니다."
+            )
 
     # ── 차트 ────────────────────────────────────────────────────
     st.markdown("### ■ 차트")
