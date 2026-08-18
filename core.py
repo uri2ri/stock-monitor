@@ -620,6 +620,20 @@ def breakout_verdict(gap_atr: float, chase_mult: float = CHASE_ATR_MULT) -> str:
     return "추격금지"
 
 
+def gap_atr_key(row: dict) -> float:
+    """갭(×ATR) 정렬 키. gap_atr 필드가 있으면 그대로 쓰고, 없으면(예전 스캔
+    결과) price/high_20_prev/atr로부터 계산한다."""
+    if "gap_atr" in row:
+        return row["gap_atr"]
+    atr = row.get("atr", 0)
+    return (row.get("price", 0) - row.get("high_20_prev", 0)) / atr if atr else 0.0
+
+
+def sort_by_gap(rows: list[dict]) -> list[dict]:
+    """갭(×ATR) 오름차순 정렬 – 아직 덜 뛴(추격위험 낮은) 종목이 앞에 온다."""
+    return sorted(rows, key=gap_atr_key)
+
+
 # ── 보유 종목 판정 ──────────────────────────────────────────
 
 

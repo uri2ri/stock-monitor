@@ -32,6 +32,7 @@ import requests
 
 import core
 import kakao
+import kis_client
 import scan_all
 
 logger = logging.getLogger(__name__)
@@ -287,7 +288,7 @@ def build_messages(
     if not enterable:
         return []
 
-    enterable.sort(key=lambda h: h["gap_atr"])
+    enterable = core.sort_by_gap(enterable)
     header = f"[돌파]{now.strftime('%H:%M')}"
 
     lines: list[str] = []
@@ -386,6 +387,17 @@ def run(dry_run: bool = False) -> int:
             kakao.send_kakao_message(msg)
         logger.info("카톡 %d통 발송", len(messages))
 
+    # 자동매수: 진입가능 종목만 kis_client에 넘긴다. 신호 알림(위)은 이
+    # 실패와 무관하게 이미 나갔다 - kis_client.run_auto_trade() 내부
+    # 함수들은 각자 실패를 이미 카톡으로 알리므로, 여기서 잡히는 예외는
+    # 그 안전장치들까지 넘어온 진짜 예상 밖의 오류다. 알림 이력 저장까지
+    # 막으면 안 되니 여기서 흡수한다.
+    enterable = [h for h in hits if h["status"] == STATUS_ENTER]
+    try:
+        kis_client.run_auto_trade(enterable)
+    except Exception as e:                  # noqa: BLE001
+        logger.error("자동매수 실패: %s", e)
+
     for h in hits:
         alerted[h["ticker"]] = {
             "time": now.strftime("%H:%M"),
@@ -408,6 +420,11 @@ def main() -> int:
         stream=sys.stdout,
     )
     logger.setLevel(logging.INFO)
+    # kis_client/notion_repo는 root(WARNING)를 물려받아 기본으로는 조용하다.
+    # 자동매수 진단(시간 게이트 판단, 상한 상세 분해, 유령 행 등)이 워크플로
+    # 로그에 실제로 찍히게 여기서 같이 올린다.
+    logging.getLogger("kis_client").setLevel(logging.INFO)
+    logging.getLogger("notion_repo").setLevel(logging.INFO)
 
     parser = argparse.ArgumentParser(description="장중 돌파 감시")
     parser.add_argument("--dry-run", action="store_true",

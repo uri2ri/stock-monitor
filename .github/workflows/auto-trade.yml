@@ -1,0 +1,72 @@
+name: Auto Trade (KIS 모의투자)
+
+# intraday_watch.py가 돌파를 잡으면 kis_client.run_auto_trade()로 넘겨
+# KIS 모의투자 계좌에 자동매수까지 시도한다 (신호 카톡 알림은 그대로 감).
+#
+# GitHub 자체 schedule은 이 저장소에서 실행 0건이었던 전례가 있어 쓰지
+# 않는다. workflow_dispatch만 열어두고 cron-job.org에서 외부로 트리거한다.
+#
+# 시간 게이트(kis_client.TRADE_START_TIME~TRADE_END_TIME)와 일일 주문
+# 상한은 코드 쪽에서 판단한다 - 이 워크플로는 언제 불려도 안전하다.
+
+on:
+  workflow_dispatch:
+
+# 알림 이력(data/alerted_*.json) 커밋과 노션 자동주문 기록을 함께 다루므로
+# 겹쳐 돌면 안 된다. intraday.yml과는 별개 워크플로라 GitHub가 자동으로
+# 겹침을 막아주지 않는다 - 여기서 별도 그룹으로 명시한다.
+concurrency:
+  group: auto-trade
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  trade:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Watch for breakouts and auto-trade
+        env:
+          KAKAO_REST_API_KEY: ${{ secrets.KAKAO_REST_API_KEY }}
+          KAKAO_CLIENT_SECRET: ${{ secrets.KAKAO_CLIENT_SECRET }}
+          KAKAO_REFRESH_TOKEN: ${{ secrets.KAKAO_REFRESH_TOKEN }}
+          TOTAL_CAPITAL: ${{ secrets.TOTAL_CAPITAL }}
+          WATCH_THRESHOLD: ${{ vars.WATCH_THRESHOLD }}
+          STREAMLIT_APP_URL: ${{ secrets.STREAMLIT_APP_URL }}
+          KIS_APP_KEY: ${{ secrets.KIS_APP_KEY }}
+          KIS_APP_SECRET: ${{ secrets.KIS_APP_SECRET }}
+          KIS_ACCOUNT: ${{ secrets.KIS_ACCOUNT }}
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+          NOTION_ORDERS_DB_ID: ${{ secrets.NOTION_ORDERS_DB_ID }}
+        run: python intraday_watch.py
+
+      # 알림 이력만 커밋한다 (intraday.yml과 같은 방식). 자동주문 기록은
+      # 노션에 남으므로 이 저장소에는 커밋할 게 없다.
+      - name: Commit alert log
+        if: success()
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/alerted_*.json 2>/dev/null || true
+          if git diff --cached --quiet; then
+            echo "새 알림 없음 – 커밋하지 않습니다."
+            exit 0
+          fi
+          git commit -m "chore(auto-trade): 돌파 알림 $(TZ=Asia/Seoul date '+%Y-%m-%d %H:%M') [skip ci]"
+          git pull --rebase --autostash origin ${{ github.ref_name }}
+          git push origin HEAD:${{ github.ref_name }}

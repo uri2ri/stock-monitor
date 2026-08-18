@@ -1592,14 +1592,7 @@ def render_breakout(capital: float, ai_unlocked: bool) -> None:
     # ── 표 (갭(×ATR) 오름차순 — 아직 덜 뛴 = 추격위험 낮은 종목이 위로) ──
     # 업종 분포 요약(위)은 업종별로 묶어서 보고, 종목 표는 갭 기준으로
     # 다시 정렬한다. 둘의 정렬 기준이 다른 건 의도한 것이다.
-    def _gap_atr(s: dict) -> float:
-        # 예전 스캔 결과(gap_atr 필드 도입 전)와도 호환되게 필요하면
-        # 있는 값으로 계산한다.
-        if "gap_atr" in s:
-            return s["gap_atr"]
-        return (s["price"] - s["high_20_prev"]) / s["atr"] if s["atr"] else 0.0
-
-    rows = sorted(stocks, key=_gap_atr)
+    rows = core.sort_by_gap(stocks)
 
     st.markdown("### ■ 통과 종목")
     render_scan_table(
@@ -1609,10 +1602,10 @@ def render_breakout(capital: float, ai_unlocked: bool) -> None:
                 "code": s["ticker"],
                 "sector": s["sector"],
                 "price": s["price"],
-                "metric": _gap_atr(s),
+                "metric": core.gap_atr_key(s),
                 "atr_pct": s["atr_pct"],
                 "vol_mult": s["vol_mult"],
-                "verdict": core.breakout_verdict(_gap_atr(s)),
+                "verdict": core.breakout_verdict(core.gap_atr_key(s)),
             }
             for s in rows
         ],

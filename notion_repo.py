@@ -6,7 +6,7 @@ from __future__ import annotations
 
 import logging
 import os
-from datetime import date
+from datetime import date, datetime
 from typing import Any, Optional
 
 import requests
@@ -391,3 +391,336 @@ def update_favorite_calc(page_id: str, calc: dict) -> None:
     )
     resp.raise_for_status()
     logger.info("즐겨찾기 계산 갱신 완료: page_id=%s", page_id)
+
+
+# ── 자동주문 기록 DB ────────────────────────────────────────
+#
+# 보유종목 점검표·매매일지·즐겨찾기 DB와 완전히 별개다. 서로의 칸을
+# 읽거나 쓰지 않는다. kis_client.py가 GitHub Actions의 매 실행마다
+# 새로 뜨는 컨테이너에서도 "오늘 몇 건 주문했는지 · 어느 종목을 이미
+# 주문했는지"를 알 수 있도록 실행 간 상태를 이 DB에 남긴다.
+#
+# 조회 함수(count_success_orders_today / has_order_today)는 절대 예외를
+# 삼키지 않는다 — 실패하면 그대로 올려서 호출자가 "조회 실패 = 주문 중단"
+# (fail-closed)으로 처리하게 한다. 여기서 0건으로 눙치면 일일 상한과
+# 중복 방지가 둘 다 무력화된다.
+#
+# 기록은 2단계다: 주문 전송 "전"에 상태="주문중"으로 먼저 만들고(create_order_record),
+# 전송 후 같은 행을 결과로 갱신한다(update_order_record). 전송 -> 기록 순서면
+# 주문은 나갔는데 기록이 실패했을 때 다음 실행이 그 주문을 못 보고 또 사는
+# 구멍이 생긴다 (kis_client.py 쪽 정책 - 여기선 그 순서만 지원한다).
+
+ORDER_LOG_STATUSES = ("성공", "실패", "거부", "경고", "주문중")
+
+
+def create_order_record(
+    *,
+    name: str,
+    ticker: str,
+    order_no: str,
+    qty: float,
+    price: float,
+    status: str,
+    reason: str,
+    account_type: str,
+    when: datetime,
+) -> str:
+    """자동주문 기록 DB에 주문 시도 1건을 남긴다. 성공·실패·거부 모두 기록한다.
+
+    Returns:
+        생성된 page_id
+    """
+    db_id = os.environ["NOTION_ORDERS_DB_ID"]
+    payload = {
+        "parent": {"database_id": db_id},
+        "properties": {
+            "종목명": {"title": [{"type": "text", "text": {"content": name}}]},
+            "주문일시": {"date": {"start": when.isoformat()}},
+            "종목코드": {"rich_text": [{"type": "text", "text": {"content": ticker}}]},
+            "주문번호": {"rich_text": [{"type": "text", "text": {"content": order_no}}]},
+            "수량": {"number": qty},
+            "주문가": {"number": price},
+            "상태": {"select": {"name": status}},
+            "사유": _rich_text(reason),
+            "계좌구분": {"select": {"name": account_type}},
+        },
+    }
+    resp = requests.post(f"{NOTION_BASE}/pages", headers=_headers(),
+                          json=payload, timeout=30)
+    resp.raise_for_status()
+    page_id = resp.json()["id"]
+    logger.info("자동주문 기록: %s(%s) %s page_id=%s", name, ticker, status, page_id)
+    return page_id
+
+
+def update_order_record(page_id: str, *, status: str,
+                         order_no: str = "", reason: str = "") -> None:
+    """"주문중"으로 미리 만들어둔 행을 주문 결과로 갱신한다. 새 행을 만들지 않는다.
+
+    예외를 삼키지 않는다 - 실패하면 그대로 raise. 이 시점엔 이미 주문이
+    실제로 나간 뒤라 호출자(kis_client.py)는 fail-open으로 다룬다(주문
+    자체는 막지 않고 경고만 보낸다). 갱신이 실패하면 행은 "주문중"으로
+    남는데, 그 덕분에 중복 방지(has_order_today)는 계속 작동한다.
+    """
+    payload = {
+        "properties": {
+            "상태": {"select": {"name": status}},
+            "주문번호": {"rich_text": [{"type": "text", "text": {"content": order_no}}]},
+            "사유": _rich_text(reason),
+        },
+    }
+    resp = requests.patch(f"{NOTION_BASE}/pages/{page_id}", headers=_headers(),
+                           json=payload, timeout=30)
+    resp.raise_for_status()
+    logger.info("자동주문 기록 갱신: page_id=%s -> %s", page_id, status)
+
+
+def _day_range_filter(prop: str, day: date) -> list[dict]:
+    """KST 기준 하루 범위로 date 프로퍼티를 거르는 필터 조각."""
+    start = f"{day.isoformat()}T00:00:00+09:00"
+    end = f"{day.isoformat()}T23:59:59+09:00"
+    return [
+        {"property": prop, "date": {"on_or_after": start}},
+        {"property": prop, "date": {"on_or_before": end}},
+    ]
+
+
+def count_success_orders_today(day: date, account_type: str) -> int:
+    """오늘(day) + 계좌구분 + 상태가 '성공' 또는 '주문중'인 행 개수. 일일 주문 상한 판단용.
+
+    '주문중'도 센다 - 결과를 아직 모르는 주문(사후 갱신이 실패했거나 아직
+    전송 중인 주문)을 상한 계산에서 빼면, 그만큼 상한을 넘겨서 주문할 수
+    있게 된다. 예외를 삼키지 않는다 - 실패하면 그대로 raise (fail-closed는
+    호출자 책임).
+    """
+    db_id = os.environ["NOTION_ORDERS_DB_ID"]
+    url = f"{NOTION_BASE}/databases/{db_id}/query"
+    payload: dict[str, Any] = {
+        "filter": {
+            "and": [
+                *_day_range_filter("주문일시", day),
+                {"property": "계좌구분", "select": {"equals": account_type}},
+                {"or": [
+                    {"property": "상태", "select": {"equals": "성공"}},
+                    {"property": "상태", "select": {"equals": "주문중"}},
+                ]},
+            ]
+        },
+        "page_size": 100,
+    }
+
+    count = 0
+    has_more = True
+    start_cursor: Optional[str] = None
+    while has_more:
+        if start_cursor:
+            payload["start_cursor"] = start_cursor
+        resp = requests.post(url, headers=_headers(), json=payload, timeout=30)
+        resp.raise_for_status()
+        data = resp.json()
+        count += len(data.get("results", []))
+        has_more = data.get("has_more", False)
+        start_cursor = data.get("next_cursor")
+
+    return count
+
+
+def count_orders_by_status_today(day: date, account_type: str) -> dict[str, int]:
+    """오늘(day) + 계좌구분의 상태별(성공/주문중) 건수를 각각 센다.
+
+    count_success_orders_today의 합계 판단 로직은 그대로 두고, 이건
+    "왜 상한에 걸렸는지"를 사람이 알 수 있게 분해해서 보여주는 가시성
+    전용이다 - 유령 행("주문중")이 그날 슬롯을 얼마나 먹었는지 구분한다.
+
+    예외를 삼키지 않는다 - 실패하면 그대로 raise.
+    """
+    db_id = os.environ["NOTION_ORDERS_DB_ID"]
+    url = f"{NOTION_BASE}/databases/{db_id}/query"
+    payload: dict[str, Any] = {
+        "filter": {
+            "and": [
+                *_day_range_filter("주문일시", day),
+                {"property": "계좌구분", "select": {"equals": account_type}},
+                {"or": [
+                    {"property": "상태", "select": {"equals": "성공"}},
+                    {"property": "상태", "select": {"equals": "주문중"}},
+                ]},
+            ]
+        },
+        "page_size": 100,
+    }
+
+    counts = {"성공": 0, "주문중": 0}
+    has_more = True
+    start_cursor: Optional[str] = None
+    while has_more:
+        if start_cursor:
+            payload["start_cursor"] = start_cursor
+        resp = requests.post(url, headers=_headers(), json=payload, timeout=30)
+        resp.raise_for_status()
+        data = resp.json()
+        for page in data.get("results", []):
+            status = (page.get("properties", {}).get("상태", {}).get("select") or {}).get("name")
+            if status in counts:
+                counts[status] += 1
+        has_more = data.get("has_more", False)
+        start_cursor = data.get("next_cursor")
+
+    return counts
+
+
+def count_rejected_orders_today(ticker: str, day: date,
+                                 since: Optional[datetime] = None) -> int:
+    """오늘(day) 이 종목코드로 상태='거부'인 행 개수. 반복 거부 재시도 상한 판단용.
+
+    since를 주면 그 시각 이후 거부만 센다 - 장 시작 전(호가 미확정 구간)에
+    쌓인 거부까지 스트라이크에 포함되면, 정작 거래 시간이 시작됐을 때
+    이미 차단 상태가 되는 문제가 있다 (kis_client.py의 TRADE_START_TIME).
+
+    예외를 삼키지 않는다 - 실패하면 그대로 raise (fail-closed는 호출자 책임).
+    """
+    db_id = os.environ["NOTION_ORDERS_DB_ID"]
+    url = f"{NOTION_BASE}/databases/{db_id}/query"
+    date_filter = _day_range_filter("주문일시", day)
+    if since is not None:
+        date_filter = [
+            {"property": "주문일시", "date": {"on_or_after": since.isoformat()}},
+            date_filter[1],  # 그날 끝 시각 상한은 그대로 유지
+        ]
+    payload: dict[str, Any] = {
+        "filter": {
+            "and": [
+                {"property": "종목코드", "rich_text": {"equals": ticker}},
+                *date_filter,
+                {"property": "상태", "select": {"equals": "거부"}},
+            ]
+        },
+        "page_size": 100,
+    }
+
+    count = 0
+    has_more = True
+    start_cursor: Optional[str] = None
+    while has_more:
+        if start_cursor:
+            payload["start_cursor"] = start_cursor
+        resp = requests.post(url, headers=_headers(), json=payload, timeout=30)
+        resp.raise_for_status()
+        data = resp.json()
+        count += len(data.get("results", []))
+        has_more = data.get("has_more", False)
+        start_cursor = data.get("next_cursor")
+
+    return count
+
+
+def has_order_today(ticker: str, day: date) -> bool:
+    """오늘(day) 이 종목코드로 이미 주문 시도가 있고 그 상태가 성공/주문중/실패인가.
+
+    "거부"는 뺀다 - 거래소가 명시적으로 안 받았다는 뜻이라 체결 가능성이
+    사실상 없다. 터틀은 돌파 당일 진입이 핵심이라, 일시적 오류(호가
+    미개시·수량 오류·네트워크)로 거부됐다고 하루를 통째로 막으면 다음날
+    갭 때문에 추격금지에 걸릴 위험이 크다. 반대로 "실패"는 응답을 못
+    받았을 뿐 실제로는 체결됐을 수 있어 차단을 유지한다("주문중"과 같은
+    취급). 반복 거부(구조적 문제로 의심되는 경우)는 이 함수가 아니라
+    count_rejected_orders_today + kis_client.py의 재시도 상한이 막는다.
+
+    예외를 삼키지 않는다 - 실패하면 그대로 raise (fail-closed는 호출자 책임).
+    """
+    db_id = os.environ["NOTION_ORDERS_DB_ID"]
+    url = f"{NOTION_BASE}/databases/{db_id}/query"
+    payload: dict[str, Any] = {
+        "filter": {
+            "and": [
+                {"property": "종목코드", "rich_text": {"equals": ticker}},
+                *_day_range_filter("주문일시", day),
+                {"or": [
+                    {"property": "상태", "select": {"equals": "성공"}},
+                    {"property": "상태", "select": {"equals": "주문중"}},
+                    {"property": "상태", "select": {"equals": "실패"}},
+                ]},
+            ]
+        },
+        "page_size": 1,
+    }
+    resp = requests.post(url, headers=_headers(), json=payload, timeout=30)
+    resp.raise_for_status()
+    return len(resp.json().get("results", [])) > 0
+
+
+def latest_warning_at(reason: str) -> Optional[datetime]:
+    """상태='경고' + 사유=reason인 가장 최근 행의 주문일시. 없으면 None.
+
+    경고 알림 억제(kis_client.py의 _notify_warning_throttled) 판단용이다.
+    날짜로 거르지 않고 전체에서 가장 최근 1건을 찾는다 - 억제 기준(1시간)이
+    자정을 넘길 수 있어 "오늘"로 한정하면 안 된다.
+
+    예외를 삼키지 않는다 - 실패하면 그대로 raise. 호출자(kis_client.py)는
+    이 예외를 fail-open으로 다룬다 (판단 안 되면 그냥 알린다). fail-closed인
+    has_order_today/count_success_orders_today와는 반대 방향이니 여기서
+    임의로 기본값을 만들어 삼키지 않는다 - 그 판단은 호출자 몫이다.
+    """
+    db_id = os.environ["NOTION_ORDERS_DB_ID"]
+    url = f"{NOTION_BASE}/databases/{db_id}/query"
+    payload: dict[str, Any] = {
+        "filter": {
+            "and": [
+                {"property": "상태", "select": {"equals": "경고"}},
+                {"property": "사유", "rich_text": {"equals": reason}},
+            ]
+        },
+        "sorts": [{"property": "주문일시", "direction": "descending"}],
+        "page_size": 1,
+    }
+    resp = requests.post(url, headers=_headers(), json=payload, timeout=30)
+    resp.raise_for_status()
+    results = resp.json().get("results", [])
+    if not results:
+        return None
+    d = results[0].get("properties", {}).get("주문일시", {}).get("date")
+    if not d or not d.get("start"):
+        return None
+    return datetime.fromisoformat(d["start"])
+
+
+def list_pending_orders_today(day: date) -> list[dict]:
+    """오늘(day) 상태='주문중'으로 남아 있는 행 목록 ("유령 행" 알림용).
+
+    사전 기록은 됐는데 주문 전송 중 프로세스가 죽으면 이 상태로 남는다.
+    자동으로 지우거나 상태를 바꾸지 않는다 - 실제 체결 여부는 사람이
+    확인해야 한다 (kis_client.py 쪽 정책).
+
+    예외를 삼키지 않는다 - 실패하면 그대로 raise. 이건 안전장치가 아니라
+    알림용 조회라 호출자는 이 실패로 주문 흐름을 막지 않는다.
+    """
+    db_id = os.environ["NOTION_ORDERS_DB_ID"]
+    url = f"{NOTION_BASE}/databases/{db_id}/query"
+    payload: dict[str, Any] = {
+        "filter": {
+            "and": [
+                *_day_range_filter("주문일시", day),
+                {"property": "상태", "select": {"equals": "주문중"}},
+            ]
+        },
+        "page_size": 100,
+    }
+
+    results: list[dict] = []
+    has_more = True
+    start_cursor: Optional[str] = None
+    while has_more:
+        if start_cursor:
+            payload["start_cursor"] = start_cursor
+        resp = requests.post(url, headers=_headers(), json=payload, timeout=30)
+        resp.raise_for_status()
+        data = resp.json()
+        for page in data.get("results", []):
+            props = page.get("properties", {})
+            results.append({
+                "name": _text(props.get("종목명", {})),
+                "ticker": _text(props.get("종목코드", {})),
+            })
+        has_more = data.get("has_more", False)
+        start_cursor = data.get("next_cursor")
+
+    return results
