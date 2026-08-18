@@ -802,19 +802,26 @@ def run_auto_trade(candidates: list[dict]) -> None:
     candidates 원소 형태는 intraday_watch.judge()의 결과와 같다
     ({"ticker","name","sector","price","atr20","gap_atr", ...}).
 
-    시간 게이트가 최우선이다: TRADE_START_TIME~TRADE_END_TIME 밖이면
-    토큰 발급조차 하지 않고 로그만 남기고 즉시 반환한다 - 장 시작 전
-    호가 미확정 구간에 쏟아지는 거부를 원천적으로 피한다. 휴장일은
-    따로 판단하지 않는다: 휴장일엔 candidates 자체가 비거나(스캔이
-    전일 데이터를 걸러냄) 시세 조회가 실패해 자연히 걸러진다.
+    유령 행 경고(warn_pending_orders_at_startup)를 candidates가 있으면
+    항상 먼저 호출한다 - 이 함수가 매 실행마다 반드시 거치는 진입점이라,
+    __main__에만 있으면 import로 호출될 때(intraday_watch.py 안에서)
+    조용히 빠지는 문제가 없다. 실제 매수 여부와 무관한 건강 체크라
+    아래 시간 게이트보다 먼저 돈다(장 시작 전이라도 알아야 하므로).
 
-    유령 행 경고(warn_pending_orders_at_startup)를 여기서 호출한다 -
-    이 함수가 매 실행마다 반드시 거치는 진입점이라, __main__에만
-    있으면 import로 호출될 때(intraday_watch.py 안에서) 조용히 빠지는
-    문제가 없다.
+    유령 행 경고 다음이 시간 게이트다: TRADE_START_TIME~TRADE_END_TIME
+    밖이면 토큰 발급조차 하지 않고 로그만 남기고 즉시 반환한다 - 장
+    시작 전 호가 미확정 구간에 쏟아지는 거부를 원천적으로 피한다.
+    휴장일은 따로 판단하지 않는다: 휴장일엔 candidates 자체가
+    비거나(스캔이 전일 데이터를 걸러냄) 시세 조회가 실패해 자연히
+    걸러진다.
     """
     if not candidates:
         return
+
+    # 유령 행 경고는 거래 시간 게이트보다 먼저 - 장 시작 전이라도 이전에
+    # 죽은 "주문중" 행이 있으면 바로 알아야 한다. 실제 매수 여부와는
+    # 별개의 건강 체크라 시간 게이트를 타지 않는다.
+    warn_pending_orders_at_startup()
 
     if not _within_trading_hours():
         logger.info(
@@ -822,8 +829,6 @@ def run_auto_trade(candidates: list[dict]) -> None:
             TRADE_START_TIME, TRADE_END_TIME, datetime.now(KST).strftime("%H:%M"),
         )
         return
-
-    warn_pending_orders_at_startup()
 
     token = get_access_token()
     selected = select_buy_candidates(token, candidates)
