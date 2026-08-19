@@ -13,11 +13,12 @@ on:
   workflow_dispatch:
     inputs:
       mode:
-        description: "watch = 평소 돌파감시+자동매수, smoke_test = kis_client.py __main__(삼성전자 1주 모의매수 단발 테스트)"
+        description: "watch = 평소 돌파감시+자동매수, smoke_test = 삼성전자 1주 모의매수 단발 테스트, balance_check = 모의계좌 잔고·보유종목 조회만"
         type: choice
         options:
           - watch
           - smoke_test
+          - balance_check
         default: watch
 
 # 알림 이력(data/alerted_*.json) 커밋과 노션 자동주문 기록을 함께 다루므로
@@ -49,7 +50,7 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Watch for breakouts and auto-trade
-        if: ${{ inputs.mode != 'smoke_test' }}
+        if: ${{ inputs.mode == 'watch' || inputs.mode == '' }}
         env:
           KAKAO_REST_API_KEY: ${{ secrets.KAKAO_REST_API_KEY }}
           KAKAO_CLIENT_SECRET: ${{ secrets.KAKAO_CLIENT_SECRET }}
@@ -80,6 +81,25 @@ jobs:
           NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
           NOTION_ORDERS_DB_ID: ${{ secrets.NOTION_ORDERS_DB_ID }}
         run: python kis_client.py
+
+      # 잔고조회 API만 호출해 계좌평가액·예수금·보유종목을 그대로 찍는다.
+      # 주문을 넣지 않는다 - "500 에러 났던 시도가 실제로 체결됐는지"처럼
+      # 상태만 확인하고 싶을 때 쓰는 읽기 전용 진단.
+      - name: Balance check (모의계좌 잔고·보유종목 조회)
+        if: ${{ inputs.mode == 'balance_check' }}
+        env:
+          KIS_APP_KEY: ${{ secrets.KIS_APP_KEY }}
+          KIS_APP_SECRET: ${{ secrets.KIS_APP_SECRET }}
+          KIS_ACCOUNT: ${{ secrets.KIS_ACCOUNT }}
+        run: |
+          python -c "
+          import kis_client
+          token = kis_client.get_access_token()
+          balance = kis_client.get_account_balance(token)
+          print('계좌평가액:', balance['account_size'])
+          print('예수금:', balance['available_cash'])
+          print('보유종목:', balance['holdings'])
+          "
 
       # 알림 이력만 커밋한다 (intraday.yml과 같은 방식). 자동주문 기록은
       # 노션에 남으므로 이 저장소에는 커밋할 게 없다.
