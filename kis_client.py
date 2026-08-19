@@ -53,6 +53,8 @@ BASE_URL = "https://openapivts.koreainvestment.com:29443"
 
 # 모의투자 주식 현금 매수 주문 TR ID
 ORDER_BUY_TR_ID = "VTTC0802U"
+# 모의투자 주식 현금 매도 주문 TR ID
+ORDER_SELL_TR_ID = "VTTC0801U"
 # 모의투자 주식 일별 주문체결 조회 TR ID
 INQUIRE_CCLD_TR_ID = "VTTC8001R"
 # 모의투자 주식 잔고조회 TR ID
@@ -523,6 +525,212 @@ def place_market_buy_order(access_token: str, stock_code: str, qty: int,
     return {"status": "sent", "order_no": order_no}
 
 
+# ── 매도 ────────────────────────────────────────────────────
+#
+# 매수와 대칭이지만 게이트가 다르다. 매수는 "안 사는 게 안전"이라 자금·
+# 일일 상한·중복 방지를 겹겹이 두지만, 매도는 반대로 "못 파는 게 위험"이다.
+# 그래서 일일 상한과 자금 게이트를 적용하지 않는다 - 청산은 언제나 나갈 수
+# 있어야 한다. 중복 매도만 막으면 되는데, 그건 노션 장부가 아니라 증권사
+# 잔고(주문가능수량)로 판단한다 (run_auto_sell 참고).
+
+
+def _send_market_sell(access_token: str, stock_code: str, qty: int) -> dict:
+    """모의투자 시장가 매도 주문을 KIS API로 전송하고 응답 body를 그대로 반환한다.
+
+    _send_market_buy와 본문·헤더 구조가 같고 tr_id만 다르다 (매도 0801U).
+    """
+    app_key = os.environ["KIS_APP_KEY"]
+    app_secret = os.environ["KIS_APP_SECRET"]
+    cano, acnt_prdt_cd = _parse_account(os.environ["KIS_ACCOUNT"])
+
+    body = {
+        "CANO": cano,
+        "ACNT_PRDT_CD": acnt_prdt_cd,
+        "PDNO": stock_code,
+        "ORD_DVSN": "01",  # 시장가
+        "ORD_QTY": str(qty),
+        "ORD_UNPR": "0",
+    }
+    hashkey = _get_hashkey(app_key, app_secret, body)
+
+    headers = {
+        "content-type": "application/json; charset=utf-8",
+        "authorization": f"Bearer {access_token}",
+        "appkey": app_key,
+        "appsecret": app_secret,
+        "tr_id": ORDER_SELL_TR_ID,
+        "custtype": "P",
+        "hashkey": hashkey,
+    }
+    resp = requests.post(
+        f"{BASE_URL}/uapi/domestic-stock/v1/trading/order-cash",
+        headers=headers,
+        json=body,
+        timeout=10,
+    )
+    resp.raise_for_status()
+    return resp.json()
+
+
+def place_market_sell_order(access_token: str, stock_code: str, qty: int,
+                             *, name: Optional[str] = None,
+                             reason: str = "",
+                             ref_price: float = 0.0) -> dict:
+    """모의투자 시장가 매도 주문 1건을 시도한다 (청산은 항상 전량).
+
+    기록 순서는 매수와 같다: 사전 기록("주문중", fail-closed) -> 전송 ->
+    사후 갱신(fail-open). 사전 기록조차 못 하면 주문하지 않는다 - 판 걸
+    모르면 다음 실행이 또 팔 수 있기 때문이다.
+
+    Args:
+        reason: 매도 사유 (손절/추세청산). 노션 기록과 카톡에 그대로 쓴다.
+        ref_price: 노션 "주문가" 참고용 (시장가라 체결 전엔 정확한 값을 모른다).
+    반환: {"status": "sent"|"rejected"|"error"|"blocked", ...}
+    """
+    display_name = name or stock_code
+
+    try:
+        page_id = notion_repo.create_order_record(
+            name=display_name, ticker=stock_code, order_no="", qty=qty,
+            price=ref_price, status="주문중", reason=reason,
+            account_type=ACCOUNT_TYPE, when=datetime.now(KST),
+            side=notion_repo.SIDE_SELL,
+        )
+    except Exception as e:                  # noqa: BLE001
+        msg = f"[KIS] 매도 주문 건너뜀 - 사전 기록 실패로 주문 중단: {stock_code} {e}"
+        logger.error(msg)
+        _notify_failure(msg)
+        return {"status": "blocked", "msg": f"사전 기록 실패 (fail-closed): {e}"}
+
+    try:
+        result = _send_market_sell(access_token, stock_code, qty)
+    except Exception as e:                  # noqa: BLE001
+        msg = f"[KIS] 매도 주문 전송 실패 - {stock_code} {qty}주: {e}"
+        logger.error(msg)
+        _notify_failure(msg)
+        _update_order_record(page_id, status="실패", reason=f"{reason} / {e}")
+        return {"status": "error", "msg": str(e)}
+
+    if result.get("rt_cd") != "0":
+        rejected_msg = result.get("msg1", "알 수 없는 오류")
+        msg = f"[KIS] 매도 주문 거부 - {stock_code} {qty}주: {rejected_msg}"
+        logger.warning(msg)
+        _notify_failure(msg)
+        _update_order_record(page_id, status="거부",
+                             reason=f"{reason} / {rejected_msg}")
+        return {"status": "rejected", "msg": rejected_msg}
+
+    order_no = result["output"]["ODNO"]
+    _update_order_record(page_id, status="성공", order_no=order_no, reason=reason)
+    _notify_failure(
+        f"[KIS] 🔻 자동매도 {display_name}({stock_code}) {qty}주 - {reason}"
+    )
+    return {"status": "sent", "order_no": order_no}
+
+
+def _sell_reason(inp, price: float, today: date) -> Optional[str]:
+    """이 종목을 지금 팔아야 하는 이유. 없으면 None.
+
+    판정 로직 자체는 core.evaluate_holding()에 있고 아침 배치가 이미 돌려
+    노션에 써둔다 - 여기서 그 판정을 다시 구현하지 않는다. 다만 손절선
+    이탈만은 장중 현재가로 다시 확인한다 (배치는 전일 종가 기준이라 장중
+    급락을 놓친다).
+
+    - 추세청산(10일 저가)은 종가 기준 규칙이라 배치 판정을 그대로 따른다.
+    - 손절선은 배치 판정(전일 종가) 또는 장중 현재가, 둘 중 하나만 걸려도
+      판다. 손절선은 래칫이라 장중에 값이 내려갈 일이 없다.
+
+    배치 판정은 '오늘 낸 것'만 신뢰한다 - 배치가 못 돈 날의 묵은 판정으로
+    팔면 안 되기 때문이다 (checked_date 확인).
+    """
+    verdict_fresh = inp.checked_date == today
+    if verdict_fresh and inp.recent_verdict in ("손절", "추세청산"):
+        return f"{inp.recent_verdict} (아침 배치 판정)"
+
+    stop = inp.prev_stop_loss
+    if stop and price > 0 and price <= stop:
+        return f"손절 (장중 {price:,.0f} ≤ 손절선 {stop:,.0f})"
+
+    return None
+
+
+def run_auto_sell(holdings: Optional[list] = None) -> None:
+    """보유 종목의 청산 판정을 실제 매도 주문으로 잇는다.
+
+    intraday_watch.py가 매 실행마다 호출한다. 매수(run_auto_trade)와 달리
+    일일 상한·자금 게이트가 없다 - 못 파는 게 더 위험하기 때문이다.
+
+    holdings를 주지 않으면 노션에서 직접 읽는다 (NOTION_DB_ID 필요).
+    조회가 실패하면 판정 자체가 불가능하므로 조용히 건너뛴다 - 여기서
+    예외를 올리면 호출부의 돌파 감시·알림까지 같이 죽는다.
+
+    중복 매도는 증권사 잔고로 막는다: 주문가능수량(sellable)이 0이면 이미
+    팔았거나 매도가 미체결로 걸려 있다는 뜻이라 건너뛴다. 노션 장부 대신
+    증권사를 원본으로 삼아, 기록이 어긋나도 두 번 팔지 않는다.
+
+    수량은 노션 보유수량이 아니라 실제 주문가능수량을 쓴다 - 둘이 어긋날 때
+    (수동 매매·부분 체결) 증권사에 있는 만큼만 파는 게 항상 안전하다.
+    """
+    # 시간 게이트를 노션 조회보다 먼저 - 장 밖에선 아무것도 조회하지 않는다.
+    if not _within_trading_hours():
+        logger.info(
+            "거래 시간(%s~%s) 아님 - 자동매도 건너뜀 (현재 %s)",
+            TRADE_START_TIME, TRADE_END_TIME, datetime.now(KST).strftime("%H:%M"),
+        )
+        return
+
+    if holdings is None:
+        try:
+            holdings = [inp for _, inp in notion_repo.fetch_holdings()]
+        except Exception as e:              # noqa: BLE001
+            logger.error("보유 종목 조회 실패 - 자동매도를 건너뜁니다: %s", e)
+            _notify_warning_throttled(
+                WARN_ORDER_STATUS_UNKNOWN,
+                "[KIS] ⚠ 보유 종목 조회 실패 — 자동매도 판단 불가로 건너뜀",
+            )
+            return
+
+    if not holdings:
+        return
+
+    today = _today()
+    token = get_access_token()
+
+    try:
+        balance = get_account_balance(token)
+    except Exception as e:                  # noqa: BLE001
+        logger.error("잔고조회 실패 - 자동매도를 건너뜁니다: %s", e)
+        _notify_warning_throttled(
+            WARN_ORDER_STATUS_UNKNOWN,
+            "[KIS] ⚠ 잔고조회 실패 — 자동매도 판단 불가로 건너뜀",
+        )
+        return
+
+    sellable = {h["ticker"]: h["sellable"] for h in balance.get("holdings", [])}
+
+    for inp in holdings:
+        qty = sellable.get(inp.ticker, 0)
+        if qty <= 0:
+            # 이 계좌에 없거나(수동 보유·다른 계좌) 이미 매도가 걸려 있다.
+            continue
+
+        try:
+            price = float(get_current_price(token, inp.ticker))
+        except Exception as e:              # noqa: BLE001
+            logger.warning("[%s] 현재가 조회 실패 - 이번 회차 매도 판정 건너뜀: %s",
+                           inp.ticker, e)
+            continue
+
+        reason = _sell_reason(inp, price, today)
+        if reason is None:
+            continue
+
+        result = place_market_sell_order(
+            token, inp.ticker, qty, name=inp.name, reason=reason, ref_price=price,
+        )
+        logger.info("자동매도: %s(%s) %d주 -> %s", inp.name, inp.ticker, qty, result)
+
+
 def get_order_execution(access_token: str, order_no: str) -> dict | None:
     """오늘 주문의 체결 여부를 조회한다. 체결 전이거나 못 찾으면 None."""
     app_key = os.environ["KIS_APP_KEY"]
@@ -581,7 +789,12 @@ def get_account_balance(access_token: str) -> dict:
     """모의투자 잔고조회 API로 계좌평가액·예수금(가용현금)·보유종목을 실시간 조회한다.
 
     반환: {"account_size": 총평가금액, "available_cash": 예수금총금액,
-           "holdings": [{"ticker","qty"}, ...]}  (이 모의계좌 자체 보유분)
+           "holdings": [{"ticker","qty","sellable"}, ...]}  (이 모의계좌 자체 보유분)
+
+    holdings의 sellable은 주문가능수량(ord_psbl_qty)이다. 이미 낸 매도가
+    미체결로 걸려 있으면 이 값이 줄어들므로, 자동매도는 hldg_qty가 아니라
+    이 값을 보고 "이미 팔았는지"를 판단한다 - 노션 장부가 아니라 증권사
+    잔고가 원본이라 중복 매도를 구조적으로 막아준다.
     """
     app_key = os.environ["KIS_APP_KEY"]
     app_secret = os.environ["KIS_APP_SECRET"]
@@ -619,7 +832,11 @@ def get_account_balance(access_token: str) -> dict:
     output2 = data.get("output2") or [{}]
     row = output2[0]
     holdings = [
-        {"ticker": h.get("pdno", ""), "qty": int(float(h.get("hldg_qty") or 0))}
+        {
+            "ticker": h.get("pdno", ""),
+            "qty": int(float(h.get("hldg_qty") or 0)),
+            "sellable": int(float(h.get("ord_psbl_qty") or 0)),
+        }
         for h in data.get("output1") or []
         if int(float(h.get("hldg_qty") or 0)) > 0
     ]

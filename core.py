@@ -657,6 +657,11 @@ class HoldingInput:
     last_buy_price: Optional[float] = None      # 마지막 매수가 (추가매수 기준)
     signal_first_date: Optional[date] = None    # 신호 최초 발생일
     last_alerted_stop: Optional[float] = None   # 마지막으로 갱신 알림을 보낸 손절선
+    # 아침 배치(daily_report.py)가 기록해둔 직전 판정과 그 판정을 낸 날.
+    # 자동매도(kis_client.run_auto_sell)가 "오늘 낸 판정"만 신뢰하는 데 쓴다 –
+    # 배치가 못 돈 날의 묵은 판정으로 팔아버리면 안 되므로 둘을 함께 읽는다.
+    recent_verdict: str = ""                    # 최근 판정 (손절/추세청산/…)
+    checked_date: Optional[date] = None         # 확인일 (배치가 마지막으로 판정한 날)
     # 공시·뉴스 (Cowork가 매일 07:00에 기록) – 계산에는 쓰지 않고 리포트에만 사용
     news_memo: str = ""                      # 공시·뉴스
     exit_signal: bool = False                # 철수신호
