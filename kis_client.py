@@ -123,18 +123,44 @@ TOKEN_RETRIES = 1
 TOKEN_RETRY_WAIT_SECONDS = 2
 
 
+# 이 프로세스 실행 동안만 유효한 토큰 캐시. GitHub Actions는 실행마다 새
+# 컨테이너라 다음 실행으로 새지 않고, 8분짜리 워크플로 안에서는 KIS 토큰
+# 유효기간(수 시간)이 끝날 일도 없다. 저장소가 public이라 파일에 남기는
+# "영속 캐싱"은 여전히 하지 않는다 - 이건 그것과 다른, 한 실행 안에서의
+# 중복 네트워크 호출만 막는 캐싱이다.
+#
+# 왜 필요한가: intraday_watch.py가 같은 주기 안에서 run_auto_sell()과
+# run_auto_trade()를 각각 부르는데, 둘 다 독립적으로 get_access_token()을
+# 호출한다. KIS는 짧은 간격의 재발급을 레이트리밋(403)하고 이건 타임아웃이
+# 아니라서 재시도 대상도 아니라 그대로 실패한다 - 먼저 실행되는 쪽이 이미
+# 성공한 토큰이 있는데도 나중 쪽이 새로 받으려다 걸려서 그 회차를 통째로
+# 놓친다(2026-08-19 13:03 "토큰 발급 실패"가 이 충돌로 추정된다).
+_cached_token: Optional[str] = None
+_cached_token_error: Optional[Exception] = None
+
+
 def get_access_token() -> str:
     """모의투자 접근토큰을 발급받는다. 토큰 값은 반환만 하고 출력하지 않는다.
 
-    캐싱하지 않는다 - 실행마다 새로 발급받는다 (저장소가 아직 public이라
-    토큰을 파일에 남기지 않으려는 것. 캐싱은 저장소를 private으로 옮긴
-    뒤 별도로 한다). KIS는 잦은 재발급 시 이용 제한이 걸릴 수 있는데,
-    발급 실패·거부를 조용히 넘어가지 않고 카톡으로 알린 뒤 예외를 올린다.
+    이 프로세스 실행 안에서 두 번째 호출부터는 첫 호출 결과(성공한 토큰
+    또는 실패)를 그대로 재사용한다 - 위 _cached_token 설명 참고. 실패를
+    캐싱하는 것도 의도적이다: 첫 시도가 레이트리밋으로 실패했다면 같은
+    실행 안에서 곧바로 다시 시도해도 같은 응답이 온다.
+
+    KIS는 잦은 재발급 시 이용 제한이 걸릴 수 있는데, 발급 실패·거부를
+    조용히 넘어가지 않고 카톡으로 알린 뒤 예외를 올린다 (실행당 1회만).
 
     타임아웃은 짧게 한 번 재시도한다 (TOKEN_RETRIES). 알림은 재시도까지
     모두 실패했을 때만 보낸다 - 한 번 늦었다가 곧바로 성공한 건 사람이
     알 필요가 없다.
     """
+    global _cached_token, _cached_token_error
+
+    if _cached_token is not None:
+        return _cached_token
+    if _cached_token_error is not None:
+        raise _cached_token_error
+
     app_key = os.environ["KIS_APP_KEY"]
     app_secret = os.environ["KIS_APP_SECRET"]
 
@@ -156,6 +182,7 @@ def get_access_token() -> str:
                 raise RuntimeError("토큰 발급 응답에 access_token이 없습니다.")
             if attempt:
                 logger.info("KIS 접근토큰 발급 성공 (재시도 %d회째)", attempt)
+            _cached_token = token
             return token
         except (requests.Timeout, requests.ConnectionError) as e:
             # 서버가 대답을 못 준 경우만 재시도 대상이다.
@@ -173,6 +200,7 @@ def get_access_token() -> str:
     logger.error("KIS 접근토큰 발급 실패: %s", last_error)
     _notify_warning_throttled(
         WARN_TOKEN_FAILED, f"[KIS] ⚠ 접근토큰 발급 실패 - {last_error}")
+    _cached_token_error = last_error
     raise last_error
 
 
