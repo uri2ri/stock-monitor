@@ -11,6 +11,14 @@ name: Auto Trade (KIS 모의투자)
 
 on:
   workflow_dispatch:
+    inputs:
+      mode:
+        description: "watch = 평소 돌파감시+자동매수, smoke_test = kis_client.py __main__(삼성전자 1주 모의매수 단발 테스트)"
+        type: choice
+        options:
+          - watch
+          - smoke_test
+        default: watch
 
 # 알림 이력(data/alerted_*.json) 커밋과 노션 자동주문 기록을 함께 다루므로
 # 겹쳐 돌면 안 된다. intraday.yml과는 별개 워크플로라 GitHub가 자동으로
@@ -41,6 +49,7 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Watch for breakouts and auto-trade
+        if: ${{ inputs.mode != 'smoke_test' }}
         env:
           KAKAO_REST_API_KEY: ${{ secrets.KAKAO_REST_API_KEY }}
           KAKAO_CLIENT_SECRET: ${{ secrets.KAKAO_CLIENT_SECRET }}
@@ -54,6 +63,20 @@ jobs:
           NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
           NOTION_ORDERS_DB_ID: ${{ secrets.NOTION_ORDERS_DB_ID }}
         run: python intraday_watch.py
+
+      # kis_client.py의 __main__ 블록(삼성전자 1주 모의매수 단발 테스트)을
+      # 그대로 돌린다 - 돌파감시·시간게이트·자금게이트를 거치지 않는
+      # KIS API 연결 자체의 스모크테스트다. 수동 진단용, 일상 실행 경로가
+      # 아니다.
+      - name: Smoke test (KIS API 연결 확인)
+        if: ${{ inputs.mode == 'smoke_test' }}
+        env:
+          KIS_APP_KEY: ${{ secrets.KIS_APP_KEY }}
+          KIS_APP_SECRET: ${{ secrets.KIS_APP_SECRET }}
+          KIS_ACCOUNT: ${{ secrets.KIS_ACCOUNT }}
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+          NOTION_ORDERS_DB_ID: ${{ secrets.NOTION_ORDERS_DB_ID }}
+        run: python kis_client.py
 
       # 알림 이력만 커밋한다 (intraday.yml과 같은 방식). 자동주문 기록은
       # 노션에 남으므로 이 저장소에는 커밋할 게 없다.
