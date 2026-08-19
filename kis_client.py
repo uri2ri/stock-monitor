@@ -749,9 +749,15 @@ def run_auto_sell(holdings: Optional[list] = None) -> None:
     intraday_watch.py가 매 실행마다 호출한다. 매수(run_auto_trade)와 달리
     일일 상한·자금 게이트가 없다 - 못 파는 게 더 위험하기 때문이다.
 
-    holdings를 주지 않으면 노션에서 직접 읽는다 (NOTION_DB_ID 필요).
-    조회가 실패하면 판정 자체가 불가능하므로 조용히 건너뛴다 - 여기서
-    예외를 올리면 호출부의 돌파 감시·알림까지 같이 죽는다.
+    holdings를 주지 않으면 노션에서 운용="자동"인 행만 직접 읽는다
+    (NOTION_DB_ID 필요). 조회가 실패하면 판정 자체가 불가능하므로 조용히
+    건너뛴다 - 여기서 예외를 올리면 호출부의 돌파 감시·알림까지 같이 죽는다.
+
+    운용="자동"으로 좁히는 이유: 매도 자체는 증권사 잔고(주문가능수량)로
+    판단하지만, "무엇을 팔지"는 노션에서 가져온다. 여기서 필터링을 안
+    하면 같은 티커의 실계좌 수동 보유 종목이 모의계좌의 매도가능수량과
+    우연히 매칭돼 판정 대상에 섞여 들어갈 수 있다 - 자동매수가 실제로
+    편입한 종목(find_auto_holding_page와 같은 범위)만 본다.
 
     중복 매도는 증권사 잔고로 막는다: 주문가능수량(sellable)이 0이면 이미
     팔았거나 매도가 미체결로 걸려 있다는 뜻이라 건너뛴다. 노션 장부 대신
@@ -773,7 +779,14 @@ def run_auto_sell(holdings: Optional[list] = None) -> None:
 
     if holdings is None:
         try:
-            holdings = [inp for _, inp in notion_repo.fetch_holdings()]
+            # 운용="자동"만 본다 - 안 그러면 같은 티커의 실계좌 수동 보유
+            # 종목이 모의계좌 매도가능수량과 우연히 매칭돼 팔릴 후보에
+            # 섞여 들어갈 수 있다 (find_auto_holding_page와 같은 원칙).
+            holdings = [
+                inp for _, inp in notion_repo.fetch_holdings(
+                    managed_by=notion_repo.MANAGED_AUTO,
+                )
+            ]
         except Exception as e:              # noqa: BLE001
             logger.error("보유 종목 조회 실패 - 자동매도를 건너뜁니다: %s", e)
             _notify_warning_throttled(

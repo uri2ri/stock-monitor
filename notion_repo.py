@@ -82,16 +82,30 @@ def _date_val(prop: dict) -> Optional[date]:
 
 # ── 읽기: 보유 종목 조회 ────────────────────────────────────
 
-def fetch_holdings() -> list[tuple[str, HoldingInput]]:
-    """노션 DB에서 구분='보유'인 행을 읽어 (page_id, HoldingInput) 리스트로 반환."""
+def fetch_holdings(managed_by: Optional[str] = None) -> list[tuple[str, HoldingInput]]:
+    """노션 DB에서 구분='보유'인 행을 읽어 (page_id, HoldingInput) 리스트로 반환.
+
+    managed_by를 주면 '운용' 칸이 그 값인 행만 읽는다(예: MANAGED_AUTO="자동").
+    기본은 필터 없이 전체를 읽는다 - 아침 배치(daily_report.py)는 수동
+    보유까지 전부 판정해야 하므로 이 필터를 쓰지 않는다.
+
+    kis_client.run_auto_sell()은 managed_by=MANAGED_AUTO로 좁혀서 부른다:
+    모의계좌(자동매매 전용)의 매도가능수량과 종목코드만으로 매칭하면,
+    같은 티커의 실계좌 수동 보유 종목까지 매도 후보에 섞여 들어갈 수
+    있다 - 자동매수가 실제로 편입한 행(find_auto_holding_page가 쓰는
+    운용="자동")만 보게 좁혀 그 경로를 막는다.
+    """
     db_id = os.environ["NOTION_DB_ID"]
     url = f"{NOTION_BASE}/databases/{db_id}/query"
 
+    condition: dict[str, Any] = {"property": "구분", "select": {"equals": "보유"}}
+    if managed_by:
+        condition = {
+            "and": [condition, {"property": "운용", "select": {"equals": managed_by}}]
+        }
+
     payload: dict[str, Any] = {
-        "filter": {
-            "property": "구분",
-            "select": {"equals": "보유"},
-        },
+        "filter": condition,
         "page_size": 100,
     }
 
