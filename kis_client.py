@@ -6,7 +6,9 @@ kis_client.py - 한국투자증권(KIS) Open API 연동
 3단계: 자금 게이트 - 후보를 실제로 주문 넣기 전에 "이 계좌 규모로 감당되는가"를
        거른다. 신호 판정(20일 고가·갭·손절선)은 core.py 소관이라 여기서는
        core.calc_position()·core.MAX_UNITS* 상수만 가져다 쓰고 다시 만들지 않는다.
-매도 주문은 다루지 않는다 (매도는 증권사 자동감시주문이 담당).
+매도: 터틀 청산(손절선 이탈·추세청산)을 run_auto_sell()이 실주문으로 잇는다.
+판정 자체는 core.evaluate_holding()과 아침 배치가 이미 하고 있어 여기서 다시
+만들지 않는다. 중복 매도는 노션 장부가 아니라 증권사 잔고(주문가능수량)로 막는다.
 
 같은 날 같은 종목 중복 주문 방지, 일일 주문 건수 상한은 노션 "자동주문 기록" DB를
 조회해서 판단한다 (NOTION_ORDERS_DB_ID). GitHub Actions는 실행마다 컨테이너가 새로
@@ -21,7 +23,8 @@ fail-closed: 이 조회가 실패하면(네트워크·인증 만료 등) "0건"�
 
 로컬 테스트: python kis_client.py
 필요한 .env 값: KIS_APP_KEY, KIS_APP_SECRET, KIS_ACCOUNT, NOTION_TOKEN,
-NOTION_ORDERS_DB_ID (모의투자)
+NOTION_ORDERS_DB_ID, NOTION_DB_ID (모의투자). 하나라도 없으면 자동매수·매도를
+통째로 건너뛴다 - AUTO_TRADE_ENV 참고.
 """
 
 from __future__ import annotations
@@ -61,6 +64,30 @@ INQUIRE_CCLD_TR_ID = "VTTC8001R"
 INQUIRE_BALANCE_TR_ID = "VTTC8434R"
 
 KST = ZoneInfo("Asia/Seoul")
+
+# 자동매매에 필요한 환경변수. 하나라도 없으면 이 실행 환경은 자동매매용이
+# 아니라고 보고 매수·매도를 통째로 건너뛴다.
+#
+# intraday_watch.py는 두 워크플로가 공유한다: auto-trade.yml(자동매매,
+# 자격증명 있음)과 intraday.yml(돌파 알림 전용, 자격증명 없음). 후자에서
+# 노션·KIS 조회가 실패하는 건 정상이므로 장애로 다루면 안 된다 - 실패로
+# 보고 카톡을 보내면 10분마다 경고가 쏟아진다(경고 억제 판단조차 노션을
+# 타서 같이 죽으므로 억제도 안 걸린다). 설정 안 됨은 장애가 아니라 구성이다.
+AUTO_TRADE_ENV = (
+    "KIS_APP_KEY", "KIS_APP_SECRET", "KIS_ACCOUNT",
+    "NOTION_TOKEN", "NOTION_ORDERS_DB_ID", "NOTION_DB_ID",
+)
+
+
+def _auto_trade_configured() -> bool:
+    """이 실행 환경에 자동매매 자격증명이 갖춰져 있는가. 없으면 조용히 건너뛴다."""
+    missing = [k for k in AUTO_TRADE_ENV if not os.environ.get(k)]
+    if missing:
+        logger.info("자동매매 환경변수 미설정 (%s) - 자동매수·자동매도를 건너뜁니다",
+                    ", ".join(missing))
+        return False
+    return True
+
 
 ACCOUNT_TYPE = "모의"  # 이 파일은 모의투자 전용 - 노션 기록의 계좌구분은 항상 이 값
 # 하루에 낼 수 있는 신규 매수 주문 건수 상한. 첫 배선 확인 동안은 실패 원인을
@@ -672,6 +699,9 @@ def run_auto_sell(holdings: Optional[list] = None) -> None:
     수량은 노션 보유수량이 아니라 실제 주문가능수량을 쓴다 - 둘이 어긋날 때
     (수동 매매·부분 체결) 증권사에 있는 만큼만 파는 게 항상 안전하다.
     """
+    if not _auto_trade_configured():
+        return
+
     # 시간 게이트를 노션 조회보다 먼저 - 장 밖에선 아무것도 조회하지 않는다.
     if not _within_trading_hours():
         logger.info(
@@ -1034,6 +1064,9 @@ def run_auto_trade(candidates: list[dict]) -> None:
     걸러진다.
     """
     if not candidates:
+        return
+
+    if not _auto_trade_configured():
         return
 
     # 유령 행 경고는 거래 시간 게이트보다 먼저 - 장 시작 전이라도 이전에
