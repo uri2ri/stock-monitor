@@ -135,6 +135,10 @@ def fetch_holdings() -> list[tuple[str, HoldingInput]]:
                     last_buy_price=_number(props.get("마지막 매수가", {})),
                     signal_first_date=_date_val(props.get("신호 최초 발생일", {})),
                     last_alerted_stop=_number(props.get("마지막 알린 손절선", {})),
+                    # 배치가 쓴 판정과 그 판정일 – 자동매도가 "오늘 판정"인지
+                    # 확인하는 데 쓴다 (kis_client.run_auto_sell).
+                    recent_verdict=_select(props.get("최근 판정", {})),
+                    checked_date=_date_val(props.get("확인일", {})),
                     news_memo=_text(props.get("공시·뉴스", {})).strip(),
                     exit_signal=_flag(props.get("철수신호", {})),
                     news_date=_date_val(props.get("뉴스 확인일", {})),
@@ -412,6 +416,24 @@ def update_favorite_calc(page_id: str, calc: dict) -> None:
 
 ORDER_LOG_STATUSES = ("성공", "실패", "거부", "경고", "주문중")
 
+SIDE_BUY = "매수"
+SIDE_SELL = "매도"
+
+
+def _side_filter(side: str) -> dict:
+    """매매구분 필터 조각.
+
+    "매매구분" 칸은 자동매도를 붙이면서 나중에 추가됐다. 그 전에 쌓인 행은
+    전부 매수인데 칸이 비어 있으므로, 매수를 거를 땐 빈 값도 매수로 본다 –
+    안 그러면 과거 매수 기록이 중복 방지·일일 상한 계산에서 통째로 빠진다.
+    """
+    if side == SIDE_BUY:
+        return {"or": [
+            {"property": "매매구분", "select": {"equals": SIDE_BUY}},
+            {"property": "매매구분", "select": {"is_empty": True}},
+        ]}
+    return {"property": "매매구분", "select": {"equals": side}}
+
 
 def create_order_record(
     *,
@@ -424,8 +446,13 @@ def create_order_record(
     reason: str,
     account_type: str,
     when: datetime,
+    side: str = SIDE_BUY,
 ) -> str:
     """자동주문 기록 DB에 주문 시도 1건을 남긴다. 성공·실패·거부 모두 기록한다.
+
+    Args:
+        side: "매수" | "매도". 매도 기록이 매수의 중복 방지·일일 상한
+            계산에 섞여 들어가지 않도록 구분해서 남긴다.
 
     Returns:
         생성된 page_id
@@ -443,6 +470,7 @@ def create_order_record(
             "상태": {"select": {"name": status}},
             "사유": _rich_text(reason),
             "계좌구분": {"select": {"name": account_type}},
+            "매매구분": {"select": {"name": side}},
         },
     }
     resp = requests.post(f"{NOTION_BASE}/pages", headers=_headers(),
@@ -485,7 +513,8 @@ def _day_range_filter(prop: str, day: date) -> list[dict]:
     ]
 
 
-def count_success_orders_today(day: date, account_type: str) -> int:
+def count_success_orders_today(day: date, account_type: str,
+                                side: str = SIDE_BUY) -> int:
     """오늘(day) + 계좌구분 + 상태가 '성공' 또는 '주문중'인 행 개수. 일일 주문 상한 판단용.
 
     '주문중'도 센다 - 결과를 아직 모르는 주문(사후 갱신이 실패했거나 아직
@@ -500,6 +529,7 @@ def count_success_orders_today(day: date, account_type: str) -> int:
             "and": [
                 *_day_range_filter("주문일시", day),
                 {"property": "계좌구분", "select": {"equals": account_type}},
+                _side_filter(side),
                 {"or": [
                     {"property": "상태", "select": {"equals": "성공"}},
                     {"property": "상태", "select": {"equals": "주문중"}},
@@ -525,7 +555,8 @@ def count_success_orders_today(day: date, account_type: str) -> int:
     return count
 
 
-def count_orders_by_status_today(day: date, account_type: str) -> dict[str, int]:
+def count_orders_by_status_today(day: date, account_type: str,
+                                  side: str = SIDE_BUY) -> dict[str, int]:
     """오늘(day) + 계좌구분의 상태별(성공/주문중) 건수를 각각 센다.
 
     count_success_orders_today의 합계 판단 로직은 그대로 두고, 이건
@@ -541,6 +572,7 @@ def count_orders_by_status_today(day: date, account_type: str) -> dict[str, int]
             "and": [
                 *_day_range_filter("주문일시", day),
                 {"property": "계좌구분", "select": {"equals": account_type}},
+                _side_filter(side),
                 {"or": [
                     {"property": "상태", "select": {"equals": "성공"}},
                     {"property": "상태", "select": {"equals": "주문중"}},
@@ -570,7 +602,8 @@ def count_orders_by_status_today(day: date, account_type: str) -> dict[str, int]
 
 
 def count_rejected_orders_today(ticker: str, day: date,
-                                 since: Optional[datetime] = None) -> int:
+                                 since: Optional[datetime] = None,
+                                 side: str = SIDE_BUY) -> int:
     """오늘(day) 이 종목코드로 상태='거부'인 행 개수. 반복 거부 재시도 상한 판단용.
 
     since를 주면 그 시각 이후 거부만 센다 - 장 시작 전(호가 미확정 구간)에
@@ -591,6 +624,7 @@ def count_rejected_orders_today(ticker: str, day: date,
         "filter": {
             "and": [
                 {"property": "종목코드", "rich_text": {"equals": ticker}},
+                _side_filter(side),
                 *date_filter,
                 {"property": "상태", "select": {"equals": "거부"}},
             ]
@@ -614,7 +648,7 @@ def count_rejected_orders_today(ticker: str, day: date,
     return count
 
 
-def has_order_today(ticker: str, day: date) -> bool:
+def has_order_today(ticker: str, day: date, side: str = SIDE_BUY) -> bool:
     """오늘(day) 이 종목코드로 이미 주문 시도가 있고 그 상태가 성공/주문중/실패인가.
 
     "거부"는 뺀다 - 거래소가 명시적으로 안 받았다는 뜻이라 체결 가능성이
@@ -633,6 +667,7 @@ def has_order_today(ticker: str, day: date) -> bool:
         "filter": {
             "and": [
                 {"property": "종목코드", "rich_text": {"equals": ticker}},
+                _side_filter(side),
                 *_day_range_filter("주문일시", day),
                 {"or": [
                     {"property": "상태", "select": {"equals": "성공"}},

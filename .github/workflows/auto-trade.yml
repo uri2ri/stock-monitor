@@ -63,6 +63,8 @@ jobs:
           KIS_ACCOUNT: ${{ secrets.KIS_ACCOUNT }}
           NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
           NOTION_ORDERS_DB_ID: ${{ secrets.NOTION_ORDERS_DB_ID }}
+          # 자동매도가 보유 종목(손절선·최근 판정)을 읽는 DB
+          NOTION_DB_ID: ${{ secrets.NOTION_DB_ID }}
         run: python intraday_watch.py
 
       # kis_client.py의 __main__ 블록(삼성전자 1주 모의매수 단발 테스트)을

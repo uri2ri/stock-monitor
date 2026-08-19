@@ -336,6 +336,20 @@ def run(dry_run: bool = False) -> int:
     now = datetime.now(KST)
     day = now.strftime("%Y%m%d")
 
+    # 자동매도를 돌파 감시보다 먼저 돌린다. 아래는 "감시 종목 없음 / 이미
+    # 전부 알림 / 신규 돌파 없음"으로 일찍 return하는 경로가 여럿이라,
+    # 매도를 뒤에 두면 대부분의 회차에서 통째로 건너뛴다 - 청산은 돌파
+    # 여부와 무관하게 매 회차 확인해야 한다.
+    #
+    # dry_run에선 실행하지 않는다 (메시지 미리보기 전용 모드라 실주문이
+    # 나가면 안 된다). 예외는 여기서 흡수한다 - 매도 쪽 문제로 돌파
+    # 알림까지 죽으면 안 되고, 내부 함수들이 각자 카톡으로 이미 알린다.
+    if not dry_run:
+        try:
+            kis_client.run_auto_sell()
+        except Exception as e:              # noqa: BLE001
+            logger.error("자동매도 실패: %s", e)
+
     watch = load_watchlist()
     if watch.empty:
         logger.info("감시할 종목이 없습니다.")
