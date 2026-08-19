@@ -168,10 +168,16 @@ MANAGED_AUTO = "자동"
 MANAGED_MANUAL = "수동"
 
 
-def find_holding_page(ticker: str) -> Optional[str]:
-    """구분='보유'인 행 중 이 종목코드의 page_id. 없으면 None.
+def find_auto_holding_page(ticker: str) -> Optional[str]:
+    """구분='보유' + 운용='자동'인 행 중 이 종목코드의 page_id. 없으면 None.
 
-    자동매수가 편입 전에 "이미 있는 종목인가"를 확인하는 데 쓴다.
+    자동매수가 편입 전에 "이미 자동으로 들고 있는 종목인가"를 확인하는 데 쓴다.
+
+    운용='자동'으로 반드시 좁힌다: 같은 종목을 다른 증권사에서 수동으로
+    들고 있을 수 있는데, 그 행을 찾아 수량을 더해버리면 서로 다른 계좌의
+    포지션이 한 행에 뒤섞인다(보유수량·마지막 매수가가 둘 다 망가진다).
+    수동 행은 못 찾은 것으로 두고 자동용 행을 새로 만드는 쪽이 항상 맞다.
+
     예외를 삼키지 않는다 - 호출자가 fail-open/closed를 정한다.
     """
     db_id = os.environ["NOTION_DB_ID"]
@@ -181,6 +187,7 @@ def find_holding_page(ticker: str) -> Optional[str]:
             "and": [
                 {"property": "종목코드", "rich_text": {"equals": ticker}},
                 {"property": "구분", "select": {"equals": "보유"}},
+                {"property": "운용", "select": {"equals": MANAGED_AUTO}},
             ]
         },
         "page_size": 1,

@@ -1095,9 +1095,11 @@ def _record_holding_after_buy(access_token: str, c: dict, order_no: str) -> None
 
     memo = f"자동매수 편입 (주문번호 {order_no}) - 손절선은 다음 아침 배치부터 트레일링"
     try:
-        page_id = notion_repo.find_holding_page(ticker)
+        # 운용="자동" 행만 찾는다 - 같은 종목을 다른 증권사에서 수동으로
+        # 들고 있어도 그 행에 수량을 더하지 않는다 (계좌가 섞이면 안 된다).
+        page_id = notion_repo.find_auto_holding_page(ticker)
         if page_id:
-            # 이미 보유 중 - 추가매수분으로 누적한다 (새 행을 만들지 않는다).
+            # 이미 자동으로 보유 중 - 추가매수분으로 누적한다 (새 행 안 만듦).
             notion_repo.add_auto_holding_units(
                 page_id, add_shares=shares, buy_price=buy_price,
             )
