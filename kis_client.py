@@ -111,6 +111,18 @@ MAX_UNIT_RATIO = 0.20       # 1유닛 매수금액이 계좌평가액의 이 비
 # get_account_balance()로 매번 KIS 잔고조회 API에서 실시간으로 가져온다.
 
 
+# 토큰 발급 재시도. KIS 모의투자 서버는 간헐적으로 응답이 늦어 read timeout이
+# 난다. 토큰은 매수·매도 양쪽의 단일 관문이라 여기서 죽으면 그 회차는 손절
+# 감시까지 통째로 건너뛴다 - 10분을 그냥 버리느니 짧게 한 번 더 시도한다.
+#
+# 네트워크 계층 오류(타임아웃·연결 끊김)에만 재시도한다. 4xx/5xx 응답은
+# 다시 걸어도 같은 답이 오고(인증 오류·이용 제한 등) KIS는 잦은 재발급 자체를
+# 제한하므로, 서버가 "대답을 한" 경우엔 재시도하지 않는다.
+TOKEN_TIMEOUT_SECONDS = 20
+TOKEN_RETRIES = 1
+TOKEN_RETRY_WAIT_SECONDS = 2
+
+
 def get_access_token() -> str:
     """모의투자 접근토큰을 발급받는다. 토큰 값은 반환만 하고 출력하지 않는다.
 
@@ -118,29 +130,50 @@ def get_access_token() -> str:
     토큰을 파일에 남기지 않으려는 것. 캐싱은 저장소를 private으로 옮긴
     뒤 별도로 한다). KIS는 잦은 재발급 시 이용 제한이 걸릴 수 있는데,
     발급 실패·거부를 조용히 넘어가지 않고 카톡으로 알린 뒤 예외를 올린다.
+
+    타임아웃은 짧게 한 번 재시도한다 (TOKEN_RETRIES). 알림은 재시도까지
+    모두 실패했을 때만 보낸다 - 한 번 늦었다가 곧바로 성공한 건 사람이
+    알 필요가 없다.
     """
     app_key = os.environ["KIS_APP_KEY"]
     app_secret = os.environ["KIS_APP_SECRET"]
 
-    try:
-        resp = requests.post(
-            f"{BASE_URL}/oauth2/tokenP",
-            json={
-                "grant_type": "client_credentials",
-                "appkey": app_key,
-                "appsecret": app_secret,
-            },
-            timeout=10,
-        )
-        resp.raise_for_status()
-        token = resp.json().get("access_token")
-        if not token:
-            raise RuntimeError("토큰 발급 응답에 access_token이 없습니다.")
-    except Exception as e:                  # noqa: BLE001
-        logger.error("KIS 접근토큰 발급 실패: %s", e)
-        _notify_warning_throttled(WARN_TOKEN_FAILED, f"[KIS] ⚠ 접근토큰 발급 실패 - {e}")
-        raise
-    return token
+    last_error: Optional[Exception] = None
+    for attempt in range(TOKEN_RETRIES + 1):
+        try:
+            resp = requests.post(
+                f"{BASE_URL}/oauth2/tokenP",
+                json={
+                    "grant_type": "client_credentials",
+                    "appkey": app_key,
+                    "appsecret": app_secret,
+                },
+                timeout=TOKEN_TIMEOUT_SECONDS,
+            )
+            resp.raise_for_status()
+            token = resp.json().get("access_token")
+            if not token:
+                raise RuntimeError("토큰 발급 응답에 access_token이 없습니다.")
+            if attempt:
+                logger.info("KIS 접근토큰 발급 성공 (재시도 %d회째)", attempt)
+            return token
+        except (requests.Timeout, requests.ConnectionError) as e:
+            # 서버가 대답을 못 준 경우만 재시도 대상이다.
+            last_error = e
+            if attempt < TOKEN_RETRIES:
+                logger.warning("KIS 접근토큰 발급 지연 (%s) - %d초 뒤 재시도",
+                               e, TOKEN_RETRY_WAIT_SECONDS)
+                time.sleep(TOKEN_RETRY_WAIT_SECONDS)
+                continue
+            break
+        except Exception as e:              # noqa: BLE001
+            last_error = e
+            break
+
+    logger.error("KIS 접근토큰 발급 실패: %s", last_error)
+    _notify_warning_throttled(
+        WARN_TOKEN_FAILED, f"[KIS] ⚠ 접근토큰 발급 실패 - {last_error}")
+    raise last_error
 
 
 def get_current_price(access_token: str, stock_code: str = "005930") -> str:
