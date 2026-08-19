@@ -162,6 +162,125 @@ def fetch_holdings() -> list[tuple[str, HoldingInput]]:
     return results
 
 
+# ── 쓰기: 자동매수 종목 편입 ────────────────────────────────
+
+MANAGED_AUTO = "자동"
+MANAGED_MANUAL = "수동"
+
+
+def find_holding_page(ticker: str) -> Optional[str]:
+    """구분='보유'인 행 중 이 종목코드의 page_id. 없으면 None.
+
+    자동매수가 편입 전에 "이미 있는 종목인가"를 확인하는 데 쓴다.
+    예외를 삼키지 않는다 - 호출자가 fail-open/closed를 정한다.
+    """
+    db_id = os.environ["NOTION_DB_ID"]
+    url = f"{NOTION_BASE}/databases/{db_id}/query"
+    payload: dict[str, Any] = {
+        "filter": {
+            "and": [
+                {"property": "종목코드", "rich_text": {"equals": ticker}},
+                {"property": "구분", "select": {"equals": "보유"}},
+            ]
+        },
+        "page_size": 1,
+    }
+    resp = requests.post(url, headers=_headers(), json=payload, timeout=30)
+    resp.raise_for_status()
+    results = resp.json().get("results", [])
+    return results[0]["id"] if results else None
+
+
+def create_auto_holding(
+    *,
+    name: str,
+    ticker: str,
+    market: str,
+    buy_price: float,
+    shares: int,
+    atr: float,
+    corr_group: str = "",
+    memo: str = "",
+) -> str:
+    """자동매수로 편입한 종목을 보유종목 점검표에 새로 만든다.
+
+    이 행이 있어야 아침 배치가 손절선을 매일 갱신하고(트레일링), 그래야
+    자동매도가 판단할 기준이 생긴다 - 자동매수만 하고 이 기록을 안 남기면
+    산 종목이 청산 대상에서 통째로 빠진다.
+
+    운용="자동"으로 표시해 수동 관리 종목과 구분한다. 매매 자체는 계좌가
+    분리돼 있어(KIS=자동 전용) 섞일 일이 없고, 이 칸은 사람이 노션에서
+    구분해 보기 위한 것이다.
+
+    손절선·진입후 최고가는 진입 시점 값으로 초기화한다. 다음 아침 배치부터
+    evaluate_holding()이 트레일링으로 갱신한다.
+
+    Returns:
+        생성된 page_id
+    """
+    db_id = os.environ["NOTION_DB_ID"]
+    today = date.today()
+    stop = round(buy_price - 2 * atr)
+
+    properties: dict[str, Any] = {
+        "종목명": {"title": [{"type": "text", "text": {"content": name}}]},
+        "종목코드": _rich_text(ticker),
+        "구분": {"select": {"name": "보유"}},
+        "운용": {"select": {"name": MANAGED_AUTO}},
+        "✱ 매수단가": {"number": round(buy_price)},
+        "✱ 보유수량": {"number": shares},
+        "✱ 진입시 ATR": {"number": round(atr)},
+        "ATR": {"number": round(atr)},
+        "손절선": {"number": stop},
+        "마지막 매수가": {"number": round(buy_price)},
+        "진입후 최고가": {"number": round(buy_price)},
+        "유닛수": {"number": 1},
+        "매수일": _date_prop(today),
+        "확인일": _date_prop(today),
+        "판정 메모": _rich_text(memo),
+    }
+    if market:
+        properties["시장"] = {"select": {"name": market}}
+    if corr_group:
+        properties["상관군"] = _rich_text(corr_group)
+
+    resp = requests.post(
+        f"{NOTION_BASE}/pages", headers=_headers(),
+        json={"parent": {"database_id": db_id}, "properties": properties},
+        timeout=30,
+    )
+    resp.raise_for_status()
+    page_id = resp.json()["id"]
+    logger.info("자동매수 종목 편입: %s(%s) %d주 @%s 손절선 %s page_id=%s",
+                name, ticker, shares, f"{buy_price:,.0f}", f"{stop:,}", page_id)
+    return page_id
+
+
+def add_auto_holding_units(page_id: str, *, add_shares: int,
+                            buy_price: float) -> None:
+    """이미 있는 보유 행에 추가매수분을 더한다 (수량 누적 + 마지막 매수가 갱신).
+
+    매수단가·진입시 ATR은 건드리지 않는다 - 진입 시점 고정값이라 추가매수로
+    바뀌면 안 된다 (손절선 계산 기준이 흔들린다).
+    """
+    url = f"{NOTION_BASE}/pages/{page_id}"
+    resp = requests.get(url, headers=_headers(), timeout=30)
+    resp.raise_for_status()
+    props = resp.json().get("properties", {})
+    cur_shares = int(_number(props.get("✱ 보유수량", {})) or 0)
+    cur_units = int(_number(props.get("유닛수", {})) or 1)
+
+    payload = {"properties": {
+        "✱ 보유수량": {"number": cur_shares + add_shares},
+        "마지막 매수가": {"number": round(buy_price)},
+        "유닛수": {"number": cur_units + 1},
+    }}
+    resp = requests.patch(url, headers=_headers(), json=payload, timeout=30)
+    resp.raise_for_status()
+    logger.info("자동매수 추가분 반영: page_id=%s %d주 -> %d주",
+                page_id, cur_shares, cur_shares + add_shares)
+
+
 # ── 쓰기: 계산 결과 반영 ────────────────────────────────────
 
 # 배치가 쓸 수 있는 칸은 이게 전부다. Cowork가 쓰는 칸

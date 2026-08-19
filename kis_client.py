@@ -1059,6 +1059,59 @@ def run_auto_trade(candidates: list[dict]) -> None:
             name=c["name"], ref_price=c["price"],
         )
         logger.info("자동매수: %s(%s) -> %s", c["name"], c["ticker"], result)
+        if result.get("status") == "sent":
+            _record_holding_after_buy(token, c, result.get("order_no", ""))
+
+
+def _record_holding_after_buy(access_token: str, c: dict, order_no: str) -> None:
+    """자동매수로 산 종목을 보유종목 점검표에 편입한다.
+
+    이 기록이 없으면 아침 배치가 손절선을 갱신하지 않아 트레일링이 멈추고,
+    자동매도(run_auto_sell)의 판단 대상에서도 빠진다 - 즉 "사기만 하고 못
+    파는" 상태가 된다. 자동매수 배선의 마지막 한 칸이다.
+
+    fail-open이다: 여기서 실패해도 주문 자체를 되돌리지 않는다(이미 체결됐다).
+    대신 카톡으로 알려 사람이 노션에 손으로 넣을 수 있게 한다 - 넣지 않으면
+    그 종목은 자동매도 대상이 되지 않으므로 반드시 알려야 한다.
+
+    체결가는 주문 직후 조회해 실제 평균단가를 쓴다. 시장가라 돌파 시점
+    현재가(ref_price)와 어긋날 수 있는데, 손절선이 이 값에서 나오므로
+    가능한 한 실제 체결가를 쓴다. 조회가 안 되면 ref_price로 폴백한다.
+    """
+    ticker, name = c["ticker"], c["name"]
+    buy_price = float(c["price"])
+    shares = int(c["unit_shares"])
+
+    try:
+        time.sleep(1)  # 체결 처리 대기
+        fill = get_order_execution(access_token, order_no) if order_no else None
+        if fill and fill.get("avg_price"):
+            buy_price = float(fill["avg_price"])
+            if fill.get("filled_qty"):
+                shares = int(fill["filled_qty"])
+    except Exception as e:                  # noqa: BLE001
+        logger.warning("[%s] 체결가 조회 실패 - 돌파 시점 현재가로 기록합니다: %s",
+                       ticker, e)
+
+    memo = f"자동매수 편입 (주문번호 {order_no}) - 손절선은 다음 아침 배치부터 트레일링"
+    try:
+        page_id = notion_repo.find_holding_page(ticker)
+        if page_id:
+            # 이미 보유 중 - 추가매수분으로 누적한다 (새 행을 만들지 않는다).
+            notion_repo.add_auto_holding_units(
+                page_id, add_shares=shares, buy_price=buy_price,
+            )
+        else:
+            notion_repo.create_auto_holding(
+                name=name, ticker=ticker, market=c.get("market", ""),
+                buy_price=buy_price, shares=shares, atr=float(c["atr20"]),
+                corr_group=c.get("sector", ""), memo=memo,
+            )
+    except Exception as e:                  # noqa: BLE001
+        msg = (f"[KIS] ⚠ {name}({ticker}) 매수는 체결됐으나 노션 편입 실패 - "
+               f"손으로 넣지 않으면 자동매도 대상에서 빠집니다: {e}")
+        logger.error(msg)
+        _notify_failure(msg)
 
 
 if __name__ == "__main__":

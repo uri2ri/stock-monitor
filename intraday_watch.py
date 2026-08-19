@@ -227,6 +227,8 @@ def judge(row: pd.Series, price: float) -> Optional[dict]:
         "ticker": str(row["ticker"]),
         "name": str(row["name"]),
         "sector": str(row.get("sector", "") or "").strip(),
+        # 자동매수가 노션에 편입할 때 '시장' 칸을 채우는 데 쓴다.
+        "market": str(row.get("market", "") or "").strip(),
         "price": price,
         "high20": high20,
         "atr20": atr,
