@@ -907,19 +907,32 @@ def _pyramid_plan(inp, price: float, unit_shares: int, held_qty: int) -> Optiona
     if units_held < 1 or units_held >= core.MAX_UNITS:
         return None                     # 미보유이거나 이미 만유닛
 
-    base = inp.last_buy_price or inp.buy_price
+    # 기준가는 '추가매수 기준가'를 우선한다. 급등으로 창을 지나쳐 재기준한
+    # 값이 여기 들어있을 수 있고, 마지막매수가는 그때 안 바뀐다.
+    base = inp.pyramid_anchor or inp.last_buy_price or inp.buy_price
     if not base:
         return None
-    next_price = base + core.PYRAMID_ATR_STEP * atr
+    step = core.PYRAMID_ATR_STEP * atr
+    next_price = base + step
     if price < next_price:
         return None                     # 아직 다음 레벨에 도달 안 함
 
     if price > next_price + PYRAMID_MAX_CHASE_ATR * atr:
-        logger.info("[%s] 추가매수 레벨 초과 - 추격하지 않음 (현재 %s > 기준 %s)",
-                    inp.ticker, f"{price:,.0f}", f"{next_price:,.0f}")
-        return None
+        # 10분 사이 여러 레벨을 건너뛸 만큼 급등했다. 나쁜 가격에 따라붙지
+        # 않되, 기준가만 현재가 아래의 가장 가까운 레벨로 올려 다음 창을
+        # 연다 - 안 그러면 창이 옛 가격에 얼어붙어 주가가 계속 올라도
+        # 영영 1유닛에 갇힌다(가장 잘 가는 종목에서 가장 작은 포지션).
+        skipped = int((price - base) // step)
+        return {
+            "action": "reanchor",
+            "units_held": units_held,
+            "new_anchor": base + skipped * step,
+            "reason": (f"급등으로 {skipped}개 레벨 통과 - 매수 없이 기준가만 "
+                       f"{base + skipped * step:,.0f}으로 올림"),
+        }
 
     return {
+        "action": "buy",
         "units_held": units_held,
         "next_price": next_price,
         "qty": unit_shares,
@@ -978,6 +991,7 @@ def run_auto_pyramid(holdings: Optional[list] = None) -> None:
         if held_qty <= 0:
             continue
 
+
         atr = inp.entry_atr or inp.notion_atr
         if not atr:
             continue
@@ -992,6 +1006,18 @@ def run_auto_pyramid(holdings: Optional[list] = None) -> None:
 
         plan = _pyramid_plan(inp, price, unit_shares, held_qty)
         if plan is None:
+            continue
+
+        if plan["action"] == "reanchor":
+            # 주문은 내지 않는다. 기준가만 올려 다음 회차에 창이 열리게 한다.
+            logger.info("[%s] %s", inp.ticker, plan["reason"])
+            try:
+                page_id = notion_repo.find_auto_holding_page(inp.ticker)
+                if page_id:
+                    notion_repo.set_pyramid_anchor(page_id, plan["new_anchor"])
+            except Exception as e:      # noqa: BLE001
+                logger.warning("[%s] 추가매수 기준가 갱신 실패 - 다음 회차에 "
+                               "다시 시도합니다: %s", inp.ticker, e)
             continue
 
         # 상관군·전체 캡 - 이 종목 자체 상한은 _pyramid_plan이 이미 봤다.

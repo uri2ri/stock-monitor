@@ -151,6 +151,7 @@ def fetch_holdings(managed_by: Optional[str] = None) -> list[tuple[str, HoldingI
                     last_alerted_stop=_number(props.get("마지막 알린 손절선", {})),
                     # 배치가 쓴 판정과 그 판정일 – 자동매도가 "오늘 판정"인지
                     # 확인하는 데 쓴다 (kis_client.run_auto_sell).
+                    pyramid_anchor=_number(props.get("추가매수 기준가", {})),
                     recent_verdict=_select(props.get("최근 판정", {})),
                     checked_date=_date_val(props.get("확인일", {})),
                     news_memo=_text(props.get("공시·뉴스", {})).strip(),
@@ -212,6 +213,21 @@ def find_auto_holding_page(ticker: str) -> Optional[str]:
     return results[0]["id"] if results else None
 
 
+def set_pyramid_anchor(page_id: str, anchor: float) -> None:
+    """추가매수 기준가만 갱신한다 (실제 매수 없이 레벨만 올릴 때).
+
+    마지막 매수가는 손대지 않는다 - 그건 실제 체결 기록이고 손절선 계산의
+    기준이라, 사지도 않은 가격으로 덮으면 장부와 손절이 함께 틀어진다.
+    """
+    resp = requests.patch(
+        f"{NOTION_BASE}/pages/{page_id}", headers=_headers(),
+        json={"properties": {"추가매수 기준가": {"number": round(anchor)}}},
+        timeout=30,
+    )
+    resp.raise_for_status()
+    logger.info("추가매수 기준가 갱신: page_id=%s -> %s", page_id, f"{anchor:,.0f}")
+
+
 def create_auto_holding(
     *,
     name: str,
@@ -254,6 +270,7 @@ def create_auto_holding(
         "ATR": {"number": round(atr)},
         "손절선": {"number": stop},
         "마지막 매수가": {"number": round(buy_price)},
+        "추가매수 기준가": {"number": round(buy_price)},
         "진입후 최고가": {"number": round(buy_price)},
         "유닛수": {"number": 1},
         "매수일": _date_prop(today),
@@ -294,6 +311,8 @@ def add_auto_holding_units(page_id: str, *, add_shares: int,
     payload = {"properties": {
         "✱ 보유수량": {"number": cur_shares + add_shares},
         "마지막 매수가": {"number": round(buy_price)},
+        # 실제로 샀으므로 기준가도 체결가로 맞춘다.
+        "추가매수 기준가": {"number": round(buy_price)},
         "유닛수": {"number": cur_units + 1},
     }}
     resp = requests.patch(url, headers=_headers(), json=payload, timeout=30)
