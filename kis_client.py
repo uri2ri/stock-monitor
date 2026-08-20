@@ -90,10 +90,20 @@ def _auto_trade_configured() -> bool:
 
 
 ACCOUNT_TYPE = "모의"  # 이 파일은 모의투자 전용 - 노션 기록의 계좌구분은 항상 이 값
-# 하루에 낼 수 있는 신규 매수 주문 건수 상한. 첫 배선 확인 동안은 실패 원인을
-# 좁히려고 1건으로 낮춰뒀다가, 매수·매도 배관이 모두 실주문으로 확인된 뒤
-# 3건으로 올렸다. 모의투자 기준이다 - 실전 전환 시 다시 판단할 것.
+# 하루 상한은 신규 진입과 추가매수를 따로 센다. 한 예산에 섞으면 추가매수가
+# 신규 진입 여력을 먹어 그날 새 돌파를 못 잡는다(반대도 마찬가지).
+# 모의투자 기준이며 실전 전환 시 다시 판단할 것.
+#
+# 신규 진입: 첫 배선 확인 동안 1건으로 낮춰뒀다가 매수·매도 배관이 모두
+# 실주문으로 확인된 뒤 3건으로 올렸다.
 MAX_ORDERS_PER_DAY = 3
+# 추가매수 전체: 종목 4·상관군 6·전체 12유닛 캡이 총 노출을 이미 묶으므로,
+# 이 값은 "하루에 얼마나 빨리 키울 수 있나"만 제한한다.
+MAX_PYRAMID_ORDERS_PER_DAY = 4
+# 같은 종목 하루 추가매수 횟수. 3회면 1유닛에서 4유닛(만유닛)까지 하루 만에
+# 시장가로 다 채워진다 - 그날 스파이크가 되돌리면 꼭대기에서 만유닛이 된다.
+# 2회로 묶으면 하루 최대 3유닛까지만 가고 4번째는 다음 날로 넘어간다.
+MAX_PYRAMID_ADDS_PER_STOCK = 2
 WARNING_SUPPRESS_WINDOW_SECONDS = 3600  # 같은 사유의 시스템 경고는 이 간격 안엔 한 번만
 
 # ── 시간 게이트 ─────────────────────────────────────────────
@@ -344,13 +354,21 @@ def _notify_warning_throttled(reason_key: str, message: str) -> None:
                        "안 잡힐 수 있습니다", e)
 
 
-def _check_order_allowed(stock_code: str) -> Optional[str]:
+def _check_order_allowed(stock_code: str,
+                          order_type: str = notion_repo.ORDER_NEW) -> Optional[str]:
     """중복 주문·반복 거부·일일 상한을 노션 DB 조회로 판단한다.
+
+    order_type에 따라 세는 기준이 달라진다:
+      - 신규(ORDER_NEW): 같은 종목 하루 1건. 신규 진입은 종목당 한 번뿐이다.
+      - 추가(ORDER_ADD): 같은 종목 하루 MAX_PYRAMID_ADDS_PER_STOCK건까지.
+        터틀 피라미딩은 원래 여러 번 나가는 주문이라 boolean으로 막을 수 없다.
+    일일 총량도 신규·추가를 각자 예산으로 센다.
 
     반환: 막힌 이유(사람이 읽을 메시지) 또는 통과라면 None.
     조회 자체가 실패하면 fail-closed로 막는다 (0건으로 간주하지 않음).
     """
     day = _today()
+    is_add = order_type == notion_repo.ORDER_ADD
     try:
         # 주의: 이 중복 방지는 "1유닛 신규 진입" 전용 규칙임.
         # 터틀 추가매수(2·3·4유닛)를 자동화할 경우, 같은 날 같은 종목의
@@ -365,7 +383,14 @@ def _check_order_allowed(stock_code: str) -> Optional[str]:
         # 막으면 다음날 갭 때문에 추격금지에 걸릴 위험이 크다. 반대로
         # "실패"는 응답을 못 받았을 뿐 실제로는 체결됐을 수 있어 차단을
         # 유지한다("주문중"과 같은 취급).
-        if notion_repo.has_order_today(stock_code, day):
+        if is_add:
+            adds = notion_repo.count_orders_today(
+                stock_code, day, order_type=notion_repo.ORDER_ADD)
+            if adds >= MAX_PYRAMID_ADDS_PER_STOCK:
+                return (f"{stock_code} 오늘 추가매수 {adds}회 - "
+                        f"종목당 하루 {MAX_PYRAMID_ADDS_PER_STOCK}회 상한")
+        elif notion_repo.has_order_today(stock_code, day,
+                                         order_type=notion_repo.ORDER_NEW):
             return f"{stock_code} 오늘 이미 주문했습니다 (중복 방지 - 1유닛 진입 기준)"
 
         # 거부 재시도를 무한 허용하진 않는다 - 같은 종목이 오늘 계속
@@ -387,16 +412,18 @@ def _check_order_allowed(stock_code: str) -> Optional[str]:
             )
             return f"{stock_code} 오늘 거부 {rejected}건 누적 - 재시도 중단"
 
-        counts = notion_repo.count_orders_by_status_today(day, ACCOUNT_TYPE)
+        cap = MAX_PYRAMID_ORDERS_PER_DAY if is_add else MAX_ORDERS_PER_DAY
+        counts = notion_repo.count_orders_by_status_today(
+            day, ACCOUNT_TYPE, order_type=order_type)
         success_n, pending_n = counts.get("성공", 0), counts.get("주문중", 0)
-        if success_n + pending_n >= MAX_ORDERS_PER_DAY:
+        if success_n + pending_n >= cap:
             logger.info(
-                "일일 상한 상세: 성공 %d건 + 주문중 %d건 / 상한 %d건",
-                success_n, pending_n, MAX_ORDERS_PER_DAY,
+                "일일 상한 상세(%s): 성공 %d건 + 주문중 %d건 / 상한 %d건",
+                order_type, success_n, pending_n, cap,
             )
             return (
-                f"일일 상한 도달 (성공 {success_n}건 + 주문중 {pending_n}건 "
-                f"/ 상한 {MAX_ORDERS_PER_DAY}건)"
+                f"{order_type} 일일 상한 도달 (성공 {success_n}건 + "
+                f"주문중 {pending_n}건 / 상한 {cap}건)"
             )
     except Exception as e:                  # noqa: BLE001
         logger.error("노션 주문 상태 조회 실패 - fail-closed로 주문을 중단합니다: %s", e)
@@ -409,7 +436,8 @@ def _check_order_allowed(stock_code: str) -> Optional[str]:
 
 
 def _create_pending_record(*, name: str, stock_code: str, qty: float,
-                            price: float) -> str:
+                            price: float,
+                            order_type: str = notion_repo.ORDER_NEW) -> str:
     """주문 전송 "전"에 상태="주문중"으로 노션에 1행을 미리 만든다.
 
     기록할 수 없으면 주문하지 않는다: 이 사전 기록이 실패하면 호출자는
@@ -423,6 +451,7 @@ def _create_pending_record(*, name: str, stock_code: str, qty: float,
     return notion_repo.create_order_record(
         name=name, ticker=stock_code, order_no="", qty=qty, price=price,
         status="주문중", reason="", account_type=ACCOUNT_TYPE,
+        order_type=order_type,
         when=datetime.now(KST),
     )
 
@@ -553,7 +582,8 @@ def _send_market_buy(access_token: str, stock_code: str, qty: int) -> dict:
 
 def place_market_buy_order(access_token: str, stock_code: str, qty: int,
                             *, name: Optional[str] = None,
-                            ref_price: float = 0.0) -> dict:
+                            ref_price: float = 0.0,
+                            order_type: str = notion_repo.ORDER_NEW) -> dict:
     """모의투자 시장가 매수 주문 1건을 시도한다.
 
     순서: 중복 주문·일일 상한 확인(노션 조회, fail-closed) -> 사전 기록
@@ -573,7 +603,7 @@ def place_market_buy_order(access_token: str, stock_code: str, qty: int,
     """
     display_name = name or stock_code
 
-    blocked_reason = _check_order_allowed(stock_code)
+    blocked_reason = _check_order_allowed(stock_code, order_type)
     if blocked_reason is not None:
         msg = f"[KIS] 매수 주문 건너뜀 - {blocked_reason}"
         logger.warning(msg)
@@ -585,6 +615,7 @@ def place_market_buy_order(access_token: str, stock_code: str, qty: int,
     try:
         page_id = _create_pending_record(
             name=display_name, stock_code=stock_code, qty=qty, price=ref_price,
+            order_type=order_type,
         )
     except Exception as e:                  # noqa: BLE001
         msg = f"[KIS] 매수 주문 건너뜀 - 사전 기록 실패로 주문 중단: {stock_code} {e}"
@@ -834,6 +865,194 @@ def run_auto_sell(holdings: Optional[list] = None) -> None:
             token, inp.ticker, qty, name=inp.name, reason=reason, ref_price=price,
         )
         logger.info("자동매도: %s(%s) %d주 -> %s", inp.name, inp.ticker, qty, result)
+
+
+# ── 추가매수(피라미딩) ──────────────────────────────────────
+#
+# 터틀은 1유닛 진입 뒤 0.5×ATR 오를 때마다 1유닛씩 MAX_UNITS까지 더한다.
+# 신규 진입(run_auto_trade)과 다른 경로인 이유: 돌파 워치리스트는 아직
+# 돌파하지 않은 종목(status="임박")만 보므로, 이미 산 종목은 거기 안 나온다.
+#
+# 안전장치는 신규 진입보다 오히려 촘촘해야 한다 - 10분마다 도는 루프에서
+# 같은 유닛을 반복해서 사면 한 종목에 몇 배가 실린다:
+#   1) 보유 유닛수를 노션 장부가 아니라 증권사 잔고에서 계산한다. 노션
+#      기록이 실패해도(fail-open) 다음 회차가 같은 유닛을 또 사지 않는다.
+#   2) place_market_buy_order()를 그대로 재사용한다 - 그 안의 중복 방지
+#      (has_order_today)가 "한 종목 하루 1회"를 보장하고, 일일 주문 상한도
+#      신규 진입과 같은 예산을 쓴다.
+#   3) 다음 매수가를 넘어도 너무 멀리 뛰었으면(PYRAMID_MAX_CHASE_ATR) 사지
+#      않는다. 갭 상승에 시장가로 따라붙으면 의도한 레벨과 크게 어긋난다.
+
+# 다음 매수가를 이만큼(×진입시ATR) 넘게 벗어났으면 추격으로 보고 건너뛴다.
+PYRAMID_MAX_CHASE_ATR = 0.5
+
+
+def _pyramid_plan(inp, price: float, unit_shares: int, held_qty: int) -> Optional[dict]:
+    """이 종목을 지금 1유닛 더 살지 판단한다. 안 사면 None.
+
+    보유 유닛수는 증권사 잔고(held_qty)에서 역산한다 - 노션 '유닛수' 칸을
+    믿지 않는 이유는 위 주석 1) 참고.
+
+    기준가는 진입시 ATR로 고정한다. 매일 갱신되는 현재 ATR을 쓰면 같은
+    포지션의 추가매수 레벨이 날마다 움직여, 어제 안 샀던 가격에 오늘
+    사는 일이 생긴다.
+
+    반환: {"units_held", "next_price", "qty", "reason"} 또는 None
+    """
+    atr = inp.entry_atr or inp.notion_atr
+    if not atr or atr <= 0 or unit_shares <= 0 or price <= 0:
+        return None
+
+    units_held = round(held_qty / unit_shares)
+    if units_held < 1 or units_held >= core.MAX_UNITS:
+        return None                     # 미보유이거나 이미 만유닛
+
+    # 기준가는 '추가매수 기준가'를 우선한다. 급등으로 창을 지나쳐 재기준한
+    # 값이 여기 들어있을 수 있고, 마지막매수가는 그때 안 바뀐다.
+    base = inp.pyramid_anchor or inp.last_buy_price or inp.buy_price
+    if not base:
+        return None
+    step = core.PYRAMID_ATR_STEP * atr
+    next_price = base + step
+    if price < next_price:
+        return None                     # 아직 다음 레벨에 도달 안 함
+
+    if price > next_price + PYRAMID_MAX_CHASE_ATR * atr:
+        # 10분 사이 여러 레벨을 건너뛸 만큼 급등했다. 나쁜 가격에 따라붙지
+        # 않되, 기준가만 현재가 아래의 가장 가까운 레벨로 올려 다음 창을
+        # 연다 - 안 그러면 창이 옛 가격에 얼어붙어 주가가 계속 올라도
+        # 영영 1유닛에 갇힌다(가장 잘 가는 종목에서 가장 작은 포지션).
+        skipped = int((price - base) // step)
+        return {
+            "action": "reanchor",
+            "units_held": units_held,
+            "new_anchor": base + skipped * step,
+            "reason": (f"급등으로 {skipped}개 레벨 통과 - 매수 없이 기준가만 "
+                       f"{base + skipped * step:,.0f}으로 올림"),
+        }
+
+    return {
+        "action": "buy",
+        "units_held": units_held,
+        "next_price": next_price,
+        "qty": unit_shares,
+        "reason": (f"추가매수 {units_held + 1}유닛째 "
+                   f"(기준 {next_price:,.0f} · 현재 {price:,.0f})"),
+    }
+
+
+def run_auto_pyramid(holdings: Optional[list] = None) -> None:
+    """자동매매로 보유 중인 종목의 터틀 추가매수를 실주문으로 잇는다.
+
+    운용="자동" 행만 대상으로 한다 - 다른 증권사에서 수동으로 들고 있는
+    종목까지 KIS에서 사버리면 안 된다.
+
+    상관군·전체 유닛 캡은 신규 진입과 같은 기준(KIS 잔고 기반)으로 본다.
+    """
+    if not _auto_trade_configured():
+        return
+
+    if not _within_trading_hours():
+        return
+
+    if holdings is None:
+        try:
+            holdings = [
+                inp for _, inp in
+                notion_repo.fetch_holdings(managed_by=notion_repo.MANAGED_AUTO)
+            ]
+        except Exception as e:              # noqa: BLE001
+            logger.error("보유 종목 조회 실패 - 추가매수를 건너뜁니다: %s", e)
+            return
+
+    if not holdings:
+        return
+
+    token = get_access_token()
+    try:
+        balance = get_account_balance(token)
+    except Exception as e:                  # noqa: BLE001
+        logger.error("잔고조회 실패 - 추가매수를 건너뜁니다: %s", e)
+        return
+
+    account_size = balance["account_size"]
+    cash_remaining = balance["available_cash"]
+    held = {h["ticker"]: h["qty"] for h in balance.get("holdings", [])}
+    if not held or account_size <= 0:
+        return
+
+    corr = get_mock_account_corr_units(account_size, balance["holdings"])
+    group_units = dict(corr["groups"])
+    total_units = corr["total_units"]
+    sector_map = _get_sector_map()
+
+    for inp in holdings:
+        held_qty = held.get(inp.ticker, 0)
+        if held_qty <= 0:
+            continue
+
+
+        atr = inp.entry_atr or inp.notion_atr
+        if not atr:
+            continue
+        unit_shares = core.calc_position(atr, account_size).unit_shares
+
+        try:
+            price = float(get_current_price(token, inp.ticker))
+        except Exception as e:              # noqa: BLE001
+            logger.warning("[%s] 현재가 조회 실패 - 추가매수 판정 건너뜀: %s",
+                           inp.ticker, e)
+            continue
+
+        plan = _pyramid_plan(inp, price, unit_shares, held_qty)
+        if plan is None:
+            continue
+
+        if plan["action"] == "reanchor":
+            # 주문은 내지 않는다. 기준가만 올려 다음 회차에 창이 열리게 한다.
+            logger.info("[%s] %s", inp.ticker, plan["reason"])
+            try:
+                page_id = notion_repo.find_auto_holding_page(inp.ticker)
+                if page_id:
+                    notion_repo.set_pyramid_anchor(page_id, plan["new_anchor"])
+            except Exception as e:      # noqa: BLE001
+                logger.warning("[%s] 추가매수 기준가 갱신 실패 - 다음 회차에 "
+                               "다시 시도합니다: %s", inp.ticker, e)
+            continue
+
+        # 상관군·전체 캡 - 이 종목 자체 상한은 _pyramid_plan이 이미 봤다.
+        sector = inp.corr_group or sector_map.get(inp.ticker, "")
+        if (group_units.get(sector, 0) + 1 > core.MAX_UNITS_GROUP
+                or total_units + 1 > core.MAX_UNITS_TOTAL):
+            _notify_failure(f"[KIS] 상관군 캡으로 추가매수 보류: {inp.name}")
+            continue
+
+        amount = plan["qty"] * price
+        if amount > cash_remaining:
+            _notify_failure(f"[KIS] 현금 부족으로 추가매수 보류: {inp.name}")
+            continue
+
+        result = place_market_buy_order(
+            token, inp.ticker, plan["qty"],
+            name=inp.name, ref_price=price,
+            order_type=notion_repo.ORDER_ADD,
+        )
+        logger.info("추가매수: %s(%s) %d유닛째 %d주 -> %s",
+                    inp.name, inp.ticker, plan["units_held"] + 1,
+                    plan["qty"], result)
+
+        if result.get("status") == "sent":
+            _notify_failure(f"[KIS] ➕ {inp.name}({inp.ticker}) {plan['reason']}")
+            group_units[sector] = group_units.get(sector, 0) + 1
+            total_units += 1
+            cash_remaining -= amount
+            _record_holding_after_buy(
+                token,
+                {"ticker": inp.ticker, "name": inp.name, "market": inp.market,
+                 "sector": sector, "price": price, "atr20": atr,
+                 "unit_shares": plan["qty"]},
+                result.get("order_no", ""),
+            )
 
 
 def get_order_execution(access_token: str, order_no: str) -> dict | None:

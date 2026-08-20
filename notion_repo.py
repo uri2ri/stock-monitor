@@ -151,6 +151,7 @@ def fetch_holdings(managed_by: Optional[str] = None) -> list[tuple[str, HoldingI
                     last_alerted_stop=_number(props.get("마지막 알린 손절선", {})),
                     # 배치가 쓴 판정과 그 판정일 – 자동매도가 "오늘 판정"인지
                     # 확인하는 데 쓴다 (kis_client.run_auto_sell).
+                    pyramid_anchor=_number(props.get("추가매수 기준가", {})),
                     recent_verdict=_select(props.get("최근 판정", {})),
                     checked_date=_date_val(props.get("확인일", {})),
                     news_memo=_text(props.get("공시·뉴스", {})).strip(),
@@ -212,6 +213,21 @@ def find_auto_holding_page(ticker: str) -> Optional[str]:
     return results[0]["id"] if results else None
 
 
+def set_pyramid_anchor(page_id: str, anchor: float) -> None:
+    """추가매수 기준가만 갱신한다 (실제 매수 없이 레벨만 올릴 때).
+
+    마지막 매수가는 손대지 않는다 - 그건 실제 체결 기록이고 손절선 계산의
+    기준이라, 사지도 않은 가격으로 덮으면 장부와 손절이 함께 틀어진다.
+    """
+    resp = requests.patch(
+        f"{NOTION_BASE}/pages/{page_id}", headers=_headers(),
+        json={"properties": {"추가매수 기준가": {"number": round(anchor)}}},
+        timeout=30,
+    )
+    resp.raise_for_status()
+    logger.info("추가매수 기준가 갱신: page_id=%s -> %s", page_id, f"{anchor:,.0f}")
+
+
 def create_auto_holding(
     *,
     name: str,
@@ -254,6 +270,7 @@ def create_auto_holding(
         "ATR": {"number": round(atr)},
         "손절선": {"number": stop},
         "마지막 매수가": {"number": round(buy_price)},
+        "추가매수 기준가": {"number": round(buy_price)},
         "진입후 최고가": {"number": round(buy_price)},
         "유닛수": {"number": 1},
         "매수일": _date_prop(today),
@@ -294,6 +311,8 @@ def add_auto_holding_units(page_id: str, *, add_shares: int,
     payload = {"properties": {
         "✱ 보유수량": {"number": cur_shares + add_shares},
         "마지막 매수가": {"number": round(buy_price)},
+        # 실제로 샀으므로 기준가도 체결가로 맞춘다.
+        "추가매수 기준가": {"number": round(buy_price)},
         "유닛수": {"number": cur_units + 1},
     }}
     resp = requests.patch(url, headers=_headers(), json=payload, timeout=30)
@@ -559,6 +578,12 @@ ORDER_LOG_STATUSES = ("성공", "실패", "거부", "경고", "주문중")
 SIDE_BUY = "매수"
 SIDE_SELL = "매도"
 
+# 매수 주문의 성격. 신규 진입과 추가매수(피라미딩)는 상한을 따로 세야 한다 -
+# 추가매수가 신규 진입 예산을 먹으면 그날 새 돌파를 못 잡고, 반대로 한 예산에
+# 섞으면 "같은 종목 하루 몇 번까지"를 종목별로 제한할 수 없다.
+ORDER_NEW = "신규"
+ORDER_ADD = "추가"
+
 
 def _side_filter(side: str) -> dict:
     """매매구분 필터 조각.
@@ -575,6 +600,16 @@ def _side_filter(side: str) -> dict:
     return {"property": "매매구분", "select": {"equals": side}}
 
 
+def _order_type_filter(order_type: str) -> dict:
+    """주문유형 필터 조각. 빈 값(칸 도입 이전 기록)은 신규로 본다."""
+    if order_type == ORDER_NEW:
+        return {"or": [
+            {"property": "주문유형", "select": {"equals": ORDER_NEW}},
+            {"property": "주문유형", "select": {"is_empty": True}},
+        ]}
+    return {"property": "주문유형", "select": {"equals": order_type}}
+
+
 def create_order_record(
     *,
     name: str,
@@ -587,6 +622,7 @@ def create_order_record(
     account_type: str,
     when: datetime,
     side: str = SIDE_BUY,
+    order_type: str = ORDER_NEW,
 ) -> str:
     """자동주문 기록 DB에 주문 시도 1건을 남긴다. 성공·실패·거부 모두 기록한다.
 
@@ -611,6 +647,9 @@ def create_order_record(
             "사유": _rich_text(reason),
             "계좌구분": {"select": {"name": account_type}},
             "매매구분": {"select": {"name": side}},
+            # 매도에는 신규/추가 구분이 없다 - 청산은 항상 전량이다.
+            **({"주문유형": {"select": {"name": order_type}}}
+               if side == SIDE_BUY else {}),
         },
     }
     resp = requests.post(f"{NOTION_BASE}/pages", headers=_headers(),
@@ -654,7 +693,8 @@ def _day_range_filter(prop: str, day: date) -> list[dict]:
 
 
 def count_success_orders_today(day: date, account_type: str,
-                                side: str = SIDE_BUY) -> int:
+                                side: str = SIDE_BUY,
+                                order_type: Optional[str] = None) -> int:
     """오늘(day) + 계좌구분 + 상태가 '성공' 또는 '주문중'인 행 개수. 일일 주문 상한 판단용.
 
     '주문중'도 센다 - 결과를 아직 모르는 주문(사후 갱신이 실패했거나 아직
@@ -670,6 +710,7 @@ def count_success_orders_today(day: date, account_type: str,
                 *_day_range_filter("주문일시", day),
                 {"property": "계좌구분", "select": {"equals": account_type}},
                 _side_filter(side),
+                *([_order_type_filter(order_type)] if order_type else []),
                 {"or": [
                     {"property": "상태", "select": {"equals": "성공"}},
                     {"property": "상태", "select": {"equals": "주문중"}},
@@ -696,7 +737,8 @@ def count_success_orders_today(day: date, account_type: str,
 
 
 def count_orders_by_status_today(day: date, account_type: str,
-                                  side: str = SIDE_BUY) -> dict[str, int]:
+                                  side: str = SIDE_BUY,
+                                  order_type: Optional[str] = None) -> dict[str, int]:
     """오늘(day) + 계좌구분의 상태별(성공/주문중) 건수를 각각 센다.
 
     count_success_orders_today의 합계 판단 로직은 그대로 두고, 이건
@@ -713,6 +755,7 @@ def count_orders_by_status_today(day: date, account_type: str,
                 *_day_range_filter("주문일시", day),
                 {"property": "계좌구분", "select": {"equals": account_type}},
                 _side_filter(side),
+                *([_order_type_filter(order_type)] if order_type else []),
                 {"or": [
                     {"property": "상태", "select": {"equals": "성공"}},
                     {"property": "상태", "select": {"equals": "주문중"}},
@@ -788,7 +831,8 @@ def count_rejected_orders_today(ticker: str, day: date,
     return count
 
 
-def has_order_today(ticker: str, day: date, side: str = SIDE_BUY) -> bool:
+def has_order_today(ticker: str, day: date, side: str = SIDE_BUY,
+                     order_type: Optional[str] = None) -> bool:
     """오늘(day) 이 종목코드로 이미 주문 시도가 있고 그 상태가 성공/주문중/실패인가.
 
     "거부"는 뺀다 - 거래소가 명시적으로 안 받았다는 뜻이라 체결 가능성이
@@ -808,6 +852,7 @@ def has_order_today(ticker: str, day: date, side: str = SIDE_BUY) -> bool:
             "and": [
                 {"property": "종목코드", "rich_text": {"equals": ticker}},
                 _side_filter(side),
+                *([_order_type_filter(order_type)] if order_type else []),
                 *_day_range_filter("주문일시", day),
                 {"or": [
                     {"property": "상태", "select": {"equals": "성공"}},
@@ -821,6 +866,49 @@ def has_order_today(ticker: str, day: date, side: str = SIDE_BUY) -> bool:
     resp = requests.post(url, headers=_headers(), json=payload, timeout=30)
     resp.raise_for_status()
     return len(resp.json().get("results", [])) > 0
+
+
+def count_orders_today(ticker: str, day: date, *, side: str = SIDE_BUY,
+                        order_type: Optional[str] = None) -> int:
+    """오늘(day) 이 종목코드의 주문 건수. 상태가 성공/주문중/실패인 것만 센다.
+
+    has_order_today()의 "있나 없나"를 건수로 바꾼 것이다 - 추가매수는 하루
+    한 종목에 여러 번 허용하되 상한을 둬야 해서 boolean으로는 부족하다.
+    "거부"를 빼는 기준은 has_order_today()와 같다(그쪽 독스트링 참고).
+
+    예외를 삼키지 않는다 - 실패하면 그대로 raise (fail-closed는 호출자 책임).
+    """
+    db_id = os.environ["NOTION_ORDERS_DB_ID"]
+    url = f"{NOTION_BASE}/databases/{db_id}/query"
+    payload: dict[str, Any] = {
+        "filter": {
+            "and": [
+                {"property": "종목코드", "rich_text": {"equals": ticker}},
+                _side_filter(side),
+                *([_order_type_filter(order_type)] if order_type else []),
+                *_day_range_filter("주문일시", day),
+                {"or": [
+                    {"property": "상태", "select": {"equals": "성공"}},
+                    {"property": "상태", "select": {"equals": "주문중"}},
+                    {"property": "상태", "select": {"equals": "실패"}},
+                ]},
+            ]
+        },
+        "page_size": 100,
+    }
+    count = 0
+    has_more = True
+    start_cursor: Optional[str] = None
+    while has_more:
+        if start_cursor:
+            payload["start_cursor"] = start_cursor
+        resp = requests.post(url, headers=_headers(), json=payload, timeout=30)
+        resp.raise_for_status()
+        data = resp.json()
+        count += len(data.get("results", []))
+        has_more = data.get("has_more", False)
+        start_cursor = data.get("next_cursor")
+    return count
 
 
 def latest_warning_at(reason: str) -> Optional[datetime]:
