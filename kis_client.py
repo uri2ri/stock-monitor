@@ -836,6 +836,167 @@ def run_auto_sell(holdings: Optional[list] = None) -> None:
         logger.info("자동매도: %s(%s) %d주 -> %s", inp.name, inp.ticker, qty, result)
 
 
+# ── 추가매수(피라미딩) ──────────────────────────────────────
+#
+# 터틀은 1유닛 진입 뒤 0.5×ATR 오를 때마다 1유닛씩 MAX_UNITS까지 더한다.
+# 신규 진입(run_auto_trade)과 다른 경로인 이유: 돌파 워치리스트는 아직
+# 돌파하지 않은 종목(status="임박")만 보므로, 이미 산 종목은 거기 안 나온다.
+#
+# 안전장치는 신규 진입보다 오히려 촘촘해야 한다 - 10분마다 도는 루프에서
+# 같은 유닛을 반복해서 사면 한 종목에 몇 배가 실린다:
+#   1) 보유 유닛수를 노션 장부가 아니라 증권사 잔고에서 계산한다. 노션
+#      기록이 실패해도(fail-open) 다음 회차가 같은 유닛을 또 사지 않는다.
+#   2) place_market_buy_order()를 그대로 재사용한다 - 그 안의 중복 방지
+#      (has_order_today)가 "한 종목 하루 1회"를 보장하고, 일일 주문 상한도
+#      신규 진입과 같은 예산을 쓴다.
+#   3) 다음 매수가를 넘어도 너무 멀리 뛰었으면(PYRAMID_MAX_CHASE_ATR) 사지
+#      않는다. 갭 상승에 시장가로 따라붙으면 의도한 레벨과 크게 어긋난다.
+
+# 다음 매수가를 이만큼(×진입시ATR) 넘게 벗어났으면 추격으로 보고 건너뛴다.
+PYRAMID_MAX_CHASE_ATR = 0.5
+
+
+def _pyramid_plan(inp, price: float, unit_shares: int, held_qty: int) -> Optional[dict]:
+    """이 종목을 지금 1유닛 더 살지 판단한다. 안 사면 None.
+
+    보유 유닛수는 증권사 잔고(held_qty)에서 역산한다 - 노션 '유닛수' 칸을
+    믿지 않는 이유는 위 주석 1) 참고.
+
+    기준가는 진입시 ATR로 고정한다. 매일 갱신되는 현재 ATR을 쓰면 같은
+    포지션의 추가매수 레벨이 날마다 움직여, 어제 안 샀던 가격에 오늘
+    사는 일이 생긴다.
+
+    반환: {"units_held", "next_price", "qty", "reason"} 또는 None
+    """
+    atr = inp.entry_atr or inp.notion_atr
+    if not atr or atr <= 0 or unit_shares <= 0 or price <= 0:
+        return None
+
+    units_held = round(held_qty / unit_shares)
+    if units_held < 1 or units_held >= core.MAX_UNITS:
+        return None                     # 미보유이거나 이미 만유닛
+
+    base = inp.last_buy_price or inp.buy_price
+    if not base:
+        return None
+    next_price = base + core.PYRAMID_ATR_STEP * atr
+    if price < next_price:
+        return None                     # 아직 다음 레벨에 도달 안 함
+
+    if price > next_price + PYRAMID_MAX_CHASE_ATR * atr:
+        logger.info("[%s] 추가매수 레벨 초과 - 추격하지 않음 (현재 %s > 기준 %s)",
+                    inp.ticker, f"{price:,.0f}", f"{next_price:,.0f}")
+        return None
+
+    return {
+        "units_held": units_held,
+        "next_price": next_price,
+        "qty": unit_shares,
+        "reason": (f"추가매수 {units_held + 1}유닛째 "
+                   f"(기준 {next_price:,.0f} · 현재 {price:,.0f})"),
+    }
+
+
+def run_auto_pyramid(holdings: Optional[list] = None) -> None:
+    """자동매매로 보유 중인 종목의 터틀 추가매수를 실주문으로 잇는다.
+
+    운용="자동" 행만 대상으로 한다 - 다른 증권사에서 수동으로 들고 있는
+    종목까지 KIS에서 사버리면 안 된다.
+
+    상관군·전체 유닛 캡은 신규 진입과 같은 기준(KIS 잔고 기반)으로 본다.
+    """
+    if not _auto_trade_configured():
+        return
+
+    if not _within_trading_hours():
+        return
+
+    if holdings is None:
+        try:
+            holdings = [
+                inp for _, inp in
+                notion_repo.fetch_holdings(managed_by=notion_repo.MANAGED_AUTO)
+            ]
+        except Exception as e:              # noqa: BLE001
+            logger.error("보유 종목 조회 실패 - 추가매수를 건너뜁니다: %s", e)
+            return
+
+    if not holdings:
+        return
+
+    token = get_access_token()
+    try:
+        balance = get_account_balance(token)
+    except Exception as e:                  # noqa: BLE001
+        logger.error("잔고조회 실패 - 추가매수를 건너뜁니다: %s", e)
+        return
+
+    account_size = balance["account_size"]
+    cash_remaining = balance["available_cash"]
+    held = {h["ticker"]: h["qty"] for h in balance.get("holdings", [])}
+    if not held or account_size <= 0:
+        return
+
+    corr = get_mock_account_corr_units(account_size, balance["holdings"])
+    group_units = dict(corr["groups"])
+    total_units = corr["total_units"]
+    sector_map = _get_sector_map()
+
+    for inp in holdings:
+        held_qty = held.get(inp.ticker, 0)
+        if held_qty <= 0:
+            continue
+
+        atr = inp.entry_atr or inp.notion_atr
+        if not atr:
+            continue
+        unit_shares = core.calc_position(atr, account_size).unit_shares
+
+        try:
+            price = float(get_current_price(token, inp.ticker))
+        except Exception as e:              # noqa: BLE001
+            logger.warning("[%s] 현재가 조회 실패 - 추가매수 판정 건너뜀: %s",
+                           inp.ticker, e)
+            continue
+
+        plan = _pyramid_plan(inp, price, unit_shares, held_qty)
+        if plan is None:
+            continue
+
+        # 상관군·전체 캡 - 이 종목 자체 상한은 _pyramid_plan이 이미 봤다.
+        sector = inp.corr_group or sector_map.get(inp.ticker, "")
+        if (group_units.get(sector, 0) + 1 > core.MAX_UNITS_GROUP
+                or total_units + 1 > core.MAX_UNITS_TOTAL):
+            _notify_failure(f"[KIS] 상관군 캡으로 추가매수 보류: {inp.name}")
+            continue
+
+        amount = plan["qty"] * price
+        if amount > cash_remaining:
+            _notify_failure(f"[KIS] 현금 부족으로 추가매수 보류: {inp.name}")
+            continue
+
+        result = place_market_buy_order(
+            token, inp.ticker, plan["qty"],
+            name=inp.name, ref_price=price,
+        )
+        logger.info("추가매수: %s(%s) %d유닛째 %d주 -> %s",
+                    inp.name, inp.ticker, plan["units_held"] + 1,
+                    plan["qty"], result)
+
+        if result.get("status") == "sent":
+            _notify_failure(f"[KIS] ➕ {inp.name}({inp.ticker}) {plan['reason']}")
+            group_units[sector] = group_units.get(sector, 0) + 1
+            total_units += 1
+            cash_remaining -= amount
+            _record_holding_after_buy(
+                token,
+                {"ticker": inp.ticker, "name": inp.name, "market": inp.market,
+                 "sector": sector, "price": price, "atr20": atr,
+                 "unit_shares": plan["qty"]},
+                result.get("order_no", ""),
+            )
+
+
 def get_order_execution(access_token: str, order_no: str) -> dict | None:
     """오늘 주문의 체결 여부를 조회한다. 체결 전이거나 못 찾으면 None."""
     app_key = os.environ["KIS_APP_KEY"]

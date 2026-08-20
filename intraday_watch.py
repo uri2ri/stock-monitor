@@ -352,6 +352,15 @@ def run(dry_run: bool = False) -> int:
         except Exception as e:              # noqa: BLE001
             logger.error("자동매도 실패: %s", e)
 
+        # 추가매수도 돌파 감시와 무관하게 매 회차 확인한다 (보유 종목의
+        # 다음 유닛 레벨 도달 여부라 워치리스트와 관계가 없다). 신규 진입
+        # 보다 먼저 본다 - 이미 이익 구간에 든 포지션을 키우는 쪽이 터틀
+        # 우선순위이고, 일일 주문 상한을 신규 진입과 나눠 쓴다.
+        try:
+            kis_client.run_auto_pyramid()
+        except Exception as e:              # noqa: BLE001
+            logger.error("추가매수 실패: %s", e)
+
     watch = load_watchlist()
     if watch.empty:
         logger.info("감시할 종목이 없습니다.")
