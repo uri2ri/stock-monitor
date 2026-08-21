@@ -10,6 +10,10 @@ intraday_watch.py – 장중 돌파 감시 (10분 간격)
 같은 날 같은 종목은 한 번만 알린다 (data/alerted_YYYYMMDD.json).
 노션·메일에 쓰지 않는다.
 
+10시 이전에 돌파한 종목은 같은 파일에 10시 가격(price_10am)도 남긴다 -
+진입 시각을 09:10에서 10:00으로 바꾸는 게 나은지 나중에 실측 데이터로
+비교하기 위한 기록용이며, 매매 판단에는 쓰이지 않는다.
+
 로컬 실행:
     python intraday_watch.py
     python intraday_watch.py --dry-run     # 카톡 발송 없이 출력만
@@ -209,6 +213,48 @@ def save_alerted(day: str, alerted: dict[str, dict]) -> Path:
     return path
 
 
+# ── 10시 가격 기록 (진입 시각 룰 비교용) ─────────────────────
+#
+# 09:10 vs 10:00 중 어느 시각에 진입하는 게 나은지 나중에 실측
+# 데이터로 비교하기 위해, 10시 이전에 돌파가 잡힌 종목은 10시 가격도
+# 같이 남긴다. TRADE_START_TIME 자체를 바꾸는 게 아니라 기록만 늘리는
+# 것이라 매매 로직에는 영향이 없다. ohlcv_cache.parquet에 이미 있는
+# 이후 가격 흐름과 로컬에서 그대로 이어붙일 수 있도록 노션이 아니라
+# 이 파일(git 커밋으로 영속화됨)에 같이 둔다.
+PRICE_10AM_CUTOFF = "10:00"
+
+
+def _fill_10am_prices(alerted: dict[str, dict], now: datetime) -> bool:
+    """10시 이전 돌파 종목 중 10시 가격이 없는 것만 채운다.
+
+    10시가 되기 전엔 아무것도 하지 않는다 - 채워봐야 10시 가격이
+    아니다. 이미 채워진 종목은 다시 조회하지 않으므로 10분마다 도는
+    회차에서 자연히 한 번만 채워진다 (그 회차가 밀리면 실제 채운
+    시각을 time_10am에 같이 남겨 정확히 10:00이 아님을 알 수 있게
+    한다).
+    """
+    if now.strftime("%H:%M") < PRICE_10AM_CUTOFF:
+        return False
+
+    targets = [
+        ticker for ticker, rec in alerted.items()
+        if rec.get("time", "") < PRICE_10AM_CUTOFF and "price_10am" not in rec
+    ]
+    if not targets:
+        return False
+
+    prices = fetch_prices(targets)
+    if not prices:
+        return False
+
+    for ticker, price in prices.items():
+        alerted[ticker]["price_10am"] = price
+        alerted[ticker]["time_10am"] = now.strftime("%H:%M")
+
+    logger.info("10시 가격 기록: %d/%d종목", len(prices), len(targets))
+    return True
+
+
 # ── 판정 ────────────────────────────────────────────────────
 
 def judge(row: pd.Series, price: float) -> Optional[dict]:
@@ -361,12 +407,21 @@ def run(dry_run: bool = False) -> int:
         except Exception as e:              # noqa: BLE001
             logger.error("추가매수 실패: %s", e)
 
+    # 10시 가격 기록도 돌파 감시와 무관하게 매 회차 확인한다 (오늘 이미
+    # 돌파가 잡힌 종목의 뒤늦은 관찰이라 워치리스트 상태와 관계없다).
+    alerted = load_alerted(day)
+    if not dry_run:
+        try:
+            if _fill_10am_prices(alerted, now):
+                save_alerted(day, alerted)
+        except Exception as e:              # noqa: BLE001
+            logger.error("10시 가격 기록 실패: %s", e)
+
     watch = load_watchlist()
     if watch.empty:
         logger.info("감시할 종목이 없습니다.")
         return 0
 
-    alerted = load_alerted(day)
     pending = watch[~watch["ticker"].isin(list(alerted))]
     if pending.empty:
         logger.info("워치리스트 %d종목이 모두 이미 알림 완료입니다.", len(watch))
