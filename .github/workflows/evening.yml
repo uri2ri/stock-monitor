@@ -1,0 +1,70 @@
+name: Evening Execution Audit
+
+# 아침 리포트는 "오늘 뭘 할지", 이 워크플로는 "규칙이 시킨 것과 실제로
+# 한 것이 얼마나 달랐는지"만 본다. 카톡 없이 메일만 보낸다.
+#
+# GitHub 자체 schedule은 다른 워크플로에서 지연이 커서(수십 분) 주
+# 트리거로 신뢰하지 않기로 했다. workflow_dispatch를 열어두고
+# cron-job.org에서 외부로 트리거할 예정이다. 아래 schedule은 그게
+# 죽었을 때의 보조수단.
+#
+# 스케줄 실행은 항상 실반영(dry_run 아님)이다 - dry_run 입력은
+# workflow_dispatch(수동 실행) 전용이며 schedule 트리거에는 적용되지
+# 않는다(inputs 컨텍스트 자체가 비어 있음).
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "true = 노션 쓰기 생략(메일만 발송, 제목에 [DRY]) / false = 실제 반영"
+        type: boolean
+        default: true
+  schedule:
+    # UTC 09:00 = KST 18:00 (평일)
+    - cron: "0 9 * * 1-5"
+
+# daily.yml(아침 07:37)과 시간대가 겹치지 않지만, 과거 워크플로 둘이
+# 겹쳐 돌며 서로를 취소시킨 전례가 있어(intraday.yml 주석 참고) 그룹을
+# 명시적으로 분리한다. 이 워크플로는 저장소 파일을 커밋하지 않으므로
+# (노션에만 쓴다) git 충돌 자체는 없다 - 그래도 같은 실행이 겹치는
+# 것만 막는다.
+concurrency:
+  group: evening-audit
+  cancel-in-progress: false
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run evening audit
+        env:
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+          NOTION_DB_ID: ${{ secrets.NOTION_DB_ID }}
+          NOTION_ORDERS_DB_ID: ${{ secrets.NOTION_ORDERS_DB_ID }}
+          NOTION_LEDGER_DB_ID: ${{ secrets.NOTION_LEDGER_DB_ID }}
+          GMAIL_ADDRESS: ${{ secrets.GMAIL_ADDRESS }}
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+          GMAIL_TO: ${{ secrets.GMAIL_TO }}
+          STREAMLIT_APP_URL: ${{ secrets.STREAMLIT_APP_URL }}
+        run: |
+          if [ "${{ github.event_name }}" = "schedule" ]; then
+            python evening_audit.py
+          elif [ "${{ inputs.dry_run }}" = "false" ]; then
+            python evening_audit.py
+          else
+            python evening_audit.py --dry-run
+          fi

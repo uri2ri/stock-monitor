@@ -21,7 +21,10 @@ from datetime import date
 from email.message import EmailMessage
 from typing import Optional, Sequence
 
-from core import HoldingInput, HoldingResult, PortfolioRisk, build_stock_link
+from core import (
+    MANAGED_NON_TURTLE, HoldingInput, HoldingResult, PortfolioRisk,
+    build_stock_link,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -47,10 +50,8 @@ COLUMNS = (
 EMPTY = "-"                 # 노션 값이 비어 있을 때 (추측해서 채우지 않는다)
 NO_NEWS = "수집 없음"        # 공시·뉴스만 별도 문구
 
-# '운용' 칸이 이 값이면 터틀 진입이 아니다 (하이닉스 등 별도 전략 보유분).
-# R배수는 터틀 손절 로직(2×ATR)을 전제로 하므로 이 종목들에는 의미가
-# 없다 - 표에서 분리하고 R_EMPTY로 표시한다.
-MANAGED_NON_TURTLE = "터틀외"
+# R배수는 터틀 손절 로직(2×ATR)을 전제로 하므로 '터틀외'(core.MANAGED_
+# NON_TURTLE) 종목에는 의미가 없다 - 표에서 분리하고 R_EMPTY로 표시한다.
 R_EMPTY = "—"                # R배수 계산 불가 (진입시 ATR 없음·터틀외)
 
 # ── 색상 ────────────────────────────────────────────────────
@@ -906,4 +907,244 @@ def send_report_mail(
         smtp.send_message(msg, from_addr=sender, to_addrs=recipients)
 
     logger.info("메일 발송 완료 (수신: %s)", ", ".join(recipients))
+    return True
+
+
+# ── 저녁 실행 감사 리포트 (evening_audit.py 전용) ───────────
+#
+# 아침 리포트(_build_html/_build_text)와 완전히 분리한다. 보유 현황
+# 표·트레일링 갱신은 아침 리포트와 값이 같아 여기서는 다시 넣지 않고,
+# "규칙이 시킨 것과 실제로 한 것" 대조만 보여준다. 판단·권유 문구는
+# 쓰지 않는다 - 신호 유무·실행 여부·지연일수만 표시한다.
+#
+# 인자 report는 evening_audit.EveningReport와 같은 모양(덕타이핑)만
+# 요구한다 - 순환 임포트를 피하려고 타입은 임포트하지 않는다.
+
+WEEKDAY_KR = ("월", "화", "수", "목", "금", "토", "일")
+
+
+def build_evening_subject(today: date, dry_run: bool) -> str:
+    tail = f"{today.month}/{today.day}({WEEKDAY_KR[today.weekday()]})"
+    prefix = "[DRY] " if dry_run else ""
+    return f"{prefix}[저녁 감사] {tail}"
+
+
+def _signal_label(row) -> str:
+    """SignalRow 한 줄 표시용 문구. 판단 문구 없이 신호 내용만."""
+    if row.signal_type == "유닛추가":
+        unit = f"{row.target_unit}u " if row.target_unit else ""
+        return f"유닛추가({unit}레벨 {_fmt(row.ref_price)})"
+    return f"{row.signal_type}({_fmt(row.ref_price)})"
+
+
+def build_evening_text(report) -> str:
+    today = report.today
+    lines = [build_evening_subject(today, False), ""]
+
+    lines.append("1. 오늘의 매매")
+    if not report.buys and not report.exits:
+        lines.append("   오늘 매매 없음")
+    else:
+        for b in report.buys:
+            lines.append(
+                f"   매수  {b['name']} {_fmt(b['price'])} × "
+                f"{_fmt(b['qty'])}주 ({b['unit_label']})"
+            )
+        for e in report.exits:
+            r = e.get("r_multiple")
+            r_str = f"{r:+.2f}R" if r is not None else EMPTY
+            lines.append(
+                f"   청산  {e['name']} {_fmt(e['entry_price'])} → "
+                f"{_fmt(e['exit_price'])}  {e.get('exit_reason') or EMPTY}  {r_str}"
+            )
+    lines.append("")
+
+    lines.append("2. 실행 감사")
+    for row in report.executed:
+        lines.append(f"   ✅ {row.name}  {_signal_label(row)}   지연 {row.days}일")
+    for row in report.unexecuted:
+        lines.append(f"   ❌ {row.name} {_signal_label(row)}  누적 {row.days}일")
+    for e in report.random_trades:
+        lines.append(
+            f"   ⚠️ {e['name']}  {e.get('exit_reason') or EMPTY} (신호 없이 실행)"
+        )
+
+    total = len(report.executed) + len(report.unexecuted)
+    lines.append("")
+    lines.append(
+        f"   신호 {total}건 중 {len(report.executed)}건 실행 · "
+        f"임의 매매 {len(report.random_trades)}건"
+    )
+    lines.append("")
+
+    lines.append("3. 기록 반영")
+    if report.ledger_signal_writes:
+        parts = ", ".join(
+            f"{w['name']} {w['date'].month}/{w['date'].day}"
+            for w in report.ledger_signal_writes
+        )
+        lines.append(f"   매매일지 신호 발생일 기입: {parts}")
+    if report.holding_signal_writes:
+        parts = ", ".join(
+            f"{w['name']}({w['signal_type']})" if w.get("signal_type")
+            else f"{w['name']}(해소)"
+            for w in report.holding_signal_writes
+        )
+        lines.append(f"   점검표 신호 갱신: {parts}")
+    if not report.ledger_signal_writes and not report.holding_signal_writes:
+        lines.append("   기록 변경 없음")
+    if report.dry_run:
+        lines.append("")
+        lines.append("   (dry-run: 위 내용은 실제로 쓰지 않았습니다 - 노션은 그대로입니다)")
+
+    return "\n".join(lines)
+
+
+def build_evening_html(report) -> str:
+    today = report.today
+
+    def buy_line(b: dict) -> str:
+        name = _linked(b["name"], b["ticker"])
+        return (
+            f'<div style="margin:3px 0;">매수&nbsp;&nbsp;{name} '
+            f'{_fmt(b["price"])} × {_fmt(b["qty"])}주 '
+            f'({html.escape(b["unit_label"])})</div>'
+        )
+
+    def exit_line(e: dict) -> str:
+        name = _linked(e["name"], e["ticker"])
+        r = e.get("r_multiple")
+        r_str = f"{r:+.2f}R" if r is not None else EMPTY
+        r_color = "" if r is None else (C_PROFIT if r >= 0 else C_LOSS)
+        return (
+            f'<div style="margin:3px 0;">청산&nbsp;&nbsp;{name} '
+            f'{_fmt(e["entry_price"])} → {_fmt(e["exit_price"])}  '
+            f'{html.escape(e.get("exit_reason") or EMPTY)}  '
+            f'<span style="color:{r_color};font-weight:bold;">{r_str}</span></div>'
+        )
+
+    trade_lines = "".join(buy_line(b) for b in report.buys) + "".join(
+        exit_line(e) for e in report.exits
+    )
+    if not trade_lines:
+        trade_lines = f'<div style="color:{C_MUTED};">오늘 매매 없음</div>'
+
+    def executed_line(row) -> str:
+        name = _linked(row.name, row.ticker)
+        return (
+            f'<div style="margin:3px 0;">✅ {name} '
+            f'{html.escape(_signal_label(row))} '
+            f'<span style="color:{C_MUTED};">지연 {row.days}일</span></div>'
+        )
+
+    def unexecuted_line(row) -> str:
+        name = _linked(row.name, row.ticker, color=C_STOP_TEXT, bold=True)
+        return (
+            f'<div style="margin:3px 0;color:{C_STOP_TEXT};font-weight:bold;">'
+            f'❌ {name} {html.escape(_signal_label(row))} 누적 {row.days}일</div>'
+        )
+
+    def random_line(e: dict) -> str:
+        name = _linked(e["name"], e["ticker"], color=C_EXIT_LINE, bold=True)
+        return (
+            f'<div style="margin:3px 0;color:{C_EXIT_LINE};font-weight:bold;">'
+            f'⚠️ {name} {html.escape(e.get("exit_reason") or EMPTY)} '
+            f'(신호 없이 실행)</div>'
+        )
+
+    audit_lines = (
+        "".join(executed_line(r) for r in report.executed)
+        + "".join(unexecuted_line(r) for r in report.unexecuted)
+        + "".join(random_line(e) for e in report.random_trades)
+    )
+    if not audit_lines:
+        audit_lines = f'<div style="color:{C_MUTED};">오늘 대조할 신호 없음</div>'
+
+    total = len(report.executed) + len(report.unexecuted)
+    summary = (
+        f"신호 {total}건 중 {len(report.executed)}건 실행 · "
+        f"임의 매매 {len(report.random_trades)}건"
+    )
+
+    record_lines: list[str] = []
+    if report.ledger_signal_writes:
+        parts = ", ".join(
+            f'{w["name"]} {w["date"].month}/{w["date"].day}'
+            for w in report.ledger_signal_writes
+        )
+        record_lines.append(f"매매일지 신호 발생일 기입: {html.escape(parts)}")
+    if report.holding_signal_writes:
+        parts = ", ".join(
+            f'{w["name"]}({w["signal_type"]})' if w.get("signal_type")
+            else f'{w["name"]}(해소)'
+            for w in report.holding_signal_writes
+        )
+        record_lines.append(f"점검표 신호 갱신: {html.escape(parts)}")
+    if not record_lines:
+        record_lines.append("기록 변경 없음")
+    record_html = "".join(f"<div>{line}</div>" for line in record_lines)
+
+    dry_note = (
+        f'<p style="color:{C_MUTED};margin:10px 0 0;">'
+        "(dry-run: 위 내용은 실제로 쓰지 않았습니다 - 노션은 그대로입니다)</p>"
+        if report.dry_run else ""
+    )
+
+    return f"""\
+<div style="font-family:-apple-system,'Apple SD Gothic Neo','Malgun Gothic',
+sans-serif;font-size:14px;color:#212529;line-height:1.5;">
+  <h2 style="margin:0 0 4px;">🌙 저녁 실행 감사</h2>
+  <p style="margin:0 0 16px;color:{C_MUTED};">
+    {today.isoformat()} ({WEEKDAY_KR[today.weekday()]})</p>
+
+  <h3 style="margin:16px 0 6px;">1. 오늘의 매매</h3>
+  {trade_lines}
+
+  <h3 style="margin:16px 0 6px;">2. 실행 감사</h3>
+  {audit_lines}
+  <p style="margin:10px 0 0;font-weight:bold;">{summary}</p>
+
+  <h3 style="margin:16px 0 6px;">3. 기록 반영</h3>
+  {record_html}
+  {dry_note}
+</div>"""
+
+
+def send_evening_mail(report) -> bool:
+    """저녁 실행 감사 리포트를 Gmail SMTP로 발송한다. 카톡은 쓰지 않는다.
+
+    Returns:
+        True  – 발송 완료
+        False – 환경변수 미설정으로 건너뜀
+
+    Raises:
+        smtplib.SMTPException 등 – 발송 실패 시 그대로 전파
+        (호출부에서 try/except로 감싸 전체 실행을 막지 않도록 한다)
+    """
+    sender = os.environ.get("GMAIL_ADDRESS", "").strip()
+    password = os.environ.get("GMAIL_APP_PASSWORD", "").strip()
+    if not sender or not password:
+        logger.warning(
+            "GMAIL_ADDRESS / GMAIL_APP_PASSWORD 미설정 – "
+            "저녁 감사 메일 발송을 건너뜁니다."
+        )
+        return False
+
+    to_raw = os.environ.get("GMAIL_TO", "").strip() or sender
+    recipients = [addr.strip() for addr in to_raw.split(",") if addr.strip()]
+
+    msg = EmailMessage()
+    msg["Subject"] = build_evening_subject(report.today, report.dry_run)
+    msg["From"] = sender
+    msg["To"] = ", ".join(recipients)
+
+    msg.set_content(build_evening_text(report))
+    msg.add_alternative(build_evening_html(report), subtype="html")
+
+    with smtplib.SMTP(SMTP_HOST, SMTP_PORT, timeout=SMTP_TIMEOUT) as smtp:
+        smtp.starttls()
+        smtp.login(sender, password)
+        smtp.send_message(msg, from_addr=sender, to_addrs=recipients)
+
+    logger.info("저녁 감사 메일 발송 완료 (수신: %s)", ", ".join(recipients))
     return True

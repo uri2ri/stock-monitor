@@ -155,6 +155,13 @@ def fetch_holdings(managed_by: Optional[str] = None) -> list[tuple[str, HoldingI
                     pyramid_anchor=_number(props.get("추가매수 기준가", {})),
                     recent_verdict=_select(props.get("최근 판정", {})),
                     checked_date=_date_val(props.get("확인일", {})),
+                    units=(
+                        int(units_val)
+                        if (units_val := _number(props.get("유닛수", {}))) is not None
+                        else None
+                    ),
+                    evening_signal_type=_select(props.get("저녁판정 신호유형", {})),
+                    evening_signal_date=_date_val(props.get("저녁판정 발생일", {})),
                     news_memo=_text(props.get("공시·뉴스", {})).strip(),
                     exit_signal=_flag(props.get("철수신호", {})),
                     news_date=_date_val(props.get("뉴스 확인일", {})),
@@ -988,3 +995,167 @@ def list_pending_orders_today(day: date) -> list[dict]:
         start_cursor = data.get("next_cursor")
 
     return results
+
+
+# ── 저녁 실행감사 (evening_audit.py) 전용 ────────────────────
+#
+# 이 배치가 노션에 쓰는 칸은 아래 3개로 한정한다:
+#   보유종목 점검표 - "저녁판정 신호유형" / "저녁판정 발생일"
+#   매매일지 (청산 기록) - "신호 발생일"
+# 아침 배치(daily_report.py)가 쓰는 손절선·진입후 최고가·최근 판정·
+# 신호 최초 발생일 등은 절대 건드리지 않는다 (과거 두 주체가 같은 칸을
+# 써서 판정이 덮인 전례가 있다).
+
+EVENING_SIGNAL_WRITABLE = ("저녁판정 신호유형", "저녁판정 발생일")
+
+
+def update_evening_signal(
+    page_id: str, signal_type: Optional[str], signal_date: Optional[date],
+) -> None:
+    """점검표의 '저녁판정 신호유형'/'저녁판정 발생일' 두 칸만 갱신한다.
+
+    signal_type이 None이면 신호 해소로 보고 두 칸 다 비운다. 이 두 칸
+    밖의 어떤 프로퍼티도 이 함수는 절대 건드리지 않는다.
+    """
+    payload = {
+        "properties": {
+            "저녁판정 신호유형": {
+                "select": {"name": signal_type} if signal_type else None
+            },
+            "저녁판정 발생일": _date_prop(signal_date),
+        },
+    }
+    assert set(payload["properties"]) <= set(EVENING_SIGNAL_WRITABLE)
+    resp = requests.patch(f"{NOTION_BASE}/pages/{page_id}", headers=_headers(),
+                           json=payload, timeout=30)
+    resp.raise_for_status()
+    logger.info("[저녁감사] 점검표 신호 갱신: page_id=%s -> %s (%s)",
+                page_id, signal_type or "해소", signal_date)
+
+
+def fetch_orders_today(day: date) -> list[dict]:
+    """자동주문 기록 DB에서 오늘(day) 매수 성공분만 읽는다.
+
+    신규·추가 구분 없이 전부 가져온다 - 저녁 리포트 '오늘의 매매'
+    섹션은 둘 다 보여준다 (유닛 표시로 구분).
+    """
+    db_id = os.environ["NOTION_ORDERS_DB_ID"]
+    url = f"{NOTION_BASE}/databases/{db_id}/query"
+    payload: dict[str, Any] = {
+        "filter": {
+            "and": [
+                *_day_range_filter("주문일시", day),
+                _side_filter(SIDE_BUY),
+                {"property": "상태", "select": {"equals": "성공"}},
+            ]
+        },
+        "page_size": 100,
+    }
+
+    results: list[dict] = []
+    has_more = True
+    start_cursor: Optional[str] = None
+    while has_more:
+        if start_cursor:
+            payload["start_cursor"] = start_cursor
+        resp = requests.post(url, headers=_headers(), json=payload, timeout=30)
+        resp.raise_for_status()
+        data = resp.json()
+        for page in data.get("results", []):
+            props = page.get("properties", {})
+            results.append({
+                "name": _text(props.get("종목명", {})),
+                "ticker": _text(props.get("종목코드", {})),
+                "price": _number(props.get("주문가", {})),
+                "qty": _number(props.get("수량", {})),
+                "order_type": _select(props.get("주문유형", {})) or ORDER_NEW,
+            })
+        has_more = data.get("has_more", False)
+        start_cursor = data.get("next_cursor")
+
+    return results
+
+
+def _formula_number(prop: dict) -> Optional[float]:
+    """formula 프로퍼티(R배수 등)에서 숫자 결과를 추출한다."""
+    formula = prop.get("formula", {})
+    val = formula.get("number")
+    return float(val) if val is not None else None
+
+
+def fetch_ledger_closed_today(day: date) -> list[tuple[str, dict]]:
+    """매매일지(청산 기록)에서 ✱청산일=오늘인 행을 (page_id, dict)로 읽는다.
+
+    dict 키: ticker/name/entry_price/exit_price/exit_reason/r_multiple/
+    signal_date(기존 값, 채워져 있으면 건드리지 않는다)/holding_page_id
+    (점검표 관계 - 청산 전에 저녁 배치가 추적하던 저녁판정 발생일이
+    남아있는지 확인하는 데 쓴다. 점검표 행은 청산 후 구분='청산'으로
+    바뀌지만 삭제되지는 않는다).
+    """
+    db_id = os.environ["NOTION_LEDGER_DB_ID"]
+    url = f"{NOTION_BASE}/databases/{db_id}/query"
+    payload: dict[str, Any] = {
+        "filter": {"and": _day_range_filter("✱ 청산일", day)},
+        "page_size": 100,
+    }
+
+    results: list[tuple[str, dict]] = []
+    has_more = True
+    start_cursor: Optional[str] = None
+    while has_more:
+        if start_cursor:
+            payload["start_cursor"] = start_cursor
+        resp = requests.post(url, headers=_headers(), json=payload, timeout=30)
+        resp.raise_for_status()
+        data = resp.json()
+        for page in data.get("results", []):
+            props = page.get("properties", {})
+            relation = props.get("보유종목", {}).get("relation", [])
+            results.append((page["id"], {
+                "ticker": _text(props.get("종목코드", {})),
+                "name": _text(props.get("종목명", {})),
+                "entry_price": _number(props.get("✱ 진입가", {})),
+                "exit_price": _number(props.get("✱ 청산가", {})),
+                "exit_reason": _select(props.get("✱ 청산 사유", {})),
+                "r_multiple": _formula_number(props.get("R배수", {})),
+                "signal_date": _date_val(props.get("신호 발생일", {})),
+                "holding_page_id": relation[0]["id"] if relation else None,
+            }))
+        has_more = data.get("has_more", False)
+        start_cursor = data.get("next_cursor")
+
+    return results
+
+
+def fetch_holding_evening_signal_date(page_id: str) -> Optional[date]:
+    """점검표 특정 행의 '저녁판정 발생일'만 조회한다 (단건 GET).
+
+    청산된 종목이 매매일지에 '신호 발생일'을 아직 안 채운 채로 남아있을
+    때, 청산 전에 저녁 배치가 추적하던 발생일을 그대로 이어받기 위해
+    쓴다. 못 찾아도(행 삭제 등) 예외를 삼키고 None을 돌려준다 - 이때는
+    호출부가 청산일 자체를 기본값으로 쓴다.
+    """
+    try:
+        resp = requests.get(f"{NOTION_BASE}/pages/{page_id}",
+                             headers=_headers(), timeout=30)
+        resp.raise_for_status()
+        props = resp.json().get("properties", {})
+        return _date_val(props.get("저녁판정 발생일", {}))
+    except Exception as e:                      # noqa: BLE001
+        logger.warning("점검표 저녁판정 발생일 조회 실패 (page_id=%s): %s",
+                        page_id, e)
+        return None
+
+
+def update_ledger_signal_date(page_id: str, signal_date: date) -> None:
+    """매매일지의 '신호 발생일' 한 칸만 채운다. 이미 값이 있으면 호출하지 않는다.
+
+    (호출부가 fetch_ledger_closed_today의 signal_date가 비어 있을 때만
+    부른다 - 여기서는 중복 호출 방지를 다시 확인하지 않는다.)
+    """
+    payload = {"properties": {"신호 발생일": _date_prop(signal_date)}}
+    resp = requests.patch(f"{NOTION_BASE}/pages/{page_id}", headers=_headers(),
+                           json=payload, timeout=30)
+    resp.raise_for_status()
+    logger.info("[저녁감사] 매매일지 신호 발생일 기입: page_id=%s -> %s",
+                page_id, signal_date)

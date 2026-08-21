@@ -45,6 +45,12 @@ MAX_UNITS_TOTAL = 12     # 전체 포트폴리오 최대 유닛 수
 DEFAULT_CAPITAL = 10_000_000
 STOP_UPDATE_ATR_MULT = 0.5   # 손절선 갱신 알림 임계값 (× 진입시 ATR)
 FETCH_DAYS = 120         # 기본 조회 거래일 – Wilder 재귀식 워밍업용
+
+# 노션 점검표 '운용' 칸이 이 값이면 터틀 진입이 아니다 (하이닉스 등
+# 별도 전략 보유분). mailer.py(R배수 계산 제외)와 evening_audit.py
+# (신호 판정 대상 제외)가 함께 쓴다 - 두 곳에 문자열을 따로 두면 나중에
+# 어느 한쪽만 바뀌는 사고가 난다.
+MANAGED_NON_TURTLE = "터틀외"
 MIN_TRADING_DAYS = 40    # 이보다 적으면 조회 실패로 본다
 
 # ── 스크리너·스캔 공통 임계값 (표 색상 강조에도 쓰인다) ────────
@@ -669,6 +675,11 @@ class HoldingInput:
     pyramid_anchor: Optional[float] = None      # 추가매수 기준가
     recent_verdict: str = ""                    # 최근 판정 (손절/추세청산/…)
     checked_date: Optional[date] = None         # 확인일 (배치가 마지막으로 판정한 날)
+    units: Optional[int] = None                 # 유닛수 (1~4, 추가매수 때마다 갱신)
+    # 저녁 실행감사 배치(evening_audit.py) 전용 - 아침 배치는 절대 읽거나
+    # 쓰지 않는다. 위 '신호 최초 발생일'(아침 배치 전용)과는 별개 칸이다.
+    evening_signal_type: str = ""               # 저녁판정 신호유형
+    evening_signal_date: Optional[date] = None  # 저녁판정 발생일
     # 공시·뉴스 (Cowork가 매일 07:00에 기록) – 계산에는 쓰지 않고 리포트에만 사용
     news_memo: str = ""                      # 공시·뉴스
     exit_signal: bool = False                # 철수신호
