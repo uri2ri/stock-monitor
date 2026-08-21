@@ -646,6 +646,9 @@ class HoldingInput:
     market: str           # 시장 (KOSPI / KOSDAQ)
     buy_price: float      # 매수단가
     shares: int           # 보유수량
+    # 운용 구분 (자동/수동/터틀외). 터틀외는 터틀 진입이 아닌 종목이라
+    # 아침 리포트에서 R배수 계산·정렬 대상에서 뺀다 (mailer.py).
+    managed_by: str = ""
     # 1차·2차 익절가는 노션에 두되 읽지 않는다. 청산은 10일 저가로 판정한다.
     reeval_date: Optional[date] = None      # 재평가 기한
     corr_group: str = ""                    # 상관군 (빈 값이면 상관군 없음)

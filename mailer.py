@@ -40,10 +40,18 @@ COLUMNS = (
     "손익률",
     "손절선 여유%",
     "청산선 여유%",
+    "R배수",
+    "평가손익",
 )
 
 EMPTY = "-"                 # 노션 값이 비어 있을 때 (추측해서 채우지 않는다)
 NO_NEWS = "수집 없음"        # 공시·뉴스만 별도 문구
+
+# '운용' 칸이 이 값이면 터틀 진입이 아니다 (하이닉스 등 별도 전략 보유분).
+# R배수는 터틀 손절 로직(2×ATR)을 전제로 하므로 이 종목들에는 의미가
+# 없다 - 표에서 분리하고 R_EMPTY로 표시한다.
+MANAGED_NON_TURTLE = "터틀외"
+R_EMPTY = "—"                # R배수 계산 불가 (진입시 ATR 없음·터틀외)
 
 # ── 색상 ────────────────────────────────────────────────────
 C_BORDER = "#d5d5d5"
@@ -101,6 +109,38 @@ def _is_stop(res: HoldingResult) -> bool:
     return res.verdict == "손절"
 
 
+def _is_non_turtle(inp: HoldingInput) -> bool:
+    return inp.managed_by == MANAGED_NON_TURTLE
+
+
+def _r_multiple(inp: HoldingInput, res: HoldingResult) -> Optional[float]:
+    """R배수 = (현재가 − 매수단가) / (2 × 진입시 ATR).
+
+    분모는 반드시 ✱진입시 ATR(inp.entry_atr)이다 - 매일 갱신되는 현재
+    ATR(res.atr)을 쓰면 변동성이 커진 종목일수록 R이 실제보다 작게
+    나온다. 진입시 ATR이 없으면(신규 편입 직후 등) None - 계산하지
+    않고 호출부에서 '—'로 표시한다.
+    """
+    if not inp.entry_atr or not res.current_price:
+        return None
+    return (res.current_price - inp.buy_price) / (2 * inp.entry_atr)
+
+
+def _pl_amount(inp: HoldingInput, res: HoldingResult) -> Optional[float]:
+    """평가손익 = (현재가 − 매수단가) × 보유수량."""
+    if not res.current_price:
+        return None
+    return (res.current_price - inp.buy_price) * inp.shares
+
+
+def _fmt_r(value: Optional[float]) -> str:
+    return f"{value:+.2f}R" if value is not None else R_EMPTY
+
+
+def _fmt_signed(value: Optional[float]) -> str:
+    return f"{value:+,.0f}" if value is not None else EMPTY
+
+
 def _linked(name: str, ticker: str, *, color: str = "", bold: bool = False) -> str:
     """종목명. STREAMLIT_APP_URL이 설정돼 있으면 종목분석 딥링크로 감싼다.
 
@@ -147,6 +187,31 @@ def _pyramid_line(res: HoldingResult) -> str:
 def _sorted_rows(rows: Sequence[ReportRow]) -> list[ReportRow]:
     """조치 필요 종목을 위로. 그 안에서는 원래 순서를 유지한다."""
     return sorted(rows, key=lambda r: not r[1].is_action_needed)
+
+
+def _split_turtle_rows(
+    rows: Sequence[ReportRow],
+) -> tuple[list[ReportRow], list[ReportRow]]:
+    """(터틀 대상, 터틀외)로 나눈다. 터틀외는 '운용'='터틀외'인 종목."""
+    turtle = [r for r in rows if not _is_non_turtle(r[0])]
+    non_turtle = [r for r in rows if _is_non_turtle(r[0])]
+    return turtle, non_turtle
+
+
+def _sorted_turtle_rows(rows: Sequence[ReportRow]) -> list[ReportRow]:
+    """1차: 기존 판정 그룹(조치 필요 먼저). 2차: 그룹 내 R배수 내림차순.
+
+    전체를 R배수로 재정렬하면 안 된다 - 액션이 필요한 종목(손절·추세청산
+    등)이 표 아래로 밀려나 눈에 안 띄게 된다. 그룹 순서는 그대로 두고
+    그룹 안에서만 R배수로 정렬한다. R배수가 없는 종목(진입시 ATR
+    미기록)은 값을 0 취급하지 않고 그 그룹의 맨 뒤로 보낸다.
+    """
+    def key(row: ReportRow):
+        inp, res = row
+        r = _r_multiple(inp, res)
+        return (not res.is_action_needed, r is None, -(r or 0.0))
+
+    return sorted(rows, key=key)
 
 
 def _news_stamp(inp: HoldingInput, today: date) -> str:
@@ -211,6 +276,15 @@ def _row_html(inp: HoldingInput, res: HoldingResult) -> str:
     if pl is not None:
         pl_color = C_PROFIT if pl >= 0 else C_LOSS
 
+    # 터틀외 종목은 진입시 ATR이 있어도 R배수를 내지 않는다 - 터틀
+    # 손절 로직(2×ATR) 자체가 적용되지 않는 종목이라 값 자체가 무의미하다.
+    r_mult = None if _is_non_turtle(inp) else _r_multiple(inp, res)
+    r_color = "" if r_mult is None else (C_PROFIT if r_mult >= 0 else C_LOSS)
+    pl_amount = _pl_amount(inp, res)
+    pl_amount_color = (
+        "" if pl_amount is None else (C_PROFIT if pl_amount >= 0 else C_LOSS)
+    )
+
     cells = [
         _td(_linked_name(inp, color=C_STOP_TEXT if stop else "", bold=stop),
             align="left"),
@@ -221,6 +295,8 @@ def _row_html(inp: HoldingInput, res: HoldingResult) -> str:
             color=C_STOP_TEXT if (room is not None and room <= 0) else ""),
         _td(_fmt_pct(exit_room),
             color=C_STOP_TEXT if (exit_room is not None and exit_room <= 0) else ""),
+        _td(_fmt_r(r_mult), color=r_color),
+        _td(_fmt_signed(pl_amount), color=pl_amount_color),
     ]
     return f'<tr style="{bg}">' + "".join(cells) + "</tr>"
 
@@ -408,6 +484,33 @@ def _build_favorites_html(favorites: Sequence[dict]) -> str:
   </table>"""
 
 
+def _summary_row_html(turtle_rows: Sequence[ReportRow]) -> str:
+    """터틀 대상 종목 합계 행 – 평가손익 합계, 수익/손실 종목 수."""
+    pl_values = [
+        v for inp, res in turtle_rows
+        if (v := _pl_amount(inp, res)) is not None
+    ]
+    total_pl = sum(pl_values)
+    wins = sum(1 for v in pl_values if v > 0)
+    losses = sum(1 for v in pl_values if v < 0)
+    pl_color = C_PROFIT if total_pl >= 0 else C_LOSS
+
+    return f"""<tr style="background-color:{C_HEAD_BG};font-weight:bold;">
+      <td colspan="7" style="padding:6px 10px;border:1px solid {C_BORDER};
+      text-align:right;">합계 (터틀 대상 {len(turtle_rows)}종목)</td>
+      <td style="padding:6px 10px;border:1px solid {C_BORDER};
+      text-align:right;color:{pl_color};white-space:nowrap;">
+        {_fmt_signed(total_pl)}원 ({wins}승 {losses}패)</td>
+    </tr>"""
+
+
+def _divider_row_html() -> str:
+    return (
+        f'<tr><td colspan="8" style="padding:0;border:none;'
+        f'border-top:2px solid {C_MUTED};"></td></tr>'
+    )
+
+
 def _build_html(
     rows: Sequence[ReportRow],
     risk: PortfolioRisk,
@@ -424,7 +527,19 @@ def _build_html(
         f'white-space:nowrap;">{html.escape(c)}</th>'
         for c in COLUMNS
     )
-    body_rows = "".join(_row_html(inp, res) for inp, res in rows)
+
+    # 요약표는 터틀 대상만 정렬·합계 대상으로 삼는다. 터틀외(하이닉스 등)는
+    # R배수가 의미 없어 표 맨 아래 구분선 밑에 그대로(원래 순서) 붙인다.
+    turtle_rows, non_turtle_rows = _split_turtle_rows(rows)
+    turtle_rows = _sorted_turtle_rows(turtle_rows)
+
+    body_parts = [_row_html(inp, res) for inp, res in turtle_rows]
+    if turtle_rows:
+        body_parts.append(_summary_row_html(turtle_rows))
+    if non_turtle_rows:
+        body_parts.append(_divider_row_html())
+        body_parts.extend(_row_html(inp, res) for inp, res in non_turtle_rows)
+    body_rows = "".join(body_parts)
 
     actions = [res for _, res in rows if res.is_action_needed]
     if actions:
@@ -612,17 +727,43 @@ def _build_text(
 
     lines.extend(_build_stop_updates_text(stop_updates))
 
-    # 요약
-    lines.append("[요약]")
-    for inp, res in rows:
+    # 요약 – 터틀 대상만 R배수 정렬·합계 대상. 터틀외는 구분선 아래 별도.
+    turtle_rows, non_turtle_rows = _split_turtle_rows(rows)
+    turtle_rows = _sorted_turtle_rows(turtle_rows)
+
+    def _summary_line(inp: HoldingInput, res: HoldingResult) -> str:
         exit_room = res.dist_to_exit_pct if res.current_price else None
-        lines.append(
+        r_mult = None if _is_non_turtle(inp) else _r_multiple(inp, res)
+        return (
             f"  {res.verdict or EMPTY:<5} {inp.name} "
             f"{_fmt(res.current_price) if res.current_price else EMPTY} "
             f"({_fmt_pct(_profit_pct(inp, res))}) "
             f"손절여유 {_fmt_pct(_stop_room_pct(res))} / "
-            f"청산여유 {_fmt_pct(exit_room)}"
+            f"청산여유 {_fmt_pct(exit_room)} / "
+            f"{_fmt_r(r_mult)} / {_fmt_signed(_pl_amount(inp, res))}원"
         )
+
+    lines.append("[요약]")
+    for inp, res in turtle_rows:
+        lines.append(_summary_line(inp, res))
+
+    if turtle_rows:
+        pl_values = [
+            v for inp, res in turtle_rows
+            if (v := _pl_amount(inp, res)) is not None
+        ]
+        total_pl = sum(pl_values)
+        wins = sum(1 for v in pl_values if v > 0)
+        losses = sum(1 for v in pl_values if v < 0)
+        lines.append(
+            f"  합계 (터틀 대상 {len(turtle_rows)}종목): "
+            f"{_fmt_signed(total_pl)}원 ({wins}승 {losses}패)"
+        )
+
+    if non_turtle_rows:
+        lines.append("  ─── 터틀외 ───")
+        for inp, res in non_turtle_rows:
+            lines.append(_summary_line(inp, res))
     lines.append("")
 
     # 종목별 상세

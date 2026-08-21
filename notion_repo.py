@@ -132,6 +132,7 @@ def fetch_holdings(managed_by: Optional[str] = None) -> list[tuple[str, HoldingI
                     market=_select(props.get("시장", {})),
                     buy_price=_number(props.get("✱ 매수단가", {})) or 0,
                     shares=int(_number(props.get("✱ 보유수량", {})) or 0),
+                    managed_by=_select(props.get("운용", {})),
                     # 1차·2차 익절가는 읽지 않는다 (청산은 10일 저가 기준).
                     # 노션 칸은 비교용으로 남겨두되 계산에 넣지 않는다.
                     reeval_date=_date_val(props.get("재평가 기한", {})),
