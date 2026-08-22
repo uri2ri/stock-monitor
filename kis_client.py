@@ -109,8 +109,13 @@ WARNING_SUPPRESS_WINDOW_SECONDS = 3600  # 같은 사유의 시스템 경고는 �
 # ── 시간 게이트 ─────────────────────────────────────────────
 # 이 범위 밖이면 토큰 발급조차 하지 않고 자동매수 경로 전체를 건너뛴다.
 # 상수 하나만 바꾸면 백테스트로 09:10 vs 10:00 등을 비교할 수 있다.
-# 휴장일은 따로 판단하지 않는다 - 휴장일엔 시세 조회가 실패하거나 전일
-# 데이터가 나와 candidates가 자연히 비거나 걸러진다.
+#
+# 휴장일(주말·공휴일)은 이 시:분 범위만으로는 안 걸러진다 - 토요일도
+# 09:10~15:20 안에 들어오기 때문이다. cron-job.org가 요일과 무관하게
+# workflow_dispatch를 계속 쏴서(2026-08-22 토요일 확인), 휴장일에도
+# 이 범위를 통과해 KIS 토큰 발급을 시도하다 서버가 응답하지 않아
+# 타임아웃 경고가 반복됐다. _is_trading_day()가 별도로 막는다
+# (아래 3개 진입 함수 전부에 적용).
 TRADE_START_TIME = "09:10"
 TRADE_END_TIME = "15:20"
 
@@ -273,6 +278,35 @@ def _within_trading_hours(now: Optional[datetime] = None) -> bool:
     start = datetime.strptime(TRADE_START_TIME, "%H:%M").time()
     end = datetime.strptime(TRADE_END_TIME, "%H:%M").time()
     return start <= now.time() <= end
+
+
+# 요일 게이트 - 2026-08-22(토) cron-job.org가 시간대만 보고
+# workflow_dispatch를 계속 쏴서(자체적으로 요일을 모른다), 토요일
+# 내내 KIS 토큰 발급이 타임아웃나며 경고를 반복해 보낸 사고가 있었다.
+# _within_trading_hours()는 시:분만 보고 요일은 안 보므로 주말에도
+# 통과된다 - 여기서 따로 막는다. 한 프로세스(=한 회차) 안에서
+# run_auto_sell·run_auto_pyramid·run_auto_trade가 모두 불릴 수 있어
+# 날짜별로 캐싱해 pykrx 조회를 회차당 최대 1번으로 묶는다.
+_trading_day_cache: dict[date, bool] = {}
+
+
+def _is_trading_day(day: Optional[date] = None) -> bool:
+    """오늘이 실제 거래일인가 (토·일·공휴일 전부 포함해서 판단).
+
+    core.last_trading_date()가 pykrx 데이터의 마지막 날짜를 그대로
+    쓰므로 별도 공휴일 목록을 유지할 필요가 없다. 조회 자체가
+    실패하면 True를 돌려준다(fail-open) - 이 판정은 "낼지 말지"가
+    아니라 "KIS를 불러볼지 말지"만 정하는 것이라, 모르면 기존처럼
+    시도하고 진짜 장애면 아래 KIS 호출이 실패하며 기존 알림 경로로
+    알려진다. 반대로 fail-closed(모르면 건너뜀)로 두면 pykrx만 일시
+    장애여도 실제 거래일에 하루 종일 자동매매가 조용히 멈추는 새로운
+    장애 유형을 만든다.
+    """
+    day = day or _today()
+    if day not in _trading_day_cache:
+        last = core.last_trading_date()
+        _trading_day_cache[day] = True if last is None else last == day
+    return _trading_day_cache[day]
 
 
 def _notify_failure(message: str) -> None:
@@ -808,6 +842,10 @@ def run_auto_sell(holdings: Optional[list] = None) -> None:
         )
         return
 
+    if not _is_trading_day():
+        logger.info("휴장일 - 자동매도 건너뜀 (KIS 호출 생략)")
+        return
+
     if holdings is None:
         try:
             # 운용="자동"만 본다 - 안 그러면 같은 티커의 실계좌 수동 보유
@@ -953,6 +991,10 @@ def run_auto_pyramid(holdings: Optional[list] = None) -> None:
         return
 
     if not _within_trading_hours():
+        return
+
+    if not _is_trading_day():
+        logger.info("휴장일 - 추가매수 건너뜀 (KIS 호출 생략)")
         return
 
     if holdings is None:
@@ -1352,9 +1394,8 @@ def run_auto_trade(candidates: list[dict]) -> None:
     유령 행 경고 다음이 시간 게이트다: TRADE_START_TIME~TRADE_END_TIME
     밖이면 토큰 발급조차 하지 않고 로그만 남기고 즉시 반환한다 - 장
     시작 전 호가 미확정 구간에 쏟아지는 거부를 원천적으로 피한다.
-    휴장일은 따로 판단하지 않는다: 휴장일엔 candidates 자체가
-    비거나(스캔이 전일 데이터를 걸러냄) 시세 조회가 실패해 자연히
-    걸러진다.
+    시간 게이트 다음이 요일 게이트(_is_trading_day)다 - 휴장일에도
+    이 시:분 범위는 통과하므로 따로 막아야 한다.
     """
     if not candidates:
         return
@@ -1372,6 +1413,10 @@ def run_auto_trade(candidates: list[dict]) -> None:
             "거래 시간(%s~%s) 아님 - 자동매수 건너뜀 (현재 %s)",
             TRADE_START_TIME, TRADE_END_TIME, datetime.now(KST).strftime("%H:%M"),
         )
+        return
+
+    if not _is_trading_day():
+        logger.info("휴장일 - 자동매수 건너뜀 (KIS 호출 생략)")
         return
 
     token = get_access_token()

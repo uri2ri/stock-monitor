@@ -127,6 +127,29 @@ def fetch_ohlcv(
     return df
 
 
+# 거래일 판정용 기준 종목. 항상 거래되는 초대형주라 상장폐지·거래정지로
+# 흔들릴 위험이 사실상 없다.
+TRADING_DAY_REFERENCE_TICKER = "005930"  # 삼성전자
+
+
+def last_trading_date(
+    reference_ticker: str = TRADING_DAY_REFERENCE_TICKER,
+) -> Optional[date]:
+    """가장 최근 실제 거래일. pykrx 데이터가 실제로 갖고 있는 마지막 날짜를
+    그대로 쓴다 - 토·일요일은 물론 임시 휴장일까지 하드코딩 없이 걸러진다.
+
+    조회 자체가 실패하면 None을 돌려준다 (호출부가 실패 시 동작을 정한다 -
+    kis_client.py는 fail-open으로, evening_audit.py는 안전하게 건너뛰는
+    쪽으로 쓴다).
+    """
+    try:
+        df = fetch_ohlcv(reference_ticker)
+        return df.index[-1].date()
+    except Exception as e:                      # noqa: BLE001
+        logger.error("거래일 판정용 시세 조회 실패: %s", e)
+        return None
+
+
 def fetch_etf_map() -> dict[str, str]:
     """상장 ETF 전체의 티커 → 종목명.
 

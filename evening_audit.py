@@ -59,9 +59,6 @@ EXIT_REASON_TO_SIGNAL = {
     "10일 저가 이탈": SIGNAL_10LOW,
 }
 
-REFERENCE_TICKER = "005930"  # 삼성전자 - 휴장일 판정용 (항상 거래되는 종목)
-
-
 @dataclass
 class SignalRow:
     ticker: str
@@ -83,20 +80,6 @@ class EveningReport:
     random_trades: list[dict] = field(default_factory=list)
     ledger_signal_writes: list[dict] = field(default_factory=list)
     holding_signal_writes: list[dict] = field(default_factory=list)
-
-
-def _last_trading_date(ticker: str = REFERENCE_TICKER) -> Optional[date]:
-    """가장 최근 실제 거래일. 조회 자체가 실패하면 None (호출부가 판단).
-
-    core.fetch_ohlcv()는 MIN_TRADING_DAYS(40거래일) 미만이면 예외를
-    내므로 days를 짧게 줄 수 없다 - 기본값(120)을 그대로 쓴다.
-    """
-    try:
-        df = core.fetch_ohlcv(ticker)
-        return df.index[-1].date()
-    except Exception as e:                      # noqa: BLE001
-        logger.error("휴장일 판정용 시세 조회 실패: %s", e)
-        return None
 
 
 def _trading_days_between(df, start: date, end: date) -> int:
@@ -300,7 +283,7 @@ def main() -> int:
 
     today = datetime.now(KST).date()
 
-    last_trading = _last_trading_date()
+    last_trading = core.last_trading_date()
     if last_trading is None:
         logger.error("휴장일 판정 실패 - 안전하게 이번 회차를 건너뜁니다.")
         return 1
