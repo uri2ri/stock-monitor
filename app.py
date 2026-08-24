@@ -1126,10 +1126,17 @@ def render_stock_report(code: str, capital: float, ai_unlocked: bool) -> None:
 
     # ── 상관군 유닛 카운터 ──────────────────────────────────────
     st.markdown("### ■ 상관군 유닛")
-    st.caption(
-        f"종목당 {core.MAX_UNITS}유닛 · 상관군당 {core.MAX_UNITS_GROUP}유닛 · "
-        f"전체 {core.MAX_UNITS_TOTAL}유닛 상한"
-    )
+    try:
+        # core 모듈 상수 참조도 이 안에 둔다 – 배포 직후 재실행 시점에
+        # 모듈이 완전히 새로 반영되지 않아 속성이 잠깐 없어 보이는
+        # 경우(AttributeError)까지 포함해, 이 섹션만 죽고 나머지 화면은
+        # 살아있어야 한다.
+        st.caption(
+            f"종목당 {core.MAX_UNITS}유닛 · 상관군당 {core.MAX_UNITS_GROUP}유닛 · "
+            f"전체 {core.MAX_UNITS_TOTAL}유닛 상한"
+        )
+    except Exception as e:
+        st.info(f"상관군 상한 정보를 불러오지 못했습니다. 앱을 새로고침해 보세요. ({e})")
 
     # 노션 조회가 실패해도 이 섹션만 비고 나머지 화면은 그대로 남는다
     corr_groups: dict[str, float] = {}
