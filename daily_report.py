@@ -25,7 +25,7 @@ import core
 from core import HoldingInput, HoldingResult, calc_portfolio_risk, evaluate_holding
 from kakao import send_kakao_message
 from mailer import send_report_mail
-from notion_repo import fetch_favorites, fetch_holdings, update_holding
+from notion_repo import MANAGED_AUTO, fetch_favorites, fetch_holdings, update_holding
 
 # intraday_watch.py가 10분마다 읽는다. 장중에 노션을 매번 조회하지 않게
 # 아침 배치가 하루 한 번 계산해 파일로 남긴다.
@@ -196,8 +196,19 @@ def main() -> None:
             logger.exception("[%s] 노션 업데이트 실패", inp.name)
             has_errors = True
 
+    # 3.5) 리포트 집계용 - 모의투자(운용=자동) 보유분 제외.
+    # 위 루프의 평가·노션 기록(update_holding)은 모든 보유(수동+자동+터틀외)에
+    # 그대로 한다 - kis_client.run_auto_sell()이 자동 보유분의 손절선·판정을
+    # 오늘 배치가 갱신했다고 전제하고 읽는다. 여기서부터는 실계좌 리포트에
+    # 들어갈 숫자만 다루므로, 자금 규모부터 다른 모의계좌(운용=자동) 보유분을
+    # 상관군 유닛·리스크%·R배수·평가손익 집계에서 뺀다 - 안 빼면 모의계좌
+    # 손익이 실계좌 총 리스크·상관군 유닛에 섞여 들어간다. 매매 로직 쪽은
+    # 이미 managed_by=자동으로 정확히 좁혀 쓰고 있어 영향 없다.
+    report_rows = [(inp, res) for inp, res in rows if inp.managed_by != MANAGED_AUTO]
+    report_results = [res for _, res in report_rows]
+
     # 4) 리스크 요약
-    risk = calc_portfolio_risk(results, total_capital)
+    risk = calc_portfolio_risk(report_results, total_capital)
     groups = (
         " | ".join(
             f"{g} {pct:.2f}%" for g, pct in risk.group_risk_pct.items()
@@ -205,10 +216,11 @@ def main() -> None:
         or "없음"
     )
     logger.info(
-        "전체 리스크: %.2f%% | 손절 대기: %d건 | 상관군: %s",
+        "전체 리스크: %.2f%% | 손절 대기: %d건 | 상관군: %s (모의투자 %d건 제외)",
         risk.total_risk_pct,
         risk.stop_pending,
         groups,
+        len(rows) - len(report_rows),
     )
     if risk.risk_warning:
         logger.warning("⚠️ 전체 리스크 6%% 초과: %.2f%%", risk.total_risk_pct)
@@ -223,7 +235,9 @@ def main() -> None:
 
     # 4.6) 손절선 갱신 알림 대상 – evaluate_holding이 종목별로 이미 판정했다.
     # 메일 표에 '기존' 값(inp.last_alerted_stop)이 필요해 쌍으로 들고 다닌다.
-    stop_updates = [(inp, res) for inp, res in rows if res.stop_update_alert]
+    # report_rows 기준 - 모의투자 보유분의 손절선 갱신은 실계좌 리포트에
+    # 안 보여준다 (kis_client 쪽은 이 알림과 무관하게 계속 동작한다).
+    stop_updates = [(inp, res) for inp, res in report_rows if res.stop_update_alert]
     if stop_updates:
         logger.info(
             "손절선 갱신 알림 %d건: %s",
@@ -232,14 +246,17 @@ def main() -> None:
 
     # 4.7) 상관군 유닛 저장 (intraday_watch.py가 장중에 읽는다). 실패해도
     # 아침 리포트 전체를 막지 않는다 – 로그만 남기고 계속한다.
+    # report_rows 기준 - intraday_watch.py는 이 파일을 카톡 돌파 알림의
+    # "전체 N/12" 표시에만 쓰고(실계좌 관점), 자동매매 자체의 유닛 캡은
+    # kis_client.get_mock_account_corr_units()가 KIS 잔고에서 별도로 센다.
     try:
-        _write_corr_units([inp for inp, _ in rows], total_capital)
+        _write_corr_units([inp for inp, _ in report_rows], total_capital)
     except Exception:
         logger.exception("상관군 유닛 파일 저장 실패")
 
     # 5) 카카오톡 전송
     msg = _build_message(
-        results, total_capital, has_errors, favorites, stop_updates
+        report_results, total_capital, has_errors, favorites, stop_updates
     )
     logger.info("카카오톡 메시지:\n%s", msg)
 

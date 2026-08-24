@@ -247,8 +247,15 @@ def build_report(today: date, dry_run: bool) -> EveningReport:
             ))
 
     # ── 2. 터틀 대상 보유 종목 신호 재판정 ──────────────────
+    # 운용=자동(모의투자)은 여기서 뺀다 - kis_client.run_auto_sell()이 신호가
+    # 뜨는 즉시 같은 회차에 실주문으로 처리하므로 "미실행"이 사실상 나올 수
+    # 없고(나온다면 그건 자동매매 자체의 장애지 사람의 실행 지연이 아니다),
+    # 이 리포트의 원래 목적(실계좌 수동 실행 감사)과 자금 규모부터 다른
+    # 모의계좌 신호가 같은 목록에 섞이면 몇 건 중 몇 건 실행했는지 비율도
+    # 왜곡된다. 저녁판정 신호유형/발생일 노션 기록도 자동 보유분은 건드리지
+    # 않는다 - 이 두 칸은 이 리포트 전용이라 다른 코드가 읽지 않는다.
     for page_id, inp in holdings:
-        if inp.managed_by == core.MANAGED_NON_TURTLE:
+        if inp.managed_by in (core.MANAGED_NON_TURTLE, notion_repo.MANAGED_AUTO):
             continue
         try:
             df = core.fetch_ohlcv(inp.ticker)

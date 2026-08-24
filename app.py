@@ -447,10 +447,18 @@ def load_corr_units(
     집계 로직 자체는 core.calc_corr_units()에 있다 (daily_report.py와
     공유 – 다시 구현하지 않는다). 여기서는 캐시된 노션 조회를 넘길 뿐이다.
 
+    모의계좌(운용=자동) 보유분은 제외한다 – 자금 규모부터 다른 계좌라
+    실계좌 상관군 유닛·리스크 집계에 섞이면 안 된다. load_holdings() 자체는
+    건드리지 않는다 – find_holding()(개별 종목 조회)은 자동 보유분도
+    그대로 봐야 한다.
+
     Returns:
         (상관군별 유닛수, 전체 유닛수, 셀 수 없어 건너뛴 종목명, 상관군 이름 목록)
     """
-    result = core.calc_corr_units(load_holdings(), capital)
+    from notion_repo import MANAGED_AUTO
+
+    holdings = [inp for inp in load_holdings() if inp.managed_by != MANAGED_AUTO]
+    result = core.calc_corr_units(holdings, capital)
     return result.group_units, result.total_units, result.skipped, result.known_groups
 
 
