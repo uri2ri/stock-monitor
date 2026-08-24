@@ -685,7 +685,7 @@ class Candidate:
     gap_atr: float                # 돌파 갭 = (현재가 - 직전20일고가) / ATR
     unit_shares: int
     stop_loss: int
-    risk_amount: float            # 1회 리스크액 (계좌 1%)
+    risk_amount: float            # 1회 리스크액 (계좌 × core.RISK_PER_TRADE)
     high_20_prev: float           # 직전 20일 고가 (돌파 기준선)
     low_10: float                 # 10일 저가 (당일 포함)
     exit_level: float             # 청산선 = 직전 10일 저가

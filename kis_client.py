@@ -1152,10 +1152,19 @@ def get_order_execution(access_token: str, order_no: str) -> dict | None:
 # ── 자금 게이트 ─────────────────────────────────────────────
 
 def get_account_balance(access_token: str) -> dict:
-    """모의투자 잔고조회 API로 계좌평가액·예수금(가용현금)·보유종목을 실시간 조회한다.
+    """모의투자 잔고조회 API로 계좌평가액·가용현금·보유종목을 실시간 조회한다.
 
-    반환: {"account_size": 총평가금액, "available_cash": 예수금총금액,
+    반환: {"account_size": 총평가금액, "available_cash": D+2 정산금액,
+           "deposit_total": 예수금총금액,
            "holdings": [{"ticker","qty","sellable"}, ...]}  (이 모의계좌 자체 보유분)
+
+    available_cash는 예수금총금액(dnca_tot_amt)이 아니라 가수도정산금액
+    (prvs_rcdl_excc_amt = D+2 정산금액)이다. 주식은 T+2 결제라 오늘·어제
+    매수한 금액이 예수금에서 아직 안 빠져 있어서, dnca_tot_amt를 가용현금으로
+    쓰면 이미 써버린 돈을 또 쓸 수 있다고 착각한다. 2026-08-24 실측:
+    dnca_tot_amt 6,264,672원인데 D+2 정산은 -966,123원 - 723만원을 과대평가해
+    자금 게이트가 통과시킨 주문마다 KIS가 "주문가능금액이 부족합니다"로
+    거부했고, 그때마다 카톡 경고와 종목별 거부 스트라이크만 쌓였다.
 
     holdings의 sellable은 주문가능수량(ord_psbl_qty)이다. 이미 낸 매도가
     미체결로 걸려 있으면 이 값이 줄어들므로, 자동매도는 hldg_qty가 아니라
@@ -1206,9 +1215,27 @@ def get_account_balance(access_token: str) -> dict:
         for h in data.get("output1") or []
         if int(float(h.get("hldg_qty") or 0)) > 0
     ]
+    deposit_total = float(row.get("dnca_tot_amt") or 0)
+    # D+2 정산금액이 실제로 쓸 수 있는 현금이다. 미결제 매수가 예수금보다
+    # 많으면 음수가 나오므로(=이미 초과 투자) 0으로 깎는다.
+    settled = row.get("prvs_rcdl_excc_amt")
+    if settled is None:
+        # 이 칸이 없는 응답은 본 적이 없다. 그래도 비면 예수금으로 물러서되
+        # 과대평가 위험을 로그로 남긴다 (조용히 넘어가면 안 되는 값이다).
+        logger.warning("잔고 응답에 가수도정산금액(prvs_rcdl_excc_amt)이 없습니다 "
+                       "- 예수금총금액으로 대체합니다 (과대평가 가능)")
+        available_cash = deposit_total
+    else:
+        available_cash = max(0.0, float(settled))
+
+    logger.info("계좌: 평가액 %s원 · 가용현금(D+2) %s원 (예수금총액 %s원)",
+                f"{float(row.get('tot_evlu_amt') or 0):,.0f}",
+                f"{available_cash:,.0f}", f"{deposit_total:,.0f}")
+
     return {
         "account_size": float(row.get("tot_evlu_amt") or 0),
-        "available_cash": float(row.get("dnca_tot_amt") or 0),
+        "available_cash": available_cash,
+        "deposit_total": deposit_total,
         "holdings": holdings,
     }
 

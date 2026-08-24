@@ -892,7 +892,8 @@ with st.sidebar:
         min_value=1_000_000, max_value=100_000_000_000,
         step=1_000_000, format="%d", key="capital",
     )
-    st.caption(f"1회 리스크 한도: {capital * core.RISK_PER_TRADE:,.0f}원 (1%)")
+    st.caption(f"1회 리스크 한도: {capital * core.RISK_PER_TRADE:,.0f}원 "
+               f"({core.RISK_PER_TRADE:.2%})")
 
 
 def render_scroll_to_top_button() -> None:
@@ -1111,14 +1112,15 @@ def render_stock_report(code: str, capital: float, ai_unlocked: bool) -> None:
     )
 
     with p2:
-        st.caption(f"└ 계좌 1% ÷ 1ATR (터틀 원본)")
+        st.caption(f"└ 계좌 {core.RISK_PER_TRADE:.2%} ÷ 1ATR (터틀 원본)")
     with p5:
         st.caption(f"└ 기준 {screener.MIN_TRADING_VALUE / 1e8:.0f}억 ([오늘의 돌파] 필터와 동일)")
 
     if pos.unit_shares == 0:
         st.warning(
             f"**진입 불가 — 1주도 리스크 한도 초과**  \n"
-            f"1ATR {atr:,.0f}원이 계좌 1%({capital * core.RISK_PER_TRADE:,.0f}원)보다 "
+            f"1ATR {atr:,.0f}원이 1회 리스크액"
+            f"({capital * core.RISK_PER_TRADE:,.0f}원)보다 "
             "큽니다. 이 종목은 현재 계좌 규모에 맞지 않습니다."
         )
 
@@ -2018,7 +2020,7 @@ def render_calculator(capital: float) -> None:
     )
     r2.metric("1유닛 주수", f"{pos.unit_shares:,}주")
     with r2:
-        st.caption("└ 계좌 1% ÷ ATR (사이드바 계좌 금액 기준)")
+        st.caption(f"└ 계좌 {core.RISK_PER_TRADE:.2%} ÷ ATR (사이드바 계좌 금액 기준)")
     if units < core.MAX_UNITS:
         next_add = round(last_buy_price + core.PYRAMID_ATR_STEP * atr)
         r3.metric(
@@ -2032,7 +2034,8 @@ def render_calculator(capital: float) -> None:
     if pos.unit_shares == 0:
         st.warning(
             f"**1유닛 주수 0 — 계좌 규모에 안 맞는 ATR**  \n"
-            f"1ATR {atr:,.0f}원이 계좌 1%({capital * core.RISK_PER_TRADE:,.0f}원)"
+            f"1ATR {atr:,.0f}원이 1회 리스크액"
+            f"({capital * core.RISK_PER_TRADE:,.0f}원)"
             "보다 큽니다."
         )
 

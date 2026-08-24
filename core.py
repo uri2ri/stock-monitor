@@ -34,7 +34,15 @@ ATR_METHOD = "wilder"    # 기본 ATR 방식 (wilder | sma)
 EDGE_DAYS = 20           # 기대값 계산에 쓰는 일간수익률 개수
 HIGH_PERIOD = 20         # 진입 트리거: 20일 고가
 LOW_PERIOD = 10          # 청산 트리거: 10일 저가
-RISK_PER_TRADE = 0.01    # 1회 리스크 = 총자본의 1%
+# 1회 리스크 = 총자본의 0.5%.
+#
+# 1%였을 때 1유닛 매수금액이 계좌의 중앙값 14.3%였다(1유닛금액 = 계좌 ×
+# 리스크% ÷ ATR%, 돌파 후보 ATR% 중앙값 7.0% 기준). 현금 계좌에서는
+# 7유닛이면 돈이 바닥나는데 터틀 전체 상한은 12유닛이라, 12유닛을
+# 채우려면 계좌의 171%(=1.7배 레버리지)가 필요했다 - 상한이 구조적으로
+# 도달 불가능했고 7종목쯤부터 돌파마다 "주문가능금액 부족" 거부가 났다.
+# 0.5%면 1유닛이 계좌의 7.1%, 12유닛이 86%로 상한이 실제로 의미를 갖는다.
+RISK_PER_TRADE = 0.005
 STOP_ATR_MULT = 2.0      # 손절폭 = 2×ATR
 STOP_METHOD = "half"     # 기본 트레일링 방식 (half | 1to1)
 PYRAMID_ATR_STEP = 0.5   # 1/2 ATR 오를 때마다 1유닛 추가
@@ -1008,7 +1016,7 @@ def calc_corr_units(holdings: list[HoldingInput], capital: float) -> CorrUnits:
             continue
         unit_shares = calc_position(atr, capital).unit_shares
         if unit_shares <= 0:
-            # 1ATR이 계좌 1%보다 커서 1유닛이 0주 – 계좌 규모에 안 맞는 종목
+            # 1ATR이 1회 리스크액보다 커서 1유닛이 0주 – 계좌 규모에 안 맞는 종목
             skipped.append(f"{inp.name}(1유닛 0주)")
             continue
         units = inp.shares / unit_shares
@@ -1047,7 +1055,7 @@ def _print_report(
 
     print(f"\n{name} ({code})")
     print(f"조회 구간: {first_day} ~ {last_day}  ({len(df)} 거래일)")
-    print(f"총자본: {capital:,.0f}원  |  1회 리스크: {RISK_PER_TRADE:.0%}")
+    print(f"총자본: {capital:,.0f}원  |  1회 리스크: {RISK_PER_TRADE:.2%}")
 
     print("\n[ATR]")
     atr = calc_atr(df)
