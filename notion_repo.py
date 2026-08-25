@@ -11,7 +11,7 @@ from typing import Any, Optional
 
 import requests
 
-from core import HoldingInput, HoldingResult
+from core import HoldingInput, HoldingResult, today_kst
 
 logger = logging.getLogger(__name__)
 
@@ -264,7 +264,7 @@ def create_auto_holding(
         생성된 page_id
     """
     db_id = os.environ["NOTION_DB_ID"]
-    today = date.today()
+    today = today_kst()
     stop = round(buy_price - 2 * atr)
 
     properties: dict[str, Any] = {
@@ -371,7 +371,7 @@ def update_holding(
         inp: 노션에서 읽어온 현재 값. 주면 변경분만 전송한다.
     """
     url = f"{NOTION_BASE}/pages/{page_id}"
-    today = date.today()
+    today = today_kst()
 
     desired: dict[str, Any] = {
         "ATR": {"number": result.atr or None},

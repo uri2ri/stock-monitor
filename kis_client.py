@@ -263,7 +263,7 @@ def get_current_price(access_token: str, stock_code: str = "005930") -> str:
 # 낫다 - 조회 실패는 그 자체로 주문 중단 사유이고 카톡으로 알린다.
 
 def _today() -> date:
-    return datetime.now(KST).date()
+    return core.today_kst()
 
 
 def _trade_start_dt(day: date) -> datetime:

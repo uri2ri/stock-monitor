@@ -16,8 +16,9 @@ import logging
 import math
 import os
 from dataclasses import dataclass, field
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta
 from typing import Optional
+from zoneinfo import ZoneInfo
 
 import pandas as pd
 from pykrx import stock as krx
@@ -133,6 +134,23 @@ def fetch_ohlcv(
             f"[{code}] 거래일 부족: {len(df)}일 < 최소 {MIN_TRADING_DAYS}일"
         )
     return df
+
+
+KST = ZoneInfo("Asia/Seoul")
+
+
+def today_kst() -> date:
+    """오늘 날짜를 KST 기준으로 돌려준다.
+
+    GitHub Actions 러너는 UTC로 돈다. date.today()를 그대로 쓰면 KST
+    07:37에 도는 아침 배치가 아직 전날 UTC 날짜를 "오늘"로 기록해버려서,
+    노션 확인일·신호 최초 발생일이 실제 KST 날짜보다 하루 늦게 찍힌다.
+    이 값이 kis_client.py의 자동매도 신선도 판정(KST 기준 _today())과
+    어긋나면, 그날 아침 배치가 낸 추세청산 판정을 "오늘 판정이 아니다"로
+    잘못 걸러 자동매도가 조용히 막힐 수 있다 - 손절은 장중 실시간가
+    백업 경로가 있어 영향이 없지만 추세청산은 이 판정만 본다.
+    """
+    return datetime.now(KST).date()
 
 
 # 거래일 판정용 기준 종목. 항상 거래되는 초대형주라 상장폐지·거래정지로
@@ -866,7 +884,7 @@ def evaluate_holding(
         result.verdict_memo = (
             f"현재가 {current_price:,.0f} ≤ 10일 저가 {exit_level:,.0f}"
         )
-    elif inp.reeval_date is not None and inp.reeval_date < date.today():
+    elif inp.reeval_date is not None and inp.reeval_date < today_kst():
         result.verdict = "기한도래"
         result.verdict_memo = f"재평가 기한 {inp.reeval_date} 경과"
     else:
@@ -878,7 +896,7 @@ def evaluate_holding(
     # 덮어쓰지 않고, 신호가 해소되면 비운다 (매매일지 지연일수 계산용).
     result.signal_active = result.verdict in ("손절", "추세청산")
     if result.signal_active:
-        result.signal_first_date = inp.signal_first_date or date.today()
+        result.signal_first_date = inp.signal_first_date or today_kst()
     else:
         result.signal_first_date = None
 

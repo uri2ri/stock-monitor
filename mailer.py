@@ -23,7 +23,7 @@ from typing import Optional, Sequence
 
 from core import (
     MANAGED_NON_TURTLE, HoldingInput, HoldingResult, PortfolioRisk,
-    build_stock_link,
+    build_stock_link, today_kst,
 )
 
 logger = logging.getLogger(__name__)
@@ -231,7 +231,7 @@ def _news_stamp(inp: HoldingInput, today: date) -> str:
 
 def build_subject(rows: Sequence[ReportRow], today: Optional[date] = None) -> str:
     """제목: [주식점검] 7/29 조치 3건 / [주식점검] 7/29 이상 없음"""
-    today = today or date.today()
+    today = today or today_kst()
     action_count = sum(1 for _, res in rows if res.is_action_needed)
     tail = f"조치 {action_count}건" if action_count else "이상 없음"
     return f"[주식점검] {today.month}/{today.day} {tail}"
@@ -872,7 +872,7 @@ def send_report_mail(
         smtplib.SMTPException 등 – 발송 실패 시 그대로 전파
         (호출부에서 try/except로 감싸 전체 실행을 막지 않도록 한다)
     """
-    today = today or date.today()
+    today = today or today_kst()
 
     sender = os.environ.get("GMAIL_ADDRESS", "").strip()
     password = os.environ.get("GMAIL_APP_PASSWORD", "").strip()

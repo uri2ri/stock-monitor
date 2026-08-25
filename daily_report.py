@@ -11,7 +11,6 @@ import json
 import logging
 import os
 import sys
-from datetime import date
 from pathlib import Path
 
 # .env 지원 (로컬 테스트용, 없으면 무시)
@@ -48,7 +47,7 @@ def _write_corr_units(holdings: list[HoldingInput], total_capital: float) -> Non
     """
     corr = core.calc_corr_units(holdings, total_capital)
     payload = {
-        "date": date.today().isoformat(),
+        "date": core.today_kst().isoformat(),
         "total_units": round(corr.total_units, 3),
         "groups": {g: round(u, 3) for g, u in corr.group_units.items()},
     }
@@ -82,7 +81,7 @@ def _build_message(
     즐겨찾기는 200자 제한 탓에 종목 내용은 넣지 않고 건수 한 줄만
     붙인다. 딥링크도 넣지 않는다 – 자세한 내용은 메일에서 본다.
     """
-    today = date.today()
+    today = core.today_kst()
     header = f"[{today.month}/{today.day}]"
 
     # 조치 필요 종목 (유지가 아닌 것)
@@ -163,8 +162,9 @@ def main() -> None:
     except Exception:
         logger.exception("노션 DB 조회 실패")
         try:
+            _today = core.today_kst()
             send_kakao_message(
-                f"[{date.today().month}/{date.today().day}] ❌ 노션 조회 실패"
+                f"[{_today.month}/{_today.day}] ❌ 노션 조회 실패"
             )
         except Exception:
             logger.exception("카카오톡 전송도 실패")
