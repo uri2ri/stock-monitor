@@ -1513,6 +1513,16 @@ def _record_holding_after_buy(access_token: str, c: dict, order_no: str) -> None
                        ticker, e)
 
     memo = f"자동매수 편입 (주문번호 {order_no}) - 손절선은 다음 아침 배치부터 트레일링"
+    # 산 이유: intraday_watch.judge()가 이미 계산해 candidates에 실어 보낸
+    # 돌파 신호(20일 고가·초과폭)를 그대로 옮긴다 - 웹서치 없이도 "왜 샀는지"가
+    # 남는다. high20/gap_atr가 없는 호출부(테스트 등)에서는 빈 문자열로
+    # 떨어지고, create_auto_holding이 표준 placeholder로 채운다.
+    buy_reason = ""
+    if "high20" in c and "gap_atr" in c:
+        buy_reason = (
+            f"자동매매 — 20일 고가 {float(c['high20']):,.0f} 돌파 "
+            f"(+{float(c['gap_atr']):.2f}N, 진입가 {buy_price:,.0f})"
+        )
     try:
         # 운용="자동" 행만 찾는다 - 같은 종목을 다른 증권사에서 수동으로
         # 들고 있어도 그 행에 수량을 더하지 않는다 (계좌가 섞이면 안 된다).
@@ -1527,6 +1537,7 @@ def _record_holding_after_buy(access_token: str, c: dict, order_no: str) -> None
                 name=name, ticker=ticker, market=c.get("market", ""),
                 buy_price=buy_price, shares=shares, atr=float(c["atr20"]),
                 corr_group=c.get("sector", ""), memo=memo,
+                buy_reason=buy_reason,
             )
     except Exception as e:                  # noqa: BLE001
         msg = (f"[KIS] ⚠ {name}({ticker}) 매수는 체결됐으나 노션 편입 실패 - "

@@ -246,6 +246,8 @@ def create_auto_holding(
     atr: float,
     corr_group: str = "",
     memo: str = "",
+    buy_reason: str = "",
+    exit_condition: str = "손절선 이탈(자동)",
 ) -> str:
     """자동매수로 편입한 종목을 보유종목 점검표에 새로 만든다.
 
@@ -259,6 +261,13 @@ def create_auto_holding(
 
     손절선·진입후 최고가는 진입 시점 값으로 초기화한다. 다음 아침 배치부터
     evaluate_holding()이 트레일링으로 갱신한다.
+
+    ✱ 산 이유 / ✱ 철수 조건은 정성적 판단 칸이라 자동매매는 채울 수
+    없지만, 빈칸으로 두면 "사람이 깜빡한 것"인지 "자동매매라 원래
+    없는 것"인지 구분이 안 된다. buy_reason을 안 주면(신호 정보가 없는
+    호출부) "자동매매 — 정성적 근거 미기록"으로 최소한 표시하고,
+    철수 조건은 항상 채운다 - 자동매매는 손절선(진입가-2×ATR) 이탈이
+    곧 철수 조건이라 값이 고정돼 있다.
 
     Returns:
         생성된 page_id
@@ -284,6 +293,8 @@ def create_auto_holding(
         "매수일": _date_prop(today),
         "확인일": _date_prop(today),
         "판정 메모": _rich_text(memo),
+        "✱ 산 이유": _rich_text(buy_reason or "자동매매 — 정성적 근거 미기록"),
+        "✱ 철수 조건": _rich_text(exit_condition),
     }
     if market:
         properties["시장"] = {"select": {"name": market}}
