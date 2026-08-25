@@ -11,7 +11,7 @@ from typing import Any, Optional
 
 import requests
 
-from core import HoldingInput, HoldingResult
+from core import HoldingInput, HoldingResult, today_kst
 
 logger = logging.getLogger(__name__)
 
@@ -246,6 +246,8 @@ def create_auto_holding(
     atr: float,
     corr_group: str = "",
     memo: str = "",
+    buy_reason: str = "",
+    exit_condition: str = "손절선 이탈(자동)",
 ) -> str:
     """자동매수로 편입한 종목을 보유종목 점검표에 새로 만든다.
 
@@ -260,11 +262,18 @@ def create_auto_holding(
     손절선·진입후 최고가는 진입 시점 값으로 초기화한다. 다음 아침 배치부터
     evaluate_holding()이 트레일링으로 갱신한다.
 
+    ✱ 산 이유 / ✱ 철수 조건은 정성적 판단 칸이라 자동매매는 채울 수
+    없지만, 빈칸으로 두면 "사람이 깜빡한 것"인지 "자동매매라 원래
+    없는 것"인지 구분이 안 된다. buy_reason을 안 주면(신호 정보가 없는
+    호출부) "자동매매 — 정성적 근거 미기록"으로 최소한 표시하고,
+    철수 조건은 항상 채운다 - 자동매매는 손절선(진입가-2×ATR) 이탈이
+    곧 철수 조건이라 값이 고정돼 있다.
+
     Returns:
         생성된 page_id
     """
     db_id = os.environ["NOTION_DB_ID"]
-    today = date.today()
+    today = today_kst()
     stop = round(buy_price - 2 * atr)
 
     properties: dict[str, Any] = {
@@ -284,6 +293,8 @@ def create_auto_holding(
         "매수일": _date_prop(today),
         "확인일": _date_prop(today),
         "판정 메모": _rich_text(memo),
+        "✱ 산 이유": _rich_text(buy_reason or "자동매매 — 정성적 근거 미기록"),
+        "✱ 철수 조건": _rich_text(exit_condition),
     }
     if market:
         properties["시장"] = {"select": {"name": market}}
@@ -300,6 +311,25 @@ def create_auto_holding(
     logger.info("자동매수 종목 편입: %s(%s) %d주 @%s 손절선 %s page_id=%s",
                 name, ticker, shares, f"{buy_price:,.0f}", f"{stop:,}", page_id)
     return page_id
+
+
+def close_auto_holding(page_id: str) -> None:
+    """자동매도 체결 후 보유종목 점검표에서 이 행을 청산 처리한다.
+
+    구분만 "청산"으로 바꾼다 - 손절선·ATR 등 나머지 칸은 마지막 값
+    그대로 남겨 청산 시점 기록으로 쓴다. 이렇게 해야
+    find_auto_holding_page()(구분="보유" 필터)가 이 행을 더는 못 찾아서,
+    같은 종목을 나중에 다시 사면 create_auto_holding()이 새 행을
+    만든다 - 옛 행을 재사용해 손절선 계산 기준(진입시 ATR 등)이
+    꼬이는 일이 없다.
+    """
+    resp = requests.patch(
+        f"{NOTION_BASE}/pages/{page_id}", headers=_headers(),
+        json={"properties": {"구분": {"select": {"name": "청산"}}}},
+        timeout=30,
+    )
+    resp.raise_for_status()
+    logger.info("자동매도 체결 - 보유종목 점검표 청산 처리: page_id=%s", page_id)
 
 
 def add_auto_holding_units(page_id: str, *, add_shares: int,
@@ -371,7 +401,7 @@ def update_holding(
         inp: 노션에서 읽어온 현재 값. 주면 변경분만 전송한다.
     """
     url = f"{NOTION_BASE}/pages/{page_id}"
-    today = date.today()
+    today = today_kst()
 
     desired: dict[str, Any] = {
         "ATR": {"number": result.atr or None},

@@ -447,10 +447,18 @@ def load_corr_units(
     집계 로직 자체는 core.calc_corr_units()에 있다 (daily_report.py와
     공유 – 다시 구현하지 않는다). 여기서는 캐시된 노션 조회를 넘길 뿐이다.
 
+    모의계좌(운용=자동) 보유분은 제외한다 – 자금 규모부터 다른 계좌라
+    실계좌 상관군 유닛·리스크 집계에 섞이면 안 된다. load_holdings() 자체는
+    건드리지 않는다 – find_holding()(개별 종목 조회)은 자동 보유분도
+    그대로 봐야 한다.
+
     Returns:
         (상관군별 유닛수, 전체 유닛수, 셀 수 없어 건너뛴 종목명, 상관군 이름 목록)
     """
-    result = core.calc_corr_units(load_holdings(), capital)
+    from notion_repo import MANAGED_AUTO
+
+    holdings = [inp for inp in load_holdings() if inp.managed_by != MANAGED_AUTO]
+    result = core.calc_corr_units(holdings, capital)
     return result.group_units, result.total_units, result.skipped, result.known_groups
 
 
@@ -1126,10 +1134,17 @@ def render_stock_report(code: str, capital: float, ai_unlocked: bool) -> None:
 
     # ── 상관군 유닛 카운터 ──────────────────────────────────────
     st.markdown("### ■ 상관군 유닛")
-    st.caption(
-        f"종목당 {core.MAX_UNITS}유닛 · 상관군당 {core.MAX_UNITS_GROUP}유닛 · "
-        f"전체 {core.MAX_UNITS_TOTAL}유닛 상한"
-    )
+    try:
+        # core 모듈 상수 참조도 이 안에 둔다 – 배포 직후 재실행 시점에
+        # 모듈이 완전히 새로 반영되지 않아 속성이 잠깐 없어 보이는
+        # 경우(AttributeError)까지 포함해, 이 섹션만 죽고 나머지 화면은
+        # 살아있어야 한다.
+        st.caption(
+            f"종목당 {core.MAX_UNITS}유닛 · 상관군당 {core.MAX_UNITS_GROUP}유닛 · "
+            f"전체 {core.MAX_UNITS_TOTAL}유닛 상한"
+        )
+    except Exception as e:
+        st.info(f"상관군 상한 정보를 불러오지 못했습니다. 앱을 새로고침해 보세요. ({e})")
 
     # 노션 조회가 실패해도 이 섹션만 비고 나머지 화면은 그대로 남는다
     corr_groups: dict[str, float] = {}
