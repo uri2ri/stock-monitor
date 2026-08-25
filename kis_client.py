@@ -808,15 +808,17 @@ def _sell_reason(inp, price: float, today: date) -> Optional[str]:
     return None
 
 
-def run_auto_sell(holdings: Optional[list] = None) -> None:
+def run_auto_sell(holdings: Optional[list[tuple[str, core.HoldingInput]]] = None) -> None:
     """보유 종목의 청산 판정을 실제 매도 주문으로 잇는다.
 
     intraday_watch.py가 매 실행마다 호출한다. 매수(run_auto_trade)와 달리
     일일 상한·자금 게이트가 없다 - 못 파는 게 더 위험하기 때문이다.
 
     holdings를 주지 않으면 노션에서 운용="자동"인 행만 직접 읽는다
-    (NOTION_DB_ID 필요). 조회가 실패하면 판정 자체가 불가능하므로 조용히
-    건너뛴다 - 여기서 예외를 올리면 호출부의 돌파 감시·알림까지 같이 죽는다.
+    (NOTION_DB_ID 필요). (page_id, HoldingInput) 쌍이어야 한다 - 매도가
+    체결되면 그 page_id로 보유종목 점검표를 청산 처리한다(아래 참고).
+    조회가 실패하면 판정 자체가 불가능하므로 조용히 건너뛴다 - 여기서
+    예외를 올리면 호출부의 돌파 감시·알림까지 같이 죽는다.
 
     운용="자동"으로 좁히는 이유: 매도 자체는 증권사 잔고(주문가능수량)로
     판단하지만, "무엇을 팔지"는 노션에서 가져온다. 여기서 필터링을 안
@@ -830,6 +832,11 @@ def run_auto_sell(holdings: Optional[list] = None) -> None:
 
     수량은 노션 보유수량이 아니라 실제 주문가능수량을 쓴다 - 둘이 어긋날 때
     (수동 매매·부분 체결) 증권사에 있는 만큼만 파는 게 항상 안전하다.
+
+    매도가 체결되면(청산은 항상 전량이므로 "성공"=완전 청산) 보유종목
+    점검표의 구분을 "청산"으로 바꾼다 - 이걸 안 하면 실제로는 팔린
+    종목이 노션엔 "보유"로 계속 남아서, 상관군·리스크 리포트가 이미
+    없는 포지션을 계속 세고 사람이 앱에서 봐도 매도된 걸 알 길이 없다.
     """
     if not _auto_trade_configured():
         return
@@ -851,11 +858,10 @@ def run_auto_sell(holdings: Optional[list] = None) -> None:
             # 운용="자동"만 본다 - 안 그러면 같은 티커의 실계좌 수동 보유
             # 종목이 모의계좌 매도가능수량과 우연히 매칭돼 팔릴 후보에
             # 섞여 들어갈 수 있다 (find_auto_holding_page와 같은 원칙).
-            holdings = [
-                inp for _, inp in notion_repo.fetch_holdings(
-                    managed_by=notion_repo.MANAGED_AUTO,
-                )
-            ]
+            # page_id를 버리지 않는다 - 매도 체결 시 이 행을 청산 처리해야 한다.
+            holdings = notion_repo.fetch_holdings(
+                managed_by=notion_repo.MANAGED_AUTO,
+            )
         except Exception as e:              # noqa: BLE001
             logger.error("보유 종목 조회 실패 - 자동매도를 건너뜁니다: %s", e)
             _notify_warning_throttled(
@@ -882,7 +888,7 @@ def run_auto_sell(holdings: Optional[list] = None) -> None:
 
     sellable = {h["ticker"]: h["sellable"] for h in balance.get("holdings", [])}
 
-    for inp in holdings:
+    for page_id, inp in holdings:
         qty = sellable.get(inp.ticker, 0)
         if qty <= 0:
             # 이 계좌에 없거나(수동 보유·다른 계좌) 이미 매도가 걸려 있다.
@@ -903,6 +909,20 @@ def run_auto_sell(holdings: Optional[list] = None) -> None:
             token, inp.ticker, qty, name=inp.name, reason=reason, ref_price=price,
         )
         logger.info("자동매도: %s(%s) %d주 -> %s", inp.name, inp.ticker, qty, result)
+
+        # 체결됐으면(청산은 항상 전량) 보유종목 점검표를 청산 처리한다.
+        # 이걸 안 하면 노션엔 계속 "보유"로 남아 상관군·리스크 집계가
+        # 이미 없는 포지션을 계속 세고, 사람도 앱에서 매도 여부를 알 수 없다.
+        if result.get("status") == "sent":
+            try:
+                notion_repo.close_auto_holding(page_id)
+            except Exception as e:          # noqa: BLE001
+                logger.error("[%s] 매도는 체결됐으나 노션 청산 처리 실패: %s",
+                             inp.name, e)
+                _notify_failure(
+                    f"[KIS] ⚠ {inp.name} 매도는 체결됐지만 노션 기록 실패 - "
+                    "보유종목 점검표에서 구분을 수동으로 '청산'으로 바꿔주세요"
+                )
 
 
 # ── 추가매수(피라미딩) ──────────────────────────────────────

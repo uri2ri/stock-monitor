@@ -302,6 +302,25 @@ def create_auto_holding(
     return page_id
 
 
+def close_auto_holding(page_id: str) -> None:
+    """자동매도 체결 후 보유종목 점검표에서 이 행을 청산 처리한다.
+
+    구분만 "청산"으로 바꾼다 - 손절선·ATR 등 나머지 칸은 마지막 값
+    그대로 남겨 청산 시점 기록으로 쓴다. 이렇게 해야
+    find_auto_holding_page()(구분="보유" 필터)가 이 행을 더는 못 찾아서,
+    같은 종목을 나중에 다시 사면 create_auto_holding()이 새 행을
+    만든다 - 옛 행을 재사용해 손절선 계산 기준(진입시 ATR 등)이
+    꼬이는 일이 없다.
+    """
+    resp = requests.patch(
+        f"{NOTION_BASE}/pages/{page_id}", headers=_headers(),
+        json={"properties": {"구분": {"select": {"name": "청산"}}}},
+        timeout=30,
+    )
+    resp.raise_for_status()
+    logger.info("자동매도 체결 - 보유종목 점검표 청산 처리: page_id=%s", page_id)
+
+
 def add_auto_holding_units(page_id: str, *, add_shares: int,
                             buy_price: float) -> None:
     """이미 있는 보유 행에 추가매수분을 더한다 (수량 누적 + 마지막 매수가 갱신).
