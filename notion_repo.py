@@ -221,6 +221,37 @@ def find_auto_holding_page(ticker: str) -> Optional[str]:
     return results[0]["id"] if results else None
 
 
+def fetch_auto_holding_page_ids() -> set[str]:
+    """운용='자동'인 점검표 행 전체(구분 불문)의 page_id 집합.
+
+    weekly_report.py가 매매일지 청산 기록 중 자동매매 소관만 골라내는 데
+    쓴다 - 매매일지는 수동 매매도 같은 DB에 섞여 있어서(카카오·삼현 등),
+    청산 기록 행의 '보유종목' relation이 가리키는 점검표 행의 운용을
+    봐야 자동매매분만 걸러진다. find_auto_holding_page()와 달리 구분(보유/
+    청산)은 가리지 않는다 - 이미 청산된 점검표 행도 이 집합에 있어야
+    지난주 이전에 청산된 자동매매 종목이 계속 걸러진다.
+    """
+    db_id = os.environ["NOTION_DB_ID"]
+    url = f"{NOTION_BASE}/databases/{db_id}/query"
+    payload: dict[str, Any] = {
+        "filter": {"property": "운용", "select": {"equals": MANAGED_AUTO}},
+        "page_size": 100,
+    }
+    page_ids: set[str] = set()
+    has_more = True
+    start_cursor: Optional[str] = None
+    while has_more:
+        if start_cursor:
+            payload["start_cursor"] = start_cursor
+        resp = requests.post(url, headers=_headers(), json=payload, timeout=30)
+        resp.raise_for_status()
+        data = resp.json()
+        page_ids.update(page["id"] for page in data.get("results", []))
+        has_more = data.get("has_more", False)
+        start_cursor = data.get("next_cursor")
+    return page_ids
+
+
 def set_pyramid_anchor(page_id: str, anchor: float) -> None:
     """추가매수 기준가만 갱신한다 (실제 매수 없이 레벨만 올릴 때).
 
@@ -339,6 +370,7 @@ def create_ledger_record(
     exit_price: float,
     exit_reason: str,
     signal_date: date,
+    entry_date: Optional[date] = None,
     holding_page_id: Optional[str] = None,
     memo: str = "",
 ) -> str:
@@ -352,6 +384,12 @@ def create_ledger_record(
     R배수·수익률·손익금액·결과·지연일수·진입시 손절선은 노션 수식 칸이라
     쓰지 않는다(LEDGER_FORMULA_FIELDS) - 진입가·진입시 ATR·청산가·신호
     발생일만 정확히 넣으면 나머지는 노션이 계산한다.
+
+    entry_date(진입일)는 weekly_report.py의 평균 보유기간 계산 기준이다.
+    HoldingInput이 매수일을 안 들고 있어(core.py는 건드리지 않는다)
+    호출부가 notion_repo.fetch_holding_buy_date()로 따로 조회해 넘긴다.
+    못 구했으면(조회 실패 등) None으로 두고 이 칸을 생략한다 - 다른 값을
+    대신 채우지 않는다.
 
     규칙 준수는 항상 체크한다 - 자동매도는 정의상 신호대로 실행된 것이고,
     사람의 임의 판단이 끼어들 여지가 없다.
@@ -382,6 +420,8 @@ def create_ledger_record(
         properties["✱ 진입시 ATR"] = {"number": round(entry_atr)}
     if units is not None:
         properties["유닛수"] = {"number": units}
+    if entry_date is not None:
+        properties["진입일"] = _date_prop(entry_date)
     if holding_page_id:
         properties["보유종목"] = {"relation": [{"id": holding_page_id}]}
     if memo:
@@ -1215,6 +1255,62 @@ def fetch_orders_today(day: date) -> list[dict]:
     return results
 
 
+def fetch_orders_in_range(start_day: date, end_day: date,
+                           account_type: str) -> list[dict]:
+    """자동주문 기록 DB에서 [start_day, end_day] 범위의 행을 상태 불문 전부 읽는다.
+
+    weekly_report.py가 이번 주 매매 내역(상태='성공'만 골라 신규/추가/청산
+    으로 분류)과 규칙 작동 점검(상태='거부'/'경고'를 사유별로 집계) 둘 다
+    이 함수 하나로 가져다 쓴다 - 상태별로 따로 쿼리하지 않는다.
+
+    fetch_orders_today와 달리 매매구분(매수/매도)을 가리지 않고 전부
+    돌려준다 - 매도 성공분이 있어야 '청산' 내역을 알 수 있다.
+
+    dict 키: name/ticker/side(매매구분, 빈 값은 매수로 간주)/
+    order_type(주문유형, 빈 값은 신규로 간주)/status/price/qty/reason.
+    """
+    db_id = os.environ["NOTION_ORDERS_DB_ID"]
+    url = f"{NOTION_BASE}/databases/{db_id}/query"
+    start = f"{start_day.isoformat()}T00:00:00+09:00"
+    end = f"{end_day.isoformat()}T23:59:59+09:00"
+    payload: dict[str, Any] = {
+        "filter": {
+            "and": [
+                {"property": "주문일시", "date": {"on_or_after": start}},
+                {"property": "주문일시", "date": {"on_or_before": end}},
+                {"property": "계좌구분", "select": {"equals": account_type}},
+            ]
+        },
+        "page_size": 100,
+    }
+
+    results: list[dict] = []
+    has_more = True
+    start_cursor: Optional[str] = None
+    while has_more:
+        if start_cursor:
+            payload["start_cursor"] = start_cursor
+        resp = requests.post(url, headers=_headers(), json=payload, timeout=30)
+        resp.raise_for_status()
+        data = resp.json()
+        for page in data.get("results", []):
+            props = page.get("properties", {})
+            results.append({
+                "name": _text(props.get("종목명", {})),
+                "ticker": _text(props.get("종목코드", {})),
+                "side": _select(props.get("매매구분", {})) or SIDE_BUY,
+                "order_type": _select(props.get("주문유형", {})) or ORDER_NEW,
+                "status": _select(props.get("상태", {})),
+                "price": _number(props.get("주문가", {})),
+                "qty": _number(props.get("수량", {})),
+                "reason": _text(props.get("사유", {})),
+            })
+        has_more = data.get("has_more", False)
+        start_cursor = data.get("next_cursor")
+
+    return results
+
+
 def _formula_number(prop: dict) -> Optional[float]:
     """formula 프로퍼티(R배수 등)에서 숫자 결과를 추출한다."""
     formula = prop.get("formula", {})
@@ -1266,6 +1362,70 @@ def fetch_ledger_closed_today(day: date) -> list[tuple[str, dict]]:
     return results
 
 
+def fetch_ledger_closed_range(
+    start_day: date, end_day: Optional[date] = None,
+) -> list[tuple[str, dict]]:
+    """매매일지(청산 기록)에서 ✱청산일이 [start_day, end_day] 범위인 행을 전부 읽는다.
+
+    end_day를 안 주면 상한 없이(오늘까지) 읽는다. weekly_report.py가
+    "이번 주"(start=end=이번 주 범위)와 "자동매매 시작 이후 누적"
+    (start=2026-08-18, end 없음) 둘 다 이 함수 하나로 조회한다.
+
+    fetch_ledger_closed_today와 달리 매매일지는 수동 매매도 섞여 있으므로
+    호출부가 dict의 holding_page_id를 fetch_auto_holding_page_ids()의
+    결과와 대조해 자동매매분만 걸러야 한다 - 여기서는 걸러내지 않는다
+    (이 함수는 날짜 범위 조회만 책임진다).
+
+    dict 키: ticker/name/entry_price/entry_atr/exit_price/exit_reason/
+    shares/units/r_multiple/delay_days(지연일수, 수식)/entry_date(진입일 -
+    kis_client가 안 채웠으면 None)/exit_date/holding_page_id.
+    """
+    db_id = os.environ["NOTION_LEDGER_DB_ID"]
+    url = f"{NOTION_BASE}/databases/{db_id}/query"
+    conditions: list[dict] = [
+        {"property": "✱ 청산일",
+         "date": {"on_or_after": f"{start_day.isoformat()}T00:00:00+09:00"}},
+    ]
+    if end_day:
+        conditions.append({
+            "property": "✱ 청산일",
+            "date": {"on_or_before": f"{end_day.isoformat()}T23:59:59+09:00"},
+        })
+    payload: dict[str, Any] = {"filter": {"and": conditions}, "page_size": 100}
+
+    results: list[tuple[str, dict]] = []
+    has_more = True
+    start_cursor: Optional[str] = None
+    while has_more:
+        if start_cursor:
+            payload["start_cursor"] = start_cursor
+        resp = requests.post(url, headers=_headers(), json=payload, timeout=30)
+        resp.raise_for_status()
+        data = resp.json()
+        for page in data.get("results", []):
+            props = page.get("properties", {})
+            relation = props.get("보유종목", {}).get("relation", [])
+            results.append((page["id"], {
+                "ticker": _text(props.get("종목코드", {})),
+                "name": _text(props.get("종목명", {})),
+                "entry_price": _number(props.get("✱ 진입가", {})),
+                "entry_atr": _number(props.get("✱ 진입시 ATR", {})),
+                "exit_price": _number(props.get("✱ 청산가", {})),
+                "exit_reason": _select(props.get("✱ 청산 사유", {})),
+                "shares": _number(props.get("✱ 매수 수량", {})),
+                "units": _number(props.get("유닛수", {})),
+                "r_multiple": _formula_number(props.get("R배수", {})),
+                "delay_days": _formula_number(props.get("지연일수", {})),
+                "entry_date": _date_val(props.get("진입일", {})),
+                "exit_date": _date_val(props.get("✱ 청산일", {})),
+                "holding_page_id": relation[0]["id"] if relation else None,
+            }))
+        has_more = data.get("has_more", False)
+        start_cursor = data.get("next_cursor")
+
+    return results
+
+
 def fetch_holding_evening_signal_date(page_id: str) -> Optional[date]:
     """점검표 특정 행의 '저녁판정 발생일'만 조회한다 (단건 GET).
 
@@ -1283,6 +1443,49 @@ def fetch_holding_evening_signal_date(page_id: str) -> Optional[date]:
     except Exception as e:                      # noqa: BLE001
         logger.warning("점검표 저녁판정 발생일 조회 실패 (page_id=%s): %s",
                         page_id, e)
+        return None
+
+
+def fetch_holding_avg_price(page_id: str) -> Optional[float]:
+    """점검표 특정 행의 '평단가'만 조회한다 (단건 GET).
+
+    weekly_report.py의 보유 현황 섹션이 진입가로 쓴다 - 가중평균이라야
+    2유닛 이상 종목의 손익률·R배수가 정확하다(add_auto_holding_units
+    참고). 이 기능 도입 전에 만들어진 행이라 평단가가 비어 있으면 None을
+    돌려주고, 호출부가 ✱ 매수단가로 폴백한다(1회 매수의 평균은 그
+    체결가와 같으므로 안전하다).
+
+    조회 자체가 실패해도 예외를 삼키고 None을 돌려준다 - 리포트 한 종목의
+    평단가 조회 실패로 리포트 전체를 막지 않는다.
+    """
+    try:
+        resp = requests.get(f"{NOTION_BASE}/pages/{page_id}",
+                             headers=_headers(), timeout=30)
+        resp.raise_for_status()
+        props = resp.json().get("properties", {})
+        return _number(props.get("평단가", {}))
+    except Exception as e:                      # noqa: BLE001
+        logger.warning("점검표 평단가 조회 실패 (page_id=%s): %s", page_id, e)
+        return None
+
+
+def fetch_holding_buy_date(page_id: str) -> Optional[date]:
+    """점검표 특정 행의 '매수일'만 조회한다 (단건 GET).
+
+    kis_client._record_ledger_after_sell()이 매매일지의 '진입일'을 채우는
+    데 쓴다 - HoldingInput은 매수일을 들고 있지 않아(core.py는 건드리지
+    않는다) 별도 조회가 필요하다. 실패해도 예외를 삼키고 None을 돌려준다 -
+    매매일지 기록 자체는 이미 fail-open이라, 진입일 하나 못 채운다고
+    청산 기록 전체를 막을 이유가 없다(호출부가 '진입일' 생략으로 처리).
+    """
+    try:
+        resp = requests.get(f"{NOTION_BASE}/pages/{page_id}",
+                             headers=_headers(), timeout=30)
+        resp.raise_for_status()
+        props = resp.json().get("properties", {})
+        return _date_val(props.get("매수일", {}))
+    except Exception as e:                      # noqa: BLE001
+        logger.warning("점검표 매수일 조회 실패 (page_id=%s): %s", page_id, e)
         return None
 
 
