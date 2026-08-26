@@ -65,6 +65,8 @@ jobs:
           NOTION_ORDERS_DB_ID: ${{ secrets.NOTION_ORDERS_DB_ID }}
           # 자동매도가 보유 종목(손절선·최근 판정)을 읽는 DB
           NOTION_DB_ID: ${{ secrets.NOTION_DB_ID }}
+          # KIS 접근토큰 캐시 - 없어도 캐싱만 건너뛰고 거래는 그대로 진행된다
+          NOTION_TOKEN_CACHE_DB_ID: ${{ secrets.NOTION_TOKEN_CACHE_DB_ID }}
         run: python intraday_watch.py
 
       # kis_client.py의 __main__ 블록(삼성전자 1주 모의매수 단발 테스트)을
@@ -82,6 +84,7 @@ jobs:
           KIS_ACCOUNT: ${{ secrets.KIS_ACCOUNT }}
           NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
           NOTION_ORDERS_DB_ID: ${{ secrets.NOTION_ORDERS_DB_ID }}
+          NOTION_TOKEN_CACHE_DB_ID: ${{ secrets.NOTION_TOKEN_CACHE_DB_ID }}
         run: python kis_client.py
 
       # 잔고조회 API만 호출해 계좌평가액·예수금·보유종목을 그대로 찍는다.

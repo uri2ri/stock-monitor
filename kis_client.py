@@ -18,13 +18,16 @@ fail-closed: 이 조회가 실패하면(네트워크·인증 만료 등) "0건"�
 않는다. 상태를 모르는 채로 주문하는 것보다 안 사는 게 낫다 - 조회 실패는 그 자체로
 주문 중단 사유이고 카톡으로 알린다.
 
-접근토큰은 이번 단계에서 캐싱하지 않는다 (저장소가 아직 public). 실행마다 새로
-발급받고, 발급 실패·거부도 조용히 넘어가지 않고 카톡으로 알린다.
+접근토큰은 노션(NOTION_TOKEN_CACHE_DB_ID)에 만료시각과 함께 캐싱한다 - KIS
+공식 권장 방식대로 만기 도래 전까지는 재사용하고, 안전여유 안으로 들어오면
+재발급한다(get_access_token 참고). 발급 실패·거부는 조용히 넘어가지 않고
+카톡으로 알린다.
 
 로컬 테스트: python kis_client.py
 필요한 .env 값: KIS_APP_KEY, KIS_APP_SECRET, KIS_ACCOUNT, NOTION_TOKEN,
 NOTION_ORDERS_DB_ID, NOTION_DB_ID (모의투자). 하나라도 없으면 자동매수·매도를
-통째로 건너뛴다 - AUTO_TRADE_ENV 참고.
+통째로 건너뛴다 - AUTO_TRADE_ENV 참고. NOTION_TOKEN_CACHE_DB_ID는 이 목록에
+없다 - 없어도 캐싱만 건너뛰고(매 실행 새로 발급) 거래는 그대로 진행된다.
 """
 
 from __future__ import annotations
@@ -32,7 +35,7 @@ from __future__ import annotations
 import logging
 import os
 import time
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 from typing import Optional
 from zoneinfo import ZoneInfo
 
@@ -139,10 +142,9 @@ TOKEN_RETRY_WAIT_SECONDS = 2
 
 
 # 이 프로세스 실행 동안만 유효한 토큰 캐시. GitHub Actions는 실행마다 새
-# 컨테이너라 다음 실행으로 새지 않고, 8분짜리 워크플로 안에서는 KIS 토큰
-# 유효기간(수 시간)이 끝날 일도 없다. 저장소가 public이라 파일에 남기는
-# "영속 캐싱"은 여전히 하지 않는다 - 이건 그것과 다른, 한 실행 안에서의
-# 중복 네트워크 호출만 막는 캐싱이다.
+# 컨테이너라 다음 실행으로 새지 않는다 - 실행 간 영속 캐싱은 아래 노션
+# 캐시(NOTION_TOKEN_CACHE_DB_ID)가 맡고, 이건 그것과 별개로 한 실행
+# 안에서의 중복 네트워크 호출만 막는다.
 #
 # 왜 필요한가: intraday_watch.py가 같은 주기 안에서 run_auto_sell()과
 # run_auto_trade()를 각각 부르는데, 둘 다 독립적으로 get_access_token()을
@@ -153,14 +155,61 @@ TOKEN_RETRY_WAIT_SECONDS = 2
 _cached_token: Optional[str] = None
 _cached_token_error: Optional[Exception] = None
 
+# 노션 캐시 재사용 안전여유. 만료시각까지 이 값 미만으로 남으면(만료
+# 임박) 재사용하지 않고 새로 발급한다 - KIS 공식 권장 방식("접근토큰
+# 만기일을 저장하고 있다가 만기 도래 전에 갱신") 그대로다. 재발급
+# 자체는 무제한이라 여유를 넉넉히 둬도 손해가 없다.
+TOKEN_SAFETY_MARGIN = timedelta(hours=1)
+
+
+def _parse_token_expiry(data: dict) -> datetime:
+    """KIS 토큰 발급 응답에서 만료시각(KST)을 구한다.
+
+    공식 응답 필드 access_token_token_expired("YYYY-MM-DD HH:MM:SS", KST
+    naive)를 우선 쓴다. 없거나 파싱에 실패하면 expires_in(초)으로 지금부터
+    계산하고, 그것도 없으면 문서상 유효기간(24시간)으로 폴백한다 - 순서를
+    이렇게 둔 이유는 실제보다 짧게 잡는 실수는 재발급 한 번 더 하는 것으로
+    끝나지만, 길게 잡으면 이미 만료된 토큰을 계속 쓰게 되기 때문이다.
+    """
+    raw = data.get("access_token_token_expired")
+    if raw:
+        try:
+            return datetime.strptime(raw, "%Y-%m-%d %H:%M:%S").replace(tzinfo=KST)
+        except ValueError:
+            logger.warning("access_token_token_expired 파싱 실패: %r", raw)
+
+    expires_in = data.get("expires_in")
+    if expires_in:
+        try:
+            return datetime.now(KST) + timedelta(seconds=int(expires_in))
+        except (TypeError, ValueError):
+            logger.warning("expires_in 파싱 실패: %r", expires_in)
+
+    return datetime.now(KST) + timedelta(hours=24)
+
 
 def get_access_token() -> str:
     """모의투자 접근토큰을 발급받는다. 토큰 값은 반환만 하고 출력하지 않는다.
 
-    이 프로세스 실행 안에서 두 번째 호출부터는 첫 호출 결과(성공한 토큰
-    또는 실패)를 그대로 재사용한다 - 위 _cached_token 설명 참고. 실패를
-    캐싱하는 것도 의도적이다: 첫 시도가 레이트리밋으로 실패했다면 같은
-    실행 안에서 곧바로 다시 시도해도 같은 응답이 온다.
+    재사용을 3단계로 시도한다:
+    1) 이 프로세스 안에서 이미 받은 토큰(_cached_token) - 위 설명 참고.
+    2) 노션 캐시(NOTION_TOKEN_CACHE_DB_ID) - GitHub Actions는 실행마다
+       컨테이너가 새로 뜨므로 1)은 실행 간에는 안 남는다. KIS 접근토큰은
+       발급 후 24시간 유효한데 지금까지는 실행마다 무조건 새로 발급받아서,
+       짧은 간격에 몰리면 KIS가 거부했다(9일간 10건 "토큰 발급 실패",
+       대부분 장중). KIS 공식 권장 방식대로 만료시각을 저장해두고
+       TOKEN_SAFETY_MARGIN 이상 남았으면 그대로 재사용한다.
+    3) 위 둘 다 없거나 만료 임박이면 KIS에 새로 발급 요청 - 기존 로직
+       그대로(타임아웃 재시도, 실패 시 카톡 알림).
+
+    노션 캐시 조회·저장은 각각 실패해도 무시한다(fail-open): 조회 실패는
+    캐싱 없이 매번 새로 발급하는 예전 방식으로 자연스럽게 폴백하고, 저장
+    실패는 그냥 무시하고 진행한다(발급 자체는 이미 성공했다). 이 캐싱
+    기능 때문에 거래가 막히면 안 된다.
+
+    실패를 프로세스 캐시(_cached_token_error)에 담는 것도 의도적이다:
+    첫 시도가 레이트리밋으로 실패했다면 같은 실행 안에서 곧바로 다시
+    시도해도 같은 응답이 온다.
 
     KIS는 잦은 재발급 시 이용 제한이 걸릴 수 있는데, 발급 실패·거부를
     조용히 넘어가지 않고 카톡으로 알린 뒤 예외를 올린다 (실행당 1회만).
@@ -175,6 +224,21 @@ def get_access_token() -> str:
         return _cached_token
     if _cached_token_error is not None:
         raise _cached_token_error
+
+    try:
+        cached = notion_repo.get_cached_token()
+    except Exception as e:                  # noqa: BLE001
+        logger.warning("노션 토큰 캐시 조회 실패 - 캐싱 없이 새로 발급합니다: %s", e)
+        cached = None
+
+    if cached is not None:
+        cached_value, expires_at = cached
+        if datetime.now(KST) < expires_at - TOKEN_SAFETY_MARGIN:
+            logger.info("KIS 접근토큰 캐시 재사용 (만료 %s)", expires_at.isoformat())
+            _cached_token = cached_value
+            return cached_value
+        logger.info("KIS 접근토큰 캐시 만료 임박(%s) - 재발급합니다",
+                    expires_at.isoformat())
 
     app_key = os.environ["KIS_APP_KEY"]
     app_secret = os.environ["KIS_APP_SECRET"]
@@ -192,12 +256,21 @@ def get_access_token() -> str:
                 timeout=TOKEN_TIMEOUT_SECONDS,
             )
             resp.raise_for_status()
-            token = resp.json().get("access_token")
+            data = resp.json()
+            token = data.get("access_token")
             if not token:
                 raise RuntimeError("토큰 발급 응답에 access_token이 없습니다.")
             if attempt:
                 logger.info("KIS 접근토큰 발급 성공 (재시도 %d회째)", attempt)
             _cached_token = token
+
+            expires_at = _parse_token_expiry(data)
+            try:
+                notion_repo.save_cached_token(token, expires_at)
+            except Exception as e:          # noqa: BLE001
+                logger.warning(
+                    "노션 토큰 캐시 저장 실패 - 다음 실행에서 다시 발급됩니다: %s", e)
+
             return token
         except (requests.Timeout, requests.ConnectionError) as e:
             # 서버가 대답을 못 준 경우만 재시도 대상이다.
