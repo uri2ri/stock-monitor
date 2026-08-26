@@ -8,6 +8,7 @@ import logging
 import os
 from datetime import date, datetime
 from typing import Any, Optional
+from zoneinfo import ZoneInfo
 
 import requests
 
@@ -17,6 +18,7 @@ logger = logging.getLogger(__name__)
 
 NOTION_API_VERSION = "2022-06-28"
 NOTION_BASE = "https://api.notion.com/v1"
+_KST = ZoneInfo("Asia/Seoul")
 
 
 def _headers() -> dict[str, str]:
@@ -1501,3 +1503,94 @@ def update_ledger_signal_date(page_id: str, signal_date: date) -> None:
     resp.raise_for_status()
     logger.info("[저녁감사] 매매일지 신호 발생일 기입: page_id=%s -> %s",
                 page_id, signal_date)
+
+
+# ── KIS 접근토큰 캐시 DB ────────────────────────────────────
+#
+# kis_client.get_access_token()이 실행마다 무조건 새로 발급받지 않고
+# KIS 공식 권장 방식("접근토큰 만기일을 저장하고 있다가 만기 도래 전에
+# 갱신")을 쓰도록 돕는다. 단일 행만 쓴다(레코드="KIS_TOKEN" 고정값) -
+# 앱키·앱시크릿 조합 하나에 유효 토큰은 하나뿐이라 여러 행을 둘 이유가
+# 없다.
+#
+# 조회·저장 모두 예외를 삼키지 않는다 - 실패하면 그대로 raise. 호출부
+# (kis_client.get_access_token)가 fail-open으로 처리한다: 조회 실패는
+# 캐싱 없이 매번 새로 발급하는 예전 방식으로 자연스럽게 폴백하고, 저장
+# 실패는 무시하고 계속 진행한다(발급 자체는 이미 성공했다) - 이 캐싱
+# 기능 때문에 거래가 막히면 안 된다.
+
+TOKEN_CACHE_RECORD = "KIS_TOKEN"
+
+
+def get_cached_token() -> Optional[tuple[str, datetime]]:
+    """캐시된 KIS 접근토큰과 만료시각을 조회한다. 캐시 행이 없거나 값이
+    비어 있으면 None.
+
+    Returns:
+        (토큰값, 만료시각) 튜플 또는 None
+    """
+    db_id = os.environ["NOTION_TOKEN_CACHE_DB_ID"]
+    url = f"{NOTION_BASE}/databases/{db_id}/query"
+    payload: dict[str, Any] = {
+        "filter": {"property": "레코드", "title": {"equals": TOKEN_CACHE_RECORD}},
+        "page_size": 1,
+    }
+    resp = requests.post(url, headers=_headers(), json=payload, timeout=30)
+    resp.raise_for_status()
+    results = resp.json().get("results", [])
+    if not results:
+        return None
+
+    props = results[0].get("properties", {})
+    token = _text(props.get("토큰값", {}))
+    date_prop = (props.get("만료시각", {}) or {}).get("date")
+    if not token or not date_prop or not date_prop.get("start"):
+        return None
+    return token, datetime.fromisoformat(date_prop["start"])
+
+
+def save_cached_token(token: str, expires_at: datetime) -> None:
+    """KIS 접근토큰 캐시를 upsert한다 (레코드=KIS_TOKEN, 항상 단일 행).
+
+    이미 행이 있으면 갱신하고, 없으면(최초 실행) 새로 만든다. 갱신일시도
+    같이 기록한다 - 이 캐시를 마지막으로 쓴 시각을 사람이 확인할 수
+    있도록.
+    """
+    db_id = os.environ["NOTION_TOKEN_CACHE_DB_ID"]
+    now = datetime.now(_KST)
+
+    url = f"{NOTION_BASE}/databases/{db_id}/query"
+    payload: dict[str, Any] = {
+        "filter": {"property": "레코드", "title": {"equals": TOKEN_CACHE_RECORD}},
+        "page_size": 1,
+    }
+    resp = requests.post(url, headers=_headers(), json=payload, timeout=30)
+    resp.raise_for_status()
+    results = resp.json().get("results", [])
+
+    properties: dict[str, Any] = {
+        "토큰값": _rich_text(token),
+        "만료시각": {"date": {"start": expires_at.isoformat()}},
+        "갱신일시": {"date": {"start": now.isoformat()}},
+    }
+
+    if results:
+        page_id = results[0]["id"]
+        resp = requests.patch(f"{NOTION_BASE}/pages/{page_id}", headers=_headers(),
+                               json={"properties": properties}, timeout=30)
+        resp.raise_for_status()
+        logger.info("KIS 토큰 캐시 갱신: page_id=%s 만료=%s",
+                    page_id, expires_at.isoformat())
+    else:
+        properties["레코드"] = {
+            "title": [{"type": "text", "text": {"content": TOKEN_CACHE_RECORD}}]
+        }
+        resp = requests.post(
+            f"{NOTION_BASE}/pages", headers=_headers(),
+            json={"parent": {"database_id": db_id}, "properties": properties},
+            timeout=30,
+        )
+        resp.raise_for_status()
+        page_id = resp.json()["id"]
+        logger.info("KIS 토큰 캐시 최초 생성: page_id=%s 만료=%s",
+                    page_id, expires_at.isoformat())
