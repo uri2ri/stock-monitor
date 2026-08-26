@@ -326,6 +326,7 @@ def _notify_failure(message: str) -> None:
 WARN_ORDER_STATUS_UNKNOWN = "주문 상태 조회 실패"
 WARN_TOKEN_FAILED = "토큰 발급 실패"
 WARN_NOTION_RECORD_FAILED = "노션 기록 실패"
+WARN_LEDGER_RECORD_FAILED = "매매일지 기록 실패"
 WARN_NO_SECTOR_MAP = "업종 맵 없음"
 WARN_PENDING_ORDERS = "주문중 상태로 남은 행 있음"
 # 반복 거부는 종목마다 별도 사유로 취급한다(종목코드를 키에 포함) - 한
@@ -808,6 +809,75 @@ def _sell_reason(inp, price: float, today: date) -> Optional[str]:
     return None
 
 
+def _ledger_exit_reason(reason: str) -> str:
+    """_sell_reason()의 사유 문자열을 매매일지 '✱ 청산 사유' select 값으로 옮긴다.
+
+    _sell_reason은 사람이 읽는 문장("손절 (장중 12,630 ≤ 손절선 12,914)",
+    "추세청산 (아침 배치 판정)")을 돌려주는데, 매매일지 칸은 정해진 select
+    옵션만 받는다. 자동매도가 낼 수 있는 사유는 손절과 추세청산 둘뿐이라
+    앞부분만 보면 구분된다.
+
+    모르는 사유는 손절로 떨어뜨리지 않는다 - 통계가 조용히 왜곡되느니
+    호출부가 예외로 알아채는 게 낫다.
+    """
+    if reason.startswith("손절"):
+        return notion_repo.LEDGER_EXIT_STOP
+    if reason.startswith("추세청산"):
+        return notion_repo.LEDGER_EXIT_TREND
+    raise ValueError(f"매매일지에 옮길 수 없는 청산 사유: {reason!r}")
+
+
+def _record_ledger_after_sell(
+    access_token: str, page_id: str, inp, *, qty: int, ref_price: float,
+    reason: str, order_no: str, today: date,
+) -> None:
+    """자동매도로 청산한 포지션을 매매일지에 1행 남긴다.
+
+    fail-open이다: 여기서 실패해도 매도는 이미 체결됐으니 되돌리지 않는다.
+    대신 카톡으로 알린다 - 매도는 나갔는데 기록이 없는 건 감사 공백이라
+    조용히 넘어가면 안 된다. 반복 실패는 1시간 억제 대상이다.
+
+    청산가는 실제 체결가를 조회해 쓴다(시장가라 판정 시점 현재가와 어긋날
+    수 있다). R배수가 이 값에서 나오므로 가능한 한 정확해야 한다 -
+    조회가 안 되면 판정 시점 현재가로 폴백한다.
+    """
+    exit_price = ref_price
+    try:
+        time.sleep(1)  # 체결 처리 대기
+        fill = get_order_execution(access_token, order_no) if order_no else None
+        if fill and fill.get("avg_price"):
+            exit_price = float(fill["avg_price"])
+    except Exception as e:                  # noqa: BLE001
+        logger.warning("[%s] 매도 체결가 조회 실패 - 판정 시점 현재가로 기록합니다: %s",
+                       inp.ticker, e)
+
+    try:
+        notion_repo.create_ledger_record(
+            name=inp.name, ticker=inp.ticker, market=inp.market,
+            # 점검표에 평단가 칸이 따로 없어 ✱ 매수단가를 진입가로 쓴다.
+            entry_price=inp.buy_price,
+            entry_atr=inp.entry_atr,
+            shares=inp.shares or qty,
+            units=inp.units,
+            exit_date=today,
+            exit_price=exit_price,
+            exit_reason=_ledger_exit_reason(reason),
+            # 저녁 배치가 추적하던 신호 발생일이 있으면 그대로 이어받는다
+            # (지연일수 계산의 기준). 없으면 체결일 - 자동매매는 신호 즉시
+            # 실행이라 지연 0으로 보는 게 맞다.
+            signal_date=inp.evening_signal_date or today,
+            holding_page_id=page_id,
+            memo=f"자동매도 (주문번호 {order_no}) - {reason}",
+        )
+    except Exception as e:                  # noqa: BLE001
+        logger.error("[%s] 매도는 체결됐으나 매매일지 기록 실패: %s", inp.name, e)
+        _notify_warning_throttled(
+            WARN_LEDGER_RECORD_FAILED,
+            f"[KIS] ⚠ {inp.name} 매도는 체결됐지만 매매일지 기록 실패 - "
+            f"승률·R배수 통계에서 빠집니다. 손으로 넣어주세요: {e}",
+        )
+
+
 def run_auto_sell(holdings: Optional[list[tuple[str, core.HoldingInput]]] = None) -> None:
     """보유 종목의 청산 판정을 실제 매도 주문으로 잇는다.
 
@@ -923,6 +993,17 @@ def run_auto_sell(holdings: Optional[list[tuple[str, core.HoldingInput]]] = None
                     f"[KIS] ⚠ {inp.name} 매도는 체결됐지만 노션 기록 실패 - "
                     "보유종목 점검표에서 구분을 수동으로 '청산'으로 바꿔주세요"
                 )
+
+            # 점검표 청산 처리와 별개로 매매일지에도 남긴다 - 점검표는
+            # 현재 상태만 보여주고, 승률·R배수·지연일수는 청산 건이 쌓이는
+            # 매매일지에서만 나온다. 위 청산 처리가 실패해도 이건 시도한다
+            # (둘은 독립적인 기록이고, 하나 실패했다고 나머지까지 버리면
+            # 감사 공백만 커진다).
+            _record_ledger_after_sell(
+                token, page_id, inp, qty=qty, ref_price=price,
+                reason=reason, order_no=result.get("order_no", ""),
+                today=today,
+            )
 
 
 # ── 추가매수(피라미딩) ──────────────────────────────────────

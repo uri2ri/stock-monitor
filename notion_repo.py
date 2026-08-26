@@ -313,6 +313,95 @@ def create_auto_holding(
     return page_id
 
 
+# 매매일지 '✱ 청산 사유' select 옵션 중 자동매도가 낼 수 있는 값.
+# 자동매도는 손절선 이탈과 추세청산(10일 저가) 두 가지로만 판다 -
+# 익절·철수조건·임의 매도는 사람이 손으로 적는 값이라 여기 없다.
+LEDGER_EXIT_STOP = "손절"
+LEDGER_EXIT_TREND = "10일 저가 이탈"
+
+# 수식 칸이라 절대 쓰지 않는다 - 노션이 진입가·청산가·ATR로 자동 계산한다.
+# 여기에 값을 넣으려 하면 노션 API가 400을 뱉는다.
+LEDGER_FORMULA_FIELDS = (
+    "R배수", "수익률(%)", "손익금액", "결과", "지연일수", "진입시 손절선",
+)
+
+
+def create_ledger_record(
+    *,
+    name: str,
+    ticker: str,
+    market: str,
+    entry_price: float,
+    entry_atr: Optional[float],
+    shares: int,
+    units: Optional[int],
+    exit_date: date,
+    exit_price: float,
+    exit_reason: str,
+    signal_date: date,
+    holding_page_id: Optional[str] = None,
+    memo: str = "",
+) -> str:
+    """자동매도로 청산한 포지션을 매매일지(청산 기록)에 1행으로 남긴다.
+
+    점검표는 "지금 뭘 들고 있나"를 보는 현재 상태 테이블이라 청산과 동시에
+    구분만 "청산"으로 바뀌고 끝이다 - 승률·R배수·지연일수 같은 사후 통계는
+    청산 건마다 한 행이 쌓이는 이 DB에서만 나온다. 자동매도가 여기 안 쓰면
+    "자동화 이후 성적이 어떤가"를 볼 방법이 아예 없어진다.
+
+    R배수·수익률·손익금액·결과·지연일수·진입시 손절선은 노션 수식 칸이라
+    쓰지 않는다(LEDGER_FORMULA_FIELDS) - 진입가·진입시 ATR·청산가·신호
+    발생일만 정확히 넣으면 나머지는 노션이 계산한다.
+
+    규칙 준수는 항상 체크한다 - 자동매도는 정의상 신호대로 실행된 것이고,
+    사람의 임의 판단이 끼어들 여지가 없다.
+
+    Returns:
+        생성된 page_id
+    """
+    db_id = os.environ["NOTION_LEDGER_DB_ID"]
+
+    properties: dict[str, Any] = {
+        "종목명": {"title": [{"type": "text", "text": {"content": name}}]},
+        "종목코드": _rich_text(ticker),
+        "✱ 진입가": {"number": round(entry_price)},
+        "✱ 매수 수량": {"number": shares},
+        "✱ 청산일": _date_prop(exit_date),
+        "✱ 청산가": {"number": round(exit_price)},
+        "✱ 청산 사유": {"select": {"name": exit_reason}},
+        "청산 유형": {"select": {"name": "전량"}},
+        "규칙 준수": {"checkbox": True},
+        # 지연일수(수식) 계산의 기준. 자동매매는 신호 즉시 실행이라 0에
+        # 가까워야 정상이고, 커지면 배치가 밀렸다는 신호다.
+        "신호 발생일": _date_prop(signal_date),
+    }
+    if market:
+        properties["시장"] = {"select": {"name": market}}
+    if entry_atr is not None:
+        # R배수의 분모(1R = 진입가 - 진입시 손절선)가 이 값에서 나온다.
+        properties["✱ 진입시 ATR"] = {"number": round(entry_atr)}
+    if units is not None:
+        properties["유닛수"] = {"number": units}
+    if holding_page_id:
+        properties["보유종목"] = {"relation": [{"id": holding_page_id}]}
+    if memo:
+        properties["청산 메모"] = _rich_text(memo)
+
+    assert not set(properties) & set(LEDGER_FORMULA_FIELDS)
+
+    resp = requests.post(
+        f"{NOTION_BASE}/pages", headers=_headers(),
+        json={"parent": {"database_id": db_id}, "properties": properties},
+        timeout=30,
+    )
+    resp.raise_for_status()
+    page_id = resp.json()["id"]
+    logger.info("매매일지 청산 기록: %s(%s) %d주 진입 %s -> 청산 %s (%s) page_id=%s",
+                name, ticker, shares, f"{entry_price:,.0f}",
+                f"{exit_price:,.0f}", exit_reason, page_id)
+    return page_id
+
+
 def close_auto_holding(page_id: str) -> None:
     """자동매도 체결 후 보유종목 점검표에서 이 행을 청산 처리한다.
 
