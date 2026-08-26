@@ -425,8 +425,18 @@ def add_auto_holding_units(page_id: str, *, add_shares: int,
                             buy_price: float) -> None:
     """이미 있는 보유 행에 추가매수분을 더한다 (수량 누적 + 마지막 매수가 갱신).
 
-    매수단가·진입시 ATR은 건드리지 않는다 - 진입 시점 고정값이라 추가매수로
-    바뀌면 안 된다 (손절선 계산 기준이 흔들린다).
+    ✱ 매수단가·✱ 진입시 ATR은 건드리지 않는다 - 진입 시점 고정값이라
+    추가매수로 바뀌면 안 된다 (손절선 계산 기준이 흔들린다).
+
+    평단가는 가중평균으로 갱신한다:
+        새 평단가 = (기존평단가×기존보유수량 + 이번매수가×이번매수수량) / 총보유수량
+    매매일지 '✱ 진입가'가 이 칸을 그대로 가져다 쓰는데 그 정의가
+    가중평균이라, 여기서 안 갱신하면 2유닛 이상 종목의 R배수가 실제보다
+    나쁘게 나온다.
+
+    평단가가 아직 비어 있으면(이 계산을 도입하기 전에 만들어진 행 -
+    지금까지 1유닛=매수 1회였다는 뜻) 그 1회 체결가와 같으므로 ✱ 매수단가
+    (최초 진입 고정값)를 기존평단가 대신 쓴다.
     """
     url = f"{NOTION_BASE}/pages/{page_id}"
     resp = requests.get(url, headers=_headers(), timeout=30)
@@ -434,18 +444,28 @@ def add_auto_holding_units(page_id: str, *, add_shares: int,
     props = resp.json().get("properties", {})
     cur_shares = int(_number(props.get("✱ 보유수량", {})) or 0)
     cur_units = int(_number(props.get("유닛수", {})) or 1)
+    cur_avg = _number(props.get("평단가", {}))
+    if cur_avg is None:
+        cur_avg = _number(props.get("✱ 매수단가", {})) or buy_price
+
+    new_shares = cur_shares + add_shares
+    new_avg = (
+        (cur_avg * cur_shares + buy_price * add_shares) / new_shares
+        if new_shares else buy_price
+    )
 
     payload = {"properties": {
-        "✱ 보유수량": {"number": cur_shares + add_shares},
+        "✱ 보유수량": {"number": new_shares},
         "마지막 매수가": {"number": round(buy_price)},
         # 실제로 샀으므로 기준가도 체결가로 맞춘다.
         "추가매수 기준가": {"number": round(buy_price)},
         "유닛수": {"number": cur_units + 1},
+        "평단가": {"number": round(new_avg)},
     }}
     resp = requests.patch(url, headers=_headers(), json=payload, timeout=30)
     resp.raise_for_status()
-    logger.info("자동매수 추가분 반영: page_id=%s %d주 -> %d주",
-                page_id, cur_shares, cur_shares + add_shares)
+    logger.info("자동매수 추가분 반영: page_id=%s %d주 -> %d주, 평단가 %s -> %s",
+                page_id, cur_shares, new_shares, f"{cur_avg:,.0f}", f"{new_avg:,.0f}")
 
 
 # ── 쓰기: 계산 결과 반영 ────────────────────────────────────
