@@ -851,11 +851,21 @@ def _record_ledger_after_sell(
         logger.warning("[%s] 매도 체결가 조회 실패 - 판정 시점 현재가로 기록합니다: %s",
                        inp.ticker, e)
 
+    # 진입일 - HoldingInput은 매수일을 안 들고 있어(core.py는 건드리지
+    # 않는다) 점검표 행에서 따로 조회한다. 실패해도 None을 돌려주므로
+    # (fetch_holding_buy_date 자체가 예외를 삼킨다) 매매일지 기록은 계속
+    # 진행한다 - 평균 보유기간 계산에서만 이 건이 빠질 뿐이다.
+    entry_date = notion_repo.fetch_holding_buy_date(page_id)
+    # 평단가 - 가중평균이 정의라 ✱ 매수단가(최초 진입 고정값)보다 정확하다
+    # (add_auto_holding_units 참고). 못 구했으면 ✱ 매수단가로 폴백한다.
+    avg_price = notion_repo.fetch_holding_avg_price(page_id)
+    if avg_price is None:
+        avg_price = inp.buy_price
+
     try:
         notion_repo.create_ledger_record(
             name=inp.name, ticker=inp.ticker, market=inp.market,
-            # 점검표에 평단가 칸이 따로 없어 ✱ 매수단가를 진입가로 쓴다.
-            entry_price=inp.buy_price,
+            entry_price=avg_price,
             entry_atr=inp.entry_atr,
             shares=inp.shares or qty,
             units=inp.units,
@@ -866,6 +876,7 @@ def _record_ledger_after_sell(
             # (지연일수 계산의 기준). 없으면 체결일 - 자동매매는 신호 즉시
             # 실행이라 지연 0으로 보는 게 맞다.
             signal_date=inp.evening_signal_date or today,
+            entry_date=entry_date,
             holding_page_id=page_id,
             memo=f"자동매도 (주문번호 {order_no}) - {reason}",
         )

@@ -1148,3 +1148,359 @@ def send_evening_mail(report) -> bool:
 
     logger.info("저녁 감사 메일 발송 완료 (수신: %s)", ", ".join(recipients))
     return True
+
+
+# ── 주간 리포트 (weekly_report.py 전용) ──────────────────────
+#
+# 자동매매(운용="자동") 소관만 다룬다 - 아침/저녁 리포트가 실계좌 관점으로
+# 모의계좌를 빼는 것과 정반대로, 여기는 모의계좌만 본다. report는
+# weekly_report.WeeklyReport와 같은 모양(덕타이핑)만 요구한다 - 순환
+# 임포트를 피하려고 타입은 임포트하지 않는다.
+
+def build_weekly_subject(report) -> str:
+    ws, we = report.week_start, report.week_end
+    tail = f"{ws.month}/{ws.day}~{we.month}/{we.day}"
+    if report.win_count or report.loss_count:
+        summary = f"{report.win_count}승 {report.loss_count}패"
+    else:
+        summary = "청산 없음"
+    return f"[자동매매 주간] {tail} {summary}"
+
+
+def _weekly_order_text_lines(items: Sequence[dict], label: str) -> list[str]:
+    return [
+        f"   {label:<6} {o['name']} {_fmt(o['price'])} × {_fmt(o['qty'])}주"
+        for o in items
+    ]
+
+
+def build_weekly_text(report) -> str:
+    ws, we = report.week_start, report.week_end
+    lines = [f"📈 자동매매 주간 리포트 ({ws.isoformat()} ~ {we.isoformat()})", ""]
+
+    # 1. 이번 주 요약
+    lines.append("1. 이번 주 요약")
+    if report.win_count or report.loss_count:
+        lines.append(
+            f"   실현손익 {_fmt_signed(report.realized_pl)}원 "
+            f"({report.win_count}승 {report.loss_count}패)"
+        )
+    else:
+        lines.append("   이번 주 청산 없음")
+    lines.append(f"   보유 평가손익 {_fmt_signed(report.unrealized_pl)}원")
+    lines.append(
+        f"   누적 손익(실현+평가) "
+        f"{_fmt_signed(report.realized_pl + report.unrealized_pl)}원"
+    )
+    if report.account_size is not None:
+        lines.append(
+            f"   계좌 평가액 {_fmt(report.account_size)}원 "
+            f"(시작 1,000만원 대비 {report.account_pct:+.2f}%)"
+        )
+    else:
+        lines.append("   계좌 평가액 조회 실패")
+    lines.append("")
+
+    # 2. 이번 주 매매 내역
+    lines.append("2. 이번 주 매매 내역")
+    if not (report.entries or report.adds or report.exits):
+        lines.append("   이번 주 매매 없음")
+    else:
+        lines.extend(_weekly_order_text_lines(report.entries, "신규"))
+        lines.extend(_weekly_order_text_lines(report.adds, "추가매수"))
+        lines.extend(_weekly_order_text_lines(report.exits, "청산"))
+    lines.append("")
+
+    # 3. 보유 현황
+    lines.append("3. 보유 현황")
+    if not report.holdings:
+        lines.append("   자동매매 보유 종목 없음")
+    else:
+        for h in report.holdings:
+            pl_pct = (
+                (h.current_price - h.avg_price) / h.avg_price * 100
+                if h.current_price else None
+            )
+            r_mult = (
+                (h.current_price - h.avg_price) / (2 * h.entry_atr)
+                if (h.entry_atr and h.current_price) else None
+            )
+            room = (
+                (h.current_price - h.stop_loss) / h.current_price * 100
+                if (h.stop_loss and h.current_price) else None
+            )
+            lines.append(
+                f"   {h.name} 진입 {_fmt(h.avg_price)} "
+                f"현재 {_fmt(h.current_price) if h.current_price else EMPTY} "
+                f"({_fmt_pct(pl_pct)}) {_fmt_r(r_mult)} "
+                f"{h.units or 1}유닛 손절여유 {_fmt_pct(room)}"
+            )
+    lines.append("")
+
+    # 4. 규칙 작동 점검
+    lines.append("4. 규칙 작동 점검")
+    if not report.rejected_by_reason and not report.warned_by_reason:
+        lines.append("   이번 주 거부·경고 없음")
+    else:
+        for reason, count in report.rejected_by_reason.items():
+            lines.append(f"   거부 {count}건 - {reason}")
+        for reason, count in report.warned_by_reason.items():
+            lines.append(f"   경고 {count}건 - {reason}")
+    lines.append(
+        "   (사전 필터 제외 사유(가격상한·유닛금액과다·상관군캡·현금부족·"
+        "우선순위밀림)는 아직 이 DB에 기록되지 않아 집계에서 빠짐)"
+    )
+    lines.append("")
+
+    # 5. 누적 통계
+    lines.append(f"5. 누적 통계 (자동매매 시작 이후 청산 {report.cum_count}건)")
+    if not report.cum_count:
+        lines.append("   누적 청산 기록 없음")
+    else:
+        win_rate = (
+            f"{report.cum_win_rate:.1f}%" if report.cum_win_rate is not None else EMPTY
+        )
+        hold_days = (
+            f"{report.cum_avg_hold_days:.1f}일"
+            if report.cum_avg_hold_days is not None else EMPTY
+        )
+        delay_days = (
+            f"{report.cum_avg_delay_days:.1f}일"
+            if report.cum_avg_delay_days is not None else EMPTY
+        )
+        lines.append(f"   승률 {win_rate}")
+        lines.append(f"   평균 R배수 {_fmt_r(report.cum_avg_r)}")
+        lines.append(f"   평균 보유기간 {hold_days}")
+        lines.append(f"   평균 지연일수 {delay_days}")
+
+    if report.has_errors:
+        lines.append("")
+        lines.append("⚠️ 일부 데이터 조회에 실패했습니다. 로그를 확인하세요.")
+
+    return "\n".join(lines)
+
+
+def _weekly_order_html_rows(items: Sequence[dict], label: str) -> str:
+    return "".join(
+        f'<tr><td style="padding:4px 10px 4px 0;color:{C_MUTED};'
+        f'white-space:nowrap;">{html.escape(label)}</td>'
+        f'<td style="padding:4px 10px;">{_linked(o["name"], o["ticker"])}</td>'
+        f'<td style="padding:4px 10px;text-align:right;">{_fmt(o["price"])}</td>'
+        f'<td style="padding:4px 10px;text-align:right;">{_fmt(o["qty"])}주</td></tr>'
+        for o in items
+    )
+
+
+def _weekly_reason_html(bucket: dict, label: str, color: str) -> str:
+    return "".join(
+        f'<div style="margin:3px 0;">{html.escape(label)} '
+        f'<b style="color:{color};">{count}건</b> — {html.escape(reason)}</div>'
+        for reason, count in bucket.items()
+    )
+
+
+def build_weekly_html(report) -> str:
+    ws, we = report.week_start, report.week_end
+
+    realized_color = C_PROFIT if report.realized_pl >= 0 else C_LOSS
+    unrealized_color = C_PROFIT if report.unrealized_pl >= 0 else C_LOSS
+    total_pl = report.realized_pl + report.unrealized_pl
+    total_color = C_PROFIT if total_pl >= 0 else C_LOSS
+
+    if report.win_count or report.loss_count:
+        realized_html = (
+            f'<span style="color:{realized_color};">'
+            f'{_fmt_signed(report.realized_pl)}원</span> '
+            f'<span style="color:{C_MUTED};">'
+            f'({report.win_count}승 {report.loss_count}패)</span>'
+        )
+    else:
+        realized_html = f'<span style="color:{C_MUTED};">이번 주 청산 없음</span>'
+
+    if report.account_size is not None:
+        pct = report.account_pct
+        pct_color = C_PROFIT if pct >= 0 else C_LOSS
+        account_html = (
+            f'{_fmt(report.account_size)}원 '
+            f'<span style="color:{pct_color};">(시작 1,000만원 대비 {pct:+.2f}%)</span>'
+        )
+    else:
+        account_html = f'<span style="color:{C_MUTED};">조회 실패</span>'
+
+    summary_html = f"""
+  <table style="border-collapse:collapse;font-size:14px;">
+    <tr><td style="padding:4px 14px 4px 0;color:{C_MUTED};">주간 실현손익</td>
+        <td style="padding:4px 0;font-weight:bold;">{realized_html}</td></tr>
+    <tr><td style="padding:4px 14px 4px 0;color:{C_MUTED};">보유 평가손익</td>
+        <td style="padding:4px 0;font-weight:bold;color:{unrealized_color};">
+        {_fmt_signed(report.unrealized_pl)}원</td></tr>
+    <tr><td style="padding:4px 14px 4px 0;color:{C_MUTED};">누적 손익(실현+평가)</td>
+        <td style="padding:4px 0;font-weight:bold;color:{total_color};">
+        {_fmt_signed(total_pl)}원</td></tr>
+    <tr><td style="padding:4px 14px 4px 0;color:{C_MUTED};">계좌 평가액</td>
+        <td style="padding:4px 0;font-weight:bold;">{account_html}</td></tr>
+  </table>"""
+
+    trade_rows = (
+        _weekly_order_html_rows(report.entries, "신규")
+        + _weekly_order_html_rows(report.adds, "추가매수")
+        + _weekly_order_html_rows(report.exits, "청산")
+    )
+    trade_html = (
+        f'<table style="border-collapse:collapse;font-size:13px;">{trade_rows}</table>'
+        if trade_rows
+        else f'<div style="color:{C_MUTED};">이번 주 매매 없음</div>'
+    )
+
+    if report.holdings:
+        head = "".join(
+            f'<th style="padding:8px 10px;border:1px solid {C_BORDER};'
+            f'background-color:{C_HEAD_BG};text-align:center;white-space:nowrap;">'
+            f"{html.escape(c)}</th>"
+            for c in ("종목명", "진입가", "현재가", "손익률", "R배수", "유닛수", "손절선 여유%")
+        )
+
+        def _hold_row(h) -> str:
+            pl_pct = (
+                (h.current_price - h.avg_price) / h.avg_price * 100
+                if h.current_price else None
+            )
+            r_mult = (
+                (h.current_price - h.avg_price) / (2 * h.entry_atr)
+                if (h.entry_atr and h.current_price) else None
+            )
+            room = (
+                (h.current_price - h.stop_loss) / h.current_price * 100
+                if (h.stop_loss and h.current_price) else None
+            )
+            pl_color = "" if pl_pct is None else (C_PROFIT if pl_pct >= 0 else C_LOSS)
+            r_color = "" if r_mult is None else (C_PROFIT if r_mult >= 0 else C_LOSS)
+            room_color = C_STOP_TEXT if (room is not None and room <= 0) else ""
+            cells = [
+                _td(_linked(h.name, h.ticker), align="left"),
+                _td(_fmt(h.avg_price)),
+                _td(_fmt(h.current_price) if h.current_price else EMPTY),
+                _td(_fmt_pct(pl_pct), color=pl_color),
+                _td(_fmt_r(r_mult), color=r_color),
+                _td(f"{h.units or 1}"),
+                _td(_fmt_pct(room), color=room_color),
+            ]
+            return "<tr>" + "".join(cells) + "</tr>"
+
+        holdings_html = f"""
+  <table style="border-collapse:collapse;border:1px solid {C_BORDER};font-size:13px;">
+    <thead><tr>{head}</tr></thead>
+    <tbody>{"".join(_hold_row(h) for h in report.holdings)}</tbody>
+  </table>"""
+    else:
+        holdings_html = f'<div style="color:{C_MUTED};">자동매매 보유 종목 없음</div>'
+
+    rule_html = (
+        _weekly_reason_html(report.rejected_by_reason, "거부", C_STOP_TEXT)
+        + _weekly_reason_html(report.warned_by_reason, "경고", "#e67700")
+    )
+    if not rule_html:
+        rule_html = f'<div style="color:{C_MUTED};">이번 주 거부·경고 없음</div>'
+    rule_note = (
+        f'<p style="margin:6px 0 0;color:{C_MUTED};font-size:12px;">'
+        "사전 필터 제외 사유(가격상한·유닛금액과다·상관군캡·현금부족·우선순위밀림)는 "
+        "아직 이 DB에 기록되지 않아 집계에서 빠집니다.</p>"
+    )
+
+    if report.cum_count:
+        win_rate = (
+            f"{report.cum_win_rate:.1f}%" if report.cum_win_rate is not None else EMPTY
+        )
+        hold_days = (
+            f"{report.cum_avg_hold_days:.1f}일"
+            if report.cum_avg_hold_days is not None else EMPTY
+        )
+        delay_days = (
+            f"{report.cum_avg_delay_days:.1f}일"
+            if report.cum_avg_delay_days is not None else EMPTY
+        )
+        stats_html = f"""
+  <table style="border-collapse:collapse;font-size:14px;">
+    <tr><td style="padding:4px 14px 4px 0;color:{C_MUTED};">청산 건수</td>
+        <td style="padding:4px 0;font-weight:bold;">{report.cum_count}건</td></tr>
+    <tr><td style="padding:4px 14px 4px 0;color:{C_MUTED};">승률</td>
+        <td style="padding:4px 0;font-weight:bold;">{win_rate}</td></tr>
+    <tr><td style="padding:4px 14px 4px 0;color:{C_MUTED};">평균 R배수</td>
+        <td style="padding:4px 0;font-weight:bold;">{_fmt_r(report.cum_avg_r)}</td></tr>
+    <tr><td style="padding:4px 14px 4px 0;color:{C_MUTED};">평균 보유기간</td>
+        <td style="padding:4px 0;font-weight:bold;">{hold_days}</td></tr>
+    <tr><td style="padding:4px 14px 4px 0;color:{C_MUTED};">평균 지연일수</td>
+        <td style="padding:4px 0;font-weight:bold;">{delay_days}</td></tr>
+  </table>"""
+    else:
+        stats_html = f'<div style="color:{C_MUTED};">누적 청산 기록 없음</div>'
+
+    error_note = (
+        f'<p style="color:{C_STOP_TEXT};margin:8px 0 0;">'
+        "⚠️ 일부 데이터 조회에 실패했습니다. 로그를 확인하세요.</p>"
+        if report.has_errors else ""
+    )
+
+    return f"""\
+<div style="font-family:-apple-system,'Apple SD Gothic Neo','Malgun Gothic',
+sans-serif;font-size:14px;color:#212529;line-height:1.5;">
+  <h2 style="margin:0 0 4px;">📈 자동매매 주간 리포트</h2>
+  <p style="margin:0 0 16px;color:{C_MUTED};">{ws.isoformat()} ~ {we.isoformat()}</p>
+
+  <h3 style="margin:16px 0 6px;">1. 이번 주 요약</h3>
+  {summary_html}
+
+  <h3 style="margin:16px 0 6px;">2. 이번 주 매매 내역</h3>
+  {trade_html}
+
+  <h3 style="margin:16px 0 6px;">3. 보유 현황</h3>
+  {holdings_html}
+
+  <h3 style="margin:16px 0 6px;">4. 규칙 작동 점검</h3>
+  {rule_html}
+  {rule_note}
+
+  <h3 style="margin:16px 0 6px;">5. 누적 통계 (자동매매 시작 이후)</h3>
+  {stats_html}
+  {error_note}
+</div>"""
+
+
+def send_weekly_mail(report) -> bool:
+    """자동매매 주간 리포트를 Gmail SMTP로 발송한다. 카톡은 쓰지 않는다.
+
+    Returns:
+        True  – 발송 완료
+        False – 환경변수 미설정으로 건너뜀
+
+    Raises:
+        smtplib.SMTPException 등 – 발송 실패 시 그대로 전파
+        (호출부에서 try/except로 감싸 전체 실행을 막지 않도록 한다)
+    """
+    sender = os.environ.get("GMAIL_ADDRESS", "").strip()
+    password = os.environ.get("GMAIL_APP_PASSWORD", "").strip()
+    if not sender or not password:
+        logger.warning(
+            "GMAIL_ADDRESS / GMAIL_APP_PASSWORD 미설정 – "
+            "주간 리포트 메일 발송을 건너뜁니다."
+        )
+        return False
+
+    to_raw = os.environ.get("GMAIL_TO", "").strip() or sender
+    recipients = [addr.strip() for addr in to_raw.split(",") if addr.strip()]
+
+    msg = EmailMessage()
+    msg["Subject"] = build_weekly_subject(report)
+    msg["From"] = sender
+    msg["To"] = ", ".join(recipients)
+
+    msg.set_content(build_weekly_text(report))
+    msg.add_alternative(build_weekly_html(report), subtype="html")
+
+    with smtplib.SMTP(SMTP_HOST, SMTP_PORT, timeout=SMTP_TIMEOUT) as smtp:
+        smtp.starttls()
+        smtp.login(sender, password)
+        smtp.send_message(msg, from_addr=sender, to_addrs=recipients)
+
+    logger.info("주간 리포트 메일 발송 완료 (수신: %s)", ", ".join(recipients))
+    return True

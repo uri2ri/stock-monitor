@@ -1,0 +1,58 @@
+name: Weekly Auto-Trade Report
+
+# 자동매매(운용="자동") 전용 주간 리포트. 토요일 발송, 메일만(카톡 없음).
+#
+# schedule 트리거를 두지 않는다 - 이 저장소는 GitHub 자체 schedule이
+# 실행 0건으로 죽은 전례가 있어(daily.yml/evening.yml 주석 참고)
+# cron-job.org에서 매주 토요일 workflow_dispatch를 외부 호출하는
+# 방식으로만 돌린다.
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "true = 메일 발송 생략(본문을 로그에 출력) / false = 실제 발송"
+        type: boolean
+        default: true
+
+concurrency:
+  group: weekly-report
+  cancel-in-progress: false
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run weekly report
+        env:
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+          NOTION_DB_ID: ${{ secrets.NOTION_DB_ID }}
+          NOTION_ORDERS_DB_ID: ${{ secrets.NOTION_ORDERS_DB_ID }}
+          NOTION_LEDGER_DB_ID: ${{ secrets.NOTION_LEDGER_DB_ID }}
+          GMAIL_ADDRESS: ${{ secrets.GMAIL_ADDRESS }}
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+          GMAIL_TO: ${{ secrets.GMAIL_TO }}
+          STREAMLIT_APP_URL: ${{ secrets.STREAMLIT_APP_URL }}
+          KIS_APP_KEY: ${{ secrets.KIS_APP_KEY }}
+          KIS_APP_SECRET: ${{ secrets.KIS_APP_SECRET }}
+          KIS_ACCOUNT: ${{ secrets.KIS_ACCOUNT }}
+        run: |
+          if [ "${{ inputs.dry_run }}" = "false" ]; then
+            python weekly_report.py
+          else
+            python weekly_report.py --dry-run
+          fi
