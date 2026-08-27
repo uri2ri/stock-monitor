@@ -401,6 +401,7 @@ WARN_TOKEN_FAILED = "토큰 발급 실패"
 WARN_NOTION_RECORD_FAILED = "노션 기록 실패"
 WARN_LEDGER_RECORD_FAILED = "매매일지 기록 실패"
 WARN_NO_SECTOR_MAP = "업종 맵 없음"
+WARN_NOTION_CORR_FAILED = "노션 상관군 조회 실패"
 WARN_PENDING_ORDERS = "주문중 상태로 남은 행 있음"
 # 반복 거부는 종목마다 별도 사유로 취급한다(종목코드를 키에 포함) - 한
 # 종목의 반복 거부 경고가 다른 종목의 같은 경고를 억제해버리면 안 된다.
@@ -1170,7 +1171,8 @@ def run_auto_pyramid(holdings: Optional[list] = None) -> None:
     운용="자동" 행만 대상으로 한다 - 다른 증권사에서 수동으로 들고 있는
     종목까지 KIS에서 사버리면 안 된다.
 
-    상관군·전체 유닛 캡은 신규 진입과 같은 기준(KIS 잔고 기반)으로 본다.
+    상관군·전체 유닛 캡은 신규 진입과 같은 기준(get_mock_account_corr_units -
+    노션 점검표 '유닛수' 합산)으로 본다.
     """
     if not _auto_trade_configured():
         return
@@ -1443,38 +1445,51 @@ def _get_sector_map() -> dict[str, str]:
 
 
 def get_mock_account_corr_units(account_size: float, holdings: list[dict]) -> dict:
-    """모의계좌 자체 보유분만으로 상관군별·전체 누적 유닛을 계산한다.
+    """자동매매(운용="자동") 점검표 행의 '유닛수' 칼럼을 상관군별로 합산한다.
 
-    노션 점검표(실계좌 보유)는 절대 참조하지 않는다 - 실계좌와 모의계좌는
-    격리를 위해 분리했고, 유닛주수 계산 기준(계좌 규모)도 서로 달라
-    합산이 성립하지 않는다. core.calc_position()·core.fetch_ohlcv()·
-    core.calc_atr()만 가져다 쓰고 판정 로직 자체는 다시 만들지 않는다.
+    예전엔 KIS 잔고(보유수량)를 오늘 기준 ATR·계좌평가액으로 역산해서
+    유닛을 냈다("보유수량 ÷ 오늘 기준 유닛주수"). 매수 시점 이후 ATR이나
+    계좌평가액이 달라지면(가격이 크게 오른 종목일수록 오늘 기준 유닛주수가
+    작게 나와 역산값이 실제보다 커지거나 작아진다) 이 재계산값이 실제
+    매수했던 유닛수와 어긋난다. 2026-08-27 오후 GS(상관군 1유닛만 있음)에
+    "상관군 캡으로 추가매수 보류"가 30분 안에 3번 연달아 뜬 게 이 드리프트로
+    의심된다. 노션 점검표의 '유닛수'는 add_auto_holding_units()가 추가매수
+    때마다 정확히 갱신하는 원본 값이라 매번 재계산하는 것보다 진실에 가깝다.
 
-    반환: {"total_units": float, "groups": {업종명: units}}
+    account_size·holdings 파라미터는 호출부(select_buy_candidates·
+    run_auto_pyramid)를 그대로 두기 위해 시그니처만 유지한다 - 이 함수
+    안에서는 쓰지 않는다.
+
+    노션 조회가 실패하면 상관군별 캡·전체 캡 모두 미적용(0건)으로 fail-open
+    한다 - 호출부가 이미 "이 계좌에 실제로 몇 유닛 있는지" 없이 진행하는
+    걸 전제로 짜여 있어(예: select_buy_candidates의 "업종 맵 없음" 케이스)
+    새로운 실패 모드가 아니다. 대신 카톡으로 알린다(WARN_NOTION_CORR_FAILED,
+    1시간 억제).
+
+    반환: {"total_units": float, "groups": {상관군명: units}} (예전과 같은 모양)
     """
-    if not holdings:
+    try:
+        auto_holdings = notion_repo.fetch_holdings(managed_by=notion_repo.MANAGED_AUTO)
+    except Exception as e:                  # noqa: BLE001
+        logger.error("노션 상관군 조회 실패 - 상관군별 캡 미적용, 전체 캡만 적용: %s", e)
+        _notify_warning_throttled(
+            WARN_NOTION_CORR_FAILED,
+            f"[KIS] ⚠ 노션 상관군 조회 실패 - 상관군별 캡 미적용, 전체 캡만 적용: {e}",
+        )
         return {"total_units": 0.0, "groups": {}}
 
-    sector_map = _get_sector_map()
     total = 0.0
     groups: dict[str, float] = {}
-    for h in holdings:
-        ticker, qty = h["ticker"], h["qty"]
-        try:
-            df = core.fetch_ohlcv(ticker)
-            atr = core.calc_atr(df)
-        except Exception as e:              # noqa: BLE001
-            logger.warning("모의계좌 보유종목 %s ATR 조회 실패 (%s) - "
-                           "유닛 집계에서 제외합니다", ticker, e)
-            continue
-        unit_shares = core.calc_position(atr, account_size).unit_shares
-        if unit_shares <= 0:
-            continue
-        units = qty / unit_shares
+    for _, inp in auto_holdings:
+        units = float(inp.units or 0)
         total += units
-        sector = sector_map.get(ticker, "")
-        if sector:
-            groups[sector] = groups.get(sector, 0.0) + units
+        if inp.corr_group:
+            groups[inp.corr_group] = groups.get(inp.corr_group, 0.0) + units
+
+    # 디버그용 - 다음에 또 상관군 캡 오탐이 의심되면 이 로그로 바로
+    # 확인한다(실제로 몇 유닛으로 집계됐는지).
+    logger.info("상관군 유닛 집계(노션 기준): 전체 %.2f · 상관군 %s",
+                total, {g: round(u, 2) for g, u in groups.items()})
 
     return {"total_units": total, "groups": groups}
 
@@ -1485,10 +1500,11 @@ def select_buy_candidates(access_token: str, candidates: list[dict]) -> list[dic
     candidates 원소: {"ticker","name","price","atr20","gap_atr","sector"}
         (intraday_watch.py의 judge() 결과 dict와 같은 모양)
 
-    상관군 캡의 기준(현재 보유 유닛)은 항상 이 함수 안에서 KIS 잔고조회
-    API로 직접 구한다 (get_mock_account_corr_units) - 노션 실계좌 보유를
-    외부에서 넘겨받지 않는다. 그래서 이 값이 "결측이라 조용히 스킵"될
-    길이 없다.
+    상관군 캡의 기준(현재 보유 유닛)은 항상 이 함수 안에서 구한다
+    (get_mock_account_corr_units) - 외부에서 넘겨받지 않는다. 그래서 이
+    값이 "결측이라 조용히 스킵"될 길이 없다. get_mock_account_corr_units가
+    노션 점검표(운용="자동")의 '유닛수'를 집계하는 것이지 실계좌(수동·
+    터틀외) 보유를 섞는 게 아니다 - 자동매매 소관만 본다는 원칙은 그대로다.
 
     순서: 갭 오름차순 정렬 → 가격 상한 → 유닛금액 비율(핵심 게이트) →
           상관군 캡 → 가용현금 → 일일 주문 상한.
