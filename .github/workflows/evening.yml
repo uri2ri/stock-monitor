@@ -56,6 +56,10 @@ jobs:
           NOTION_DB_ID: ${{ secrets.NOTION_DB_ID }}
           NOTION_ORDERS_DB_ID: ${{ secrets.NOTION_ORDERS_DB_ID }}
           NOTION_LEDGER_DB_ID: ${{ secrets.NOTION_LEDGER_DB_ID }}
+          # core.evaluate_holding()이 유닛주수 계산에 쓴다. 이 배치는 그 값을
+          # 표시하지 않아 미설정이어도 기본값으로 진행하지만, 아침 배치와
+          # 같은 기준을 쓰도록 넣어둔다.
+          TOTAL_CAPITAL: ${{ secrets.TOTAL_CAPITAL }}
           GMAIL_ADDRESS: ${{ secrets.GMAIL_ADDRESS }}
           GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
           GMAIL_TO: ${{ secrets.GMAIL_TO }}

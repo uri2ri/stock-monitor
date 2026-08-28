@@ -29,6 +29,7 @@ from __future__ import annotations
 
 import argparse
 import logging
+import os
 import sys
 from dataclasses import dataclass, field
 from datetime import date, datetime
@@ -59,6 +60,20 @@ EXIT_REASON_TO_SIGNAL = {
     "10일 저가 이탈": SIGNAL_10LOW,
 }
 
+MANAGED_AUTO = notion_repo.MANAGED_AUTO       # "자동" - 모의계좌 자동매매
+MANAGED_MANUAL = notion_repo.MANAGED_MANUAL   # "수동" - 실계좌 사람이 실행
+
+
+def _managed_label(inp) -> str:
+    """운용 구분 표시값. 빈 값은 수동으로 본다.
+
+    노션 '운용' 칸이 비어 있는 행이 과거에 여럿 있었는데, 그것들은 전부
+    사람이 직접 산 실계좌 보유였다. 빈 값을 자동으로 오해하면 감사 대상
+    (수동 실행)에서 통째로 빠지므로 수동 쪽으로 붙인다.
+    """
+    return inp.managed_by or MANAGED_MANUAL
+
+
 @dataclass
 class SignalRow:
     ticker: str
@@ -66,7 +81,50 @@ class SignalRow:
     signal_type: str
     ref_price: float
     days: int             # 실행: 지연일수 / 미실행: 누적일수
-    target_unit: Optional[int] = None   # 유닛추가일 때만 - 목표 유닛 번호
+    # 유닛추가일 때만 - 현재 보유 유닛과 현재가가 정당화하는 유닛.
+    # 둘의 차이가 "몇 유닛 밀렸는지"다. 예전에는 held+1만 보여줘서
+    # 코스맥스처럼 이미 4유닛 구간에 있어도 "2유닛째"로 표시됐다.
+    held_units: Optional[int] = None
+    justified_units: Optional[int] = None
+
+
+@dataclass
+class LevelChange:
+    """오늘 종가로 손절선·청산선이 움직인 종목 한 줄.
+
+    손절선 before는 노션에 저장된 값(= 오늘 아침 배치가 전일 종가로 쓴 값),
+    after는 오늘 종가까지 반영해 다시 계산한 값이다. 즉 이 섹션은 "내일
+    아침 배치가 기록할 값"의 예고다 - 아침 리포트 표만 보면 그 손절선이
+    오늘 갱신된 값인지 며칠째 그대로인지 구분이 안 되기 때문에 따로 낸다.
+
+    청산선(10일 저가)은 노션에 저장하는 칸이 없어 같은 OHLCV에서
+    전일 기준값과 당일 기준값을 각각 계산해 비교한다.
+    """
+    ticker: str
+    name: str
+    managed: str
+    stop_before: Optional[float] = None
+    stop_after: Optional[float] = None
+    exit_before: Optional[float] = None
+    exit_after: Optional[float] = None
+
+    @staticmethod
+    def _moved(before: Optional[float], after: Optional[float]) -> bool:
+        if before is None or after is None:
+            return False
+        return round(before) != round(after)
+
+    @property
+    def stop_moved(self) -> bool:
+        return self._moved(self.stop_before, self.stop_after)
+
+    @property
+    def exit_moved(self) -> bool:
+        return self._moved(self.exit_before, self.exit_after)
+
+    @property
+    def any_moved(self) -> bool:
+        return self.stop_moved or self.exit_moved
 
 
 @dataclass
@@ -80,6 +138,7 @@ class EveningReport:
     random_trades: list[dict] = field(default_factory=list)
     ledger_signal_writes: list[dict] = field(default_factory=list)
     holding_signal_writes: list[dict] = field(default_factory=list)
+    level_changes: list[LevelChange] = field(default_factory=list)
 
 
 def _trading_days_between(df, start: date, end: date) -> int:
@@ -111,37 +170,51 @@ def _pyramid_units_justified(buy_price: float, entry_atr: float,
     return justified
 
 
-def _detect_signal(inp, df) -> Optional[tuple[str, float]]:
-    """이 종목의 오늘 종가 기준 신호. (신호유형, 참고가) 또는 None.
+def _detect_signal(inp, df, result) -> Optional[tuple[str, float, Optional[int]]]:
+    """이 종목의 오늘 종가 기준 신호. (신호유형, 참고가, 정당유닛) 또는 None.
 
-    우선순위: 손절선이탈 > 10일저가이탈 > 유닛추가 (아침 배치의 판정
-    우선순위와 같다 - 하락 신호가 상승 신호보다 급하다).
+    손절선이탈·10일저가이탈은 **직접 판정하지 않고** 아침 배치와 같은
+    core.evaluate_holding()의 판정(result.verdict)을 그대로 옮긴다.
+    예전에는 이 함수가 "종가 < 노션 손절선"을 자체 구현했는데, 아침
+    배치는 같은 조건을 resolve_stop()으로 트레일링·래칫까지 반영해
+    판정한다. 두 구현이 같은 종가 데이터로 서로 다른 답을 낼 수 있었고
+    (저녁 18:05 판정 = 다음날 아침 07:35 판정이 같은 종가를 본다),
+    실제로 이름만 다른 같은 사건이 두 메일에 따로 실렸다.
+
+    유닛추가만 이 배치 고유 판정이다 - 아침 리포트는 "다음 추가매수
+    지점"을 안내할 뿐 미실행 여부를 감사하지 않는다.
+
+    우선순위: 손절선이탈 > 10일저가이탈 > 유닛추가 (evaluate_holding의
+    판정 우선순위를 그대로 따른다 - 하락 신호가 상승 신호보다 급하다).
     """
-    close = core.latest_close(df)
+    if result.verdict == "손절":
+        return SIGNAL_STOP, result.stop_loss, None
+    if result.verdict == "추세청산":
+        return SIGNAL_10LOW, result.exit_level, None
 
-    if inp.prev_stop_loss and close < inp.prev_stop_loss:
-        return SIGNAL_STOP, inp.prev_stop_loss
-
-    try:
-        sig = core.trend_signals(df)
-        if sig.exit_triggered:
-            return SIGNAL_10LOW, sig.low_10_prev
-    except ValueError as e:
-        logger.debug("[%s] 10일 저가 판정 불가: %s", inp.ticker, e)
-
+    # 유닛추가 - 보유 유닛수는 노션 '유닛수'를 그대로 믿는다. 보유수량을
+    # 오늘 기준 유닛주수로 나눠 역산하면 ATR·계좌평가액이 변한 만큼
+    # 드리프트한다(kis_client의 상관군 캡에서 같은 이유로 노션 값으로
+    # 바꿨다).
     if inp.units and inp.entry_atr and inp.buy_price:
+        close = core.latest_close(df)
         justified = _pyramid_units_justified(inp.buy_price, inp.entry_atr, close)
         if justified > inp.units:
+            # 참고가는 '정당화된 마지막 레벨'이다. 예전엔 다음 레벨
+            # (보유+1)만 보여줘서, 코스맥스처럼 이미 4유닛 구간까지
+            # 올라간 종목도 "2유닛째 레벨"로 표시돼 몇 유닛 밀렸는지
+            # 알 수 없었다.
             level_price = (
-                inp.buy_price + inp.units * core.PYRAMID_ATR_STEP * inp.entry_atr
+                inp.buy_price
+                + (justified - 1) * core.PYRAMID_ATR_STEP * inp.entry_atr
             )
-            return SIGNAL_PYRAMID, level_price
+            return SIGNAL_PYRAMID, level_price, justified
 
     return None
 
 
 def _update_signal_tracking(
-    page_id: str, inp, detected: Optional[tuple[str, float]],
+    page_id: str, inp, detected: Optional[tuple[str, float, Optional[int]]],
     today: date, dry_run: bool, writes: list[dict],
 ) -> Optional[tuple[str, date]]:
     """저녁판정 신호유형/발생일 갱신 로직. (신호유형, 발생일)을 돌려준다 (신호 없으면 None).
@@ -160,7 +233,7 @@ def _update_signal_tracking(
             writes.append({"name": inp.name, "signal_type": None})
         return None
 
-    signal_type, _ref_price = detected
+    signal_type = detected[0]
     if signal_type == existing_type and existing_date:
         new_date = existing_date
     else:
@@ -173,6 +246,34 @@ def _update_signal_tracking(
                        "date": new_date})
 
     return signal_type, new_date
+
+
+def _build_level_change(inp, df, result, managed: str) -> LevelChange:
+    """오늘 종가 기준 손절선·청산선과, 그 직전 값을 짝지어 담는다.
+
+    손절선 before = 노션 저장값(오늘 아침 배치가 전일 종가로 쓴 값),
+    after = evaluate_holding()이 오늘 종가까지 반영해 낸 값.
+
+    청산선은 노션에 저장 칸이 없어 같은 OHLCV로 두 번 계산한다:
+    당일 기준(core.trend_signals(df))과 전일 기준(마지막 행을 뺀 df).
+    둘 다 '당일 제외 10일 저가'(low_10_prev)를 쓰므로 기준이 일관된다.
+    데이터가 모자라 전일 기준을 못 내면 청산선 비교만 건너뛴다.
+    """
+    exit_before: Optional[float] = None
+    try:
+        exit_before = core.trend_signals(df.iloc[:-1]).low_10_prev
+    except (ValueError, IndexError) as e:
+        logger.debug("[%s] 전일 기준 청산선 계산 불가: %s", inp.ticker, e)
+
+    return LevelChange(
+        ticker=inp.ticker,
+        name=inp.name,
+        managed=managed,
+        stop_before=inp.prev_stop_loss,
+        stop_after=result.stop_loss or None,
+        exit_before=exit_before,
+        exit_after=result.exit_level or None,
+    )
 
 
 def _resolve_ledger_signal_date(entry: dict, today: date) -> date:
@@ -194,21 +295,41 @@ def _resolve_ledger_signal_date(entry: dict, today: date) -> date:
 def build_report(today: date, dry_run: bool) -> EveningReport:
     report = EveningReport(today=today, dry_run=dry_run)
 
+    # 리포트에 쓰지는 않지만 core.evaluate_holding()이 요구한다(유닛주수·
+    # 리스크액 계산용). 이 배치는 그 두 값을 표시하지 않으므로, 미설정이면
+    # 기본값으로 진행한다 - 판정(손절/추세청산)과 손절선·청산선은
+    # total_capital에 영향받지 않는다.
+    total_capital = float(os.environ.get("TOTAL_CAPITAL") or 0) or core.DEFAULT_CAPITAL
+
     # ── 1. 오늘의 매매 ──────────────────────────────────────
     orders = notion_repo.fetch_orders_today(today)
     holdings = notion_repo.fetch_holdings()
     holdings_by_ticker = {inp.ticker: (pid, inp) for pid, inp in holdings}
 
+    # 매매일지는 자동·수동이 한 DB에 섞여 있다. 점검표에서 운용="자동"인
+    # 행의 page_id를 미리 받아 청산 기록의 '보유종목' relation과 대조해야
+    # 어느 계좌 건인지 갈린다 (weekly_report.py와 같은 방식).
+    try:
+        auto_ids = notion_repo.fetch_auto_holding_page_ids()
+    except Exception:                            # noqa: BLE001
+        logger.exception("점검표(운용=자동) page_id 조회 실패 - 청산 계좌 구분 생략")
+        auto_ids = set()
+
+    # 자동주문 기록 DB는 모의계좌(자동매매) 전용이라 여기 매수는 전부 자동이다.
     for o in orders:
         if o["order_type"] == notion_repo.ORDER_ADD:
             cur = holdings_by_ticker.get(o["ticker"])
             unit_label = f"{cur[1].units}u" if cur and cur[1].units else "?u"
         else:
             unit_label = "1u"
-        report.buys.append({**o, "unit_label": unit_label})
+        report.buys.append({**o, "unit_label": unit_label, "managed": MANAGED_AUTO})
 
     ledger_today = notion_repo.fetch_ledger_closed_today(today)
     for page_id, entry in ledger_today:
+        entry["managed"] = (
+            MANAGED_AUTO if entry.get("holding_page_id") in auto_ids
+            else MANAGED_MANUAL
+        )
         report.exits.append(entry)
 
         reason = entry.get("exit_reason") or ""
@@ -255,16 +376,37 @@ def build_report(today: date, dry_run: bool) -> EveningReport:
     # 왜곡된다. 저녁판정 신호유형/발생일 노션 기록도 자동 보유분은 건드리지
     # 않는다 - 이 두 칸은 이 리포트 전용이라 다른 코드가 읽지 않는다.
     for page_id, inp in holdings:
-        if inp.managed_by in (core.MANAGED_NON_TURTLE, notion_repo.MANAGED_AUTO):
-            continue
+        managed = _managed_label(inp)
+
         try:
             df = core.fetch_ohlcv(inp.ticker)
+            result = core.evaluate_holding(inp, total_capital)
         except Exception as e:                    # noqa: BLE001
             logger.warning("[%s] 시세 조회 실패 - 신호 판정 건너뜀: %s",
                            inp.ticker, e)
             continue
+        if result.error:
+            logger.warning("[%s] 평가 실패 - 신호 판정 건너뜀: %s",
+                           inp.ticker, result.error)
+            continue
 
-        detected = _detect_signal(inp, df)
+        # ── 3. 손절선·청산선 변동 (보유 전 종목 대상) ──────
+        # 자동·수동·터틀외를 가리지 않는다 - 손절선은 세 경우 모두
+        # 아침 배치가 관리하고, 자동매매는 이 값으로 실제 매도까지 낸다.
+        report.level_changes.append(_build_level_change(inp, df, result, managed))
+
+        # ── 2. 신호 재판정은 수동(터틀 대상)만 ─────────────
+        # 운용=자동(모의투자)은 뺀다 - kis_client.run_auto_sell()이 신호가
+        # 뜨는 즉시 같은 회차에 실주문으로 처리하므로 "미실행"이 사실상 나올 수
+        # 없고(나온다면 그건 자동매매 자체의 장애지 사람의 실행 지연이 아니다),
+        # 이 리포트의 원래 목적(실계좌 수동 실행 감사)과 자금 규모부터 다른
+        # 모의계좌 신호가 같은 목록에 섞이면 몇 건 중 몇 건 실행했는지 비율도
+        # 왜곡된다. 저녁판정 신호유형/발생일 노션 기록도 자동 보유분은 건드리지
+        # 않는다 - 이 두 칸은 이 리포트 전용이라 다른 코드가 읽지 않는다.
+        if managed in (core.MANAGED_NON_TURTLE, MANAGED_AUTO):
+            continue
+
+        detected = _detect_signal(inp, df, result)
         resolved = _update_signal_tracking(
             page_id, inp, detected, today, dry_run, report.holding_signal_writes,
         )
@@ -273,11 +415,17 @@ def build_report(today: date, dry_run: bool) -> EveningReport:
         signal_type, signal_date = resolved
         days = _trading_days_between(df, signal_date, today)
         ref_price = detected[1] if detected else core.latest_close(df)
-        target_unit = (inp.units + 1) if signal_type == SIGNAL_PYRAMID and inp.units else None
+        justified = detected[2] if detected else None
         report.unexecuted.append(SignalRow(
             ticker=inp.ticker, name=inp.name, signal_type=signal_type,
-            ref_price=ref_price, days=days, target_unit=target_unit,
+            ref_price=ref_price, days=days,
+            held_units=inp.units if signal_type == SIGNAL_PYRAMID else None,
+            justified_units=justified,
         ))
+
+    # 움직인 종목만 남긴다 - 변동 없는 종목까지 나열하면 아침 리포트의
+    # 전체 현황과 다를 게 없어져 이 섹션의 의미가 사라진다.
+    report.level_changes = [c for c in report.level_changes if c.any_moved]
 
     return report
 

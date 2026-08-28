@@ -930,11 +930,61 @@ def build_evening_subject(today: date, dry_run: bool) -> str:
 
 
 def _signal_label(row) -> str:
-    """SignalRow 한 줄 표시용 문구. 판단 문구 없이 신호 내용만."""
+    """SignalRow 한 줄 표시용 문구. 판단 문구 없이 신호 내용만.
+
+    유닛추가는 '보유 Nu → 정당 Mu' 형태로 몇 유닛 밀렸는지 그대로 보여준다.
+    예전엔 보유+1만 찍어서, 코스맥스처럼 이미 4유닛 구간까지 오른 종목도
+    "2u 레벨"로 나와 실제 격차가 감춰졌다.
+    """
     if row.signal_type == "유닛추가":
-        unit = f"{row.target_unit}u " if row.target_unit else ""
-        return f"유닛추가({unit}레벨 {_fmt(row.ref_price)})"
+        held = getattr(row, "held_units", None)
+        justified = getattr(row, "justified_units", None)
+        if held is not None and justified is not None:
+            return (f"유닛추가(보유 {held}u → 정당 {justified}u, "
+                    f"레벨 {_fmt(row.ref_price)})")
+        return f"유닛추가(레벨 {_fmt(row.ref_price)})"
     return f"{row.signal_type}({_fmt(row.ref_price)})"
+
+
+def _managed_tag(managed: str) -> str:
+    """계좌 구분 배지 문구. 자동매매와 실계좌 수동을 한눈에 가른다."""
+    return "[자동]" if managed == "자동" else "[수동]"
+
+
+def _level_arrow(before: Optional[float], after: Optional[float]) -> str:
+    """'232,632 → 240,100 (+7,468)' 형태. 변동 없으면 값만."""
+    if before is None or after is None:
+        return f"{_fmt(after) if after is not None else EMPTY}"
+    diff = after - before
+    if round(diff) == 0:
+        return f"{_fmt(after)} (변동 없음)"
+    return f"{_fmt(before)} → {_fmt(after)} ({diff:+,.0f})"
+
+
+def _build_level_change_text(changes: Sequence) -> list[str]:
+    """손절선·청산선 변동 섹션 줄 목록. 항상 섹션 제목은 낸다.
+
+    변동이 없으면 "변동 없음" 한 줄로 끝낸다 - 아침 리포트 표에서
+    손절선이 오늘 갱신된 값인지 며칠째 그대로인지 구분이 안 되는 문제를
+    메우는 섹션이라, 조용히 생략하면 "오늘은 안 움직였다"는 정보 자체가
+    사라진다.
+    """
+    lines = ["3. 손절선·청산선 변동 (오늘 종가 기준 · 내일 아침 반영값)"]
+    if not changes:
+        lines.append("   오늘 변동 없음")
+        lines.append("")
+        return lines
+
+    for c in changes:
+        tag = _managed_tag(c.managed)
+        parts = []
+        if c.stop_moved:
+            parts.append(f"손절선 {_level_arrow(c.stop_before, c.stop_after)}")
+        if c.exit_moved:
+            parts.append(f"청산선 {_level_arrow(c.exit_before, c.exit_after)}")
+        lines.append(f"   {tag} {c.name}  " + " · ".join(parts))
+    lines.append("")
+    return lines
 
 
 def build_evening_text(report) -> str:
@@ -946,20 +996,22 @@ def build_evening_text(report) -> str:
         lines.append("   오늘 매매 없음")
     else:
         for b in report.buys:
+            tag = _managed_tag(b.get("managed", "자동"))
             lines.append(
-                f"   매수  {b['name']} {_fmt(b['price'])} × "
+                f"   매수 {tag} {b['name']} {_fmt(b['price'])} × "
                 f"{_fmt(b['qty'])}주 ({b['unit_label']})"
             )
         for e in report.exits:
             r = e.get("r_multiple")
             r_str = f"{r:+.2f}R" if r is not None else EMPTY
+            tag = _managed_tag(e.get("managed", "수동"))
             lines.append(
-                f"   청산  {e['name']} {_fmt(e['entry_price'])} → "
+                f"   청산 {tag} {e['name']} {_fmt(e['entry_price'])} → "
                 f"{_fmt(e['exit_price'])}  {e.get('exit_reason') or EMPTY}  {r_str}"
             )
     lines.append("")
 
-    lines.append("2. 실행 감사")
+    lines.append("2. 실행 감사 (실계좌 수동 보유만)")
     for row in report.executed:
         lines.append(f"   ✅ {row.name}  {_signal_label(row)}   지연 {row.days}일")
     for row in report.unexecuted:
@@ -977,7 +1029,9 @@ def build_evening_text(report) -> str:
     )
     lines.append("")
 
-    lines.append("3. 기록 반영")
+    lines.extend(_build_level_change_text(getattr(report, "level_changes", ())))
+
+    lines.append("4. 기록 반영")
     if report.ledger_signal_writes:
         parts = ", ".join(
             f"{w['name']} {w['date'].month}/{w['date'].day}"
@@ -1003,10 +1057,21 @@ def build_evening_text(report) -> str:
 def build_evening_html(report) -> str:
     today = report.today
 
+    def managed_badge(managed: str) -> str:
+        """[자동]/[수동] 배지. 한 메일에 두 계좌가 섞여 나오므로 줄마다 붙인다."""
+        auto = managed == "자동"
+        bg, fg = ("#e7f5ff", "#1c7ed6") if auto else ("#f1f3f5", C_LABEL)
+        return (
+            f'<span style="display:inline-block;padding:1px 6px;border-radius:8px;'
+            f'background-color:{bg};color:{fg};font-size:11px;font-weight:bold;'
+            f'white-space:nowrap;">{"자동" if auto else "수동"}</span>'
+        )
+
     def buy_line(b: dict) -> str:
         name = _linked(b["name"], b["ticker"])
         return (
-            f'<div style="margin:3px 0;">매수&nbsp;&nbsp;{name} '
+            f'<div style="margin:3px 0;">매수&nbsp;'
+            f'{managed_badge(b.get("managed", "자동"))}&nbsp;{name} '
             f'{_fmt(b["price"])} × {_fmt(b["qty"])}주 '
             f'({html.escape(b["unit_label"])})</div>'
         )
@@ -1017,11 +1082,31 @@ def build_evening_html(report) -> str:
         r_str = f"{r:+.2f}R" if r is not None else EMPTY
         r_color = "" if r is None else (C_PROFIT if r >= 0 else C_LOSS)
         return (
-            f'<div style="margin:3px 0;">청산&nbsp;&nbsp;{name} '
+            f'<div style="margin:3px 0;">청산&nbsp;'
+            f'{managed_badge(e.get("managed", "수동"))}&nbsp;{name} '
             f'{_fmt(e["entry_price"])} → {_fmt(e["exit_price"])}  '
             f'{html.escape(e.get("exit_reason") or EMPTY)}  '
             f'<span style="color:{r_color};font-weight:bold;">{r_str}</span></div>'
         )
+
+    def level_line(c) -> str:
+        name = _linked(c.name, c.ticker)
+        parts = []
+        if c.stop_moved:
+            parts.append("손절선 " + html.escape(
+                _level_arrow(c.stop_before, c.stop_after)))
+        if c.exit_moved:
+            parts.append("청산선 " + html.escape(
+                _level_arrow(c.exit_before, c.exit_after)))
+        return (
+            f'<div style="margin:3px 0;">{managed_badge(c.managed)}&nbsp;{name} '
+            f'<span style="white-space:nowrap;">' + " · ".join(parts) + "</span></div>"
+        )
+
+    level_changes = getattr(report, "level_changes", ())
+    level_lines = "".join(level_line(c) for c in level_changes)
+    if not level_lines:
+        level_lines = f'<div style="color:{C_MUTED};">오늘 변동 없음</div>'
 
     trade_lines = "".join(buy_line(b) for b in report.buys) + "".join(
         exit_line(e) for e in report.exits
@@ -1100,11 +1185,18 @@ sans-serif;font-size:14px;color:#212529;line-height:1.5;">
   <h3 style="margin:16px 0 6px;">1. 오늘의 매매</h3>
   {trade_lines}
 
-  <h3 style="margin:16px 0 6px;">2. 실행 감사</h3>
+  <h3 style="margin:16px 0 6px;">2. 실행 감사
+    <span style="font-size:12px;font-weight:normal;color:{C_MUTED};">
+      (실계좌 수동 보유만)</span></h3>
   {audit_lines}
   <p style="margin:10px 0 0;font-weight:bold;">{summary}</p>
 
-  <h3 style="margin:16px 0 6px;">3. 기록 반영</h3>
+  <h3 style="margin:16px 0 6px;">3. 손절선·청산선 변동
+    <span style="font-size:12px;font-weight:normal;color:{C_MUTED};">
+      (오늘 종가 기준 · 내일 아침 반영값)</span></h3>
+  {level_lines}
+
+  <h3 style="margin:16px 0 6px;">4. 기록 반영</h3>
   {record_html}
   {dry_note}
 </div>"""
