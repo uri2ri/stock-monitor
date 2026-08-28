@@ -98,6 +98,13 @@
       "price": 30600.0,
       "gap_atr": 0.032,
       "status": "진입가능"
+    },
+    "010120": {
+      "time": "09:13",
+      "name": "LS ELECTRIC",
+      "price": 222500.0,
+      "gap_atr": 0.086,
+      "status": "진입가능"
     }
   }
 }
