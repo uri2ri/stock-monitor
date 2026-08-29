@@ -208,7 +208,16 @@ def build_report(today: date) -> WeeklyReport:
             try:
                 current_price = float(kis_client.get_current_price(token, inp.ticker))
             except Exception:
-                logger.warning("[%s] 현재가 조회 실패", inp.name)
+                logger.warning("[%s] KIS 현재가 조회 실패 - pykrx 종가로 대체", inp.name)
+        if current_price is None:
+            # KIS 토큰 발급 자체가 실패했거나 현재가 조회만 실패한 경우 -
+            # 이 배치는 토요일(장 마감 후)에 도니 "현재가"는 어차피 금요일
+            # 종가와 같다. daily_report.py·evening_audit.py가 판정에 쓰는
+            # 것과 같은 pykrx 경로라 KIS 상태와 무관하게 동작한다.
+            try:
+                current_price = core.latest_close(core.fetch_ohlcv(inp.ticker, days=5))
+            except Exception:
+                logger.warning("[%s] pykrx 종가 조회도 실패", inp.name)
                 report.has_errors = True
 
         report.holdings.append(HoldingRow(
