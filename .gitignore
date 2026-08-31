@@ -5,3 +5,4 @@
 __pycache__/
 *.pyc
 data/backtest_ohlcv.parquet
+data/sector_map_*.json
