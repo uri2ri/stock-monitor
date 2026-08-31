@@ -783,8 +783,18 @@ class HoldingResult:
 def evaluate_holding(
     inp: HoldingInput,
     total_capital: float,
+    as_of: Optional[date] = None,
 ) -> HoldingResult:
-    """한 종목을 평가한다. 예외 시 error가 채워진 Result를 반환."""
+    """한 종목을 평가한다. 예외 시 error가 채워진 Result를 반환.
+
+    as_of: 판정 기준일. None(기본값)이면 지금까지와 동일하게 실제 오늘
+        (today_kst())로 판정한다 - 기존 호출부(daily_report.py,
+        kis_client.run_auto_sell 등)는 수정 없이 그대로 이 기본값을 쓴다.
+        백테스트가 과거 시점 판정을 재현할 때만 이 값을 넘긴다. 시세 조회
+        (fetch_ohlcv의 end)와 날짜 비교(재평가 기한·신호 최초 발생일)
+        양쪽에 일관되게 적용된다 - 하나라도 빠지면 그 부분만 실제 오늘을
+        훔쳐보는 미래참조 구멍이 된다.
+    """
     result = HoldingResult(
         ticker=inp.ticker,
         name=inp.name,
@@ -792,7 +802,7 @@ def evaluate_holding(
     )
 
     try:
-        df = fetch_ohlcv(inp.ticker)
+        df = fetch_ohlcv(inp.ticker, end=as_of)
         atr = calc_atr(df)
         current_price = latest_close(df)
     except Exception as e:
@@ -884,7 +894,7 @@ def evaluate_holding(
         result.verdict_memo = (
             f"현재가 {current_price:,.0f} ≤ 10일 저가 {exit_level:,.0f}"
         )
-    elif inp.reeval_date is not None and inp.reeval_date < today_kst():
+    elif inp.reeval_date is not None and inp.reeval_date < (as_of or today_kst()):
         result.verdict = "기한도래"
         result.verdict_memo = f"재평가 기한 {inp.reeval_date} 경과"
     else:
@@ -896,7 +906,7 @@ def evaluate_holding(
     # 덮어쓰지 않고, 신호가 해소되면 비운다 (매매일지 지연일수 계산용).
     result.signal_active = result.verdict in ("손절", "추세청산")
     if result.signal_active:
-        result.signal_first_date = inp.signal_first_date or today_kst()
+        result.signal_first_date = inp.signal_first_date or (as_of or today_kst())
     else:
         result.signal_first_date = None
 
