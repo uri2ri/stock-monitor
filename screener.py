@@ -859,35 +859,53 @@ def build_sector_map(day: str) -> dict[str, str]:
 
 
 def load_sector_map(day: str, refresh: bool = False) -> dict[str, str]:
-    """업종 맵. SECTOR_MAX_AGE_DAYS 안에 만든 파일이 있으면 재사용한다."""
-    if not refresh and SECTOR_PATH.exists():
+    """업종 맵. day가 최근(SECTOR_MAX_AGE_DAYS 이내)이면 공용 캐시
+    (sector_map.json)를 SECTOR_MAX_AGE_DAYS 동안 재사용하고, 그보다 오래된
+    day(백테스트의 과거 시점 조회)면 day 전용 캐시(sector_map_YYYYMMDD.json)를
+    쓴다.
+
+    예전엔 "캐시 파일이 오늘 기준 며칠 됐는지"만 보고 재사용 여부를
+    정해서, 과거 day를 넘겨도 최근(오늘자) 캐시를 그대로 돌려주는
+    미래참조 버그가 있었다 - 요청한 day 자체가 최근인지부터 먼저 본다.
+
+    과거 시점 캐시는 파일이 있으면 나이와 무관하게 그대로 쓴다 - 지난
+    날짜의 지수 구성은 역사적으로 고정된 값이라 다시 받아도 똑같다.
+    """
+    day_date = datetime.strptime(day, "%Y%m%d").date()
+    is_recent = (date.today() - day_date).days <= SECTOR_MAX_AGE_DAYS
+    path = SECTOR_PATH if is_recent else DATA_DIR / f"sector_map_{day}.json"
+
+    if not refresh and path.exists():
         try:
-            saved = json.loads(SECTOR_PATH.read_text(encoding="utf-8"))
-            built = date.fromisoformat(saved["built_on"])
-            if (date.today() - built).days <= SECTOR_MAX_AGE_DAYS:
+            saved = json.loads(path.read_text(encoding="utf-8"))
+            if is_recent:
+                built = date.fromisoformat(saved["built_on"])
+                if (date.today() - built).days <= SECTOR_MAX_AGE_DAYS:
+                    return saved["map"]
+                logger.info("업종 맵이 오래되어 다시 만듭니다 (%s)", built)
+            else:
                 return saved["map"]
-            logger.info("업종 맵이 오래되어 다시 만듭니다 (%s)", built)
         except Exception as e:              # noqa: BLE001
             logger.warning("업종 맵을 읽지 못해 다시 만듭니다: %s", e)
 
-    logger.info("업종 맵 생성 중…")
+    logger.info("업종 맵 생성 중… (%s)", day)
     mapping = build_sector_map(day)
     if mapping:
         DATA_DIR.mkdir(parents=True, exist_ok=True)
-        SECTOR_PATH.write_text(
+        path.write_text(
             json.dumps(
                 {"built_on": date.today().isoformat(), "as_of": day, "map": mapping},
                 ensure_ascii=False,
             ),
             encoding="utf-8",
         )
-        logger.info("업종 맵 %d종목 저장", len(mapping))
+        logger.info("업종 맵 %d종목 저장: %s", len(mapping), path.name)
     else:
         logger.warning("업종 정보를 만들지 못했습니다 – '미분류'로 표시됩니다")
         # 오래된 맵이라도 있으면 그대로 쓴다 (없는 것보다 낫다)
-        if SECTOR_PATH.exists():
+        if path.exists():
             try:
-                return json.loads(SECTOR_PATH.read_text(encoding="utf-8"))["map"]
+                return json.loads(path.read_text(encoding="utf-8"))["map"]
             except Exception:               # noqa: BLE001
                 pass
     return mapping
