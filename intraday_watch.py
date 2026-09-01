@@ -463,9 +463,16 @@ def run(dry_run: bool = False) -> int:
         return 0
 
     if messages:
-        for msg in messages:
-            kakao.send_kakao_message(msg)
-        logger.info("카톡 %d통 발송", len(messages))
+        try:
+            for msg in messages:
+                kakao.send_kakao_message(msg)
+            logger.info("카톡 %d통 발송", len(messages))
+        except Exception as e:              # noqa: BLE001
+            # 카톡 발송 실패(토큰 만료 등)가 아래 자동매수·알림 이력
+            # 저장까지 막으면 안 된다 - 판정은 이미 끝났고 실제 매매가
+            # 알림보다 중요하다. run_auto_sell/run_auto_pyramid와 같은
+            # fail-open 원칙.
+            logger.error("카톡 발송 실패: %s", e)
 
     # 자동매수: 진입가능 종목만 kis_client에 넘긴다. 신호 알림(위)은 이
     # 실패와 무관하게 이미 나갔다 - kis_client.run_auto_trade() 내부
