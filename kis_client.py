@@ -292,8 +292,17 @@ def get_access_token() -> str:
     raise last_error
 
 
-def get_current_price(access_token: str, stock_code: str = "005930") -> str:
-    """access_token으로 종목 현재가를 조회한다."""
+# 시장경보(mrkt_warn_cls_code) 정상 코드. 이 값이 아니면 투자경고·투자위험
+# 등 어떤 형태로든 경보가 걸린 상태다 - 등급을 구분하지 않고 전부 제외한다.
+MARKET_WARN_NORMAL = "00"
+
+
+def _fetch_price_quote(access_token: str, stock_code: str) -> dict:
+    """주식현재가시세(inquire-price) 원본 응답의 output을 그대로 돌려준다.
+
+    get_current_price()·get_price_quote()가 같은 호출을 공유한다 - 현재가와
+    시장경보 상태(mrkt_warn_cls_code)가 이 응답 한 번에 같이 온다.
+    """
     app_key = os.environ["KIS_APP_KEY"]
     app_secret = os.environ["KIS_APP_SECRET"]
 
@@ -318,10 +327,39 @@ def get_current_price(access_token: str, stock_code: str = "005930") -> str:
     resp.raise_for_status()
     data = resp.json()
 
-    price = data.get("output", {}).get("stck_prpr")
-    if not price:
+    output = data.get("output", {})
+    if not output.get("stck_prpr"):
         raise RuntimeError(f"현재가 조회 실패: {data.get('msg1', '알 수 없는 오류')}")
-    return price
+    return output
+
+
+def get_current_price(access_token: str, stock_code: str = "005930") -> str:
+    """access_token으로 종목 현재가를 조회한다."""
+    return _fetch_price_quote(access_token, stock_code)["stck_prpr"]
+
+
+def get_price_quote(access_token: str, stock_code: str) -> dict:
+    """현재가와 시장경보(투자경고 등) 상태를 한 번의 조회로 같이 얻는다.
+
+    투자경고·투자위험 등 시장경보종목은 그 시점 상태만 본다 - 영구 차단이
+    아니라 매번 새로 조회해서, 경보가 해제되면 다음 판정부터 자동으로
+    다시 정상 후보가 된다.
+
+    반환: {"price": float, "market_warned": Optional[bool]}
+        market_warned=True  - mrkt_warn_cls_code가 "00"이 아님 (경보 상태)
+        market_warned=False - "00" (정상)
+        market_warned=None  - 응답에 이 필드가 없음 (조회 자체는 성공) -
+            fail-open으로 필터 미적용과 동일하게 다룬다.
+
+    Raises:
+        조회 자체(가격 포함)가 실패하면 그대로 예외를 올린다 - 호출부가
+        이미 현재가 조회 실패를 처리하는 fail-open/fail-closed 로직을
+        재사용하도록, 여기서 따로 삼키지 않는다.
+    """
+    output = _fetch_price_quote(access_token, stock_code)
+    warn_code = output.get("mrkt_warn_cls_code")
+    market_warned = (warn_code != MARKET_WARN_NORMAL) if warn_code else None
+    return {"price": float(output["stck_prpr"]), "market_warned": market_warned}
 
 
 # ── 안전장치 (fail-closed) ──────────────────────────────────
@@ -1227,10 +1265,19 @@ def run_auto_pyramid(holdings: Optional[list] = None) -> None:
         unit_shares = core.calc_position(atr, account_size).unit_shares
 
         try:
-            price = float(get_current_price(token, inp.ticker))
+            quote = get_price_quote(token, inp.ticker)
         except Exception as e:              # noqa: BLE001
             logger.warning("[%s] 현재가 조회 실패 - 추가매수 판정 건너뜀: %s",
                            inp.ticker, e)
+            continue
+        price = quote["price"]
+
+        # 투자경고종목 등 시장경보 - 그 시점 상태만 본다(영구 차단 아님).
+        # get_current_price와 같은 응답에 이미 있는 mrkt_warn_cls_code를
+        # 쓰므로 별도 API 호출은 없다. 필드가 없으면(market_warned=None)
+        # fail-open으로 필터 없이 진행한다.
+        if quote["market_warned"]:
+            _notify_failure(f"[KIS] 투자경고종목 제외: {inp.name}")
             continue
 
         plan = _pyramid_plan(inp, price, unit_shares, held_qty)
@@ -1595,6 +1642,24 @@ def select_buy_candidates(access_token: str, candidates: list[dict]) -> list[dic
         if len(selected) >= remaining_slots:
             _notify_failure(f"[KIS] 우선순위 밀림: {name}")
             continue
+
+        # 7. 투자경고종목 등 시장경보 - 여기까지 온 후보만 조회한다. 앞의
+        #    무료 게이트(가격·유닛금액·상관군·현금·상한)로 대부분 걸러진
+        #    뒤라 실제로는 최종 후보 몇 개만 KIS를 호출한다. 신규 진입
+        #    후보 가격은 네이버 시세라 이 필드(mrkt_warn_cls_code)가
+        #    없으므로, get_current_price가 쓰는 것과 같은 "주식현재가시세"
+        #    응답을 여기서 딱 한 번 조회해 같이 얻는다 - 별도 API는 아니다.
+        #    조회 자체가 실패하면 경보 여부를 몰라 매매를 막으면 안 되므로
+        #    fail-open(필터 없이 통과)한다.
+        try:
+            quote = get_price_quote(access_token, c["ticker"])
+        except Exception as e:              # noqa: BLE001
+            logger.warning("[%s] 시장경보 상태 조회 실패 - 필터 없이 진행: %s",
+                           name, e)
+        else:
+            if quote["market_warned"]:
+                _notify_failure(f"[KIS] 투자경고종목 제외: {name}")
+                continue
 
         selected.append({**c, "unit_shares": unit_shares})
         group_units[sector] = group_units.get(sector, 0) + 1
