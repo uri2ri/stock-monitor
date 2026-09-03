@@ -1,6 +1,6 @@
 {
- "built_on": "2026-08-26",
- "as_of": "20260826",
+ "built_on": "2026-09-03",
+ "as_of": "20260903",
  "source": "KRX 전종목 시세",
  "note": "폴백(종목별 개별 조회) 경로가 쓰는 종목 목록입니다. build_universe.py로 자동 갱신하거나, 아래 stocks 배열에 {\"ticker\": \"005930\", \"name\": \"삼성전자\", \"market\": \"KOSPI\"} 형식으로 직접 채워도 됩니다. name은 비워도 되고, 그때는 통과 종목에 한해 조회로 채웁니다. 신규 상장은 120거래일 미만이라 어차피 필터에서 빠지므로 목록이 며칠 낡아도 됩니다.",
  "stocks": [
@@ -933,6 +933,11 @@
    "ticker": "476080",
    "name": "M83",
    "market": "KOSDAQ"
+  },
+  {
+   "ticker": "009810",
+   "name": "MDS스피어",
+   "market": "KOSPI"
   },
   {
    "ticker": "086960",
@@ -2977,11 +2982,6 @@
   {
    "ticker": "084670",
    "name": "동양고속",
-   "market": "KOSPI"
-  },
-  {
-   "ticker": "082640",
-   "name": "동양생명",
    "market": "KOSPI"
   },
   {
@@ -5320,11 +5320,6 @@
    "market": "KOSDAQ"
   },
   {
-   "ticker": "002420",
-   "name": "세기상사",
-   "market": "KOSPI"
-  },
-  {
    "ticker": "061090",
    "name": "세나테크놀로지",
    "market": "KOSDAQ"
@@ -6652,11 +6647,6 @@
   {
    "ticker": "140670",
    "name": "알에스오토메이션",
-   "market": "KOSDAQ"
-  },
-  {
-   "ticker": "096610",
-   "name": "알에프세미",
    "market": "KOSDAQ"
   },
   {
@@ -8068,6 +8058,11 @@
    "ticker": "101970",
    "name": "우양에이치씨",
    "market": "KOSDAQ"
+  },
+  {
+   "ticker": "002420",
+   "name": "우양피앤엘",
+   "market": "KOSPI"
   },
   {
    "ticker": "046940",
@@ -11408,11 +11403,6 @@
    "ticker": "075130",
    "name": "플랜티넷",
    "market": "KOSDAQ"
-  },
-  {
-   "ticker": "009810",
-   "name": "플레이그램",
-   "market": "KOSPI"
   },
   {
    "ticker": "237820",
