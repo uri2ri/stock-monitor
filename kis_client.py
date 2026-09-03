@@ -441,6 +441,7 @@ WARN_LEDGER_RECORD_FAILED = "매매일지 기록 실패"
 WARN_NO_SECTOR_MAP = "업종 맵 없음"
 WARN_NOTION_CORR_FAILED = "노션 상관군 조회 실패"
 WARN_PENDING_ORDERS = "주문중 상태로 남은 행 있음"
+WARN_AUTO_TRADE_STATUS_UNKNOWN = "자동매매 제어 상태 조회 실패"
 # 반복 거부는 종목마다 별도 사유로 취급한다(종목코드를 키에 포함) - 한
 # 종목의 반복 거부 경고가 다른 종목의 같은 경고를 억제해버리면 안 된다.
 WARN_REPEATED_REJECTION_PREFIX = "같은 종목 반복 거부"
@@ -499,6 +500,33 @@ def _notify_warning_throttled(reason_key: str, message: str) -> None:
     except Exception as e:                  # noqa: BLE001
         logger.warning("경고 기록 실패 (%s) - 다음 억제 판단에 이번 발송이 "
                        "안 잡힐 수 있습니다", e)
+
+
+def _auto_trade_paused() -> bool:
+    """노션 "자동매매 제어" DB 상태를 확인한다. 신규 진입·추가매수 전용
+    게이트다 - run_auto_sell()은 이 함수를 쓰지 않는다(정지 중에도
+    손절·추세청산은 항상 나가야 한다).
+
+    fail-closed: 조회 자체가 실패하면(네트워크·DB ID 미설정 등) 상태를
+    모른 채 매수하는 것보다 이번 회차 하나 쉬는 게 안전하므로 True(정지)로
+    간주하고 카톡으로 알린다. 행이 없으면(기능을 처음 배포한 직후라
+    아직 아무도 노션에서 안 건드린 상태) 조회 자체는 성공한 것이므로
+    "실행중"(기본 동작)으로 본다 - 이건 실패가 아니다.
+    """
+    try:
+        status = notion_repo.get_auto_trade_status()
+    except Exception as e:                  # noqa: BLE001
+        logger.error("자동매매 제어 상태 조회 실패 - fail-closed로 매수 건너뜀: %s", e)
+        _notify_warning_throttled(
+            WARN_AUTO_TRADE_STATUS_UNKNOWN,
+            f"[KIS] ⚠ 자동매매 제어 상태 조회 실패 - 안전을 위해 신규 매수 중단: {e}",
+        )
+        return True
+
+    if status is None:
+        return False
+
+    return status != notion_repo.AUTO_TRADE_RUNNING
 
 
 def _check_order_allowed(stock_code: str,
@@ -1215,6 +1243,10 @@ def run_auto_pyramid(holdings: Optional[list] = None) -> None:
     if not _auto_trade_configured():
         return
 
+    if _auto_trade_paused():
+        logger.info("자동매매 일시정지 - 추가매수 건너뜀")
+        return
+
     if not _within_trading_hours():
         return
 
@@ -1694,6 +1726,10 @@ def run_auto_trade(candidates: list[dict]) -> None:
         return
 
     if not _auto_trade_configured():
+        return
+
+    if _auto_trade_paused():
+        logger.info("자동매매 일시정지 - 신규 진입 건너뜀")
         return
 
     # 유령 행 경고는 거래 시간 게이트보다 먼저 - 장 시작 전이라도 이전에

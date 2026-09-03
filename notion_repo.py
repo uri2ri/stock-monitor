@@ -1594,3 +1594,47 @@ def save_cached_token(token: str, expires_at: datetime) -> None:
         page_id = resp.json()["id"]
         logger.info("KIS 토큰 캐시 최초 생성: page_id=%s 만료=%s",
                     page_id, expires_at.isoformat())
+
+
+# ── 자동매매 정지/재개 제어 DB ───────────────────────────────
+#
+# 사람이 노션 "자동매매 제어" DB의 상태를 실행중/일시정지로 바꾸면
+# 신규 진입(run_auto_trade)·추가매수(run_auto_pyramid)가 이를 그대로
+# 따른다. 단일 행만 쓴다(레코드="AUTO_TRADE_CONTROL" 고정값) - KIS
+# 토큰 캐시 DB와 같은 패턴. 변경일시·사유는 사람이 노션에서 상태를
+# 바꿀 때 같이 채우는 칸이라 이 코드는 쓰지 않고 읽기만 한다.
+#
+# 자동매도(run_auto_sell)는 이 상태를 아예 확인하지 않는다 - 정지는
+# 신규 매수만 막고, 손절·추세청산은 항상 나가야 한다.
+#
+# 조회 실패는 여기서 그대로 raise한다(토큰 캐시 조회와 동일 원칙) -
+# 호출부(kis_client)가 fail-closed로 처리한다: 상태를 모를 땐 정지로
+# 간주하고 매수를 막는다.
+
+AUTO_TRADE_CONTROL_RECORD = "AUTO_TRADE_CONTROL"
+AUTO_TRADE_RUNNING = "실행중"
+AUTO_TRADE_PAUSED = "일시정지"
+
+
+def get_auto_trade_status() -> Optional[str]:
+    """자동매매 제어 DB의 현재 상태를 조회한다.
+
+    Returns:
+        "실행중" 또는 "일시정지". 행이 아직 없으면(기능을 배포했지만
+        아무도 아직 노션에서 건드리지 않은 초기 상태) None을 돌려준다 -
+        호출부가 이 경우 "실행중"(기본 동작)으로 다룬다.
+    """
+    db_id = os.environ["NOTION_AUTO_TRADE_CONTROL_DB_ID"]
+    url = f"{NOTION_BASE}/databases/{db_id}/query"
+    payload: dict[str, Any] = {
+        "filter": {"property": "레코드", "title": {"equals": AUTO_TRADE_CONTROL_RECORD}},
+        "page_size": 1,
+    }
+    resp = requests.post(url, headers=_headers(), json=payload, timeout=30)
+    resp.raise_for_status()
+    results = resp.json().get("results", [])
+    if not results:
+        return None
+
+    props = results[0].get("properties", {})
+    return _select(props.get("상태", {})) or None
