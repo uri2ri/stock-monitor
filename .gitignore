@@ -6,3 +6,10 @@ __pycache__/
 *.pyc
 data/backtest_ohlcv.parquet
 data/sector_map_*.json
+
+# 백테스트 실행 결과물 (backtest.py 로 재생성 가능 - 커밋하지 않음)
+data/bt_*.csv
+data/backtest_compare_trades.csv
+data/backtest_dev_fixed_*.csv
+data/backtest_portfolio_*.csv
+data/*_equity.csv
