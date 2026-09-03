@@ -67,6 +67,9 @@ jobs:
           NOTION_DB_ID: ${{ secrets.NOTION_DB_ID }}
           # KIS 접근토큰 캐시 - 없어도 캐싱만 건너뛰고 거래는 그대로 진행된다
           NOTION_TOKEN_CACHE_DB_ID: ${{ secrets.NOTION_TOKEN_CACHE_DB_ID }}
+          # 자동매매 정지/재개 스위치 - 신규 진입·추가매수 전용(자동매도는 무관).
+          # 미설정이면 조회가 실패해 fail-closed로 매수가 막힌다.
+          NOTION_AUTO_TRADE_CONTROL_DB_ID: ${{ secrets.NOTION_AUTO_TRADE_CONTROL_DB_ID }}
         run: python intraday_watch.py
 
       # kis_client.py의 __main__ 블록(삼성전자 1주 모의매수 단발 테스트)을
