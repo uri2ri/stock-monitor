@@ -445,12 +445,21 @@ WARN_AUTO_TRADE_STATUS_UNKNOWN = "자동매매 제어 상태 조회 실패"
 # 반복 거부는 종목마다 별도 사유로 취급한다(종목코드를 키에 포함) - 한
 # 종목의 반복 거부 경고가 다른 종목의 같은 경고를 억제해버리면 안 된다.
 WARN_REPEATED_REJECTION_PREFIX = "같은 종목 반복 거부"
+# 투자경고종목 제외도 같은 이유로 종목별 키를 쓴다 - 보유 중인 종목은
+# 10분마다 재평가되므로, 억제 없이 그대로 보내면 경고가 풀릴 때까지
+# 같은 카톡이 계속 온다 (그 시점마다 재확인하는 것 자체는 의도한
+# 동작이라 - 확인 주기가 아니라 알림 발송만 억제한다).
+WARN_MARKET_WARNED_PREFIX = "투자경고종목 제외"
 
 MAX_REJECTIONS_PER_STOCK = 3  # 같은 종목 오늘 거부 누적 이 값 이상이면 재시도 중단
 
 
 def _repeated_rejection_reason_key(stock_code: str) -> str:
     return f"{WARN_REPEATED_REJECTION_PREFIX} - {stock_code}"
+
+
+def _market_warned_reason_key(stock_code: str) -> str:
+    return f"{WARN_MARKET_WARNED_PREFIX} - {stock_code}"
 
 
 def _notify_warning_throttled(reason_key: str, message: str) -> None:
@@ -1309,7 +1318,10 @@ def run_auto_pyramid(holdings: Optional[list] = None) -> None:
         # 쓰므로 별도 API 호출은 없다. 필드가 없으면(market_warned=None)
         # fail-open으로 필터 없이 진행한다.
         if quote["market_warned"]:
-            _notify_failure(f"[KIS] 투자경고종목 제외: {inp.name}")
+            _notify_warning_throttled(
+                _market_warned_reason_key(inp.ticker),
+                f"[KIS] 투자경고종목 제외: {inp.name}",
+            )
             continue
 
         plan = _pyramid_plan(inp, price, unit_shares, held_qty)
@@ -1690,7 +1702,10 @@ def select_buy_candidates(access_token: str, candidates: list[dict]) -> list[dic
                            name, e)
         else:
             if quote["market_warned"]:
-                _notify_failure(f"[KIS] 투자경고종목 제외: {name}")
+                _notify_warning_throttled(
+                    _market_warned_reason_key(c["ticker"]),
+                    f"[KIS] 투자경고종목 제외: {name}",
+                )
                 continue
 
         selected.append({**c, "unit_shares": unit_shares})
