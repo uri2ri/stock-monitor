@@ -982,7 +982,7 @@ def render_analysis(capital: float, ai_unlocked: bool) -> None:
 
 @st.cache_data(ttl=86_400, show_spinner=False)
 def load_ticker_stats(_mtime: float) -> dict:
-    """data/ticker_stats.json (build_ticker_stats.py가 만든 종목별 백테스트
+    """data/ticker_stats.json (build_ticker_stats.py가 만든 종목별 돌파 이력
     집계). 인자는 캐시 키용 - 파일이 바뀌면 다시 읽는다.
 
     이 화면 전용 참고 정보다 - 자동매매 판정에는 쓰지 않는다.
@@ -991,20 +991,21 @@ def load_ticker_stats(_mtime: float) -> dict:
 
 
 BACKTEST_HISTORY_DISCLAIMER = (
-    "과거 백테스트 이력입니다. 각 유닛 단계 진출률이 43~51%로 사실상 "
-    "무작위에 가깝다는 게 확인됐으므로, 과거 성적이 미래를 예측하지 "
-    "않습니다. 참고용으로만 보세요."
+    "dev 구간(2019-09~2023-08) 동안 이 종목이 20일 고가를 돌파했을 때의 "
+    "이력입니다. 계좌 자금 제약 없이 신호 자체의 결과만 봅니다. 각 유닛 "
+    "단계 진출률이 43~51%로 사실상 무작위에 가깝다는 게 확인됐으므로, "
+    "과거 성적이 미래를 예측하지 않습니다. 참고용으로만 보세요."
 )
 
 
 def render_backtest_history(code: str) -> None:
-    """[백테스트 이력] 섹션 - dev 구간 백테스트를 종목별로 집계한 참고 정보.
+    """[백테스트 이력] 섹션 - dev 구간 돌파 이력을 종목별로 집계한 참고 정보.
 
     data/ticker_stats.json은 build_ticker_stats.py가 data/
-    backtest_portfolio_dev_v2.csv(dev 구간 2019-09~2023-08 정식 기준선
-    산출물, .gitignore 대상이라 로컬에만 있을 수 있음)에서 만든 작은
-    집계 파일이다 - 이 화면은 그 JSON만 읽고, 원본 CSV·백테스트 실행
-    자체는 건드리지 않는다.
+    ticker_breakout_history.csv(dev 구간 2019-09~2023-08, 계좌 자금
+    게이트를 전부 무력화하고 돌파 신호 자체만 본 산출물, .gitignore
+    대상이라 로컬에만 있을 수 있음)에서 만든 작은 집계 파일이다 - 이
+    화면은 그 JSON만 읽고, 원본 CSV·백테스트 실행 자체는 건드리지 않는다.
 
     표시 전용이다: core.py·kis_client.py의 자동매매 판정은 이 통계를
     전혀 참조하지 않는다.
@@ -1027,14 +1028,16 @@ def render_backtest_history(code: str) -> None:
 
     row = stats.get(code)
     if row is None:
-        st.info("이 종목은 백테스트 이력 없음 (dev 구간(2019-09~2023-08)에 돌파 신호가 없었습니다).")
+        st.info(
+            "이 종목은 백테스트 이력 없음 — dev 구간(2019-09~2023-08)에 "
+            "20일 고가 돌파(추격금지 통과) 자체가 없었습니다."
+        )
         return
 
     units = row.get("유닛별_도달횟수", {})
-    atr_pct = row.get("평균ATR퍼센트")
     st.dataframe(
         {
-            "거래수": [row["거래수"]],
+            "돌파횟수": [row["돌파횟수"]],
             "승률": [f"{row['승률']:.1f}%"],
             "평균R": [f"{row['평균R']:.2f}"],
             "총손익": [f"{row['총손익']:,.0f}원"],
@@ -1043,14 +1046,8 @@ def render_backtest_history(code: str) -> None:
             "3유닛 도달": [units.get("3", 0)],
             "4유닛 도달": [units.get("4", 0)],
             "평균 보유일수": [f"{row['평균보유일수']:.1f}일"],
-            "평균 ATR%": [f"{atr_pct:.2f}%" if atr_pct is not None else "—"],
         },
         hide_index=True, width="stretch",
-    )
-    st.caption(
-        "돌파 신호 발생 횟수(진입 안 된 것 포함)와 가짜 돌파 비율은 이번 "
-        "집계에 없습니다 — 실제 진입까지 간 거래만 종목별로 남아 있고, "
-        "나머지는 아직 종목별로 측정되지 않았습니다."
     )
 
 

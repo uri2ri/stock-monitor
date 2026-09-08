@@ -12,5 +12,6 @@ data/bt_*.csv
 data/backtest_compare_trades.csv
 data/backtest_dev_fixed_*.csv
 data/backtest_portfolio_*.csv
+data/ticker_breakout_history.csv
 data/*_equity.csv
 data/archive/

@@ -994,6 +994,8 @@ def run_portfolio_backtest(tickers: list[str], start: date, end: date,
                             breakout_period: Optional[int] = None,
                             kospi200: bool = False,
                             vol_mult_min: Optional[float] = None,
+                            max_unit_ratio: Optional[float] = None,
+                            max_daily_entries: Optional[int] = None,
                             ) -> dict:
     """계좌 하나를 전종목이 공유하는 포트폴리오 시뮬레이션.
 
@@ -1049,6 +1051,14 @@ def run_portfolio_backtest(tickers: list[str], start: date, end: date,
         이미 보유 중인 종목이 지수에서 빠져도 피라미딩은 계속 허용한다. 제한에
         걸린 후보는 "코스피200외"로 카운트한다.
 
+    max_unit_ratio: None이면 모듈 상수 MAX_UNIT_RATIO(0.20) 그대로. 값을 주면
+        실행 동안만 그 값으로 바꿔치기한다(stop_atr_mult와 같은 방식). "캡 없음"
+        실험은 아주 큰 값(예: 999)을 넘긴다. 실행이 끝나면 복원.
+
+    max_daily_entries: None이면 모듈 상수 MAX_DAILY_ENTRIES(3) 그대로. 값을
+        주면 실행 동안만 그 값으로 바꿔치기한다. "상한 없음" 실험은 아주 큰
+        값을 넘긴다. 실행이 끝나면 복원.
+
     반환 dict 키: trades(list[PortfolioTrade]), rejections(dict),
     equity_curve(list[(date, 평가금액)]), final_cash, open_positions_value,
     final_value, open_positions(dict[ticker, PortfolioPosition]).
@@ -1069,6 +1079,13 @@ def run_portfolio_backtest(tickers: list[str], start: date, end: date,
     original_vol_mult = _ENTRY_VOL_MULT_MIN
     if vol_mult_min is not None:
         _ENTRY_VOL_MULT_MIN = vol_mult_min
+    global MAX_UNIT_RATIO, MAX_DAILY_ENTRIES
+    original_max_unit_ratio = MAX_UNIT_RATIO
+    if max_unit_ratio is not None:
+        MAX_UNIT_RATIO = max_unit_ratio
+    original_max_daily_entries = MAX_DAILY_ENTRIES
+    if max_daily_entries is not None:
+        MAX_DAILY_ENTRIES = max_daily_entries
 
     regime_by_market, ticker_market = load_regime_gate() if regime_gate else ({}, {})
     k200_pit = load_kospi200_pit() if kospi200 else None
@@ -1343,6 +1360,8 @@ def run_portfolio_backtest(tickers: list[str], start: date, end: date,
         core.MAX_UNITS, core.MAX_UNITS_GROUP, core.MAX_UNITS_TOTAL = original_caps
         _ENTRY_HIGH_PERIOD = original_high_period
         _ENTRY_VOL_MULT_MIN = original_vol_mult
+        MAX_UNIT_RATIO = original_max_unit_ratio
+        MAX_DAILY_ENTRIES = original_max_daily_entries
 
     open_positions_value = 0.0
     for ticker, pos in positions.items():
@@ -1561,6 +1580,15 @@ def main() -> int:
                              "예: --unit-caps 4/8/16, --unit-caps 4/none/none. "
                              "실행 동안만 core.MAX_UNITS·MAX_UNITS_GROUP·MAX_UNITS_TOTAL을 "
                              "바꿔치기하고 끝나면 복원")
+    parser.add_argument("--max-unit-ratio", type=float, default=None,
+                        help="--portfolio 전용: 유닛금액이 계좌평가액의 이 비율을 넘으면 "
+                             "제외하는 캡의 실험값 (기본 모듈 상수 MAX_UNIT_RATIO=0.20). "
+                             "'캡 없음' 실험은 큰 값(예: 999)을 넘긴다. 실행 동안만 "
+                             "바꿔치기하고 끝나면 복원")
+    parser.add_argument("--max-daily-entries", type=int, default=None,
+                        help="--portfolio 전용: 일일 신규 진입(1유닛) 상한 실험값 "
+                             "(기본 모듈 상수 MAX_DAILY_ENTRIES=3). '상한 없음' 실험은 "
+                             "큰 값을 넘긴다. 실행 동안만 바꿔치기하고 끝나면 복원")
     parser.add_argument("--breakout-period", type=int, default=None,
                         help="--portfolio 전용: 진입 돌파 판정 기간 실험값 "
                              "(기본 core.HIGH_PERIOD=20). 예: --breakout-period 55. "
@@ -1682,6 +1710,7 @@ def main() -> int:
             regime_gate=args.regime_gate, unit_caps=unit_caps,
             breakout_period=args.breakout_period, kospi200=args.kospi200,
             vol_mult_min=args.vol_mult,
+            max_unit_ratio=args.max_unit_ratio, max_daily_entries=args.max_daily_entries,
         )
         out_csv = Path(args.out) if args.out else None
         market_desc = "코스피200(시점별)" if args.kospi200 else args.market
