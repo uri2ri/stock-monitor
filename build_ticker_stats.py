@@ -1,144 +1,125 @@
+"""build_ticker_stats.py – 백테스트 결과를 종목별로 집계해 저장한다.
+
+원본 거래 상세(data/backtest_portfolio_trades.csv, backtest.py의 3단계
+포트폴리오 시뮬레이션 산출물)는 .gitignore 대상이라 재생성 가능한
+로컬 파일로만 존재하고 스트림릿 클라우드엔 없다. 이 스크립트가 만드는
+작은 집계 결과(data/ticker_stats.json)만 커밋해서, app.py는 그 JSON만
+읽는다 - CSV 자체를 배포 환경에 올릴 필요가 없다.
+
+종목분석 화면(app.py)의 "백테스트 이력" 섹션 전용 참고 데이터다.
+자동매매 판정(core.py·kis_client.py)은 이 파일의 존재 자체를 모른다.
+
+[집계 범위 – 1차분]
+아래 항목은 backtest_portfolio_trades.csv 컬럼만으로 바로 나온다:
+    거래수, 승률, 평균R, 총손익, 유닛별(1~4유닛) 도달 횟수,
+    평균 보유일수, 평균 ATR%(진입시ATR ÷ 평균매수단가)
+
+아래 두 항목은 이번엔 뺐다 - 이 CSV엔 실제 진입까지 간 거래만 남고
+거부된 신호는 포트폴리오 전체 집계로만 있어 종목별로 못 살린다.
+가짜 돌파 비율은 자본 무제한 단일진입 비교모드(backtest_compare_trades.csv)
+에만 있어 조건이 달라 그냥 섞으면 안 된다(backtest.py에 종목별 로깅을
+추가하고 재실행해야 나온다):
+    돌파 신호 발생 횟수(진입 안 된 것 포함), 가짜 돌파 비율
+
+CLI:
+    python build_ticker_stats.py
+    python build_ticker_stats.py --trades data/backtest_portfolio_trades.csv \
+        --out data/ticker_stats.json
 """
-종목별 백테스트 통계 집계 스크립트
 
-입력: data/backtest_portfolio_trades.csv (7년 fixed 모드 결과)
-출력: data/ticker_stats.json
+from __future__ import annotations
 
-종목별 통계:
-- 승률, 평균 R배수, 총손익
-- 유닛별 도달 횟수 (1/2/3/4유닛)
-- 평균 보유일수, 평균 진입시 ATR%
-"""
-
-from pathlib import Path
-import pandas as pd
+import argparse
 import json
-from datetime import datetime
+import logging
+import sys
+from pathlib import Path
+
+import pandas as pd
+
+logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
+logger = logging.getLogger(__name__)
 
 DATA_DIR = Path(__file__).resolve().parent / "data"
+DEFAULT_TRADES_PATH = DATA_DIR / "backtest_portfolio_trades.csv"
+TICKER_STATS_PATH = DATA_DIR / "ticker_stats.json"
 
-def build_ticker_stats():
-    """종목별 통계 집계"""
+REQUIRED_COLUMNS = [
+    "종목코드", "진입일", "청산일", "최종유닛수",
+    "매수원가(수수료포함)", "총수량", "진입시ATR", "순손익", "R배수",
+]
 
-    # CSV 로드
-    csv_path = DATA_DIR / "backtest_portfolio_trades.csv"
-    if not csv_path.exists():
-        print(f"❌ 파일 없음: {csv_path}")
-        return
 
-    df = pd.read_csv(csv_path)
-    df['진입일'] = pd.to_datetime(df['진입일'])
-    df['청산일'] = pd.to_datetime(df['청산일'])
+def aggregate(df: pd.DataFrame) -> dict[str, dict]:
+    """거래 상세를 종목코드별로 집계한다.
 
-    print(f"✓ CSV 로드: {len(df)}건 거래")
+    Returns:
+        {종목코드: {거래수, 승률, 평균R, 총손익, 유닛별, 평균보유일수, 평균ATR퍼센트}}
+    """
+    missing = [c for c in REQUIRED_COLUMNS if c not in df.columns]
+    if missing:
+        raise ValueError(f"거래 CSV에 필요한 컬럼이 없습니다: {missing}")
 
-    # 종목별 집계
-    stats = {}
+    df = df.copy()
+    # 종목코드는 6자리 zero-padded 문자열이다 - dtype 지정 없이 읽으면
+    # pandas가 순수 숫자로 보고 앞자리 0을 날린다("000660" -> 660).
+    df["종목코드"] = df["종목코드"].astype(str).str.zfill(6)
+    df["진입일"] = pd.to_datetime(df["진입일"])
+    df["청산일"] = pd.to_datetime(df["청산일"])
+    df["보유일수"] = (df["청산일"] - df["진입일"]).dt.days
+    # 진입가는 CSV에 직접 없다 - 매수원가(수수료 포함)를 총수량으로 나눈
+    # 평균 매수단가로 근사한다 (ATR%는 참고용 표시라 이 정도 근사면 충분).
+    df["평균매수단가"] = df["매수원가(수수료포함)"] / df["총수량"].replace(0, pd.NA)
+    df["ATR퍼센트"] = df["진입시ATR"] / df["평균매수단가"] * 100
 
-    for ticker in df['종목코드'].unique():
-        ticker_data = df[df['종목코드'] == ticker]
-
-        n = len(ticker_data)
-
-        # 승률
-        wins = len(ticker_data[ticker_data['순손익'] > 0])
-        win_rate = wins / n * 100 if n > 0 else 0
-
-        # 평균 R배수
-        avg_r = ticker_data['R배수'].mean()
-
-        # 총손익
-        total_pnl = ticker_data['순손익'].sum()
-
-        # 유닛별 도달 횟수
-        units_dist = {}
-        for u in [1, 2, 3, 4]:
-            units_dist[str(u)] = int(len(ticker_data[ticker_data['최종유닛수'] == u]))
-
-        # 평균 보유일수
-        ticker_data['보유일'] = (ticker_data['청산일'] - ticker_data['진입일']).dt.days + 1
-        avg_holding_days = ticker_data['보유일'].mean()
-
-        # 평균 진입시 ATR%
-        # ATR%는 진입시ATR / 진입가 * 100로 해석 (자산 대비 손절 규모)
-        avg_atr_pct = ticker_data['진입시ATR'].mean() if '진입시ATR' in ticker_data.columns else 0
-
-        # 진입가 추정 (매수원가 / 1유닛주수)
-        ticker_data['진입가'] = ticker_data['매수원가(수수료포함)'] / ticker_data['1유닛주수']
-        entry_prices = ticker_data['진입가'].values
-        atrs = ticker_data['진입시ATR'].values
-
-        # ATR을 진입가 대비 %로 계산
-        atr_pcts = []
-        for atr, entry_price in zip(atrs, entry_prices):
-            if entry_price > 0:
-                atr_pcts.append(atr / entry_price * 100)
-
-        avg_atr_pct = sum(atr_pcts) / len(atr_pcts) if atr_pcts else 0
-
-        stats[str(ticker)] = {
-            "거래수": int(n),
-            "승률": round(win_rate, 2),
-            "평균R배수": round(avg_r, 2),
-            "총손익": int(total_pnl),
-            "유닛별_도달": units_dist,
-            "평균_보유일": round(avg_holding_days, 1),
-            "평균_진입시_ATR_pct": round(avg_atr_pct, 2),
+    stats: dict[str, dict] = {}
+    for ticker, g in df.groupby("종목코드"):
+        n = len(g)
+        wins = int((g["순손익"] > 0).sum())
+        unit_counts = {
+            str(u): int((g["최종유닛수"] == u).sum()) for u in (1, 2, 3, 4)
         }
-
-    # JSON 저장
-    output_path = DATA_DIR / "ticker_stats.json"
-    with open(output_path, 'w', encoding='utf-8') as f:
-        json.dump(stats, f, indent=2, ensure_ascii=False)
-
-    print(f"✓ JSON 저장: {output_path}")
-    print(f"✓ 종목 수: {len(stats)}개")
-
+        stats[str(ticker)] = {
+            "거래수": n,
+            "승률": round(wins / n * 100, 1) if n else 0.0,
+            "평균R": round(float(g["R배수"].mean()), 2) if n else 0.0,
+            "총손익": round(float(g["순손익"].sum()), 0),
+            "유닛별_도달횟수": unit_counts,
+            "평균보유일수": round(float(g["보유일수"].mean()), 1) if n else 0.0,
+            "평균ATR퍼센트": (
+                round(float(g["ATR퍼센트"].dropna().mean()), 2)
+                if g["ATR퍼센트"].notna().any() else None
+            ),
+        }
     return stats
 
-def verify_stats(stats):
-    """통계 검증"""
-    if not stats:
-        return
 
-    print(f"\n【검증】")
+def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--trades", type=Path, default=DEFAULT_TRADES_PATH,
+                         help=f"백테스트 거래 상세 CSV (기본 {DEFAULT_TRADES_PATH})")
+    parser.add_argument("--out", type=Path, default=TICKER_STATS_PATH,
+                         help=f"집계 결과 저장 경로 (기본 {TICKER_STATS_PATH})")
+    args = parser.parse_args()
 
-    # 임의 종목 선택
-    sample_ticker = list(stats.keys())[0]
-    print(f"\n샘플 종목: {sample_ticker}")
-    print(f"  {json.dumps(stats[sample_ticker], indent=2, ensure_ascii=False)}")
+    if not args.trades.exists():
+        logger.error("거래 CSV가 없습니다: %s (backtest.py로 먼저 생성하세요)", args.trades)
+        return 1
 
-    # CSV에서 직접 확인
-    csv_path = DATA_DIR / "backtest_portfolio_trades.csv"
-    df = pd.read_csv(csv_path)
-    df['진입일'] = pd.to_datetime(df['진입일'])
-    df['청산일'] = pd.to_datetime(df['청산일'])
+    df = pd.read_csv(args.trades, dtype={"종목코드": str})
+    if df.empty:
+        logger.warning("거래 CSV가 비어 있습니다 - 빈 집계 결과를 저장합니다: %s", args.trades)
+        stats = {}
+    else:
+        stats = aggregate(df)
 
-    sample_data = df[df['종목코드'] == int(sample_ticker)]
+    args.out.parent.mkdir(parents=True, exist_ok=True)
+    args.out.write_text(
+        json.dumps(stats, ensure_ascii=False, indent=1), encoding="utf-8",
+    )
+    logger.info("종목별 백테스트 집계 저장: %s (%d종목)", args.out, len(stats))
+    return 0
 
-    print(f"\n원본 CSV 데이터 ({len(sample_data)}건):")
-    print(f"  승률: {len(sample_data[sample_data['순손익'] > 0]) / len(sample_data) * 100:.2f}%")
-    print(f"  평균R: {sample_data['R배수'].mean():.2f}")
-    print(f"  총손익: {sample_data['순손익'].sum():,.0f}")
-    print(f"  유닛 분포:")
-    for u in [1, 2, 3, 4]:
-        count = len(sample_data[sample_data['최종유닛수'] == u])
-        print(f"    {u}유닛: {count}건")
-
-    sample_data['보유일'] = (sample_data['청산일'] - sample_data['진입일']).dt.days + 1
-    print(f"  평균 보유일: {sample_data['보유일'].mean():.1f}")
-
-    print(f"\n✓ 검증 완료 (값이 일치하면 정상)")
-
-def main():
-    print("\n" + "="*80)
-    print("【종목별 백테스트 통계 집계】")
-    print("="*80 + "\n")
-
-    stats = build_ticker_stats()
-    verify_stats(stats)
-
-    print("\n" + "="*80)
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

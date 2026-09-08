@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import html
 import io
+import json
 import logging
 import re
 import zipfile
@@ -27,6 +28,7 @@ import requests
 import streamlit as st
 from pykrx import stock as krx
 
+import build_ticker_stats
 import core
 import notion_repo
 import scan_all
@@ -978,6 +980,79 @@ def render_analysis(capital: float, ai_unlocked: bool) -> None:
     render_scroll_to_top_button()
 
 
+@st.cache_data(ttl=86_400, show_spinner=False)
+def load_ticker_stats(_mtime: float) -> dict:
+    """data/ticker_stats.json (build_ticker_stats.py가 만든 종목별 백테스트
+    집계). 인자는 캐시 키용 - 파일이 바뀌면 다시 읽는다.
+
+    이 화면 전용 참고 정보다 - 자동매매 판정에는 쓰지 않는다.
+    """
+    return json.loads(build_ticker_stats.TICKER_STATS_PATH.read_text(encoding="utf-8"))
+
+
+BACKTEST_HISTORY_DISCLAIMER = (
+    "과거 백테스트 이력입니다. 각 유닛 단계 진출률이 43~51%로 사실상 "
+    "무작위에 가깝다는 게 확인됐으므로, 과거 성적이 미래를 예측하지 "
+    "않습니다. 참고용으로만 보세요."
+)
+
+
+def render_backtest_history(code: str) -> None:
+    """[백테스트 이력] 섹션 - 7년 백테스트를 종목별로 집계한 참고 정보.
+
+    data/ticker_stats.json은 build_ticker_stats.py가 data/
+    backtest_portfolio_trades.csv(백테스트 산출물, .gitignore 대상이라
+    로컬에만 있을 수 있음)에서 만든 작은 집계 파일이다 - 이 화면은 그
+    JSON만 읽고, 원본 CSV·백테스트 실행 자체는 건드리지 않는다.
+
+    표시 전용이다: core.py·kis_client.py의 자동매매 판정은 이 통계를
+    전혀 참조하지 않는다.
+    """
+    st.markdown("### ■ 백테스트 이력")
+    st.caption(BACKTEST_HISTORY_DISCLAIMER)
+
+    if not build_ticker_stats.TICKER_STATS_PATH.exists():
+        st.info(
+            "**백테스트 집계 파일 없음** — `data/ticker_stats.json`이 없습니다.  \n"
+            "로컬에서 `python build_ticker_stats.py`로 만들어 커밋하면 여기 표시됩니다."
+        )
+        return
+
+    try:
+        stats = load_ticker_stats(build_ticker_stats.TICKER_STATS_PATH.stat().st_mtime)
+    except Exception as e:
+        st.warning(f"백테스트 집계 파일을 읽지 못했습니다: {e}")
+        return
+
+    row = stats.get(code)
+    if row is None:
+        st.info("이 종목은 백테스트 이력 없음 (7년 구간에 돌파 신호가 없었습니다).")
+        return
+
+    units = row.get("유닛별_도달횟수", {})
+    atr_pct = row.get("평균ATR퍼센트")
+    st.dataframe(
+        {
+            "거래수": [row["거래수"]],
+            "승률": [f"{row['승률']:.1f}%"],
+            "평균R": [f"{row['평균R']:.2f}"],
+            "총손익": [f"{row['총손익']:,.0f}원"],
+            "1유닛 도달": [units.get("1", 0)],
+            "2유닛 도달": [units.get("2", 0)],
+            "3유닛 도달": [units.get("3", 0)],
+            "4유닛 도달": [units.get("4", 0)],
+            "평균 보유일수": [f"{row['평균보유일수']:.1f}일"],
+            "평균 ATR%": [f"{atr_pct:.2f}%" if atr_pct is not None else "—"],
+        },
+        hide_index=True, width="stretch",
+    )
+    st.caption(
+        "돌파 신호 발생 횟수(진입 안 된 것 포함)와 가짜 돌파 비율은 이번 "
+        "집계에 없습니다 — 실제 진입까지 간 거래만 종목별로 남아 있고, "
+        "나머지는 아직 종목별로 측정되지 않았습니다."
+    )
+
+
 def render_stock_report(code: str, capital: float, ai_unlocked: bool) -> None:
     """종목 하나의 전체 리포트(진입 신호~AI 의견)를 그린다.
 
@@ -1309,6 +1384,8 @@ def render_stock_report(code: str, capital: float, ai_unlocked: bool) -> None:
                 "추가매수할 때마다 전체 유닛의 손절선이 (마지막 매수가 − 2×ATR)로 "
                 "함께 올라갑니다."
             )
+
+    render_backtest_history(code)
 
     # ── 차트 ────────────────────────────────────────────────────
     st.markdown("### ■ 차트")
