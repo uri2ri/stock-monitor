@@ -1,16 +1,23 @@
 """build_ticker_stats.py – 백테스트 결과를 종목별로 집계해 저장한다.
 
-원본 거래 상세(data/backtest_portfolio_trades.csv, backtest.py의 3단계
-포트폴리오 시뮬레이션 산출물)는 .gitignore 대상이라 재생성 가능한
-로컬 파일로만 존재하고 스트림릿 클라우드엔 없다. 이 스크립트가 만드는
-작은 집계 결과(data/ticker_stats.json)만 커밋해서, app.py는 그 JSON만
-읽는다 - CSV 자체를 배포 환경에 올릴 필요가 없다.
+원본 거래 상세(data/backtest_portfolio_dev_v2.csv, backtest.py --portfolio
+--period dev --capital-mode fixed 산출물 - 돌파 20일·손절 2.0 ATR·캡
+4/6/12 dev 구간(2019-09~2023-08) 정식 기준선, 479건)는 .gitignore
+대상이라 재생성 가능한 로컬 파일로만 존재하고 스트림릿 클라우드엔 없다.
+이 스크립트가 만드는 작은 집계 결과(data/ticker_stats.json)만 커밋해서,
+app.py는 그 JSON만 읽는다 - CSV 자체를 배포 환경에 올릴 필요가 없다.
+
+※ 예전엔 이름이 애매한 backtest_portfolio_trades.csv를 기본값으로 썼는데,
+그 파일은 dev/holdout 구간 개념이 코드에 생기기도 전에 다른 설정으로
+만들어진 낡은 산출물이었다(진입일이 2023-11~2026-07로 몰려 있어 dev 구간
+종목 다수가 통계에서 통째로 빠짐). data/archive/로 옮기고 이 스크립트는
+이제 dev_v2를 기본으로 읽는다.
 
 종목분석 화면(app.py)의 "백테스트 이력" 섹션 전용 참고 데이터다.
 자동매매 판정(core.py·kis_client.py)은 이 파일의 존재 자체를 모른다.
 
 [집계 범위 – 1차분]
-아래 항목은 backtest_portfolio_trades.csv 컬럼만으로 바로 나온다:
+아래 항목은 backtest_portfolio_dev_v2.csv 컬럼만으로 바로 나온다:
     거래수, 승률, 평균R, 총손익, 유닛별(1~4유닛) 도달 횟수,
     평균 보유일수, 평균 ATR%(진입시ATR ÷ 평균매수단가)
 
@@ -23,7 +30,7 @@
 
 CLI:
     python build_ticker_stats.py
-    python build_ticker_stats.py --trades data/backtest_portfolio_trades.csv \
+    python build_ticker_stats.py --trades data/backtest_portfolio_dev_v2.csv \
         --out data/ticker_stats.json
 """
 
@@ -41,7 +48,7 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(me
 logger = logging.getLogger(__name__)
 
 DATA_DIR = Path(__file__).resolve().parent / "data"
-DEFAULT_TRADES_PATH = DATA_DIR / "backtest_portfolio_trades.csv"
+DEFAULT_TRADES_PATH = DATA_DIR / "backtest_portfolio_dev_v2.csv"
 TICKER_STATS_PATH = DATA_DIR / "ticker_stats.json"
 
 REQUIRED_COLUMNS = [

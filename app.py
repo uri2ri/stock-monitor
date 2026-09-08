@@ -998,12 +998,13 @@ BACKTEST_HISTORY_DISCLAIMER = (
 
 
 def render_backtest_history(code: str) -> None:
-    """[백테스트 이력] 섹션 - 7년 백테스트를 종목별로 집계한 참고 정보.
+    """[백테스트 이력] 섹션 - dev 구간 백테스트를 종목별로 집계한 참고 정보.
 
     data/ticker_stats.json은 build_ticker_stats.py가 data/
-    backtest_portfolio_trades.csv(백테스트 산출물, .gitignore 대상이라
-    로컬에만 있을 수 있음)에서 만든 작은 집계 파일이다 - 이 화면은 그
-    JSON만 읽고, 원본 CSV·백테스트 실행 자체는 건드리지 않는다.
+    backtest_portfolio_dev_v2.csv(dev 구간 2019-09~2023-08 정식 기준선
+    산출물, .gitignore 대상이라 로컬에만 있을 수 있음)에서 만든 작은
+    집계 파일이다 - 이 화면은 그 JSON만 읽고, 원본 CSV·백테스트 실행
+    자체는 건드리지 않는다.
 
     표시 전용이다: core.py·kis_client.py의 자동매매 판정은 이 통계를
     전혀 참조하지 않는다.
@@ -1026,7 +1027,7 @@ def render_backtest_history(code: str) -> None:
 
     row = stats.get(code)
     if row is None:
-        st.info("이 종목은 백테스트 이력 없음 (7년 구간에 돌파 신호가 없었습니다).")
+        st.info("이 종목은 백테스트 이력 없음 (dev 구간(2019-09~2023-08)에 돌파 신호가 없었습니다).")
         return
 
     units = row.get("유닛별_도달횟수", {})
