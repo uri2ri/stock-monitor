@@ -6,189 +6,243 @@
       "name": "코미팜",
       "price": 10020.0,
       "gap_atr": 0.144,
-      "status": "진입가능"
+      "status": "진입가능",
+      "price_10am": 10010.0,
+      "time_10am": "10:00"
     },
     "002380": {
       "time": "09:01",
       "name": "KCC",
       "price": 502000.0,
       "gap_atr": 0.099,
-      "status": "진입가능"
+      "status": "진입가능",
+      "price_10am": 500000.0,
+      "time_10am": "10:00"
     },
     "272450": {
       "time": "09:01",
       "name": "진에어",
       "price": 6220.0,
       "gap_atr": 0.132,
-      "status": "진입가능"
+      "status": "진입가능",
+      "price_10am": 6290.0,
+      "time_10am": "10:00"
     },
     "042700": {
       "time": "09:01",
       "name": "한미반도체",
       "price": 248000.0,
       "gap_atr": 0.337,
-      "status": "진입가능"
+      "status": "진입가능",
+      "price_10am": 251500.0,
+      "time_10am": "10:00"
     },
     "003490": {
       "time": "09:01",
       "name": "대한항공",
       "price": 30550.0,
       "gap_atr": 0.044,
-      "status": "진입가능"
+      "status": "진입가능",
+      "price_10am": 30600.0,
+      "time_10am": "10:00"
     },
     "096770": {
       "time": "09:01",
       "name": "SK이노베이션",
       "price": 142500.0,
       "gap_atr": 0.352,
-      "status": "진입가능"
+      "status": "진입가능",
+      "price_10am": 137100.0,
+      "time_10am": "10:00"
     },
     "034020": {
       "time": "09:01",
       "name": "두산에너빌리티",
       "price": 90900.0,
       "gap_atr": 0.345,
-      "status": "진입가능"
+      "status": "진입가능",
+      "price_10am": 90700.0,
+      "time_10am": "10:00"
     },
     "030190": {
       "time": "09:01",
       "name": "NICE평가정보",
       "price": 16480.0,
       "gap_atr": 0.054,
-      "status": "진입가능"
+      "status": "진입가능",
+      "price_10am": 15870.0,
+      "time_10am": "10:00"
     },
     "023530": {
       "time": "09:01",
       "name": "롯데쇼핑",
       "price": 115500.0,
       "gap_atr": 0.154,
-      "status": "진입가능"
+      "status": "진입가능",
+      "price_10am": 120500.0,
+      "time_10am": "10:00"
     },
     "035890": {
       "time": "09:01",
       "name": "서희건설",
       "price": 2515.0,
       "gap_atr": 1.055,
-      "status": "추격금지"
+      "status": "추격금지",
+      "price_10am": 2440.0,
+      "time_10am": "10:00"
     },
     "000990": {
       "time": "09:01",
       "name": "DB하이텍",
       "price": 108600.0,
       "gap_atr": 0.581,
-      "status": "추격금지"
+      "status": "추격금지",
+      "price_10am": 106900.0,
+      "time_10am": "10:00"
     },
     "011790": {
       "time": "09:01",
       "name": "SKC",
       "price": 92800.0,
       "gap_atr": 0.142,
-      "status": "진입가능"
+      "status": "진입가능",
+      "price_10am": 88700.0,
+      "time_10am": "10:00"
     },
     "064290": {
       "time": "09:03",
       "name": "인텍플러스",
       "price": 42200.0,
       "gap_atr": 0.348,
-      "status": "진입가능"
+      "status": "진입가능",
+      "price_10am": 42250.0,
+      "time_10am": "10:00"
     },
     "294630": {
       "time": "09:03",
       "name": "서남",
       "price": 3085.0,
       "gap_atr": 0.09,
-      "status": "진입가능"
+      "status": "진입가능",
+      "price_10am": 2965.0,
+      "time_10am": "10:00"
     },
     "035250": {
       "time": "09:03",
       "name": "강원랜드",
       "price": 14910.0,
       "gap_atr": 0.128,
-      "status": "진입가능"
+      "status": "진입가능",
+      "price_10am": 14880.0,
+      "time_10am": "10:00"
     },
     "086790": {
       "time": "09:03",
       "name": "하나금융지주",
       "price": 141300.0,
       "gap_atr": 0.036,
-      "status": "진입가능"
+      "status": "진입가능",
+      "price_10am": 137200.0,
+      "time_10am": "10:00"
     },
     "306200": {
       "time": "09:03",
       "name": "세아제강",
       "price": 150200.0,
       "gap_atr": 0.182,
-      "status": "진입가능"
+      "status": "진입가능",
+      "price_10am": 145400.0,
+      "time_10am": "10:00"
     },
     "000430": {
       "time": "09:10",
       "name": "대원강업",
       "price": 4660.0,
       "gap_atr": 0.383,
-      "status": "진입가능"
+      "status": "진입가능",
+      "price_10am": 4580.0,
+      "time_10am": "10:00"
     },
     "121440": {
       "time": "09:10",
       "name": "골프존홀딩스",
       "price": 8430.0,
       "gap_atr": 0.2,
-      "status": "진입가능"
+      "status": "진입가능",
+      "price_10am": 8100.0,
+      "time_10am": "10:00"
     },
     "000660": {
       "time": "09:13",
       "name": "SK하이닉스",
       "price": 1812000.0,
       "gap_atr": 0.14,
-      "status": "진입가능"
+      "status": "진입가능",
+      "price_10am": 1856000.0,
+      "time_10am": "10:00"
     },
     "279570": {
       "time": "09:13",
       "name": "케이뱅크",
       "price": 5830.0,
       "gap_atr": 0.108,
-      "status": "진입가능"
+      "status": "진입가능",
+      "price_10am": 5740.0,
+      "time_10am": "10:00"
     },
     "493330": {
       "time": "09:20",
       "name": "지에프아이",
       "price": 15100.0,
       "gap_atr": 0.094,
-      "status": "진입가능"
+      "status": "진입가능",
+      "price_10am": 14590.0,
+      "time_10am": "10:00"
     },
     "020560": {
       "time": "09:20",
       "name": "아시아나항공",
       "price": 8180.0,
       "gap_atr": 0.032,
-      "status": "진입가능"
+      "status": "진입가능",
+      "price_10am": 8180.0,
+      "time_10am": "10:00"
     },
     "034730": {
       "time": "09:20",
       "name": "SK",
       "price": 624000.0,
       "gap_atr": 0.091,
-      "status": "진입가능"
+      "status": "진입가능",
+      "price_10am": 622000.0,
+      "time_10am": "10:00"
     },
     "425420": {
       "time": "09:30",
       "name": "티에프이",
       "price": 54000.0,
       "gap_atr": 0.078,
-      "status": "진입가능"
+      "status": "진입가능",
+      "price_10am": 53700.0,
+      "time_10am": "10:00"
     },
     "004310": {
       "time": "09:43",
       "name": "현대약품",
       "price": 9180.0,
       "gap_atr": 0.165,
-      "status": "진입가능"
+      "status": "진입가능",
+      "price_10am": 9440.0,
+      "time_10am": "10:00"
     },
     "162300": {
       "time": "09:50",
       "name": "신스틸",
       "price": 2250.0,
       "gap_atr": 0.061,
-      "status": "진입가능"
+      "status": "진입가능",
+      "price_10am": 2205.0,
+      "time_10am": "10:00"
     }
   }
 }
