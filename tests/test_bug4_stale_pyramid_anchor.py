@@ -51,9 +51,11 @@ def _build_t4(all_dates: pd.DatetimeIndex) -> tuple[pd.DataFrame, dict]:
     rows.append(row(trigger2_close, trigger2_close + 100, trigger2_close - 100,
                      trigger2_close))  # idx 87 - 2유닛 트리거일
 
-    # 2유닛 체결일 - 큰 갭업 시가로 체결시켜 "이론 트리거가"와 "실제 체결가"를
-    # 크게 벌린다(현실의 슬리피지·갭상승을 과장한 것).
-    gap = 3 * step
+    # 2유닛 체결일 - 갭업 시가로 체결시켜 "이론 트리거가"와 "실제 체결가"를
+    # 벌린다(현실의 슬리피지·갭상승을 표현한 것). 체결 시 재검증(추격
+    # 허용범위 PYRAMID_MAX_CHASE_ATR)에 걸려 이 매수 자체가 취소되면 안
+    # 되므로, 허용범위(다음 기준가 + step) 안쪽으로 갭을 잡는다.
+    gap = 0.5 * step
     unit2_fill_open = trigger2_close + gap
     rows.append(row(unit2_fill_open, unit2_fill_open + 100, unit2_fill_open - 100,
                      unit2_fill_open))  # idx 88
@@ -131,4 +133,4 @@ def test_pyramid_anchor_follows_last_actual_fill_not_entry_grid(monkeypatch):
     assert fill3 == pytest.approx(
         (info["new_anchor_unit3_trigger"] + 2.0) * (1 + backtest.SLIPPAGE), rel=1e-6
     )
-    assert abs(fill3 - info["old_grid_unit3_trigger"]) > info["step"]
+    assert abs(fill3 - info["old_grid_unit3_trigger"]) > info["step"] * 0.5
