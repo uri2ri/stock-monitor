@@ -6,182 +6,234 @@
       "name": "케이뱅크",
       "price": 5820.0,
       "gap_atr": 0.054,
-      "status": "진입가능"
+      "status": "진입가능",
+      "price_10am": 5870.0,
+      "time_10am": "10:01"
     },
     "014950": {
       "time": "09:01",
       "name": "삼익제약",
       "price": 8960.0,
       "gap_atr": 0.203,
-      "status": "진입가능"
+      "status": "진입가능",
+      "price_10am": 8850.0,
+      "time_10am": "10:01"
     },
     "000990": {
       "time": "09:01",
       "name": "DB하이텍",
       "price": 111900.0,
       "gap_atr": 0.991,
-      "status": "추격금지"
+      "status": "추격금지",
+      "price_10am": 114800.0,
+      "time_10am": "10:01"
     },
     "002380": {
       "time": "09:01",
       "name": "KCC",
       "price": 506000.0,
       "gap_atr": 0.162,
-      "status": "진입가능"
+      "status": "진입가능",
+      "price_10am": 506000.0,
+      "time_10am": "10:01"
     },
     "035250": {
       "time": "09:01",
       "name": "강원랜드",
       "price": 14900.0,
       "gap_atr": 0.065,
-      "status": "진입가능"
+      "status": "진입가능",
+      "price_10am": 14780.0,
+      "time_10am": "10:01"
     },
     "012630": {
       "time": "09:01",
       "name": "HDC",
       "price": 24000.0,
       "gap_atr": 0.435,
-      "status": "진입가능"
+      "status": "진입가능",
+      "price_10am": 24550.0,
+      "time_10am": "10:01"
     },
     "042700": {
       "time": "09:01",
       "name": "한미반도체",
       "price": 251000.0,
       "gap_atr": 0.142,
-      "status": "진입가능"
+      "status": "진입가능",
+      "price_10am": 248000.0,
+      "time_10am": "10:01"
     },
     "306200": {
       "time": "09:01",
       "name": "세아제강",
       "price": 150000.0,
       "gap_atr": 0.153,
-      "status": "진입가능"
+      "status": "진입가능",
+      "price_10am": 147100.0,
+      "time_10am": "10:01"
     },
     "019990": {
       "time": "09:01",
       "name": "에너토크",
       "price": 5740.0,
       "gap_atr": 0.302,
-      "status": "진입가능"
+      "status": "진입가능",
+      "price_10am": 5540.0,
+      "time_10am": "10:01"
     },
     "024060": {
       "time": "09:01",
       "name": "흥구석유",
       "price": 12340.0,
       "gap_atr": 0.012,
-      "status": "진입가능"
+      "status": "진입가능",
+      "price_10am": 12100.0,
+      "time_10am": "10:01"
     },
     "098120": {
       "time": "09:03",
       "name": "마이크로컨텍솔",
       "price": 47500.0,
       "gap_atr": 0.16,
-      "status": "진입가능"
+      "status": "진입가능",
+      "price_10am": 49250.0,
+      "time_10am": "10:01"
     },
     "267250": {
       "time": "09:03",
       "name": "HD현대",
       "price": 253500.0,
       "gap_atr": 0.256,
-      "status": "진입가능"
+      "status": "진입가능",
+      "price_10am": 252000.0,
+      "time_10am": "10:01"
     },
     "011700": {
       "time": "09:03",
       "name": "한신기계",
       "price": 2705.0,
       "gap_atr": 0.029,
-      "status": "진입가능"
+      "status": "진입가능",
+      "price_10am": 2680.0,
+      "time_10am": "10:01"
     },
     "000720": {
       "time": "09:03",
       "name": "현대건설",
       "price": 138700.0,
       "gap_atr": 0.317,
-      "status": "진입가능"
+      "status": "진입가능",
+      "price_10am": 136800.0,
+      "time_10am": "10:01"
     },
     "108380": {
       "time": "09:03",
       "name": "대양전기공업",
       "price": 19160.0,
       "gap_atr": 0.181,
-      "status": "진입가능"
+      "status": "진입가능",
+      "price_10am": 18910.0,
+      "time_10am": "10:01"
     },
     "204270": {
       "time": "09:03",
       "name": "제이앤티씨",
       "price": 21700.0,
       "gap_atr": 0.228,
-      "status": "진입가능"
+      "status": "진입가능",
+      "price_10am": 21900.0,
+      "time_10am": "10:01"
     },
     "067290": {
       "time": "09:10",
       "name": "JW신약",
       "price": 3940.0,
       "gap_atr": 0.114,
-      "status": "진입가능"
+      "status": "진입가능",
+      "price_10am": 3895.0,
+      "time_10am": "10:01"
     },
     "004020": {
       "time": "09:10",
       "name": "현대제철",
       "price": 33550.0,
       "gap_atr": 0.176,
-      "status": "진입가능"
+      "status": "진입가능",
+      "price_10am": 33150.0,
+      "time_10am": "10:01"
     },
     "000430": {
       "time": "09:10",
       "name": "대원강업",
       "price": 4650.0,
       "gap_atr": 0.145,
-      "status": "진입가능"
+      "status": "진입가능",
+      "price_10am": 4665.0,
+      "time_10am": "10:01"
     },
     "388050": {
       "time": "09:10",
       "name": "지투파워",
       "price": 11610.0,
       "gap_atr": 0.189,
-      "status": "진입가능"
+      "status": "진입가능",
+      "price_10am": 11290.0,
+      "time_10am": "10:01"
     },
     "388790": {
       "time": "09:10",
       "name": "라이콤",
       "price": 4770.0,
       "gap_atr": 0.661,
-      "status": "추격금지"
+      "status": "추격금지",
+      "price_10am": 4830.0,
+      "time_10am": "10:01"
     },
     "062040": {
       "time": "09:13",
       "name": "산일전기",
       "price": 210000.0,
       "gap_atr": 0.174,
-      "status": "진입가능"
+      "status": "진입가능",
+      "price_10am": 210000.0,
+      "time_10am": "10:01"
     },
     "052860": {
       "time": "09:23",
       "name": "아이앤씨",
       "price": 7050.0,
       "gap_atr": 0.045,
-      "status": "진입가능"
+      "status": "진입가능",
+      "price_10am": 6930.0,
+      "time_10am": "10:01"
     },
     "004100": {
       "time": "09:40",
       "name": "태양금속",
       "price": 2845.0,
       "gap_atr": 0.041,
-      "status": "진입가능"
+      "status": "진입가능",
+      "price_10am": 2835.0,
+      "time_10am": "10:01"
     },
     "064290": {
       "time": "09:40",
       "name": "인텍플러스",
       "price": 44050.0,
       "gap_atr": 0.097,
-      "status": "진입가능"
+      "status": "진입가능",
+      "price_10am": 44600.0,
+      "time_10am": "10:01"
     },
     "294870": {
       "time": "09:43",
       "name": "IPARK현대산업개발",
       "price": 23550.0,
       "gap_atr": 0.06,
-      "status": "진입가능"
+      "status": "진입가능",
+      "price_10am": 23600.0,
+      "time_10am": "10:01"
     }
   }
 }
