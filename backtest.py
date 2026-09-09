@@ -1024,16 +1024,20 @@ def _day_open(ticker: str, ts: pd.Timestamp) -> Optional[float]:
     row = _tradable_row(ticker, ts)
     if row is None:
         return None
-    o = float(row["시가"])
-    return o if _is_valid_price(o) else None
+    o = row["시가"]
+    # 유효성 확인 전에는 float()로 바꾸지 않는다 - 값이 None이면(NaN이
+    # 아니라) float(None)이 그 자리에서 TypeError를 던져 여기서 걸러야 할
+    # 무효 가격이 오히려 예외로 시뮬레이션을 죽인다. _is_valid_price()가
+    # 변환 자체를 자기 try/except 안에서 하므로 원본 값을 그대로 넘긴다.
+    return float(o) if _is_valid_price(o) else None
 
 
 def _day_close(ticker: str, ts: pd.Timestamp) -> Optional[float]:
     row = _tradable_row(ticker, ts)
     if row is None:
         return None
-    c = float(row["종가"])
-    return c if _is_valid_price(c) else None
+    c = row["종가"]
+    return float(c) if _is_valid_price(c) else None
 
 
 def run_portfolio_backtest(tickers: list[str], start: date, end: date,
@@ -1283,7 +1287,11 @@ def run_portfolio_backtest(tickers: list[str], start: date, end: date,
                 # (reanchor)된 뒤로는 pyramid_anchor가 그 값에 그대로 갇혀
                 # 이후 실제 체결가를 영영 못 따라간다.
                 pos.pyramid_anchor = fill
-                last_known_close[ticker] = fill
+                # last_known_close는 여기서 갱신하지 않는다 - 진입 때 이미
+                # 채워져 있고("마지막 유효 종가" 없음 대비), 그 뒤로는 매일
+                # 3)번이 실제 종가로 계속 갱신한다. 여기서 체결가로 덮으면
+                # 당일 종가가 없을 때 "마지막 유효 종가"가 아니라 "방금 산
+                # 체결가"로 전체 보유수량을 평가하게 돼 요청한 규칙과 달라진다.
                 if ticker == DEBUG_TICKER:
                     print(f"[DEBUG {ticker}] {today} 추가매수 체결 -> {pos.num_units}유닛 fill={fill:.1f}")
 
