@@ -97,6 +97,7 @@ from __future__ import annotations
 
 import argparse
 import logging
+import math
 import os
 import sys
 from dataclasses import dataclass
@@ -120,6 +121,20 @@ BACKTEST_CACHE_PATH = DATA_DIR / "backtest_ohlcv.parquet"
 SLIPPAGE = 0.003        # 슬리피지 0.3% - 매수는 불리하게(비싸게), 매도는 불리하게(싸게)
 COST_RATE = 0.0025      # 세금+수수료 합산 0.25% (매수·매도 각각 부과)
 STARTING_CAPITAL = 10_000_000  # 계좌 시작 1000만원. 복리 반영 안 함.
+
+
+def _reserved_buy_cost(price: float, shares: int) -> float:
+    """트리거 시점에 이 가격·수량을 나중에 실제로 매수하면 대략 얼마
+    현금이 나갈지 추정한다(슬리피지+수수료 포함).
+
+    실제 체결은 내일 시가에 슬리피지·수수료가 더 붙어(fill = op*(1+SLIPPAGE),
+    total_needed = fill*shares*(1+COST_RATE)) 트리거가(오늘 종가)보다 항상
+    더 큰 현금이 나간다. 예약 단계에서 이 마진을 빼고 원금만 잡으면, 같은
+    날 여러 후보가 현금 여유를 나눠 쓸 때 실제로는 감당 못 할 만큼 현금을
+    예약해줄 수 있다 - 그래서 여기서도 같은 배율을 곱해 보수적으로 잡는다.
+    """
+    return price * shares * (1 + SLIPPAGE) * (1 + COST_RATE)
+
 
 DEFAULT_TICKER = "005930"       # 삼성전자 - 전 구간 커버, 상장폐지 없음
 # 기간은 --period(dev/holdout/full)가 정한다. --start/--end는 그 안에서 좁힐 때만.
@@ -795,6 +810,9 @@ def run_universe_compare(tickers: list[str], start: date, end: date,
 MAX_STOCK_PRICE = 150_000      # 주가 상한 - kis_client.py와 동일
 MAX_UNIT_RATIO = 0.20          # 유닛금액이 계좌평가액의 이 비율 넘으면 제외
 MAX_DAILY_ENTRIES = 3          # 일일 신규 진입(1유닛) 상한 - 추가매수는 별도(제한 없음)
+PYRAMID_MAX_CHASE_ATR = 0.5    # kis_client.py의 동명 상수와 같은 값 - 값을 그대로 복제해
+                                # 쓴다(kis_client import는 안 함 - 그쪽은 실거래 인증 등
+                                # 임포트 시점 부작용이 있어 백테스트에서 건드리지 않는다).
 SECTOR_REFRESH_DAYS = 30       # 업종 맵 갱신 주기(달력일). 실운영은 7일이지만 과거
                                 # 시점 업종 맵 1회 조회에 KRX 로그인 후 약 60~70초가
                                 # 걸려(3·4단계 조사에서 실측), 7일 주기로는 3년·전종목
@@ -866,12 +884,17 @@ class PortfolioPosition:
     sector: str
     entry_atr: int
     unit_shares: int
-    pyramid_plan: list                      # core.build_pyramid() 결과, 진입 시점에 고정
     units: list = None
     trailing_high: Optional[float] = None
     stop_loss: Optional[float] = None
     total_invested: float = 0.0             # 매수원가+매수수수료 누적 (실제로 나간 현금)
     entry_gap_atr: float = 0.0              # 1유닛 진입 신호일의 gap_atr (진단용, 고정)
+    pyramid_anchor: Optional[float] = None  # kis_client.py의 pyramid_anchor와 동일 개념 -
+                                             # 급등으로 여러 레벨을 건너뛸 때만 설정된다.
+                                             # None이면 다음 추가매수 기준가는 last_buy_price
+                                             # (직전 실제 체결가) - 진입가에 고정된 그리드가
+                                             # 아니라 매 체결마다 기준가가 갱신된다(kis_client.py
+                                             # _pyramid_plan()과 동일 로직, 백테스트 전용 재구현).
     breakeven_engaged: bool = False         # breakeven_ratchet 모드에서 본전 하한이 한 번이라도 core 자체 손절선보다 높았던 적이 있는지
     exit_verdict: str = ""                  # "손절"|"추세청산"|"본전하한" - 청산 트리거 시점에 채워짐
 
@@ -968,18 +991,53 @@ def _entry_signal_for(ticker: str, as_of: date) -> Optional[dict]:
     return {"ticker": ticker, "atr": atr, "price": sig.current_price, "gap_atr": gap_atr}
 
 
-def _day_open(ticker: str, ts: pd.Timestamp) -> Optional[float]:
+def _is_valid_price(x) -> bool:
+    """None·NaN·inf·0 이하는 전부 체결 불가 가격으로 본다."""
+    try:
+        v = float(x)
+    except (TypeError, ValueError):
+        return False
+    return math.isfinite(v) and v > 0
+
+
+def _tradable_row(ticker: str, ts: pd.Timestamp) -> Optional[pd.Series]:
+    """이 날짜에 실제로 체결 가능한 행인지 확인한다.
+
+    시세가 아예 없거나(ts not in index), 거래량이 0 이하(거래정지 등
+    명시적 거래 불가 - 과거값을 그대로 들고 있는 행도 있을 수 있어 시가·
+    종가 존재만으로는 못 거른다)면 체결 불가로 본다.
+    """
     df = _ALL_DFS[ticker]
     if ts not in df.index:
         return None
-    return float(df.loc[ts, "시가"])
+    row = df.loc[ts]
+    try:
+        volume = float(row["거래량"])
+    except (TypeError, ValueError):
+        return None
+    if not math.isfinite(volume) or volume <= 0:
+        return None
+    return row
+
+
+def _day_open(ticker: str, ts: pd.Timestamp) -> Optional[float]:
+    row = _tradable_row(ticker, ts)
+    if row is None:
+        return None
+    o = row["시가"]
+    # 유효성 확인 전에는 float()로 바꾸지 않는다 - 값이 None이면(NaN이
+    # 아니라) float(None)이 그 자리에서 TypeError를 던져 여기서 걸러야 할
+    # 무효 가격이 오히려 예외로 시뮬레이션을 죽인다. _is_valid_price()가
+    # 변환 자체를 자기 try/except 안에서 하므로 원본 값을 그대로 넘긴다.
+    return float(o) if _is_valid_price(o) else None
 
 
 def _day_close(ticker: str, ts: pd.Timestamp) -> Optional[float]:
-    df = _ALL_DFS[ticker]
-    if ts not in df.index:
+    row = _tradable_row(ticker, ts)
+    if row is None:
         return None
-    return float(df.loc[ts, "종가"])
+    c = row["종가"]
+    return float(c) if _is_valid_price(c) else None
 
 
 def run_portfolio_backtest(tickers: list[str], start: date, end: date,
@@ -1101,6 +1159,7 @@ def run_portfolio_backtest(tickers: list[str], start: date, end: date,
 
     sector_map: dict[str, str] = {}
     sector_map_asof: Optional[date] = None
+    last_known_close: dict[str, float] = {}
 
     cash = starting_capital
 
@@ -1116,13 +1175,22 @@ def run_portfolio_backtest(tickers: list[str], start: date, end: date,
                                i, len(sim_days), today, cash, len(positions))
 
             # 1) 어제 확정된 청산·진입·추가매수를 오늘 시가로 체결.
-            for ticker, reason in pending_exits.items():
-                pos = positions.pop(ticker, None)
+            #    청산 요청은 체결 성공 전까지는 pending_exits에 그대로 남겨둔다 -
+            #    거래정지 등으로 오늘 체결 못 하면 지우지 않고 다음 거래
+            #    재개일 시가에 "정확히 한 번" 체결될 때까지 재시도한다(그 사이
+            #    가격이 반등해도 어제 이미 내린 청산 결정을 번복하지 않는다 -
+            #    4)번은 청산 대기 중인 종목을 재판정·추가매수 모두 건너뛴다).
+            for ticker in list(pending_exits.keys()):
+                reason = pending_exits[ticker]
+                pos = positions.get(ticker)
                 if pos is None:
+                    del pending_exits[ticker]
                     continue
                 op = _day_open(ticker, ts)
                 if op is None:
-                    continue  # 거래정지 등 - 단순화를 위해 재시도하지 않고 포기
+                    continue  # 거래정지 등 - 요청·포지션 모두 유지, 내일 다시 시도
+                del pending_exits[ticker]
+                positions.pop(ticker)
                 fill = op * (1 - SLIPPAGE)
                 proceeds = fill * pos.total_shares * (1 - COST_RATE)
                 cash += proceeds
@@ -1137,9 +1205,9 @@ def run_portfolio_backtest(tickers: list[str], start: date, end: date,
                 if ticker == DEBUG_TICKER:
                     print(f"[DEBUG {ticker}] {today} 청산 체결 fill={fill:.1f} "
                           f"units={pos.num_units} proceeds={proceeds:.0f}")
-            pending_exits.clear()
 
-            for ticker, info in pending_entries.items():
+            for ticker in list(pending_entries.keys()):
+                info = pending_entries.pop(ticker)
                 if ticker in positions:
                     continue
                 op = _day_open(ticker, ts)
@@ -1150,41 +1218,99 @@ def run_portfolio_backtest(tickers: list[str], start: date, end: date,
                 if not unlimited_cash and cash < total_needed:
                     rejections["현금부족"] += 1
                     continue
+                # 체결 직전 재검증 - 어제 판단 이후 다른 포지션이 먼저 체결돼
+                # 상관군·전체 유닛수가 이미 달라졌을 수 있다. 지금 실제
+                # positions 기준으로 캡을 다시 본다(예약 시점 running 카운터는
+                # "같은 날 겹치는 후보"만 다루지, 하루 지나 바뀐 실제 상태는
+                # 반영 못 한다).
+                sector = info["sector"]
+                group_now = sum(
+                    p.num_units for t2, p in positions.items()
+                    if sector and sector_map.get(t2, p.sector) == sector
+                )
+                total_now = sum(p.num_units for p in positions.values())
+                if (sector and group_now + 1 > core.MAX_UNITS_GROUP) or \
+                   (total_now + 1 > core.MAX_UNITS_TOTAL):
+                    rejections["상관군캡"] += 1
+                    continue
                 cash -= total_needed
-                plan = core.build_pyramid(fill, info["atr"], info["shares"],
-                                          capital=info["account_size"], max_units=core.MAX_UNITS)
                 pos = PortfolioPosition(
                     ticker=ticker, sector=info["sector"], entry_atr=info["atr"],
-                    unit_shares=info["shares"], pyramid_plan=plan,
+                    unit_shares=info["shares"],
                     total_invested=total_needed, entry_gap_atr=info["gap_atr"],
                 )
                 pos.units.append(PortfolioUnit(unit=1, shares=info["shares"],
                                                buy_price=fill, fill_date=today))
                 positions[ticker] = pos
+                # 진입 당일 종가가 없어도(휴장 등) 계좌평가액이 이 포지션을
+                # 0원 취급하지 않도록, 실제 체결가를 잠정 기준값으로 남긴다.
+                last_known_close[ticker] = fill
                 if ticker == DEBUG_TICKER:
                     print(f"[DEBUG {ticker}] {today} 진입 체결 1유닛 fill={fill:.1f} "
                           f"atr={info['atr']} shares={info['shares']}")
-            pending_entries.clear()
 
-            for ticker in pending_adds:
+            for ticker in list(pending_adds.keys()):
+                del pending_adds[ticker]
                 pos = positions.get(ticker)
                 if pos is None or pos.num_units >= core.MAX_UNITS:
                     continue
                 op = _day_open(ticker, ts)
                 if op is None:
                     continue
+                # 체결 직전 재검증(1) - 트리거는 어제 종가 기준이었지만 실제
+                # 체결은 오늘 시가다. 그 사이 갭다운으로 아직 기준가 미달이거나
+                # 갭업으로 추격 허용범위(PYRAMID_MAX_CHASE_ATR)를 벗어났으면
+                # 이번 체결은 취소한다 - 어제 판단을 그대로 밀어붙이지 않고
+                # 오늘 4)번 재평가에 새로 맡긴다.
+                base = pos.pyramid_anchor if pos.pyramid_anchor is not None else pos.last_buy_price
+                step = core.PYRAMID_ATR_STEP * pos.entry_atr
+                next_price = base + step
+                if op < next_price:
+                    if ticker == DEBUG_TICKER:
+                        print(f"[DEBUG {ticker}] {today} 추가매수 체결 취소(갭다운 "
+                              f"시가={op:.0f} < 기준가={next_price:.0f}) - 오늘 재평가")
+                    continue
+                if op > next_price + PYRAMID_MAX_CHASE_ATR * pos.entry_atr:
+                    skipped = int((op - base) // step)
+                    pos.pyramid_anchor = base + skipped * step
+                    if ticker == DEBUG_TICKER:
+                        print(f"[DEBUG {ticker}] {today} 추가매수 체결 취소(갭업으로 "
+                              f"추격범위 초과) - 기준가만 {pos.pyramid_anchor:,.0f}으로 올림")
+                    continue
                 fill = op * (1 + SLIPPAGE)
                 total_needed = fill * pos.unit_shares * (1 + COST_RATE)
                 if not unlimited_cash and cash < total_needed:
                     rejections["현금부족"] += 1
                     continue
+                # 체결 직전 재검증(2) - 상관군·전체 유닛 한도도 지금 실제
+                # positions 기준으로 다시 본다(이유는 신규진입 쪽과 동일).
+                sector = sector_map.get(ticker, pos.sector)
+                group_now = sum(
+                    p.num_units for t2, p in positions.items()
+                    if sector and sector_map.get(t2, p.sector) == sector
+                )
+                total_now = sum(p.num_units for p in positions.values())
+                if (sector and group_now + 1 > core.MAX_UNITS_GROUP) or \
+                   (total_now + 1 > core.MAX_UNITS_TOTAL):
+                    rejections["상관군캡"] += 1
+                    continue
                 cash -= total_needed
                 pos.total_invested += total_needed
                 pos.units.append(PortfolioUnit(unit=pos.num_units + 1, shares=pos.unit_shares,
                                                buy_price=fill, fill_date=today))
+                # 실제로 샀으므로 기준가도 체결가로 맞춘다(kis_client.py의
+                # add_auto_holding_units와 동일 - "실제로 샀으므로 기준가도
+                # 체결가로 맞춘다"). 이걸 안 하면 한 번이라도 재기준
+                # (reanchor)된 뒤로는 pyramid_anchor가 그 값에 그대로 갇혀
+                # 이후 실제 체결가를 영영 못 따라간다.
+                pos.pyramid_anchor = fill
+                # last_known_close는 여기서 갱신하지 않는다 - 진입 때 이미
+                # 채워져 있고("마지막 유효 종가" 없음 대비), 그 뒤로는 매일
+                # 3)번이 실제 종가로 계속 갱신한다. 여기서 체결가로 덮으면
+                # 당일 종가가 없을 때 "마지막 유효 종가"가 아니라 "방금 산
+                # 체결가"로 전체 보유수량을 평가하게 돼 요청한 규칙과 달라진다.
                 if ticker == DEBUG_TICKER:
                     print(f"[DEBUG {ticker}] {today} 추가매수 체결 -> {pos.num_units}유닛 fill={fill:.1f}")
-            pending_adds.clear()
 
             # 2) 업종 맵 - 달마다 한 번만 갱신 (사유는 클래스 상단 주석 참고).
             if sector_map_asof is None or (today - sector_map_asof).days >= SECTOR_REFRESH_DAYS:
@@ -1201,12 +1327,37 @@ def run_portfolio_backtest(tickers: list[str], start: date, end: date,
             for ticker, pos in positions.items():
                 c = _day_close(ticker, ts)
                 if c is not None:
+                    last_known_close[ticker] = c
+                else:
+                    # 거래정지 등으로 당일 시세가 없다 - 0원 취급(자산이 그날
+                    # 증발한 것처럼 보이는 것)하지 않고 마지막으로 확인된
+                    # 종가를 그대로 들고 간다.
+                    c = last_known_close.get(ticker)
+                if c is not None:
                     mtm_equity += c * pos.total_shares
             equity_curve.append((today, mtm_equity))
             account_size = fixed_account_size if fixed_account_size is not None else mtm_equity
 
             # 4) 보유종목 판정 - 청산(evaluate_holding) 또는 피라미딩 트리거.
+            #    상관군·전체 유닛 캡과 현금은 이날 안에서 실행 순서대로 "예약"해
+            #    나간다 - 같은 날 여러 종목이 동시에 추가매수·신규진입 트리거를
+            #    맞아도, 아직 체결 전(내일 시가) 상태를 서로 못 보고 각자 캡을
+            #    통과해버려 다음날 체결하면 합계가 캡을 넘는 이중승인을 막기 위함.
+            #    5)번 신규진입 스캔도 이 값을 그대로 이어받아 계속 갱신한다.
+            group_units_running: dict[str, int] = {}
+            for t2, p in positions.items():
+                s = sector_map.get(t2, p.sector)
+                if s:
+                    group_units_running[s] = group_units_running.get(s, 0) + p.num_units
+            total_units_running = sum(p.num_units for p in positions.values())
+            cash_running = cash
+
             for ticker, pos in list(positions.items()):
+                if ticker in pending_exits:
+                    # 이미 청산이 확정돼 체결(다음 거래 재개일 시가)만 기다리는
+                    # 중이다 - 그 사이 가격이 반등해도 어제 이미 내린 결정을
+                    # 다시 판정하지 않고, 추가매수도 절대 하지 않는다.
+                    continue
                 c = _day_close(ticker, ts)
                 if c is None:
                     continue
@@ -1254,9 +1405,26 @@ def run_portfolio_backtest(tickers: list[str], start: date, end: date,
                         print(f"[DEBUG {ticker}] {today} 청산 트리거({pos.exit_verdict}) -> {pending_exits[ticker]}")
                     continue
                 if pos.num_units < core.MAX_UNITS:
-                    next_step = pos.pyramid_plan[pos.num_units]  # 0-idx: 다음 유닛 단계
-                    if c >= next_step.buy_price:
-                        if c > MAX_STOCK_PRICE:
+                    # 기준가는 kis_client.py _pyramid_plan()과 동일하게 "직전 실제
+                    # 체결가"(또는 급등을 건너뛴 재기준값)다 - 진입가에서 고정된
+                    # 그리드(core.build_pyramid)를 쓰지 않는다. 슬리피지로 체결가가
+                    # 이론가에서 벗어나면 다음 유닛 기준가도 그 실제 체결가를 따라
+                    # 옮겨가야, 실제 운용에서 매일 안 사던 가격에 갑자기 사는 일이
+                    # 없다.
+                    base = pos.pyramid_anchor if pos.pyramid_anchor is not None else pos.last_buy_price
+                    step = core.PYRAMID_ATR_STEP * pos.entry_atr
+                    next_price = base + step
+                    if c >= next_price:
+                        if c > next_price + PYRAMID_MAX_CHASE_ATR * pos.entry_atr:
+                            # 하루 사이 여러 레벨을 건너뛸 만큼 급등 - 나쁜 가격에
+                            # 쫓아가 사지 않고, 기준가만 현재가 아래 가장 가까운
+                            # 레벨로 올려 다음 창을 연다(kis_client.py와 동일).
+                            skipped = int((c - base) // step)
+                            pos.pyramid_anchor = base + skipped * step
+                            if ticker == DEBUG_TICKER:
+                                print(f"[DEBUG {ticker}] {today} 급등으로 {skipped}개 레벨 통과 - "
+                                      f"매수 없이 기준가만 {pos.pyramid_anchor:,.0f}으로 올림")
+                        elif c > MAX_STOCK_PRICE:
                             rejections["가격상한"] += 1
                             if ticker == DEBUG_TICKER:
                                 print(f"[DEBUG {ticker}] {today} 피라미딩 트리거했으나 가격상한 제외")
@@ -1269,21 +1437,27 @@ def run_portfolio_backtest(tickers: list[str], start: date, end: date,
                                           f"(unit_amount={unit_amount:.0f} > {account_size*MAX_UNIT_RATIO:.0f})")
                             else:
                                 sector = sector_map.get(ticker, pos.sector)
-                                group_units = sum(
-                                    p.num_units for t2, p in positions.items()
-                                    if sector and sector_map.get(t2, p.sector) == sector
-                                )
-                                total_units = sum(p.num_units for p in positions.values())
-                                if (sector and group_units + 1 > core.MAX_UNITS_GROUP) or \
-                                   (total_units + 1 > core.MAX_UNITS_TOTAL):
+                                group_after = group_units_running.get(sector, 0) + 1
+                                total_after = total_units_running + 1
+                                reserved_cost = _reserved_buy_cost(c, pos.unit_shares)
+                                if (sector and group_after > core.MAX_UNITS_GROUP) or \
+                                   (total_after > core.MAX_UNITS_TOTAL):
                                     rejections["상관군캡"] += 1
                                     if ticker == DEBUG_TICKER:
                                         print(f"[DEBUG {ticker}] {today} 피라미딩 트리거했으나 상관군캡 제외")
+                                elif not unlimited_cash and reserved_cost > cash_running:
+                                    rejections["현금부족"] += 1
+                                    if ticker == DEBUG_TICKER:
+                                        print(f"[DEBUG {ticker}] {today} 피라미딩 트리거했으나 현금부족 제외")
                                 else:
                                     pending_adds[ticker] = {}
+                                    if sector:
+                                        group_units_running[sector] = group_units_running.get(sector, 0) + 1
+                                    total_units_running += 1
+                                    cash_running -= reserved_cost
                                     if ticker == DEBUG_TICKER:
                                         print(f"[DEBUG {ticker}] {today} 피라미딩 트리거 accepted "
-                                              f"close={c:.0f} >= {next_step.buy_price} (내일 시가체결 예약)")
+                                              f"close={c:.0f} >= {next_price:.0f} (내일 시가체결 예약)")
 
             # 5) 신규 진입 후보 스캔 (미보유·유동성 충족 종목만) -> 갭 오름차순.
             k200_today = _k200_members_asof(k200_pit, today) if k200_pit is not None else None
@@ -1294,19 +1468,18 @@ def run_portfolio_backtest(tickers: list[str], start: date, end: date,
                 df_all = _ALL_DFS[ticker]
                 if ts not in df_all.index or not bool(df_all.loc[ts, "유동성충족"]):
                     continue
+                if _day_close(ticker, ts) is None:
+                    continue  # 거래정지 등 명시적 거래 불가 - 신규 진입 후보에서 제외
                 sig = _entry_signal_for(ticker, today)
                 if sig is not None:
                     sig["sector"] = sector_map.get(ticker, "")
                     candidates.append(sig)
             candidates = core.sort_by_gap(candidates)
 
-            group_units_running: dict[str, int] = {}
-            for t2, p in positions.items():
-                s = sector_map.get(t2, p.sector)
-                if s:
-                    group_units_running[s] = group_units_running.get(s, 0) + p.num_units
-            total_units_running = sum(p.num_units for p in positions.values())
-            cash_running = cash
+            # group_units_running·total_units_running·cash_running은 4)번에서
+            # 이미 초기화되고 그 단계의 승인분만큼 갱신된 상태 - 여기서 다시
+            # positions만 보고 초기화하면 오늘 4)에서 승인된(아직 미체결) 추가매수가
+            # 캡·현금 계산에서 빠져 신규진입과 합쳐 캡을 넘길 수 있다.
             entries_today = 0
 
             for c in candidates:
@@ -1338,7 +1511,8 @@ def run_portfolio_backtest(tickers: list[str], start: date, end: date,
                    (total_after > core.MAX_UNITS_TOTAL):
                     rejections["상관군캡"] += 1
                     continue
-                if not unlimited_cash and unit_amount > cash_running:
+                reserved_cost = _reserved_buy_cost(c["price"], shares)
+                if not unlimited_cash and reserved_cost > cash_running:
                     rejections["현금부족"] += 1
                     continue
                 if entries_today >= MAX_DAILY_ENTRIES:
@@ -1351,7 +1525,7 @@ def run_portfolio_backtest(tickers: list[str], start: date, end: date,
                 if sector:
                     group_units_running[sector] = group_units_running.get(sector, 0) + 1
                 total_units_running += 1
-                cash_running -= unit_amount
+                cash_running -= reserved_cost
                 entries_today += 1
 
     finally:
@@ -1363,13 +1537,16 @@ def run_portfolio_backtest(tickers: list[str], start: date, end: date,
         MAX_UNIT_RATIO = original_max_unit_ratio
         MAX_DAILY_ENTRIES = original_max_daily_entries
 
+    # 최종 평가도 일별 평가(3번 블록)와 완전히 같은 규칙을 쓴다 - last_known_close
+    # 는 시뮬레이션이 실제로 지나간 날짜의 유효한 종가(또는 그날 체결가)만
+    # 담고 있으므로, 여기서 원본 데이터프레임을 따로 다시 읽어 end 이전 마지막
+    # 행을 집는 것과 달리 미래(시뮬레이션이 보지 않은 날짜)를 참조할 위험이
+    # 없다.
     open_positions_value = 0.0
     for ticker, pos in positions.items():
-        df_all = _ALL_DFS[ticker]
-        hist = df_all[df_all.index <= pd.Timestamp(end)]
-        if hist.empty:
+        last_close = last_known_close.get(ticker)
+        if last_close is None:
             continue
-        last_close = float(hist["종가"].iloc[-1])
         open_positions_value += last_close * pos.total_shares
 
     return {
