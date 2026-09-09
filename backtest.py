@@ -795,6 +795,9 @@ def run_universe_compare(tickers: list[str], start: date, end: date,
 MAX_STOCK_PRICE = 150_000      # 주가 상한 - kis_client.py와 동일
 MAX_UNIT_RATIO = 0.20          # 유닛금액이 계좌평가액의 이 비율 넘으면 제외
 MAX_DAILY_ENTRIES = 3          # 일일 신규 진입(1유닛) 상한 - 추가매수는 별도(제한 없음)
+PYRAMID_MAX_CHASE_ATR = 0.5    # kis_client.py의 동명 상수와 같은 값 - 값을 그대로 복제해
+                                # 쓴다(kis_client import는 안 함 - 그쪽은 실거래 인증 등
+                                # 임포트 시점 부작용이 있어 백테스트에서 건드리지 않는다).
 SECTOR_REFRESH_DAYS = 30       # 업종 맵 갱신 주기(달력일). 실운영은 7일이지만 과거
                                 # 시점 업종 맵 1회 조회에 KRX 로그인 후 약 60~70초가
                                 # 걸려(3·4단계 조사에서 실측), 7일 주기로는 3년·전종목
@@ -866,12 +869,17 @@ class PortfolioPosition:
     sector: str
     entry_atr: int
     unit_shares: int
-    pyramid_plan: list                      # core.build_pyramid() 결과, 진입 시점에 고정
     units: list = None
     trailing_high: Optional[float] = None
     stop_loss: Optional[float] = None
     total_invested: float = 0.0             # 매수원가+매수수수료 누적 (실제로 나간 현금)
     entry_gap_atr: float = 0.0              # 1유닛 진입 신호일의 gap_atr (진단용, 고정)
+    pyramid_anchor: Optional[float] = None  # kis_client.py의 pyramid_anchor와 동일 개념 -
+                                             # 급등으로 여러 레벨을 건너뛸 때만 설정된다.
+                                             # None이면 다음 추가매수 기준가는 last_buy_price
+                                             # (직전 실제 체결가) - 진입가에 고정된 그리드가
+                                             # 아니라 매 체결마다 기준가가 갱신된다(kis_client.py
+                                             # _pyramid_plan()과 동일 로직, 백테스트 전용 재구현).
     breakeven_engaged: bool = False         # breakeven_ratchet 모드에서 본전 하한이 한 번이라도 core 자체 손절선보다 높았던 적이 있는지
     exit_verdict: str = ""                  # "손절"|"추세청산"|"본전하한" - 청산 트리거 시점에 채워짐
 
@@ -1084,6 +1092,7 @@ def run_portfolio_backtest(tickers: list[str], start: date, end: date,
 
     sector_map: dict[str, str] = {}
     sector_map_asof: Optional[date] = None
+    last_known_close: dict[str, float] = {}
 
     cash = starting_capital
 
@@ -1100,12 +1109,15 @@ def run_portfolio_backtest(tickers: list[str], start: date, end: date,
 
             # 1) 어제 확정된 청산·진입·추가매수를 오늘 시가로 체결.
             for ticker, reason in pending_exits.items():
-                pos = positions.pop(ticker, None)
+                pos = positions.get(ticker)
                 if pos is None:
                     continue
                 op = _day_open(ticker, ts)
                 if op is None:
-                    continue  # 거래정지 등 - 단순화를 위해 재시도하지 않고 포기
+                    continue  # 거래정지 등 - 포지션은 그대로 두고 다음 날 재평가한다
+                               # (예전엔 여기서 이미 positions.pop() 해버려서 체결도
+                               # 안 됐는데 포지션이 장부에서 그냥 사라졌었다)
+                positions.pop(ticker)
                 fill = op * (1 - SLIPPAGE)
                 proceeds = fill * pos.total_shares * (1 - COST_RATE)
                 cash += proceeds
@@ -1134,11 +1146,9 @@ def run_portfolio_backtest(tickers: list[str], start: date, end: date,
                     rejections["현금부족"] += 1
                     continue
                 cash -= total_needed
-                plan = core.build_pyramid(fill, info["atr"], info["shares"],
-                                          capital=info["account_size"], max_units=core.MAX_UNITS)
                 pos = PortfolioPosition(
                     ticker=ticker, sector=info["sector"], entry_atr=info["atr"],
-                    unit_shares=info["shares"], pyramid_plan=plan,
+                    unit_shares=info["shares"],
                     total_invested=total_needed, entry_gap_atr=info["gap_atr"],
                 )
                 pos.units.append(PortfolioUnit(unit=1, shares=info["shares"],
@@ -1184,11 +1194,31 @@ def run_portfolio_backtest(tickers: list[str], start: date, end: date,
             for ticker, pos in positions.items():
                 c = _day_close(ticker, ts)
                 if c is not None:
+                    last_known_close[ticker] = c
+                else:
+                    # 거래정지 등으로 당일 시세가 없다 - 0원 취급(자산이 그날
+                    # 증발한 것처럼 보이는 것)하지 않고 마지막으로 확인된
+                    # 종가를 그대로 들고 간다.
+                    c = last_known_close.get(ticker)
+                if c is not None:
                     mtm_equity += c * pos.total_shares
             equity_curve.append((today, mtm_equity))
             account_size = fixed_account_size if fixed_account_size is not None else mtm_equity
 
             # 4) 보유종목 판정 - 청산(evaluate_holding) 또는 피라미딩 트리거.
+            #    상관군·전체 유닛 캡과 현금은 이날 안에서 실행 순서대로 "예약"해
+            #    나간다 - 같은 날 여러 종목이 동시에 추가매수·신규진입 트리거를
+            #    맞아도, 아직 체결 전(내일 시가) 상태를 서로 못 보고 각자 캡을
+            #    통과해버려 다음날 체결하면 합계가 캡을 넘는 이중승인을 막기 위함.
+            #    5)번 신규진입 스캔도 이 값을 그대로 이어받아 계속 갱신한다.
+            group_units_running: dict[str, int] = {}
+            for t2, p in positions.items():
+                s = sector_map.get(t2, p.sector)
+                if s:
+                    group_units_running[s] = group_units_running.get(s, 0) + p.num_units
+            total_units_running = sum(p.num_units for p in positions.values())
+            cash_running = cash
+
             for ticker, pos in list(positions.items()):
                 c = _day_close(ticker, ts)
                 if c is None:
@@ -1237,9 +1267,26 @@ def run_portfolio_backtest(tickers: list[str], start: date, end: date,
                         print(f"[DEBUG {ticker}] {today} 청산 트리거({pos.exit_verdict}) -> {pending_exits[ticker]}")
                     continue
                 if pos.num_units < core.MAX_UNITS:
-                    next_step = pos.pyramid_plan[pos.num_units]  # 0-idx: 다음 유닛 단계
-                    if c >= next_step.buy_price:
-                        if c > MAX_STOCK_PRICE:
+                    # 기준가는 kis_client.py _pyramid_plan()과 동일하게 "직전 실제
+                    # 체결가"(또는 급등을 건너뛴 재기준값)다 - 진입가에서 고정된
+                    # 그리드(core.build_pyramid)를 쓰지 않는다. 슬리피지로 체결가가
+                    # 이론가에서 벗어나면 다음 유닛 기준가도 그 실제 체결가를 따라
+                    # 옮겨가야, 실제 운용에서 매일 안 사던 가격에 갑자기 사는 일이
+                    # 없다.
+                    base = pos.pyramid_anchor if pos.pyramid_anchor is not None else pos.last_buy_price
+                    step = core.PYRAMID_ATR_STEP * pos.entry_atr
+                    next_price = base + step
+                    if c >= next_price:
+                        if c > next_price + PYRAMID_MAX_CHASE_ATR * pos.entry_atr:
+                            # 하루 사이 여러 레벨을 건너뛸 만큼 급등 - 나쁜 가격에
+                            # 쫓아가 사지 않고, 기준가만 현재가 아래 가장 가까운
+                            # 레벨로 올려 다음 창을 연다(kis_client.py와 동일).
+                            skipped = int((c - base) // step)
+                            pos.pyramid_anchor = base + skipped * step
+                            if ticker == DEBUG_TICKER:
+                                print(f"[DEBUG {ticker}] {today} 급등으로 {skipped}개 레벨 통과 - "
+                                      f"매수 없이 기준가만 {pos.pyramid_anchor:,.0f}으로 올림")
+                        elif c > MAX_STOCK_PRICE:
                             rejections["가격상한"] += 1
                             if ticker == DEBUG_TICKER:
                                 print(f"[DEBUG {ticker}] {today} 피라미딩 트리거했으나 가격상한 제외")
@@ -1252,21 +1299,26 @@ def run_portfolio_backtest(tickers: list[str], start: date, end: date,
                                           f"(unit_amount={unit_amount:.0f} > {account_size*MAX_UNIT_RATIO:.0f})")
                             else:
                                 sector = sector_map.get(ticker, pos.sector)
-                                group_units = sum(
-                                    p.num_units for t2, p in positions.items()
-                                    if sector and sector_map.get(t2, p.sector) == sector
-                                )
-                                total_units = sum(p.num_units for p in positions.values())
-                                if (sector and group_units + 1 > core.MAX_UNITS_GROUP) or \
-                                   (total_units + 1 > core.MAX_UNITS_TOTAL):
+                                group_after = group_units_running.get(sector, 0) + 1
+                                total_after = total_units_running + 1
+                                if (sector and group_after > core.MAX_UNITS_GROUP) or \
+                                   (total_after > core.MAX_UNITS_TOTAL):
                                     rejections["상관군캡"] += 1
                                     if ticker == DEBUG_TICKER:
                                         print(f"[DEBUG {ticker}] {today} 피라미딩 트리거했으나 상관군캡 제외")
+                                elif not unlimited_cash and unit_amount > cash_running:
+                                    rejections["현금부족"] += 1
+                                    if ticker == DEBUG_TICKER:
+                                        print(f"[DEBUG {ticker}] {today} 피라미딩 트리거했으나 현금부족 제외")
                                 else:
                                     pending_adds[ticker] = {}
+                                    if sector:
+                                        group_units_running[sector] = group_units_running.get(sector, 0) + 1
+                                    total_units_running += 1
+                                    cash_running -= unit_amount
                                     if ticker == DEBUG_TICKER:
                                         print(f"[DEBUG {ticker}] {today} 피라미딩 트리거 accepted "
-                                              f"close={c:.0f} >= {next_step.buy_price} (내일 시가체결 예약)")
+                                              f"close={c:.0f} >= {next_price:.0f} (내일 시가체결 예약)")
 
             # 5) 신규 진입 후보 스캔 (미보유·유동성 충족 종목만) -> 갭 오름차순.
             k200_today = _k200_members_asof(k200_pit, today) if k200_pit is not None else None
@@ -1283,13 +1335,10 @@ def run_portfolio_backtest(tickers: list[str], start: date, end: date,
                     candidates.append(sig)
             candidates = core.sort_by_gap(candidates)
 
-            group_units_running: dict[str, int] = {}
-            for t2, p in positions.items():
-                s = sector_map.get(t2, p.sector)
-                if s:
-                    group_units_running[s] = group_units_running.get(s, 0) + p.num_units
-            total_units_running = sum(p.num_units for p in positions.values())
-            cash_running = cash
+            # group_units_running·total_units_running·cash_running은 4)번에서
+            # 이미 초기화되고 그 단계의 승인분만큼 갱신된 상태 - 여기서 다시
+            # positions만 보고 초기화하면 오늘 4)에서 승인된(아직 미체결) 추가매수가
+            # 캡·현금 계산에서 빠져 신규진입과 합쳐 캡을 넘길 수 있다.
             entries_today = 0
 
             for c in candidates:
