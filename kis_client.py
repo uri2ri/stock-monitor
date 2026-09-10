@@ -99,7 +99,12 @@ ACCOUNT_TYPE = "모의"  # 이 파일은 모의투자 전용 - 노션 기록의 
 #
 # 신규 진입: 첫 배선 확인 동안 1건으로 낮춰뒀다가 매수·매도 배관이 모두
 # 실주문으로 확인된 뒤 3건으로 올렸다.
-MAX_ORDERS_PER_DAY = 3
+#
+# 2026-09-10 운영 점검(PR #2 병합 전)으로 0으로 내려 신규 진입만 보류.
+# 이 값은 select_buy_candidates()의 신규(ORDER_NEW) 전용 예산이라
+# MAX_PYRAMID_ORDERS_PER_DAY(추가매수)·run_auto_sell(청산)에는 영향이
+# 없다. 재개 시 3으로 되돌릴 것 - 사람이 점검 결과를 보고 별도 결정.
+MAX_ORDERS_PER_DAY = 0
 # 추가매수 전체: 종목 4·상관군 6·전체 12유닛 캡이 총 노출을 이미 묶으므로,
 # 이 값은 "하루에 얼마나 빨리 키울 수 있나"만 제한한다.
 MAX_PYRAMID_ORDERS_PER_DAY = 4
