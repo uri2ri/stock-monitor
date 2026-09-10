@@ -4,8 +4,8 @@
 - 종목 스캔 완료 (`scan_all.py`, `high20`/`high20_next` 둘 다 저장)
 - 장중 돌파 감시 완료 (`intraday_watch.py`)
 - KIS 모의투자 주문 연결 완료 (`kis_client.py`)
-- 장중 자동매수 파이프라인 fail-closed 강화 완료 — PR #2 (draft),
-  브랜치 `claude/holdings-search-error-kfynqa`
+- 장중 자동매수 파이프라인 fail-closed 강화 완료 — PR #2 **병합 완료**
+  (`main`, 2026-09-10 08:28 UTC)
   1. 구버전 스캔 CSV의 신규매수 차단 (화면 표시는 계속, 자동매수만 보류)
   2. 후보 선정(워치리스트 순위)과 판정(`judge()`) 기준을 `high20_next`로 통일
   3. KIS 최신 가격 검증 실패 시 신규매수 보류 (fail-open → fail-closed)
@@ -49,8 +49,18 @@
   한 번 더 돌리면 `high20_next`가 채워진 새 `scan_latest.csv`로 자동 전환.
   재스캔 전까지 화면 표시는 계속되지만 신규매수만 보류
 
+## 운영 상태 (중요)
+- PR #2 병합 직전(2026-09-10 08:27 UTC) `MAX_ORDERS_PER_DAY`를 3 → **0**
+  으로 내려 **신규 자동매수를 운영 보류 중**(커밋 `b3adc7f`). 병합 후
+  변경 사항을 실거래에서 점검하기 위한 조치이며, `select_buy_candidates()`
+  의 신규(ORDER_NEW) 전용 예산만 낮춘 것이라 추가매수(`MAX_PYRAMID_ORDERS_PER_DAY`)
+  ·청산(`run_auto_sell`)에는 영향 없음. **재개 시 사람이 3으로 되돌려야 함**
+  (자동 복구 아님) — 점검 결과를 보고 결정.
+
 ## 현재 문제
 - 보유종목 검색 오류 확인 필요
+- (위 운영 보류 참고) 신규 자동매수가 `MAX_ORDERS_PER_DAY=0`으로 막혀
+  있는 동안은 정상 동작이 아니라 의도된 일시 정지 상태임
 
 ## 테스트
 - `python -m pytest tests/ -q` → **63 passed** (기존 20건 + 신규/갱신 43건)
@@ -67,8 +77,10 @@
   `scan_latest.csv`(구버전·최신 각각)로 `load_watchlist()`/`judge()` 재확인,
   실 계좌 규모에서 비용 포함 현금 게이트가 기존 게이트5와 크게 어긋나지
   않는지 점검 권장
-- `main` 병합·배포는 하지 않음
+- `MAX_ORDERS_PER_DAY=0` 운영 보류 해제(3으로 복원) 여부는 실거래 점검
+  결과를 보고 사람이 결정해야 함 (자동 복구 없음)
 
 ## 최근 정상 기준
-- commit: `916becc` (이전 정상 기준 `d85d75a` → `56c222d` 위에 문서만 추가, 리셋 없음)
-- PR: https://github.com/uri2ri/stock-monitor/pull/2 (draft, base `main`)
+- commit: `5b80f4d` (`main`, PR #2 병합 `d2f29e1` + 운영 보류 `b3adc7f` +
+  야간 스캔 `5b80f4d` 이후 최신)
+- PR: https://github.com/uri2ri/stock-monitor/pull/2 (병합됨, `main`)
