@@ -23,10 +23,11 @@ from __future__ import annotations
 
 import json
 import logging
+import math
 import os
 import sys
 import time
-from datetime import datetime
+from datetime import date, datetime, timedelta
 from pathlib import Path
 from typing import Optional
 from zoneinfo import ZoneInfo
@@ -37,7 +38,9 @@ import requests
 import core
 import kakao
 import kis_client
+import notion_repo
 import scan_all
+import screener
 
 logger = logging.getLogger(__name__)
 
@@ -95,6 +98,89 @@ def load_corr_units() -> Optional[dict]:
         return None
 
 
+# ── 야간 스캔 신선도 ──────────────────────────────────────────
+#
+# load_watchlist()는 scan_date를 로그에만 찍고 신선도는 검사하지 않았다.
+# 야간 작업(scan_all.py)이 실패하거나 스케줄이 아예 안 돌면(GitHub
+# Actions 스케줄이 0건 실행된 전례가 있다) scan_latest.csv가 며칠 전
+# 기준선·ATR을 그대로 들고 있는데, 장중 감시는 그걸 알 방법이 없어
+# 계속 낡은 기준으로 매수해왔다. 신규 진입만 막는다 - 보유 종목의
+# 청산(run_auto_sell)·추가매수(run_auto_pyramid)는 스캔 신선도와
+# 무관하게 항상 작동해야 한다(run()에서 이 검사보다 먼저, 무조건 실행).
+
+def _expected_trading_day(today: date) -> Optional[date]:
+    """오늘(Asia/Seoul 날짜) 기준 '직전 거래일'. 확인할 수 없으면 None.
+
+    주말만 건너뛰는 로컬 계산은 공휴일·거래소 특별 휴장일 다음날을 놓친다
+    (예: 월요일이 임시공휴일이면 화요일의 "직전 거래일"은 금요일이어야
+    하는데, 주말만 걸러내면 월요일로 잘못 계산한다) - 그 상태로 "정상
+    평일이니 기대 날짜와 다르면 낡았다"고 판단하면, 실제로는 최신인
+    스캔을 오탐으로 막거나(공휴일 다음날 스캔이 없다고 보류), 반대로
+    진짜 낡은 스캔을 통과시킬 수 있다. 그래서 scan_all.py 자체 스캔이
+    이미 쓰는 거래일 달력 접근자(screener.trading_days, pykrx 기준 종목
+    시세 인덱스)를 그대로 재사용한다 - 새 의존성을 들이지 않고, 테스트에서
+    screener.trading_days를 mock으로 바꿔치기하기도 쉽다.
+
+    달력 조회 자체가 실패하면(KrxUnavailable 등) "평일이니 어제"로 추정하지
+    않고 None을 돌려준다 - 호출측(_scan_is_stale)이 이를 "신선도를 알 수
+    없음 = 신선하지 않음(보류)"으로 처리한다. 이건 안전한 방향의 오차다:
+    달력을 못 믿는 상태에서 신규매수를 계속 내보내는 쪽이 훨씬 위험하다.
+    """
+    try:
+        days = screener.trading_days(today - timedelta(days=1), 1)
+    except Exception as e:              # noqa: BLE001 - screener.KrxUnavailable 등
+        logger.warning(
+            "거래일 달력 조회 실패 - 야간 스캔 신선도를 확인할 수 없습니다: %s", e,
+        )
+        return None
+    if not days:
+        return None
+    try:
+        return datetime.strptime(days[-1], "%Y%m%d").date()
+    except ValueError:
+        return None
+
+
+def _scan_is_stale(scan_date_str: Optional[str],
+                   today: date) -> tuple[bool, Optional[date]]:
+    """scan_latest.csv의 scan_date(YYYYMMDD 문자열)가 '직전 거래일'이 아니면 True.
+
+    scan_date가 아예 없거나(파일 없음) 형식이 깨졌거나, 거래일 달력을
+    신뢰할 수 없어 직전 거래일 자체를 모르면(expected is None) 안전 쪽으로
+    신선하지 않다(True)고 본다 - 뒤 두 경우 모두 "평일이니 어제"라는 추정
+    없이 신규 진입을 보류한다. 미래 날짜로 찍힌 스캔(시계 오류 등)이나
+    달력 범위를 벗어난 scan_date도 단순히 expected와 다르므로 여기서
+    함께 걸린다.
+    """
+    expected = _expected_trading_day(today)
+    if expected is None:
+        return True, None
+    if not scan_date_str:
+        return True, expected
+    try:
+        scan_date = datetime.strptime(str(scan_date_str), "%Y%m%d").date()
+    except ValueError:
+        return True, expected
+    return scan_date != expected, expected
+
+
+def _is_valid_threshold(value) -> bool:
+    """high20_next 같은 "다음 거래일 기준선" 값이 유효한가.
+
+    None·NaN·inf·0 이하는 전부 무효로 본다 - 자동 신규매수는 이 값을
+    못 믿으면 하루 밀린 high20으로 조용히 대체하지 않고 그 후보(또는
+    워치리스트 전체)의 신규 진입을 보류해야 한다(화면 표시용 high20·
+    status·dist_atr는 이 검사와 무관하게 그대로 유지된다).
+    """
+    if value is None:
+        return False
+    try:
+        v = float(value)
+    except (TypeError, ValueError):
+        return False
+    return math.isfinite(v) and v > 0
+
+
 # ── 워치리스트 ──────────────────────────────────────────────
 
 def load_watchlist(threshold: float = WATCH_THRESHOLD,
@@ -104,6 +190,23 @@ def load_watchlist(threshold: float = WATCH_THRESHOLD,
     아직 돌파하지 않은 종목(status="임박")만 본다. 어젯밤 이미 돌파로
     기록된 종목은 '넘는 순간'이 지났으므로 장 시작과 동시에 전부
     알림이 나가버린다 — 그건 새 신호가 아니라 어제 스캔의 반복이다.
+    이 status="임박" 필터는 화면 판정(scan_all.py, 당일을 뺀 20일 고가
+    기준)과 완전히 같은 의미로 그대로 둔다 - 당일 이미 돌파("돌파" 상태)
+    한 종목까지 범위를 넓혀 감시하지 않는다. judge()가 다음 거래일
+    기준선(high20_next)을 쓰는 것과는 별개의 판단이다 - "임박"은 "당일
+    기준으로 아직 안 넘었다"는 화면상의 사실이고, 워치리스트에 올릴지는
+    거기서부터 시작한다.
+
+    다만 워치리스트 우선순위(임계값 통과·정렬·최대 100종목 제한)는
+    scan_all.py의 dist_atr(당일 제외 20일 고가 기준, 화면 판정용)가
+    아니라 다음 거래일 실제 판정 기준선(high20_next)으로 다시 계산한
+    거리를 쓴다 - judge()는 high20_next로 돌파를 보는데 후보 선정만
+    high20 기준 dist_atr을 쓰면, 당일 장중 한때 20일 신고가를 찍고
+    종가는 눌린("임박") 종목처럼 두 기준이 크게 벌어지는 경우 순위와
+    실제 돌파선이 어긋난다(100종목 컷에서 진짜 임박 종목이 밀려날 수
+    있다). high20_next가 무효(구버전 CSV·계산 오류)인 행은 이 거리를
+    낼 수 없으므로 워치리스트에서 제외한다(화면용 frame 자체는 건드리지
+    않는다) - 재스캔이 필요하다는 뜻이다.
     """
     frame = scan_all.load_scan()
     if frame is None:
@@ -111,12 +214,35 @@ def load_watchlist(threshold: float = WATCH_THRESHOLD,
                        scan_all.LATEST_PATH.name)
         return pd.DataFrame()
 
-    watch = frame[
-        (frame["status"] == scan_all.STATUS_NEAR)
-        & (frame["dist_atr"] <= threshold)
-    ]
-    watch = watch.sort_values("dist_atr").head(limit)
-    logger.info("워치리스트 %d종목 (기준일 %s · dist_atr ≤ %.1f)",
+    near = frame[frame["status"] == scan_all.STATUS_NEAR].copy()
+
+    def _dist_atr_next(r: pd.Series) -> Optional[float]:
+        # high20_next·atr20 둘 다 유효해야 거리를 낼 수 있다 - 하나라도
+        # 무효면(구버전 CSV·계산 오류) None을 돌려 이 행을 걸러낸다.
+        if not _is_valid_threshold(r.get("high20_next")):
+            return None
+        if not _is_valid_threshold(r.get("atr20")):
+            return None
+        return (float(r["high20_next"]) - float(r["close"])) / float(r["atr20"])
+
+    if near.empty:
+        near["dist_atr_next"] = []
+    else:
+        near["dist_atr_next"] = near.apply(_dist_atr_next, axis=1)
+
+    invalid_n = int(near["dist_atr_next"].isna().sum())
+    if invalid_n:
+        logger.warning(
+            "%d종목 high20_next(또는 atr20)가 없거나 유효하지 않습니다(구버전 "
+            "scan_latest.csv 또는 계산 오류) - 워치리스트(자동 신규매수 "
+            "대상)에서 제외합니다. 야간 스캔(scan_all.py)을 다시 돌려 "
+            "최신 값을 채우세요.", invalid_n,
+        )
+    near = near[near["dist_atr_next"].notna()]
+
+    watch = near[near["dist_atr_next"] <= threshold]
+    watch = watch.sort_values("dist_atr_next").head(limit)
+    logger.info("워치리스트 %d종목 (기준일 %s · 다음 거래일 dist_atr_next ≤ %.1f)",
                 len(watch),
                 frame["scan_date"].iloc[0] if not frame.empty else "?",
                 threshold)
@@ -202,6 +328,50 @@ def load_alerted(day: str) -> dict[str, dict]:
         return {}
 
 
+def _retry_candidates(alerted: dict[str, dict], today: date) -> list[dict]:
+    """알림은 갔지만 아직 매수가 확정되지 않은 종목을 다시 후보로 만든다.
+
+    예전에는 "알렸다"(alerted에 있음)와 "샀다"를 구분하지 않아서, 09:30에
+    일시적 조회 실패로 매수를 못 해도 09:40에 조건이 좋아지면 재시도할
+    방법이 없었다 - alerted에 있다는 이유만으로 다음 회차 워치리스트에서
+    아예 빠졌기 때문이다. 이제 alerted는 "카톡 알림을 오늘 이미
+    보냈는가"만 의미하고, "오늘 이 종목을 다시 사려 시도할까"는 노션
+    자동주문 기록(has_order_today, 기존 중복방지 로직 재사용)으로 매
+    회차 새로 판단한다 - 성공/주문중/실패 중 하나라도 있으면(주문중은
+    결과 불명 = 체결됐을 수 있어 재시도 대상에서 제외) 더 이상 재시도하지
+    않는다. 노션 조회 자체가 실패하면 fail-closed로 이번 회차는 재시도
+    보류(다음 회차에 다시 시도).
+    """
+    retries: list[dict] = []
+    for ticker, rec in alerted.items():
+        if rec.get("status") != STATUS_ENTER:
+            continue  # 추격금지였던 종목은 애초에 사려던 게 아니었다
+        try:
+            already = notion_repo.has_order_today(
+                ticker, today, side=notion_repo.SIDE_BUY,
+                order_type=notion_repo.ORDER_NEW,
+            )
+        except Exception as e:              # noqa: BLE001
+            logger.error("[%s] 주문 이력 조회 실패 - 이번 회차 재시도 보류: %s",
+                         ticker, e)
+            continue
+        if already:
+            continue
+        retries.append({
+            "ticker": ticker,
+            "name": rec.get("name", ticker),
+            "sector": rec.get("sector", ""),
+            "market": rec.get("market", ""),
+            "price": rec.get("price"),
+            "high20": rec.get("high20"),
+            "atr20": rec.get("atr20"),
+            "gap_atr": rec.get("gap_atr", 0.0),
+            "unit_shares": rec.get("unit_shares", 0),
+            "status": STATUS_ENTER,
+        })
+    return retries
+
+
 def save_alerted(day: str, alerted: dict[str, dict]) -> Path:
     path = alerted_path(day)
     DATA_DIR.mkdir(parents=True, exist_ok=True)
@@ -258,12 +428,31 @@ def _fill_10am_prices(alerted: dict[str, dict], now: datetime) -> bool:
 # ── 판정 ────────────────────────────────────────────────────
 
 def judge(row: pd.Series, price: float) -> Optional[dict]:
-    """현재가가 직전 20일 고가를 넘었는가. 아니면 None.
+    """현재가가 다음 거래일 기준선(high20_next)을 넘었는가. 아니면 None.
+
+    scan_all.py의 high20(= 스캔 당일을 뺀 20일 고가)을 장중 판정에 그대로
+    쓰면 기준선이 하루 밀린다 - 오늘(장중) 감시는 "어제까지(당일 포함)
+    20일 고가"를 넘었는지 봐야 하는데, high20은 "그제까지"의 고가이기
+    때문이다. 그래서 high20_next(= 스캔 당일 종가까지 포함한 20일 고가)를
+    쓴다. 구버전 scan_latest.csv(컬럼 추가 전에 만들어진 파일)나 계산
+    오류로 이 값이 없거나 NaN·inf·0 이하면 하루 밀린 high20으로 조용히
+    대체하지 않고 이 종목의 신규매수 판정을 보류한다(None) - 화면 표시는
+    load_watchlist()가 별도로 걸러내지만, judge() 자신도 같은 기준을
+    반드시 다시 확인한다. 필요한 조치는 야간 스캔 재실행이다.
 
     돌파 폭이 CHASE_ATR_MULT×ATR을 넘으면 추격 구간으로 본다 —
     app.py의 entry_state()와 같은 기준이다.
     """
-    high20 = float(row["high20"])
+    high20_next = row.get("high20_next")
+    if not _is_valid_threshold(high20_next):
+        logger.warning(
+            "[%s] high20_next가 없거나 유효하지 않습니다(구버전 "
+            "scan_latest.csv 또는 계산 오류) - 하루 밀린 high20으로 대체하지 "
+            "않고 신규매수 판정을 보류합니다. 야간 스캔을 다시 돌려 "
+            "최신 컬럼을 채우세요.", row.get("ticker"),
+        )
+        return None
+    high20 = float(high20_next)
     if price <= high20:
         return None
 
@@ -417,43 +606,67 @@ def run(dry_run: bool = False) -> int:
         except Exception as e:              # noqa: BLE001
             logger.error("10시 가격 기록 실패: %s", e)
 
+    # 야간 스캔 신선도 - scan_date가 "직전 거래일"이 아니면 신규 진입만
+    # 보류한다(위에서 이미 실행한 청산·추가매수는 영향받지 않는다).
+    # 경고는 dry_run에선 보내지 않는다(카톡이 실제로 나가면 안 되는 모드).
+    scan_frame = scan_all.load_scan()
+    scan_date_str = (str(scan_frame["scan_date"].iloc[0])
+                     if scan_frame is not None and not scan_frame.empty else None)
+    scan_is_stale, expected_scan_date = _scan_is_stale(scan_date_str, now.date())
+    expected_scan_date_str = (f"{expected_scan_date:%Y%m%d}"
+                              if expected_scan_date else "확인불가(거래일 달력 조회 실패)")
+    if scan_is_stale and not dry_run:
+        kis_client._notify_warning_throttled(
+            kis_client.WARN_STALE_SCAN,
+            f"[KIS] ⚠ 야간 스캔 기준일이 오래됐습니다"
+            f"(scan_date={scan_date_str or '없음'}, 기대 {expected_scan_date_str}) - "
+            f"신규 진입을 보류합니다. 보유 종목 청산·추가매수는 정상 작동합니다.",
+        )
+
     watch = load_watchlist()
+
+    # 재시도 대상: 이전 회차에 이미 카톡 알림은 갔지만("alerted"에 있음)
+    # 아직 매수가 확정되지 않은 종목. dry_run에선 만들지 않는다(실주문
+    # 재시도가 목적이라 미리보기 모드와 안 맞는다).
+    retry = [] if dry_run else _retry_candidates(alerted, now.date())
+
     if watch.empty:
         logger.info("감시할 종목이 없습니다.")
-        return 0
-
-    pending = watch[~watch["ticker"].isin(list(alerted))]
-    if pending.empty:
-        logger.info("워치리스트 %d종목이 모두 이미 알림 완료입니다.", len(watch))
-        return 0
-
-    codes = pending["ticker"].tolist()
-    prices = fetch_prices(codes)
+        if not retry:
+            return 0
+        pending = watch  # 빈 DataFrame - 아래 hits는 자연히 빈 리스트
+    else:
+        pending = watch[~watch["ticker"].isin(list(alerted))]
 
     hits: list[dict] = []
-    for _, row in pending.iterrows():
-        price = prices.get(str(row["ticker"]))
-        if price is None:
-            continue            # 조회 실패는 조용히 건너뛴다
-        hit = judge(row, price)
-        if hit:
-            hits.append(hit)
+    if not pending.empty:
+        codes = pending["ticker"].tolist()
+        prices = fetch_prices(codes)
+        for _, row in pending.iterrows():
+            price = prices.get(str(row["ticker"]))
+            if price is None:
+                continue            # 조회 실패는 조용히 건너뛴다(다음 회차에 재시도)
+            hit = judge(row, price)
+            if hit:
+                hits.append(hit)
 
-    if not hits:
-        logger.info("신규 돌파 없음 (감시 %d종목)", len(pending))
+    if not hits and not retry:
+        logger.info("신규 돌파 없음 · 재시도 대상 없음 (감시 %d종목)", len(pending))
         return 0
 
-    for h in hits:
-        logger.info("돌파: %s(%s) %s원 → %s (+%.2fN)",
-                    h["name"], h["ticker"], f"{h['price']:,.0f}",
-                    h["status"], h["gap_atr"])
+    messages: list[str] = []
+    if hits:
+        for h in hits:
+            logger.info("돌파: %s(%s) %s원 → %s (+%.2fN)",
+                        h["name"], h["ticker"], f"{h['price']:,.0f}",
+                        h["status"], h["gap_atr"])
 
-    corr = load_corr_units()
-    messages = build_messages(hits, now, corr)
-    if not messages:
-        # 전부 추격금지 – 카톡은 보내지 않지만 이력에는 남긴다.
-        # 남기지 않으면 10분 뒤 같은 종목을 또 판정하게 된다.
-        logger.info("돌파 %d종목이 모두 추격 구간 – 발송하지 않습니다", len(hits))
+        corr = load_corr_units()
+        messages = build_messages(hits, now, corr)
+        if not messages:
+            # 전부 추격금지 – 카톡은 보내지 않지만 이력에는 남긴다.
+            # 남기지 않으면 10분 뒤 같은 종목을 또 판정하게 된다.
+            logger.info("돌파 %d종목이 모두 추격 구간 – 발송하지 않습니다", len(hits))
 
     if dry_run:
         for msg in messages:
@@ -474,27 +687,43 @@ def run(dry_run: bool = False) -> int:
             # fail-open 원칙.
             logger.error("카톡 발송 실패: %s", e)
 
-    # 자동매수: 진입가능 종목만 kis_client에 넘긴다. 신호 알림(위)은 이
+    # 자동매수: 이번 회차 신규 돌파(진입가능) + 이전 회차에 알림은 갔지만
+    # 아직 체결되지 않은 재시도 대상을 합쳐서 넘긴다. 신호 알림(위)은 이
     # 실패와 무관하게 이미 나갔다 - kis_client.run_auto_trade() 내부
     # 함수들은 각자 실패를 이미 카톡으로 알리므로, 여기서 잡히는 예외는
     # 그 안전장치들까지 넘어온 진짜 예상 밖의 오류다. 알림 이력 저장까지
     # 막으면 안 되니 여기서 흡수한다.
-    enterable = [h for h in hits if h["status"] == STATUS_ENTER]
-    try:
-        kis_client.run_auto_trade(enterable)
-    except Exception as e:                  # noqa: BLE001
-        logger.error("자동매수 실패: %s", e)
+    enterable = [h for h in hits if h["status"] == STATUS_ENTER] + retry
+    if retry:
+        logger.info("재시도 대상 %d종목 (이전 회차 알림 · 아직 미체결)", len(retry))
+    if enterable:
+        if scan_is_stale:
+            logger.info(
+                "야간 스캔 신선도 불량(scan_date=%s, 기대=%s) - 신규 진입 %d건 보류",
+                scan_date_str, expected_scan_date_str, len(enterable),
+            )
+        else:
+            try:
+                kis_client.run_auto_trade(enterable)
+            except Exception as e:              # noqa: BLE001
+                logger.error("자동매수 실패: %s", e)
 
-    for h in hits:
-        alerted[h["ticker"]] = {
-            "time": now.strftime("%H:%M"),
-            "name": h["name"],
-            "price": h["price"],
-            "gap_atr": round(h["gap_atr"], 3),
-            "status": h["status"],
-        }
-    path = save_alerted(day, alerted)
-    logger.info("알림 이력 저장: %s (%d종목)", path.name, len(alerted))
+    if hits:
+        for h in hits:
+            alerted[h["ticker"]] = {
+                "time": now.strftime("%H:%M"),
+                "name": h["name"],
+                "sector": h.get("sector", ""),
+                "market": h.get("market", ""),
+                "price": h["price"],
+                "high20": h["high20"],
+                "atr20": h["atr20"],
+                "gap_atr": round(h["gap_atr"], 3),
+                "unit_shares": h["unit_shares"],
+                "status": h["status"],
+            }
+        path = save_alerted(day, alerted)
+        logger.info("알림 이력 저장: %s (%d종목)", path.name, len(alerted))
     return 0
 
 

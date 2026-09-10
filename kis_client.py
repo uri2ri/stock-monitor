@@ -33,6 +33,7 @@ NOTION_ORDERS_DB_ID, NOTION_DB_ID (모의투자). 하나라도 없으면 자동�
 from __future__ import annotations
 
 import logging
+import math
 import os
 import time
 from datetime import date, datetime, timedelta
@@ -130,6 +131,34 @@ TRADE_END_TIME = "15:20"
 # ── 자금 게이트 설정 ────────────────────────────────────────
 MAX_STOCK_PRICE = 150_000   # 주가 상한 - 1주 반올림 오차 방지용
 MAX_UNIT_RATIO = 0.20       # 1유닛 매수금액이 계좌평가액의 이 비율을 넘으면 제외
+# 주문 직전 최신가 재검증(select_buy_candidates 7번 게이트)의 현금 여력
+# 확인에만 쓰는 보수적 비용률 - backtest.py의 COST_RATE(수수료+세금 근사)와
+# 같은 값이다. 매수는 세금이 없어 실제보다 다소 높게 잡히지만(안전한
+# 방향의 오차), 별도 매수/매도 요율을 새로 조사해 들이기보다 기존
+# 백테스트 가정을 그대로 재사용한다. 다른 기존 현금 게이트(위 5번)는
+# 이 비용률을 적용하지 않은 채 그대로 둔다 - 이번 수정 범위는 새로
+# 추가하는 최종 재검증 하나로 한정한다.
+ORDER_COST_RATE = 0.0025
+
+
+def _is_valid_price(value) -> bool:
+    """KIS 최신 시세 재조회 결과가 신뢰할 수 있는 가격인가.
+
+    None·비숫자·NaN·inf·0 이하는 전부 무효로 본다. 이 값이 무효면 판정
+    시점(네이버) 가격으로 되돌아가 주문을 진행하지 않는다(fail-closed) -
+    이 재검증 자체가 "그 사이 가격이 움직였는가"를 확인하는 마지막
+    안전장치라, 조회가 실패했다고 검증을 건너뛰면 안전장치가 없는 것과
+    같다. 같은 조회 안의 시장경보 필드(investment-warning) 판정은 이와
+    별개 정책(조회 실패 시 fail-open, 아래 예외 처리부에서 그대로 유지)
+    이다 - 두 검증을 하나의 실패 정책으로 묶지 않는다.
+    """
+    if value is None:
+        return False
+    try:
+        v = float(value)
+    except (TypeError, ValueError):
+        return False
+    return math.isfinite(v) and v > 0
 # ACCOUNT_SIZE는 상수로 두지 않는다. 계좌 평가액은 그때그때 달라지므로
 # get_account_balance()로 매번 KIS 잔고조회 API에서 실시간으로 가져온다.
 
@@ -455,6 +484,9 @@ WARN_REPEATED_REJECTION_PREFIX = "같은 종목 반복 거부"
 # 같은 카톡이 계속 온다 (그 시점마다 재확인하는 것 자체는 의도한
 # 동작이라 - 확인 주기가 아니라 알림 발송만 억제한다).
 WARN_MARKET_WARNED_PREFIX = "투자경고종목 제외"
+# 야간 스캔(scan_all.py) 기준일이 직전 거래일이 아닐 때 - intraday_watch.py
+# 가 신규 진입을 보류하며 이 사유로 억제 경고를 보낸다.
+WARN_STALE_SCAN = "야간 스캔 기준일 오래됨"
 
 MAX_REJECTIONS_PER_STOCK = 3  # 같은 종목 오늘 거부 누적 이 값 이상이면 재시도 중단
 
@@ -1692,28 +1724,94 @@ def select_buy_candidates(access_token: str, candidates: list[dict]) -> list[dic
             _notify_failure(f"[KIS] 우선순위 밀림: {name}")
             continue
 
-        # 7. 투자경고종목 등 시장경보 - 여기까지 온 후보만 조회한다. 앞의
-        #    무료 게이트(가격·유닛금액·상관군·현금·상한)로 대부분 걸러진
-        #    뒤라 실제로는 최종 후보 몇 개만 KIS를 호출한다. 신규 진입
-        #    후보 가격은 네이버 시세라 이 필드(mrkt_warn_cls_code)가
-        #    없으므로, get_current_price가 쓰는 것과 같은 "주식현재가시세"
-        #    응답을 여기서 딱 한 번 조회해 같이 얻는다 - 별도 API는 아니다.
-        #    조회 자체가 실패하면 경보 여부를 몰라 매매를 막으면 안 되므로
-        #    fail-open(필터 없이 통과)한다.
+        # 7. 투자경고종목 등 시장경보 + 주문 직전 가격 재검증 - 여기까지
+        #    온 후보만 조회한다. 앞의 무료 게이트(가격·유닛금액·상관군·
+        #    현금·상한)로 대부분 걸러진 뒤라 실제로는 최종 후보 몇 개만
+        #    KIS를 호출한다. 신규 진입 후보 가격은 네이버 시세라 이 필드
+        #    (mrkt_warn_cls_code)가 없으므로, get_current_price가 쓰는
+        #    것과 같은 "주식현재가시세" 응답을 여기서 딱 한 번 조회해
+        #    시장경보·최신가를 같이 얻는다 - 별도 API는 아니다.
+        #
+        #    이 조회 자체가 실패하면(시장경보 필드도 최신가도 못 얻음)
+        #    이 종목의 신규매수는 이번 회차에 보류한다(fail-closed) -
+        #    가격 재검증은 "판정과 주문 사이 가격이 움직였는가"를 보는
+        #    마지막 안전장치라, 조회가 안 됐다고 판정 시점(네이버) 가격
+        #    그대로 주문하면 그 안전장치가 없는 것과 같다. 이건 시장경보
+        #    필드 조회 실패에 대한 기존 정책(fail-open, 아래 참고)과는
+        #    별개다 - 시장경보는 "모르면 막지 않는다"가 안전한 방향이지만,
+        #    가격은 "모르면 진행하지 않는다"가 안전한 방향이라 방향이
+        #    서로 다르다. 이 재확인도 시장가 주문이므로 실제 체결가를
+        #    보장하지 않는다 - 체결가는 주문 전송 시점 호가로 정해지고,
+        #    여기서 확인하는 건 "주문을 낼지 말지"뿐이다.
         try:
             quote = get_price_quote(access_token, c["ticker"])
         except Exception as e:              # noqa: BLE001
-            logger.warning("[%s] 시장경보 상태 조회 실패 - 필터 없이 진행: %s",
-                           name, e)
-        else:
-            if quote["market_warned"]:
-                _notify_warning_throttled(
-                    _market_warned_reason_key(c["ticker"]),
-                    f"[KIS] 투자경고종목 제외: {name}",
-                )
-                continue
+            msg = f"[KIS] 주문 직전 재검증 - 최신 시세 조회 실패, 신규매수 보류: {name}"
+            logger.warning("%s: %s", msg, e)
+            _notify_failure(msg)
+            continue
 
-        selected.append({**c, "unit_shares": unit_shares})
+        if quote["market_warned"]:
+            _notify_warning_throttled(
+                _market_warned_reason_key(c["ticker"]),
+                f"[KIS] 투자경고종목 제외: {name}",
+            )
+            continue
+
+        # 판정(네이버 시세)과 이 시점 사이에 가격이 움직였을 수 있다 -
+        # 돌파가 유지되는지, 추격 허용범위(0.5×ATR) 안인지를 최신가로
+        # 다시 본다. 유닛 수량 자체는 ATR·계좌규모로만 정해져 가격과
+        # 무관하지만, 유닛금액·현금 여력은 가격에 비례하므로 최신가로
+        # 다시 계산해야 그 사이 오른 가격에 못 감당할 주문을 내지 않는다.
+        fresh_price = quote.get("price")
+        if not _is_valid_price(fresh_price):
+            msg = f"[KIS] 주문 직전 재검증 - 최신가가 유효하지 않음, 신규매수 보류: {name}"
+            logger.info(msg)
+            _notify_failure(msg)
+            continue
+
+        high20 = c.get("high20")
+        if high20 is None or atr <= 0:
+            msg = f"[KIS] 주문 직전 재검증 - 돌파 기준선/ATR 확인 불가, 신규매수 보류: {name}"
+            logger.info(msg)
+            _notify_failure(msg)
+            continue
+
+        if fresh_price <= high20:
+            msg = f"[KIS] 주문 직전 재검증 - 돌파 유지 안 됨: {name}"
+            logger.info(msg)
+            _notify_failure(msg)
+            continue
+        gap_atr_now = (fresh_price - high20) / atr
+        if gap_atr_now > core.CHASE_ATR_MULT:
+            msg = (f"[KIS] 주문 직전 재검증 - 추격범위 초과"
+                   f"(+{gap_atr_now:.2f}N): {name}")
+            logger.info(msg)
+            _notify_failure(msg)
+            continue
+
+        fresh_unit_amount = unit_shares * fresh_price
+        fresh_ratio = (fresh_unit_amount / account_size
+                       if account_size > 0 else float("inf"))
+        if fresh_ratio > MAX_UNIT_RATIO:
+            msg = (f"[KIS] 주문 직전 재검증 - 유닛금액 과다"
+                   f"(최신가 기준 계좌 {fresh_ratio * 100:.1f}%): {name}")
+            logger.info(msg)
+            _notify_failure(msg)
+            continue
+        # 비용 포함(수수료 근사, ORDER_COST_RATE) 현금 여력 - 이 최종
+        # 재검증에만 적용한다(위 5번 게이트는 그대로 비용 미포함).
+        fresh_cost = fresh_unit_amount * ORDER_COST_RATE
+        if fresh_unit_amount + fresh_cost > cash_remaining:
+            msg = f"[KIS] 주문 직전 재검증 - 현금 부족(최신가+비용 기준): {name}"
+            logger.info(msg)
+            _notify_failure(msg)
+            continue
+
+        price = fresh_price
+        unit_amount = fresh_unit_amount
+
+        selected.append({**c, "unit_shares": unit_shares, "price": price})
         group_units[sector] = group_units.get(sector, 0) + 1
         total_units += 1
         cash_remaining -= unit_amount

@@ -55,7 +55,7 @@ BACKFILL_BUDGET_SEC = 10 * 60
 
 SCAN_COLUMNS = [
     "scan_date", "ticker", "name", "market", "sector", "close",
-    "atr20", "atr_pct", "high20", "low10",
+    "atr20", "atr_pct", "high20", "high20_next", "low10",
     "gap", "gap_atr", "dist_to_break", "dist_atr", "vol_mult",
     "unit_shares", "value_avg_20", "status",
 ]
@@ -179,7 +179,15 @@ def scan_row(
         return None
 
     close = sig.current_price
+    # 스캔 당일 종가의 돌파 여부(화면·status 판정용)는 당일을 뺀 20일 고가로
+    # 본다 - 그래야 당일 자기 자신의 고가로 자신을 못 넘는 오류가 안 생긴다
+    # (trend_signals의 원래 취지). 하지만 이 값을 "다음 거래일" 장중 감시
+    # 기준선으로 그대로 재사용하면, 스캔 당일 하루치 고가가 통째로 빠진
+    # 기준선이 하루 밀린 채 남는다 - 당일 크게 오른 종목일수록 실제보다
+    # 낮은 선으로 판정돼 가짜 돌파를 더 사게 된다. 다음 거래일 감시용은
+    # 당일 포함 20일 고가(high_20)를 별도로 저장한다.
     high20 = sig.high_20_prev
+    high20_next = sig.high_20
     gap = close - high20
 
     window = hist.tail(TRADING_VALUE_DAYS)
@@ -199,6 +207,7 @@ def scan_row(
         "atr20": atr,
         "atr_pct": round(core.calc_atr_pct(atr, close), 2),
         "high20": round(high20),
+        "high20_next": round(high20_next),
         "low10": round(sig.low_10_prev),
         "gap": round(gap),
         "gap_atr": round(gap / atr, 3),
