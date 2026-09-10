@@ -8,7 +8,7 @@ alerted는 "카톡 알림을 오늘 보냈는가"만 의미하고, "오늘 다�
 
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import datetime, timedelta
 from unittest import mock
 from zoneinfo import ZoneInfo
 
@@ -19,6 +19,7 @@ import intraday_watch
 import kis_client
 import notion_repo
 import scan_all
+from tests.helpers import mock_trading_days
 
 KST = ZoneInfo("Asia/Seoul")
 
@@ -85,7 +86,8 @@ def test_run_retries_next_cycle_after_order_failure_then_stops_once_ordered(tmp_
     monkeypatch.setattr(intraday_watch, "DATA_DIR", tmp_path)
 
     now = datetime.now(KST)
-    expected_scan_date = intraday_watch._expected_scan_date(now.date())
+    expected_scan_date = now.date() - timedelta(days=1)
+    mock_trading_days(monkeypatch, expected_scan_date)
     frame = _make_scan_frame(expected_scan_date.strftime("%Y%m%d"))
 
     monkeypatch.setattr(scan_all, "load_scan", lambda: frame.copy())

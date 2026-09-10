@@ -13,8 +13,9 @@ scan_all.py가 high20(스캔 당일을 뺀 20일 고가)만 저장하고 그걸 
      "당일 제외 20일 고가는 넘었지만 당일 포함 20일 고가는 아직
      안 넘은" 가격에서 예전 기준(high20)이면 돌파로 잘못 판정하고,
      새 기준(high20_next)이면 아직 돌파가 아니라고 정확히 판정하는지.
-  3) high20_next 컬럼이 없는 구버전 scan_latest.csv 행에서는 경고를
-     남기고 high20으로 대체(fallback)하는지.
+  3) high20_next 컬럼이 없거나 유효하지 않은 구버전/오류 scan_latest.csv
+     행에서는 경고를 남기고 하루 밀린 high20으로 대체(fallback)하지
+     않고 신규매수 판정 자체를 보류(None)하는지.
 """
 
 from __future__ import annotations
@@ -59,16 +60,26 @@ def test_judge_uses_high20_next_not_high20():
     assert hit["high20"] == 10_600.0
 
 
-def test_judge_falls_back_to_high20_when_high20_next_missing(caplog):
-    # high20_next 컬럼이 없는 구버전 scan_latest.csv 행.
-    row = pd.Series({
+@pytest.mark.parametrize("bad_high20_next", [
+    None, float("nan"), float("inf"), 0, -100.0,
+])
+def test_judge_blocks_instead_of_falling_back_when_high20_next_invalid(
+    caplog, bad_high20_next,
+):
+    # high20_next가 없거나(구버전 scan_latest.csv) NaN·inf·0 이하(계산
+    # 오류)인 행 - 하루 밀린 high20(10300)으로 조용히 대체하면 가짜
+    # 돌파(10400 > 10300)로 잘못 매수할 수 있으므로, 대체하지 않고
+    # 판정을 보류(None)해야 한다.
+    row_data = {
         "ticker": "005930", "name": "삼성전자", "sector": "전기전자",
         "market": "KOSPI", "atr20": 500.0,
         "high20": 10_300.0,
         "unit_shares": 10,
-    })
+    }
+    if bad_high20_next is not None:
+        row_data["high20_next"] = bad_high20_next
+    row = pd.Series(row_data)
     with caplog.at_level("WARNING"):
         hit = intraday_watch.judge(row, 10_400.0)
-    assert hit is not None
-    assert hit["high20"] == 10_300.0
+    assert hit is None, "구버전/무효 high20_next에서는 high20으로 대체해 매수 판정하면 안 된다"
     assert any("high20_next" in rec.message for rec in caplog.records)

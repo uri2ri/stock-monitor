@@ -93,11 +93,37 @@ def test_fresh_price_cash_shortfall_blocks_order(monkeypatch):
     assert selected == [], "최신가 기준으로 재계산한 현금이 부족하면 막아야 한다"
 
 
-def test_price_quote_failure_falls_back_to_original_price(monkeypatch):
-    # 기존 fail-open 동작 유지 확인 - 최신가 조회 자체가 실패하면
-    # 판정 시점 가격 그대로 진행한다(시장경보도 모르니 그대로 통과).
+def test_price_quote_failure_blocks_order(monkeypatch):
+    # fail-closed 확인 - 최신가 조회 자체가 실패하면 판정 시점(네이버)
+    # 가격으로 되돌아가 주문을 진행하지 않는다. 이 재검증은 "판정과
+    # 주문 사이 가격이 움직였는가"를 보는 마지막 안전장치라, 조회 실패로
+    # 그 확인을 건너뛰면 안전장치가 없는 것과 같다(시장경보 필드 조회
+    # 실패의 기존 fail-open 정책과는 별개 - 가격은 모르면 진행하지
+    # 않는 쪽이 안전한 방향이다).
     candidate = _candidate(price=10_400.0)
     selected = _run_select(monkeypatch, candidate,
                            fresh_quote_error=RuntimeError("타임아웃"))
-    assert len(selected) == 1
-    assert selected[0]["price"] == 10_400.0
+    assert selected == [], "최신가 조회 실패 시 신규매수를 보류해야 한다(fail-closed)"
+
+
+@pytest.mark.parametrize("bad_fresh_price", [None, float("nan"), float("inf"), 0, -1.0])
+def test_invalid_fresh_price_blocks_order(monkeypatch, bad_fresh_price):
+    # 조회는 성공했지만 값 자체가 못 믿을 가격(None·NaN·inf·0 이하)이면
+    # 역시 판정 시점 가격으로 되돌아가지 않고 보류해야 한다 - 옛 코드는
+    # `if fresh_price and ...`로 이 경우를 조용히 건너뛰어(falsy) 판정
+    # 시점 가격 그대로 선정해버렸다.
+    candidate = _candidate(price=10_400.0)
+    selected = _run_select(monkeypatch, candidate, fresh_price=bad_fresh_price)
+    assert selected == []
+
+
+def test_fresh_price_cash_shortfall_includes_estimated_cost(monkeypatch):
+    # unit_shares=100, fresh_price=10500 -> unit_amount=1,050,000원.
+    # 현금이 unit_amount보다는 많지만 비용(ORDER_COST_RATE=0.25%) 포함
+    # 금액보다는 적은 경계값 - 비용을 포함해야만 막힌다는 걸 확인한다.
+    fresh_price = 10_500.0
+    unit_amount = 100 * fresh_price
+    cash = unit_amount + (unit_amount * kis_client.ORDER_COST_RATE) - 1.0
+    candidate = _candidate(price=10_400.0)
+    selected = _run_select(monkeypatch, candidate, fresh_price=fresh_price, cash=cash)
+    assert selected == [], "비용까지 포함한 현금 여력을 확인해야 한다"
