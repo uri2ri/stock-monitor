@@ -195,6 +195,17 @@ def test_same_day_or_later_pending_sell_still_blocks_reentered_position(env, mon
     n.close_auto_holding.assert_called_once_with('new_holding_page')
 
 
+def test_no_pending_sell_skips_entry_date_lookup(env, monkeypatch):
+    """미확인 매도가 없는 종목까지 매 회차 매수일을 조회하면, 절대다수인
+    "미확인 매도 없음" 종목에 불필요한 노션 조회가 매번 추가된다."""
+    inp, _ = env
+    n.fetch_unconfirmed_sell_orders.return_value = []
+    fetch_buy_date = Mock(return_value=date(2026, 9, 1))
+    monkeypatch.setattr(n, 'fetch_holding_buy_date', fetch_buy_date)
+    k.run_auto_sell([('holding', inp)])
+    fetch_buy_date.assert_not_called()
+
+
 def test_pending_sell_query_paginates_and_keeps_original_day(monkeypatch):
     monkeypatch.setenv('NOTION_ORDERS_DB_ID', 'dummy')
     monkeypatch.setattr(n, '_headers', lambda: {})

@@ -131,11 +131,11 @@ TRADE_END_TIME = "15:20"
 # ── 자금 게이트 설정 ────────────────────────────────────────
 MAX_STOCK_PRICE = 150_000   # 주가 상한 - 1주 반올림 오차 방지용
 MAX_UNIT_RATIO = 0.20       # 1유닛 매수금액이 계좌평가액의 이 비율을 넘으면 제외
-# 주문 직전 최신가 재검증(select_buy_candidates 7번 게이트)의 현금 여력
+# 주문 직전 최신가 재검증(select_buy_candidates 8번 게이트)의 현금 여력
 # 확인에만 쓰는 보수적 비용률 - backtest.py의 COST_RATE(수수료+세금 근사)와
 # 같은 값이다. 매수는 세금이 없어 실제보다 다소 높게 잡히지만(안전한
 # 방향의 오차), 별도 매수/매도 요율을 새로 조사해 들이기보다 기존
-# 백테스트 가정을 그대로 재사용한다. 다른 기존 현금 게이트(위 5번)는
+# 백테스트 가정을 그대로 재사용한다. 다른 기존 현금 게이트(위 6번)는
 # 이 비용률을 적용하지 않은 채 그대로 둔다 - 이번 수정 범위는 새로
 # 추가하는 최종 재검증 하나로 한정한다.
 ORDER_COST_RATE = 0.0025
@@ -1092,7 +1092,14 @@ def _split_stale_pending_sells(pending: list[dict], page_id: Optional[str]
     영구히 막을 수 있다. 새 포지션의 매수일보다 이전 주문은 과거 매도로
     보고 분리한다. 매수일을 확인할 수 없으면(page_id 없음·조회 실패)
     안전한 쪽(기존처럼 전부 현재 것으로 취급해 차단)으로 남긴다.
+
+    미확인 매도가 없는 종목(pending이 비어 있음)에는 노션 매수일 조회를
+    아예 하지 않는다 - 이 함수는 보유 종목마다 매 회차 불려서, 여기서
+    빠지지 않으면 미확인 매도와 무관한 절대다수 종목에도 불필요한 조회가
+    매번 추가된다.
     """
+    if not pending:
+        return [], pending
     if not page_id:
         return [], pending
     entry_date = notion_repo.fetch_holding_buy_date(page_id)
@@ -1743,8 +1750,8 @@ def select_buy_candidates(access_token: str, candidates: list[dict]) -> list[dic
     노션 점검표(운용="자동")의 '유닛수'를 집계하는 것이지 실계좌(수동·
     터틀외) 보유를 섞는 게 아니다 - 자동매매 소관만 본다는 원칙은 그대로다.
 
-    순서: 갭 오름차순 정렬 → 가격 상한 → 유닛금액 비율(핵심 게이트) →
-          상관군 캡 → 가용현금 → 일일 주문 상한.
+    순서: 갭 오름차순 정렬 → 이미 보유 중인지 확인 → 가격 상한 →
+          유닛금액 비율(핵심 게이트) → 상관군 캡 → 가용현금 → 일일 주문 상한.
     막힌 종목은 사유별로 기존 카톡 알림 경로로 통지하고 다음 순위로 넘어간다.
     한 번의 호출 안에서 여러 종목이 선정되면, 그만큼 유닛·현금 여력을
     누적해서 소모한다 (같은 상관군 후보를 연달아 다 뽑아버리는 일이 없게).
@@ -1795,12 +1802,36 @@ def select_buy_candidates(access_token: str, candidates: list[dict]) -> list[dic
     for c in ordered:
         name, price, atr = c["name"], c["price"], c["atr20"]
 
-        # 2. 가격 상한
+        # 2. 이미 보유 중인 종목인지 확인 - 아래 5번 상관군 캡은 "이 종목의
+        #    기존 유닛은 0"을 전제로 계산한다(stock_units_after = 1). 이미
+        #    자동으로 보유 중인 종목이 워치리스트에 다시 걸리면(예: 보유
+        #    중 새 20일 고가에 재차 근접) 그 전제가 깨져 유닛 캡을 우회하게
+        #    된다. 특히 이번 회차에 손절/추세청산으로 매도를 접수했지만
+        #    아직 체결 확인 전인 종목도 노션엔 여전히 "보유"로 남아 있어
+        #    (SELL_CONFIRMATION.md 참고) 여기서 함께 걸러진다 - 매도 확인이
+        #    끝나기 전에 신규매수 경로로 같은 종목에 다시 들어가면 안 된다.
+        #    추가매수는 run_auto_pyramid의 소관이라 여기서는 그냥 다음
+        #    후보로 넘어간다. 조회 자체가 실패하면(이미 보유 중인지 확인
+        #    불가) fail-closed로 이 종목만 보류한다 - "모르면 새 포지션을
+        #    열지 않는다"가 안전한 방향이다.
+        try:
+            already_held = bool(notion_repo.find_auto_holding_page(c["ticker"]))
+        except Exception as e:                  # noqa: BLE001
+            msg = f"[KIS] 주문 직전 재검증 - 기존 보유 여부 확인 실패, 신규매수 보류: {name}"
+            logger.warning("%s: %s", msg, e)
+            _notify_failure(msg)
+            continue
+        if already_held:
+            logger.info("[%s] 이미 자동 보유 중 - 신규매수 후보에서 제외"
+                        "(추가매수는 run_auto_pyramid 소관)", name)
+            continue
+
+        # 3. 가격 상한
         if price > MAX_STOCK_PRICE:
             _notify_failure(f"[KIS] 가격 상한 초과: {name}")
             continue
 
-        # 3. 유닛금액 과다 - 핵심 게이트. 유닛주수는 스캔 시점 값을 재사용하지
+        # 4. 유닛금액 과다 - 핵심 게이트. 유닛주수는 스캔 시점 값을 재사용하지
         #    않고 지금 막 조회한 실시간 계좌평가액으로 core.calc_position을
         #    다시 호출한다 ("이 계좌 규모로 감당되는가"는 지금 기준이어야 함).
         unit_shares = core.calc_position(atr, account_size).unit_shares
@@ -1818,8 +1849,9 @@ def select_buy_candidates(access_token: str, candidates: list[dict]) -> list[dic
             _notify_failure(msg)
             continue
 
-        # 4. 상관군 캡 (종목당 4유닛 · 상관군당 6유닛 · 전체 12유닛)
-        #    돌파 후보는 아직 보유 전이라 이 종목 자체의 기존 유닛은 0이다.
+        # 5. 상관군 캡 (종목당 4유닛 · 상관군당 6유닛 · 전체 12유닛)
+        #    위 2번에서 이미 보유 중인 종목을 걸렀으므로 이 종목 자체의
+        #    기존 유닛은 0이다.
         sector = c.get("sector", "")
         stock_units_after = 1
         group_units_after = group_units.get(sector, 0) + 1
@@ -1830,18 +1862,18 @@ def select_buy_candidates(access_token: str, candidates: list[dict]) -> list[dic
             _notify_failure(f"[KIS] 상관군 캡: {name}")
             continue
 
-        # 5. 현금 부족 - 마지막 그물
+        # 6. 현금 부족 - 마지막 그물
         if unit_amount > cash_remaining:
             _notify_failure(f"[KIS] 현금 부족: {name}")
             continue
 
-        # 6. 일일 주문 건수 상한 - 갭이 낮은(우선순위 높은) 순으로 이미
+        # 7. 일일 주문 건수 상한 - 갭이 낮은(우선순위 높은) 순으로 이미
         #    남은 자리를 다 채웠으면 나머지는 자격이 있어도 밀린다.
         if len(selected) >= remaining_slots:
             _notify_failure(f"[KIS] 우선순위 밀림: {name}")
             continue
 
-        # 7. 투자경고종목 등 시장경보 + 주문 직전 가격 재검증 - 여기까지
+        # 8. 투자경고종목 등 시장경보 + 주문 직전 가격 재검증 - 여기까지
         #    온 후보만 조회한다. 앞의 무료 게이트(가격·유닛금액·상관군·
         #    현금·상한)로 대부분 걸러진 뒤라 실제로는 최종 후보 몇 개만
         #    KIS를 호출한다. 신규 진입 후보 가격은 네이버 시세라 이 필드
@@ -1921,7 +1953,7 @@ def select_buy_candidates(access_token: str, candidates: list[dict]) -> list[dic
             _notify_failure(msg)
             continue
         # 비용 포함(수수료 근사, ORDER_COST_RATE) 현금 여력 - 이 최종
-        # 재검증에만 적용한다(위 5번 게이트는 그대로 비용 미포함).
+        # 재검증에만 적용한다(위 6번 게이트는 그대로 비용 미포함).
         fresh_cost = fresh_unit_amount * ORDER_COST_RATE
         if fresh_unit_amount + fresh_cost > cash_remaining:
             msg = f"[KIS] 주문 직전 재검증 - 현금 부족(최신가+비용 기준): {name}"

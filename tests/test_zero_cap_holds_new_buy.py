@@ -76,6 +76,7 @@ def test_nonzero_cap_still_runs_existing_candidate_checks_and_limit_notification
     monkeypatch.setattr(kis_client, "get_mock_account_corr_units",
                         lambda size, holdings: {"groups": {}, "total_units": 0})
     monkeypatch.setattr(notion_repo, "count_success_orders_today", lambda day, acct: 3)
+    monkeypatch.setattr(notion_repo, "find_auto_holding_page", lambda ticker: None)
     monkeypatch.setattr(
         kis_client, "get_price_quote",
         lambda token, ticker: {"price": 10_000.0, "market_warned": False},

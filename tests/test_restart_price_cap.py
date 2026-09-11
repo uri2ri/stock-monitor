@@ -10,6 +10,7 @@ def test_latest_quote_price_cap(monkeypatch, fresh, allowed):
         'account_size': 10000000, 'available_cash': 10000000, 'holdings': []})
     monkeypatch.setattr(k, 'get_mock_account_corr_units', lambda *a: {'groups': {}, 'total_units': 0})
     monkeypatch.setattr(n, 'count_success_orders_today', lambda *a: 0)
+    monkeypatch.setattr(n, 'find_auto_holding_page', lambda ticker: None)
     monkeypatch.setattr(k, '_notify_failure', Mock())
     monkeypatch.setattr(k, 'get_price_quote', lambda *a: {'price': fresh, 'market_warned': False})
     candidate = dict(ticker='000001', name='test', price=150000,

@@ -55,6 +55,17 @@ def test_no_sell_when_sellable_zero(monkeypatch, setup):
     k.place_market_sell_order.assert_not_called()
 
 
+def test_no_pending_sell_skips_holding_lookup_for_pyramid(monkeypatch, setup):
+    """미확인 매도가 없는 종목까지 매 회차 find_auto_holding_page를 부르면
+    절대다수인 "미확인 매도 없음" 종목에 불필요한 노션 조회가 추가된다."""
+    n.fetch_unconfirmed_sell_orders.return_value = []
+    find_page = Mock(return_value='page')
+    monkeypatch.setattr(n, 'find_auto_holding_page', find_page)
+    monkeypatch.setattr(k, 'get_price_quote', lambda *a: {'price': 10250, 'market_warned': False})
+    k.run_auto_pyramid([setup])
+    find_page.assert_not_called()
+
+
 def test_pending_sell_blocks_pyramid(monkeypatch, setup):
     n.fetch_unconfirmed_sell_orders.return_value = [{'ticker': setup.ticker, 'order_day': '2026-09-11'}]
     monkeypatch.setattr(k, 'get_price_quote', Mock(side_effect=AssertionError('No buy quote needed')))
