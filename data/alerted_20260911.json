@@ -120,6 +120,18 @@
       "gap_atr": 0.077,
       "unit_shares": 382,
       "status": "진입가능"
+    },
+    "108380": {
+      "time": "11:14",
+      "name": "대양전기공업",
+      "sector": "운송장비·부품",
+      "market": "KOSDAQ",
+      "price": 19300.0,
+      "high20": 19260.0,
+      "atr20": 865.0,
+      "gap_atr": 0.046,
+      "unit_shares": 578,
+      "status": "진입가능"
     }
   }
 }
