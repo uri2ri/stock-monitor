@@ -48,6 +48,30 @@
       "gap_atr": 0.028,
       "unit_shares": 46,
       "status": "진입가능"
+    },
+    "000150": {
+      "time": "09:13",
+      "name": "두산",
+      "sector": "전기전자",
+      "market": "KOSPI",
+      "price": 1341000.0,
+      "high20": 1334000.0,
+      "atr20": 101587.0,
+      "gap_atr": 0.069,
+      "unit_shares": 4,
+      "status": "진입가능"
+    },
+    "204270": {
+      "time": "09:13",
+      "name": "제이앤티씨",
+      "sector": "전기전자",
+      "market": "KOSDAQ",
+      "price": 23850.0,
+      "high20": 22750.0,
+      "atr20": 1616.0,
+      "gap_atr": 0.681,
+      "unit_shares": 309,
+      "status": "추격금지"
     }
   }
 }
