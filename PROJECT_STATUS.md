@@ -72,7 +72,7 @@
   있는 동안은 정상 동작이 아니라 의도된 일시 정지 상태임
 
 ## 테스트
-- `python -m pytest tests/ -q` → **68 passed, 0 failed** (커밋 `56339f0` 기준)
+- `python -m pytest tests/ -q` → **68 passed, 0 failed** (커밋 `dfd967e` 기준, PR #3 최종 diff와 동일)
 - 신규 `tests/test_zero_cap_holds_new_buy.py` 5건은 모두 통과
   (상한 0 조기반환·로그, 상한 3 기존 흐름 유지, 추가매수·자동매도 무영향)
 - `MAX_ORDERS_PER_DAY=3→0`(운영 보류) 전환 이후 이 값을 monkeypatch하지
@@ -100,3 +100,17 @@
 - commit: `5b80f4d` (`main`, PR #2 병합 `d2f29e1` + 운영 보류 `b3adc7f` +
   야간 스캔 `5b80f4d` 이후 최신)
 - PR: https://github.com/uri2ri/stock-monitor/pull/2 (병합됨, `main`)
+
+## PR #3 (Draft, 별도 PR — PR #2와 무관)
+- 브랜치: `claude/holdings-search-error-kfynqa`, base `main`
+- https://github.com/uri2ri/stock-monitor/pull/3
+- `main`(당시 최신 `cb14d02`) 대비 diff: 6 files, +184/-8
+  - `kis_client.py`(최소 수정 8줄) — 신규매수 운영 보류(상한 0)에서 후보별
+    거절 카톡 반복 발송 수정
+  - `tests/test_zero_cap_holds_new_buy.py`(신규 5건)
+  - `test_multi_candidate_reservation.py`·`test_order_state_retry_policy.py`·
+    `test_bug3_final_price_reverify.py` 기존 6건에 `MAX_ORDERS_PER_DAY=3`
+    monkeypatch 추가(총 18줄) — 운영 보류 설정(0) 의존 제거, 검증 목적 유지
+  - `PROJECT_STATUS.md`(문서, 최종 테스트 결과 반영)
+- 프로덕션 상한은 `kis_client.py:108` `MAX_ORDERS_PER_DAY = 0` 그대로 유지
+- 상태: Draft, 미병합 — `main` 병합·배포·실주문·외부 알림·노션 쓰기 미실행
