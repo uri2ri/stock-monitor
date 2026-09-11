@@ -204,6 +204,18 @@
       "gap_atr": 0.072,
       "unit_shares": 51,
       "status": "진입가능"
+    },
+    "306200": {
+      "time": "15:13",
+      "name": "세아제강",
+      "sector": "금속",
+      "market": "KOSPI",
+      "price": 150500.0,
+      "high20": 150300.0,
+      "atr20": 6461.0,
+      "gap_atr": 0.031,
+      "unit_shares": 77,
+      "status": "진입가능"
     }
   }
 }
