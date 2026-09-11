@@ -132,6 +132,30 @@
       "gap_atr": 0.046,
       "unit_shares": 578,
       "status": "진입가능"
+    },
+    "017940": {
+      "time": "11:23",
+      "name": "E1",
+      "sector": "유통",
+      "market": "KOSPI",
+      "price": 99700.0,
+      "high20": 99600.0,
+      "atr20": 3181.0,
+      "gap_atr": 0.031,
+      "unit_shares": 157,
+      "status": "진입가능"
+    },
+    "000520": {
+      "time": "11:23",
+      "name": "삼일제약",
+      "sector": "제약",
+      "market": "KOSPI",
+      "price": 7210.0,
+      "high20": 7180.0,
+      "atr20": 361.0,
+      "gap_atr": 0.083,
+      "unit_shares": 1385,
+      "status": "진입가능"
     }
   }
 }
