@@ -1,0 +1,53 @@
+{
+  "date": "20260911",
+  "alerted": {
+    "216080": {
+      "time": "09:03",
+      "name": "제테마",
+      "sector": "제약",
+      "market": "KOSDAQ",
+      "price": 6800.0,
+      "high20": 6710.0,
+      "atr20": 445.0,
+      "gap_atr": 0.202,
+      "unit_shares": 1123,
+      "status": "진입가능"
+    },
+    "005440": {
+      "time": "09:03",
+      "name": "현대지에프홀딩스",
+      "sector": "금융",
+      "market": "KOSPI",
+      "price": 13080.0,
+      "high20": 13050.0,
+      "atr20": 580.0,
+      "gap_atr": 0.052,
+      "unit_shares": 862,
+      "status": "진입가능"
+    },
+    "112610": {
+      "time": "09:03",
+      "name": "씨에스윈드",
+      "sector": "금속",
+      "market": "KOSPI",
+      "price": 52400.0,
+      "high20": 52200.0,
+      "atr20": 2936.0,
+      "gap_atr": 0.068,
+      "unit_shares": 170,
+      "status": "진입가능"
+    },
+    "001820": {
+      "time": "09:03",
+      "name": "삼화콘덴서",
+      "sector": "전기전자",
+      "market": "KOSPI",
+      "price": 123300.0,
+      "high20": 123000.0,
+      "atr20": 10838.0,
+      "gap_atr": 0.028,
+      "unit_shares": 46,
+      "status": "진입가능"
+    }
+  }
+}
