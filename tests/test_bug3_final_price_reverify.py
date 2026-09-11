@@ -56,6 +56,9 @@ def _run_select(monkeypatch, candidate, fresh_price=None, fresh_quote_error=None
 
 
 def test_price_still_within_chase_range_updates_price_and_proceeds(monkeypatch):
+    # 이 시나리오는 정상 신규매수 통과 경로를 보려는 것이라, 운영 보류
+    # 설정(MAX_ORDERS_PER_DAY=0)에 의존하지 않도록 정상값(3)으로 고정한다.
+    monkeypatch.setattr(kis_client, "MAX_ORDERS_PER_DAY", 3)
     candidate = _candidate(price=10_400.0)   # 판정 시점 가격(네이버)
     fresh_price = 10_500.0                    # 그 사이 조금 더 올랐지만 추격범위(10550) 안
     selected = _run_select(monkeypatch, candidate, fresh_price=fresh_price)
