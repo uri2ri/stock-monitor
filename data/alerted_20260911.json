@@ -192,6 +192,18 @@
       "gap_atr": 0.017,
       "unit_shares": 166,
       "status": "진입가능"
+    },
+    "052690": {
+      "time": "14:53",
+      "name": "한전기술",
+      "sector": "일반서비스",
+      "market": "KOSPI",
+      "price": 153200.0,
+      "high20": 152500.0,
+      "atr20": 9757.0,
+      "gap_atr": 0.072,
+      "unit_shares": 51,
+      "status": "진입가능"
     }
   }
 }
