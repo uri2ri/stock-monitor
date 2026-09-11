@@ -49,6 +49,9 @@ def test_second_candidate_blocked_by_cash_reserved_for_first(monkeypatch):
     # unit_shares = floor(10,000,000*0.005/500) = 100주 -> 1유닛 1,000,000원 안팎.
     # 현금이 딱 한 종목분(+비용)만 감당하도록 잡아, 두 번째 후보는
     # 첫 번째가 예약해간 현금 때문에 막혀야 한다.
+    # 이 시나리오는 정상 신규매수 현금 예약 동작을 보려는 것이라, 운영
+    # 보류 설정(MAX_ORDERS_PER_DAY=0)에 의존하지 않도록 정상값(3)으로 고정한다.
+    monkeypatch.setattr(kis_client, "MAX_ORDERS_PER_DAY", 3)
     c1 = _candidate("000001", "전기전자", price=10_000.0, high20=9_900.0)
     c2 = _candidate("000002", "화학", price=10_000.0, high20=9_900.0)
     cash = 1_000_000.0 * 1.0025 + 1.0   # 딱 1종목분(비용 포함) + 약간의 여유
@@ -88,6 +91,9 @@ def test_price_reverification_still_deducts_updated_amount_from_reservation(monk
     # 그 커진 금액 그대로 현금 예약에서 빠져야 한다 - 판정 시점(낮은)
     # 가격으로 예약했다면 통과했을 두 번째 후보가, 재검증 후 커진 예약
     # 때문에 막혀야 한다.
+    # 이 시나리오는 정상 신규매수 재검증 예약 동작을 보려는 것이라, 운영
+    # 보류 설정(MAX_ORDERS_PER_DAY=0)에 의존하지 않도록 정상값(3)으로 고정한다.
+    monkeypatch.setattr(kis_client, "MAX_ORDERS_PER_DAY", 3)
     c1 = _candidate("000001", "전기전자", price=9_950.0, high20=9_900.0)   # 판정 시점 가격
     c2 = _candidate("000002", "화학", price=9_950.0, high20=9_900.0)
     # unit_shares=100 -> 판정시점 unit_amount=995,000. 재검증 최신가는

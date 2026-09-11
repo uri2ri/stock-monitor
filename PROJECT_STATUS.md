@@ -4,8 +4,8 @@
 - 종목 스캔 완료 (`scan_all.py`, `high20`/`high20_next` 둘 다 저장)
 - 장중 돌파 감시 완료 (`intraday_watch.py`)
 - KIS 모의투자 주문 연결 완료 (`kis_client.py`)
-- 장중 자동매수 파이프라인 fail-closed 강화 완료 — PR #2 (draft),
-  브랜치 `claude/holdings-search-error-kfynqa`
+- 장중 자동매수 파이프라인 fail-closed 강화 완료 — PR #2 **병합 완료**
+  (`main`, 2026-09-10 08:28 UTC)
   1. 구버전 스캔 CSV의 신규매수 차단 (화면 표시는 계속, 자동매수만 보류)
   2. 후보 선정(워치리스트 순위)과 판정(`judge()`) 기준을 `high20_next`로 통일
   3. KIS 최신 가격 검증 실패 시 신규매수 보류 (fail-open → fail-closed)
@@ -49,13 +49,39 @@
   한 번 더 돌리면 `high20_next`가 채워진 새 `scan_latest.csv`로 자동 전환.
   재스캔 전까지 화면 표시는 계속되지만 신규매수만 보류
 
+## 운영 상태 (중요)
+- PR #2 병합 직전(2026-09-10 08:27 UTC) `MAX_ORDERS_PER_DAY`를 3 → **0**
+  으로 내려 **신규 자동매수를 운영 보류 중**(커밋 `b3adc7f`). 병합 후
+  변경 사항을 실거래에서 점검하기 위한 조치이며, `select_buy_candidates()`
+  의 신규(ORDER_NEW) 전용 예산만 낮춘 것이라 추가매수(`MAX_PYRAMID_ORDERS_PER_DAY`)
+  ·청산(`run_auto_sell`)에는 영향 없음. **재개 시 사람이 3으로 되돌려야 함**
+  (자동 복구 아님) — 점검 결과를 보고 결정.
+- 운영 보류 중 발견된 부작용 수정 완료(2026-09-11): `MAX_ORDERS_PER_DAY=0`
+  이어도 `select_buy_candidates()`가 후보별 가격·유닛금액·상관군·현금
+  검사를 그대로 거쳐 후보마다 거절 카톡을 반복 발송하던 문제. 이제 상한이
+  0이면 계좌 조회·후보별 검사·거절 알림 없이 바로 빈 목록을 반환하고
+  로그(`신규매수 운영 보류: 일일 상한 0`)만 남김. 상한이 정상값(예: 3)이고
+  그날 소진돼 `remaining_slots == 0`이 된 경우는 대상이 아니며 기존
+  후보별 검사·"우선순위 밀림" 알림 그대로 유지. 자동매도·추가매수·주문
+  기록 기반 재시도 정책은 영향 없음(별도 캡·경로 사용). 상한값 자체는
+  여전히 0 — 재개는 위 항목대로 사람이 결정.
+
 ## 현재 문제
 - 보유종목 검색 오류 확인 필요
+- (위 운영 보류 참고) 신규 자동매수가 `MAX_ORDERS_PER_DAY=0`으로 막혀
+  있는 동안은 정상 동작이 아니라 의도된 일시 정지 상태임
 
 ## 테스트
-- `python -m pytest tests/ -q` → **63 passed** (기존 20건 + 신규/갱신 43건)
-- 핵심 회귀는 수정 전 실패 → 수정 후 통과를 직접 확인
-  (`git stash push -- intraday_watch.py kis_client.py`로 되돌려 25건 실패 확인 후 복원)
+- `python -m pytest tests/ -q` → **68 passed, 0 failed** (커밋 `dfd967e` 기준, PR #3 최종 diff와 동일)
+- 신규 `tests/test_zero_cap_holds_new_buy.py` 5건은 모두 통과
+  (상한 0 조기반환·로그, 상한 3 기존 흐름 유지, 추가매수·자동매도 무영향)
+- `MAX_ORDERS_PER_DAY=3→0`(운영 보류) 전환 이후 이 값을 monkeypatch하지
+  않아 실패하던 기존 6건(`test_multi_candidate_reservation.py` 2건,
+  `test_order_state_retry_policy.py` 3건, `test_bug3_final_price_reverify.py`
+  1건)은 모두 정상 신규매수 통과·재검증·현금 예약 동작을 검증하는
+  테스트로 확인 — 검증 목적·assert는 그대로 두고 테스트 내부에서
+  `MAX_ORDERS_PER_DAY`를 3으로 monkeypatch해 운영 보류 설정과 분리함
+  (프로덕션 상한은 여전히 0, 변경 없음)
 
 ## 남은 한계 / 후속 확인
 - 최종 가격 재검증은 시장가 주문의 실제 체결가격을 보장하지 않음
@@ -67,8 +93,24 @@
   `scan_latest.csv`(구버전·최신 각각)로 `load_watchlist()`/`judge()` 재확인,
   실 계좌 규모에서 비용 포함 현금 게이트가 기존 게이트5와 크게 어긋나지
   않는지 점검 권장
-- `main` 병합·배포는 하지 않음
+- `MAX_ORDERS_PER_DAY=0` 운영 보류 해제(3으로 복원) 여부는 실거래 점검
+  결과를 보고 사람이 결정해야 함 (자동 복구 없음)
 
 ## 최근 정상 기준
-- commit: `916becc` (이전 정상 기준 `d85d75a` → `56c222d` 위에 문서만 추가, 리셋 없음)
-- PR: https://github.com/uri2ri/stock-monitor/pull/2 (draft, base `main`)
+- commit: `5b80f4d` (`main`, PR #2 병합 `d2f29e1` + 운영 보류 `b3adc7f` +
+  야간 스캔 `5b80f4d` 이후 최신)
+- PR: https://github.com/uri2ri/stock-monitor/pull/2 (병합됨, `main`)
+
+## PR #3 (Draft, 별도 PR — PR #2와 무관)
+- 브랜치: `claude/holdings-search-error-kfynqa`, base `main`
+- https://github.com/uri2ri/stock-monitor/pull/3
+- `main`(당시 최신 `cb14d02`) 대비 diff: 6 files, +184/-8
+  - `kis_client.py`(최소 수정 8줄) — 신규매수 운영 보류(상한 0)에서 후보별
+    거절 카톡 반복 발송 수정
+  - `tests/test_zero_cap_holds_new_buy.py`(신규 5건)
+  - `test_multi_candidate_reservation.py`·`test_order_state_retry_policy.py`·
+    `test_bug3_final_price_reverify.py` 기존 6건에 `MAX_ORDERS_PER_DAY=3`
+    monkeypatch 추가(총 18줄) — 운영 보류 설정(0) 의존 제거, 검증 목적 유지
+  - `PROJECT_STATUS.md`(문서, 최종 테스트 결과 반영)
+- 프로덕션 상한은 `kis_client.py:108` `MAX_ORDERS_PER_DAY = 0` 그대로 유지
+- 상태: Draft, 미병합 — `main` 병합·배포·실주문·외부 알림·노션 쓰기 미실행

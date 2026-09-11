@@ -36,6 +36,9 @@ TODAY = date(2026, 9, 16)
 # ── _check_order_allowed(): 재시도 허용/차단 판단 ──────────────
 
 def test_allowed_when_no_prior_order_and_no_rejection_streak(monkeypatch):
+    # 이 시나리오는 정상 신규매수 통과 판정을 보려는 것이라, 운영 보류
+    # 설정(MAX_ORDERS_PER_DAY=0)에 의존하지 않도록 정상값(3)으로 고정한다.
+    monkeypatch.setattr(kis_client, "MAX_ORDERS_PER_DAY", 3)
     monkeypatch.setattr(notion_repo, "has_order_today", lambda *a, **k: False)
     monkeypatch.setattr(notion_repo, "count_rejected_orders_today", lambda *a, **k: 0)
     monkeypatch.setattr(notion_repo, "count_orders_by_status_today",
@@ -55,6 +58,9 @@ def test_blocked_when_prior_order_recorded_today(monkeypatch):
 def test_transient_lookup_failure_is_fail_closed_but_not_permanent(monkeypatch):
     # 1회차: 노션 조회 자체가 일시적으로 실패 - 이번 회차는 막되(fail-closed),
     # 다음 회차에 조회가 정상화되면 재평가할 수 있어야 한다(영구 차단 아님).
+    # 이 시나리오는 정상 신규매수 재평가 통과를 보려는 것이라, 운영 보류
+    # 설정(MAX_ORDERS_PER_DAY=0)에 의존하지 않도록 정상값(3)으로 고정한다.
+    monkeypatch.setattr(kis_client, "MAX_ORDERS_PER_DAY", 3)
     monkeypatch.setattr(notion_repo, "has_order_today",
                         mock.Mock(side_effect=RuntimeError("타임아웃")))
     monkeypatch.setattr(kis_client, "_notify_warning_throttled", lambda k, m: None)
@@ -85,6 +91,9 @@ def test_repeated_explicit_rejections_stop_retry_even_though_not_blocked_by_has_
 
 
 def test_single_rejection_below_streak_cap_does_not_block_retry(monkeypatch):
+    # 이 시나리오는 정상 신규매수 재시도 허용을 보려는 것이라, 운영 보류
+    # 설정(MAX_ORDERS_PER_DAY=0)에 의존하지 않도록 정상값(3)으로 고정한다.
+    monkeypatch.setattr(kis_client, "MAX_ORDERS_PER_DAY", 3)
     monkeypatch.setattr(notion_repo, "has_order_today", lambda *a, **k: False)
     monkeypatch.setattr(notion_repo, "count_rejected_orders_today",
                         lambda *a, **k: kis_client.MAX_REJECTIONS_PER_STOCK - 1)
