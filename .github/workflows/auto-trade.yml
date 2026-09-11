@@ -65,6 +65,8 @@ jobs:
           NOTION_ORDERS_DB_ID: ${{ secrets.NOTION_ORDERS_DB_ID }}
           # 자동매도가 보유 종목(손절선·최근 판정)을 읽는 DB
           NOTION_DB_ID: ${{ secrets.NOTION_DB_ID }}
+          # 전량 체결 확인 후 청산 일지 기록과 중복 확인에 사용
+          NOTION_LEDGER_DB_ID: ${{ secrets.NOTION_LEDGER_DB_ID }}
           # KIS 접근토큰 캐시 - 없어도 캐싱만 건너뛰고 거래는 그대로 진행된다
           NOTION_TOKEN_CACHE_DB_ID: ${{ secrets.NOTION_TOKEN_CACHE_DB_ID }}
           # 자동매매 정지/재개 스위치 - 신규 진입·추가매수 전용(자동매도는 무관).

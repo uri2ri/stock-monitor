@@ -39,6 +39,7 @@ def _run_select(monkeypatch, candidate, fresh_price=None, fresh_quote_error=None
     monkeypatch.setattr(kis_client, "get_mock_account_corr_units",
                         lambda size, holdings: {"groups": {}, "total_units": 0})
     monkeypatch.setattr(notion_repo, "count_success_orders_today", lambda day, acct: 0)
+    monkeypatch.setattr(notion_repo, "find_auto_holding_page", lambda ticker: None)
     monkeypatch.setattr(kis_client, "_notify_failure", lambda msg: None)
     monkeypatch.setattr(kis_client, "_notify_warning_throttled", lambda key, msg: None)
 

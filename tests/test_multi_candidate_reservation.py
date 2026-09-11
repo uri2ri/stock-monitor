@@ -37,6 +37,7 @@ def _setup_common(monkeypatch, cash: float, fresh_prices: dict[str, float]):
     monkeypatch.setattr(kis_client, "get_mock_account_corr_units",
                         lambda size, holdings: {"groups": {}, "total_units": 0})
     monkeypatch.setattr(notion_repo, "count_success_orders_today", lambda day, acct: 0)
+    monkeypatch.setattr(notion_repo, "find_auto_holding_page", lambda ticker: None)
     monkeypatch.setattr(kis_client, "_notify_failure", lambda msg: None)
     monkeypatch.setattr(kis_client, "_notify_warning_throttled", lambda key, msg: None)
     monkeypatch.setattr(
@@ -98,7 +99,7 @@ def test_price_reverification_still_deducts_updated_amount_from_reservation(monk
     c2 = _candidate("000002", "화학", price=9_950.0, high20=9_900.0)
     # unit_shares=100 -> 판정시점 unit_amount=995,000. 재검증 최신가는
     # 10,000원으로 올라 unit_amount=1,000,000이 된다(예약 차감은 비용
-    # 미포함 unit_amount 기준). 그만큼 예약되고 나면, 두 번째 후보의
+    # 포함 1,002,500원 기준). 그만큼 예약되고 나면, 두 번째 후보의
     # 비용 포함 필요금액(997,487.5원)을 감당하지 못할 만큼만 현금을 준다.
     cash = 1_997_000.0
     _setup_common(monkeypatch, cash=cash,
@@ -108,3 +109,20 @@ def test_price_reverification_still_deducts_updated_amount_from_reservation(monk
 
     assert [s["ticker"] for s in selected] == ["000001"]
     assert selected[0]["price"] == 10_000.0, "최신가로 갱신된 가격이 반영돼야 한다"
+
+
+def test_all_candidate_costs_are_reserved(monkeypatch):
+    monkeypatch.setattr(kis_client, "MAX_ORDERS_PER_DAY", 3)
+    candidates = [_candidate(f"{i:06d}", "전기전자", 10_000, 9_900) for i in range(2)]
+    _setup_common(monkeypatch, 2_003_000, {c['ticker']: 10_000 for c in candidates})
+    selected = kis_client.select_buy_candidates('dummy', candidates)
+    assert len(selected) == 1
+    assert sum(c['price'] * c['unit_shares'] * (1 + kis_client.ORDER_COST_RATE)
+               for c in selected) <= 2_003_000
+
+
+def test_exact_combined_cost_allows_both(monkeypatch):
+    monkeypatch.setattr(kis_client, "MAX_ORDERS_PER_DAY", 3)
+    candidates = [_candidate(f"{i:06d}", "전기전자", 10_000, 9_900) for i in range(2)]
+    _setup_common(monkeypatch, 2_005_000, {c['ticker']: 10_000 for c in candidates})
+    assert len(kis_client.select_buy_candidates('dummy', candidates)) == 2
