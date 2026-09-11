@@ -156,6 +156,18 @@
       "gap_atr": 0.083,
       "unit_shares": 1385,
       "status": "진입가능"
+    },
+    "020150": {
+      "time": "12:53",
+      "name": "롯데에너지머티리얼즈",
+      "sector": "전기전자",
+      "market": "KOSPI",
+      "price": 43700.0,
+      "high20": 43600.0,
+      "atr20": 3159.0,
+      "gap_atr": 0.032,
+      "unit_shares": 158,
+      "status": "진입가능"
     }
   }
 }
