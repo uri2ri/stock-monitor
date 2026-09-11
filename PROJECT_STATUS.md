@@ -72,14 +72,16 @@
   있는 동안은 정상 동작이 아니라 의도된 일시 정지 상태임
 
 ## 테스트
-- `python -m pytest tests/ -q` → 62 passed, 6 failed (2026-09-11 기준)
-- 6건 실패는 이번 수정과 무관한 기존 결함 — `MAX_ORDERS_PER_DAY=3→0` 전환
-  이후 해당 테스트들이 이 값을 monkeypatch하지 않아 생긴 사전 존재 문제
-  (`test_multi_candidate_reservation.py` 2건, `test_order_state_retry_policy.py`
-  3건, `test_bug3_final_price_reverify.py` 1건). 브랜치를 되돌려도 동일하게
-  실패함을 확인 — 이번 작업 범위 밖이라 손대지 않음
+- `python -m pytest tests/ -q` → **68 passed, 0 failed** (커밋 `56339f0` 기준)
 - 신규 `tests/test_zero_cap_holds_new_buy.py` 5건은 모두 통과
   (상한 0 조기반환·로그, 상한 3 기존 흐름 유지, 추가매수·자동매도 무영향)
+- `MAX_ORDERS_PER_DAY=3→0`(운영 보류) 전환 이후 이 값을 monkeypatch하지
+  않아 실패하던 기존 6건(`test_multi_candidate_reservation.py` 2건,
+  `test_order_state_retry_policy.py` 3건, `test_bug3_final_price_reverify.py`
+  1건)은 모두 정상 신규매수 통과·재검증·현금 예약 동작을 검증하는
+  테스트로 확인 — 검증 목적·assert는 그대로 두고 테스트 내부에서
+  `MAX_ORDERS_PER_DAY`를 3으로 monkeypatch해 운영 보류 설정과 분리함
+  (프로덕션 상한은 여전히 0, 변경 없음)
 
 ## 남은 한계 / 후속 확인
 - 최종 가격 재검증은 시장가 주문의 실제 체결가격을 보장하지 않음
