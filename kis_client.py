@@ -1080,6 +1080,35 @@ def _record_ledger_after_sell(
         return False
 
 
+def _split_stale_pending_sells(pending: list[dict], page_id: Optional[str]
+                               ) -> tuple[list[dict], list[dict]]:
+    """재진입한 새 포지션에 그 이전 포지션의 미확인 매도 기록을 적용하지 않는다.
+
+    자동주문 기록(노션)은 보유종목 점검표 행과 relation으로 연결돼 있지
+    않고 종목코드로만 매칭한다(주문 DB 스키마에 그런 칸이 없다). 한 종목을
+    완전청산한 뒤 재진입하면 점검표엔 새 page_id의 새 행이 생기므로, 청산
+    처리 후 주문 상태 갱신만 실패해 "주문중"으로 남은 과거 매도 기록이
+    새 포지션과 종목코드만으로 잘못 엮여 새 포지션의 매도·추가매수를
+    영구히 막을 수 있다. 새 포지션의 매수일보다 이전 주문은 과거 매도로
+    보고 분리한다. 매수일을 확인할 수 없으면(page_id 없음·조회 실패)
+    안전한 쪽(기존처럼 전부 현재 것으로 취급해 차단)으로 남긴다.
+    """
+    if not page_id:
+        return [], pending
+    entry_date = notion_repo.fetch_holding_buy_date(page_id)
+    if entry_date is None:
+        return [], pending
+    stale, current = [], []
+    for o in pending:
+        try:
+            order_day = date.fromisoformat(o.get('order_day') or '')
+        except ValueError:
+            current.append(o)   # 날짜 불명은 안전한 쪽(현재 것으로 취급)
+            continue
+        (stale if order_day < entry_date else current).append(o)
+    return stale, current
+
+
 def _reconcile_sell(token: str, page_id: str, inp, order: dict) -> None:
     """전체 체결과 실제 잔고 0을 모두 확인한 경우에만 청산한다."""
     try:
@@ -1199,7 +1228,13 @@ def run_auto_sell(holdings: Optional[list[tuple[str, core.HoldingInput]]] = None
     sellable = {h["ticker"]: h["sellable"] for h in balance.get("holdings", [])}
 
     for page_id, inp in holdings:
-        pending = [o for o in pending_sells if o['ticker'] == inp.ticker]
+        pending_all = [o for o in pending_sells if o['ticker'] == inp.ticker]
+        stale, pending = _split_stale_pending_sells(pending_all, page_id)
+        if stale:
+            _notify_warning_throttled(
+                f'sell_stale:{inp.ticker}:{page_id}',
+                f'[KIS] {inp.name} 재진입 이전 매도 기록 {len(stale)}건 잔존 - '
+                f'수동 확인/정리 필요')
         if pending:
             if len(pending) == 1:
                 _reconcile_sell(token, page_id, inp, pending[0])
@@ -1364,15 +1399,33 @@ def run_auto_pyramid(holdings: Optional[list] = None) -> None:
     total_units = corr["total_units"]
     sector_map = _get_sector_map()
     try:
-        pending_sell_tickers = {o['ticker'] for o in
-                               notion_repo.fetch_unconfirmed_sell_orders(ACCOUNT_TYPE)}
+        pending_sells_by_ticker: dict[str, list[dict]] = {}
+        for o in notion_repo.fetch_unconfirmed_sell_orders(ACCOUNT_TYPE):
+            pending_sells_by_ticker.setdefault(o['ticker'], []).append(o)
     except Exception as e:
         logger.warning('미확인 매도 조회 실패 - 추가매수 보류: %s', e)
         return
 
     for inp in holdings:
-        if inp.ticker in pending_sell_tickers:
-            continue
+        pending = pending_sells_by_ticker.get(inp.ticker)
+        if pending:
+            # 재진입한 새 포지션에 과거(이전 포지션) 매도 기록이 종목코드만으로
+            # 잘못 엮이지 않도록, 이 포지션의 매수일 이후 주문만 "현재 것"으로
+            # 본다 (_split_stale_pending_sells 참고).
+            try:
+                page_id = notion_repo.find_auto_holding_page(inp.ticker)
+            except Exception as e:          # noqa: BLE001
+                logger.warning('[%s] 보유종목 조회 실패 - 추가매수 보류: %s',
+                               inp.ticker, e)
+                continue
+            stale, pending = _split_stale_pending_sells(pending, page_id)
+            if stale:
+                _notify_warning_throttled(
+                    f'pyramid_stale:{inp.ticker}',
+                    f'[KIS] {inp.name} 재진입 이전 매도 기록 {len(stale)}건 잔존 - '
+                    f'수동 확인/정리 필요')
+            if pending:
+                continue
         held_qty = held.get(inp.ticker, 0)
         if held_qty <= 0:
             continue
@@ -1492,6 +1545,15 @@ def get_order_execution(access_token: str, order_no: str,
     )
     resp.raise_for_status()
     data = resp.json()
+
+    # 오류 응답을 "아직 못 찾음(=미체결)"과 구분하지 않으면 조회 자체가
+    # 실패했을 때도 조용히 "미체결"로 해석해 알림 없이 계속 재시도만 하게
+    # 된다(당일엔 다음 전날-미완료 검사 전까지 티가 안 남). 여기서 확실히
+    # 예외로 올려 호출자가 알림을 보내게 한다.
+    if data.get('rt_cd') != '0':
+        raise RuntimeError(f"체결 조회 응답 오류: {data.get('msg1', '알 수 없는 오류')}")
+    if resp.headers.get('tr_cont', '') in ('F', 'M'):
+        raise RuntimeError('체결 조회 연속조회 필요 - 전체 내역 확인 전 처리 보류')
 
     for row in data.get("output1", []):
         if row.get("odno") != order_no:

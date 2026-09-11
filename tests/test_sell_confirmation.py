@@ -136,6 +136,65 @@ def test_close_failure_keeps_order_pending(env):
     n.update_order_record.assert_not_called()
 
 
+@pytest.mark.parametrize('data, continuation', [
+    ({'rt_cd': '1', 'msg1': '조회 오류'}, ''),
+    ({'rt_cd': '0', 'output1': []}, 'M'),
+])
+def test_execution_query_error_raises_instead_of_silent_unfilled(monkeypatch, data, continuation):
+    """조회 자체가 실패한 응답을 "미체결"로 조용히 해석하면 당일 내내
+    알림 없이 재시도만 하다가 청산 기회를 놓칠 수 있다 - 예외로 올려
+    호출자(_reconcile_sell)가 즉시 경고하게 한다."""
+    for key in ('KIS_APP_KEY', 'KIS_APP_SECRET'):
+        monkeypatch.setenv(key, 'dummy')
+    monkeypatch.setenv('KIS_ACCOUNT', '12345678-01')
+    response = Mock()
+    response.json.return_value = data
+    response.headers = {'tr_cont': continuation}
+    monkeypatch.setattr(k.requests, 'get', Mock(return_value=response))
+    with pytest.raises(RuntimeError):
+        k.get_order_execution('dummy', '123', order_day=date(2026, 9, 11))
+
+
+def test_execution_query_error_surfaces_same_day_notification(env):
+    """당일 조회 오류는(이전 거래일 검사를 기다리지 않고) 이번 회차에
+    바로 경고해야 한다."""
+    inp, _ = env
+    k.get_order_execution.side_effect = RuntimeError('체결 조회 응답 오류')
+    k.run_auto_sell([('holding', inp)])
+    n.close_auto_holding.assert_not_called()
+    k._notify_warning_throttled.assert_called()
+
+
+def test_stale_pending_sell_does_not_block_reentered_position(env, monkeypatch):
+    """완전청산(다만 주문 상태 갱신만 실패) 후 같은 종목을 재진입하면, 점검표엔
+    새 page_id의 새 행이 생긴다. 주문 DB는 종목코드로만 매칭되므로 과거
+    매도 기록이 새 포지션의 매수일보다 앞서면(재진입 이전 주문이면)
+    새 포지션의 매도 판정을 막지 않아야 한다."""
+    inp, order = env
+    order['order_day'] = '2026-09-01'   # 재진입 이전(과거 포지션)의 매도 주문
+    monkeypatch.setattr(n, 'fetch_holding_buy_date', Mock(return_value=date(2026, 9, 10)))
+    k.run_auto_sell([('new_holding_page', inp)])
+    # 과거 주문의 체결 여부는 다시 조회하지 않고(=엮이지 않고), 대신
+    # sellable=0(계좌 잔고 없음, env 기본값)이라 그냥 이번 회차는 넘어간다.
+    k.get_order_execution.assert_not_called()
+    n.close_auto_holding.assert_not_called()
+    n.update_order_record.assert_not_called()
+    stale_msgs = [c.args[1] for c in k._notify_warning_throttled.call_args_list
+                  if '재진입 이전' in c.args[1]]
+    assert stale_msgs, "재진입 이전 매도 기록에 대한 별도 알림이 있어야 한다"
+
+
+def test_same_day_or_later_pending_sell_still_blocks_reentered_position(env, monkeypatch):
+    """매수일과 같은 날 이상인 미확인 매도는(재진입 이전인지 확실치 않으므로)
+    여전히 안전한 쪽으로 현재 포지션의 주문으로 취급해 막아야 한다."""
+    inp, order = env
+    order['order_day'] = '2026-09-11'
+    monkeypatch.setattr(n, 'fetch_holding_buy_date', Mock(return_value=date(2026, 9, 11)))
+    k.get_order_execution.return_value = {'filled_qty': 100, 'avg_price': 8870}
+    k.run_auto_sell([('new_holding_page', inp)])
+    n.close_auto_holding.assert_called_once_with('new_holding_page')
+
+
 def test_pending_sell_query_paginates_and_keeps_original_day(monkeypatch):
     monkeypatch.setenv('NOTION_ORDERS_DB_ID', 'dummy')
     monkeypatch.setattr(n, '_headers', lambda: {})

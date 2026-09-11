@@ -56,7 +56,34 @@ def test_no_sell_when_sellable_zero(monkeypatch, setup):
 
 
 def test_pending_sell_blocks_pyramid(monkeypatch, setup):
-    n.fetch_unconfirmed_sell_orders.return_value = [{'ticker': setup.ticker}]
+    n.fetch_unconfirmed_sell_orders.return_value = [{'ticker': setup.ticker, 'order_day': '2026-09-11'}]
+    monkeypatch.setattr(k, 'get_price_quote', Mock(side_effect=AssertionError('No buy quote needed')))
+    monkeypatch.setattr(n, 'find_auto_holding_page', Mock(return_value='page'))
+    monkeypatch.setattr(n, 'fetch_holding_buy_date', Mock(return_value=date(2026, 9, 11)))
+    k.run_auto_pyramid([setup])
+    k.place_market_buy_order.assert_not_called()
+
+
+def test_stale_pending_sell_does_not_block_pyramid_on_reentered_position(monkeypatch, setup):
+    """재진입 이전(과거 포지션)의 미확인 매도 기록이 새 포지션의 추가매수까지
+    영구히 막아서는 안 된다 - 새 포지션의 매수일 이후 주문만 "현재 것"으로
+    본다."""
+    n.fetch_unconfirmed_sell_orders.return_value = [
+        {'ticker': setup.ticker, 'order_day': '2026-09-01'}]
+    monkeypatch.setattr(n, 'find_auto_holding_page', Mock(return_value='new_page'))
+    monkeypatch.setattr(n, 'fetch_holding_buy_date', Mock(return_value=date(2026, 9, 10)))
+    monkeypatch.setattr(k, 'get_price_quote', lambda *a: {'price': 10250, 'market_warned': False})
+    k.run_auto_pyramid([setup])
+    k.place_market_buy_order.assert_called_once()
+
+
+def test_unresolvable_entry_date_still_blocks_pyramid(monkeypatch, setup):
+    """새 포지션의 매수일을 확인할 수 없으면(조회 실패) 안전한 쪽으로
+    막아야 한다(재진입 오탐지보다 과잉차단이 안전)."""
+    n.fetch_unconfirmed_sell_orders.return_value = [
+        {'ticker': setup.ticker, 'order_day': '2026-09-01'}]
+    monkeypatch.setattr(n, 'find_auto_holding_page', Mock(return_value='new_page'))
+    monkeypatch.setattr(n, 'fetch_holding_buy_date', Mock(return_value=None))
     monkeypatch.setattr(k, 'get_price_quote', Mock(side_effect=AssertionError('No buy quote needed')))
     k.run_auto_pyramid([setup])
     k.place_market_buy_order.assert_not_called()
