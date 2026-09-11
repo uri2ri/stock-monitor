@@ -1779,6 +1779,10 @@ def select_buy_candidates(access_token: str, candidates: list[dict]) -> list[dic
             continue
 
         high20 = c.get("high20")
+        if fresh_price > MAX_STOCK_PRICE:
+            _notify_failure(f"[KIS] 주문 직전 재검증 - 가격 상한 초과: {name}")
+            continue
+
         if high20 is None or atr <= 0:
             msg = f"[KIS] 주문 직전 재검증 - 돌파 기준선/ATR 확인 불가, 신규매수 보류: {name}"
             logger.info(msg)
@@ -1822,7 +1826,7 @@ def select_buy_candidates(access_token: str, candidates: list[dict]) -> list[dic
         selected.append({**c, "unit_shares": unit_shares, "price": price})
         group_units[sector] = group_units.get(sector, 0) + 1
         total_units += 1
-        cash_remaining -= unit_amount
+        cash_remaining -= unit_amount + fresh_cost
 
     return selected
 
