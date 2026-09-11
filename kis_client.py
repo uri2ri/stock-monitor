@@ -1641,6 +1641,14 @@ def select_buy_candidates(access_token: str, candidates: list[dict]) -> list[dic
     누적해서 소모한다 (같은 상관군 후보를 연달아 다 뽑아버리는 일이 없게).
     반환: 통과한 후보 리스트 (각 원소에 "unit_shares" 추가), 갭 오름차순 그대로.
     """
+    if MAX_ORDERS_PER_DAY == 0:
+        # 일일 상한 자체가 0(신규매수 운영 보류)이면 후보별 가격·현금
+        # 검사와 거절 알림 없이 바로 빈 목록을 반환한다. 상한이 3처럼
+        # 정상값일 때 남은 자리(remaining_slots)가 소진돼 0이 되는 경우와는
+        # 다르다 - 그쪽은 기존 후보별 검사·알림 흐름을 그대로 탄다.
+        logger.info("신규매수 운영 보류: 일일 상한 0")
+        return []
+
     balance = get_account_balance(access_token)
     account_size = balance["account_size"]
 
