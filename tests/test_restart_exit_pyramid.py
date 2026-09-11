@@ -18,6 +18,7 @@ def setup(monkeypatch):
     monkeypatch.setattr(k, '_record_holding_after_buy', Mock())
     monkeypatch.setattr(k, '_record_ledger_after_sell', Mock())
     monkeypatch.setattr(n, 'close_auto_holding', Mock())
+    monkeypatch.setattr(n, 'fetch_unconfirmed_sell_orders', Mock(return_value=[]))
     monkeypatch.setattr(k, 'get_mock_account_corr_units', lambda *a: {'groups': {}, 'total_units': 1})
     monkeypatch.setattr(k, '_get_sector_map', lambda: {})
     monkeypatch.setattr(k, 'get_account_balance', lambda *a: {
@@ -52,3 +53,10 @@ def test_no_sell_when_sellable_zero(monkeypatch, setup):
     monkeypatch.setattr(k, 'get_current_price', Mock(side_effect=AssertionError('No quote needed')))
     k.run_auto_sell([('page', setup)])
     k.place_market_sell_order.assert_not_called()
+
+
+def test_pending_sell_blocks_pyramid(monkeypatch, setup):
+    n.fetch_unconfirmed_sell_orders.return_value = [{'ticker': setup.ticker}]
+    monkeypatch.setattr(k, 'get_price_quote', Mock(side_effect=AssertionError('No buy quote needed')))
+    k.run_auto_pyramid([setup])
+    k.place_market_buy_order.assert_not_called()

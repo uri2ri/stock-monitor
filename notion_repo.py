@@ -444,6 +444,17 @@ def create_ledger_record(
     return page_id
 
 
+def has_ledger_for_holding(page_id: str) -> bool:
+    """보유 포지션의 청산 일지 존재 여부. 오류 시 중복 생성을 막는다."""
+    resp = requests.post(
+        f"{NOTION_BASE}/databases/{os.environ['NOTION_LEDGER_DB_ID']}/query",
+        headers=_headers(), json={"filter": {
+            "property": "보유종목", "relation": {"contains": page_id}}, "page_size": 1},
+        timeout=30)
+    resp.raise_for_status()
+    return bool(resp.json().get('results'))
+
+
 def close_auto_holding(page_id: str) -> None:
     """자동매도 체결 후 보유종목 점검표에서 이 행을 청산 처리한다.
 
@@ -1212,6 +1223,35 @@ def update_evening_signal(
     resp.raise_for_status()
     logger.info("[저녁감사] 점검표 신호 갱신: page_id=%s -> %s (%s)",
                 page_id, signal_type or "해소", signal_date)
+
+
+def fetch_unconfirmed_sell_orders(account_type: str) -> list[dict]:
+    """날짜를 넘겨도 남는 미확인 매도 주문. 조회 오류는 호출자에게 전달한다."""
+    payload = {"filter": {"and": [
+        {"property": "계좌구분", "select": {"equals": account_type}},
+        _side_filter(SIDE_SELL),
+        {"or": [{"property": "상태", "select": {"equals": s}}
+                for s in ("주문중", "실패")]},
+    ]}, "page_size": 100}
+    rows = []
+    while True:
+        resp = requests.post(
+            f"{NOTION_BASE}/databases/{os.environ['NOTION_ORDERS_DB_ID']}/query",
+            headers=_headers(), json=payload, timeout=30)
+        resp.raise_for_status()
+        data = resp.json()
+        for page in data.get('results', []):
+            props = page.get('properties', {})
+            rows.append(dict(
+                page_id=page['id'], ticker=_text(props.get('종목코드', {})),
+                order_no=_text(props.get('주문번호', {})),
+                qty=_number(props.get('수량', {})),
+                reason=_text(props.get('사유', {})),
+                order_day=(props.get('주문일시', {}).get('date') or {}).get('start', '')[:10],
+            ))
+        if not data.get('has_more'):
+            return rows
+        payload['start_cursor'] = data['next_cursor']
 
 
 def fetch_orders_today(day: date) -> list[dict]:

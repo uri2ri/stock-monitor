@@ -962,11 +962,12 @@ def place_market_sell_order(access_token: str, stock_code: str, qty: int,
         return {"status": "rejected", "msg": rejected_msg}
 
     order_no = result["output"]["ODNO"]
-    _update_order_record(page_id, status="성공", order_no=order_no, reason=reason)
+    # 주문 접수 후 체결 확인 전까지 다음 회차의 확인 대상으로 남긴다.
+    _update_order_record(page_id, status="주문중", order_no=order_no, reason=reason)
     _notify_failure(
-        f"[KIS] 🔻 자동매도 {display_name}({stock_code}) {qty}주 - {reason}"
+        f"[KIS] 🔻 자동매도 접수 {display_name}({stock_code}) {qty}주 - {reason}"
     )
-    return {"status": "sent", "order_no": order_no}
+    return {"status": "sent", "order_no": order_no, "page_id": page_id}
 
 
 def _sell_reason(inp, price: float, today: date) -> Optional[str]:
@@ -1015,8 +1016,8 @@ def _ledger_exit_reason(reason: str) -> str:
 
 def _record_ledger_after_sell(
     access_token: str, page_id: str, inp, *, qty: int, ref_price: float,
-    reason: str, order_no: str, today: date,
-) -> None:
+    reason: str, order_no: str, today: date, confirmed_fill: Optional[dict] = None,
+) -> bool:
     """자동매도로 청산한 포지션을 매매일지에 1행 남긴다.
 
     fail-open이다: 여기서 실패해도 매도는 이미 체결됐으니 되돌리지 않는다.
@@ -1030,7 +1031,7 @@ def _record_ledger_after_sell(
     exit_price = ref_price
     try:
         time.sleep(1)  # 체결 처리 대기
-        fill = get_order_execution(access_token, order_no) if order_no else None
+        fill = confirmed_fill or (get_order_execution(access_token, order_no) if order_no else None)
         if fill and fill.get("avg_price"):
             exit_price = float(fill["avg_price"])
     except Exception as e:                  # noqa: BLE001
@@ -1049,6 +1050,8 @@ def _record_ledger_after_sell(
         avg_price = inp.buy_price
 
     try:
+        if notion_repo.has_ledger_for_holding(page_id):
+            return True
         notion_repo.create_ledger_record(
             name=inp.name, ticker=inp.ticker, market=inp.market,
             entry_price=avg_price,
@@ -1066,6 +1069,7 @@ def _record_ledger_after_sell(
             holding_page_id=page_id,
             memo=f"자동매도 (주문번호 {order_no}) - {reason}",
         )
+        return True
     except Exception as e:                  # noqa: BLE001
         logger.error("[%s] 매도는 체결됐으나 매매일지 기록 실패: %s", inp.name, e)
         _notify_warning_throttled(
@@ -1073,6 +1077,40 @@ def _record_ledger_after_sell(
             f"[KIS] ⚠ {inp.name} 매도는 체결됐지만 매매일지 기록 실패 - "
             f"승률·R배수 통계에서 빠집니다. 손으로 넣어주세요: {e}",
         )
+        return False
+
+
+def _reconcile_sell(token: str, page_id: str, inp, order: dict) -> None:
+    """전체 체결과 실제 잔고 0을 모두 확인한 경우에만 청산한다."""
+    try:
+        if not order.get('order_no'):
+            raise ValueError('주문번호 미확인 - 증권사 주문 내역 수동 확인 필요')
+        order_day = date.fromisoformat(order['order_day'])
+        fill = get_order_execution(token, order['order_no'], order_day=order_day)
+        if not fill or fill['filled_qty'] < order['qty']:
+            logger.info('[%s] 매도 미체결/부분체결 - 보유 유지', inp.ticker)
+            if order_day < _today():
+                raise ValueError('이전 거래일 매도 미완료 - 취소/잔여수량 수동 확인 필요')
+            return
+        if not _is_valid_price(fill.get('avg_price')):
+            raise ValueError('매도 체결가 확인 불가')
+        balance = get_account_balance(token)
+        if any(h['ticker'] == inp.ticker and h['qty'] > 0 for h in balance['holdings']):
+            raise ValueError('매도 체결 후 잔여 보유수량 확인 - 수동 확인 필요')
+        if not _record_ledger_after_sell(
+            token, page_id, inp, qty=int(fill['filled_qty']),
+            ref_price=fill['avg_price'], reason=order['reason'],
+            order_no=order['order_no'], today=order_day, confirmed_fill=fill,
+        ):
+            return
+        notion_repo.close_auto_holding(page_id)
+        notion_repo.update_order_record(order['page_id'], status='성공',
+                                        order_no=order['order_no'], reason=order['reason'])
+    except Exception as e:
+        logger.warning('[%s] 매도 체결 확인/장부 반영 보류: %s', inp.ticker, e)
+        _notify_warning_throttled(
+            f'sell_reconcile:{inp.ticker}',
+            f'[KIS] {inp.name} 매도 확인 보류 - 확인 필요: {e}')
 
 
 def run_auto_sell(holdings: Optional[list[tuple[str, core.HoldingInput]]] = None) -> None:
@@ -1100,10 +1138,9 @@ def run_auto_sell(holdings: Optional[list[tuple[str, core.HoldingInput]]] = None
     수량은 노션 보유수량이 아니라 실제 주문가능수량을 쓴다 - 둘이 어긋날 때
     (수동 매매·부분 체결) 증권사에 있는 만큼만 파는 게 항상 안전하다.
 
-    매도가 체결되면(청산은 항상 전량이므로 "성공"=완전 청산) 보유종목
-    점검표의 구분을 "청산"으로 바꾼다 - 이걸 안 하면 실제로는 팔린
-    종목이 노션엔 "보유"로 계속 남아서, 상관군·리스크 리포트가 이미
-    없는 포지션을 계속 세고 사람이 앱에서 봐도 매도된 걸 알 길이 없다.
+    주문 접수 후에는 주문중 기록을 다음 회차에도 조회한다. 주문 전체
+    체결과 잔고 0을 확인한 뒤 일지를 기록하고 보유종목을 청산 처리한다.
+    부분체결·조회 실패·주문번호 불명 상태는 보유와 주문 기록을 유지한다.
     """
     if not _auto_trade_configured():
         return
@@ -1153,9 +1190,23 @@ def run_auto_sell(holdings: Optional[list[tuple[str, core.HoldingInput]]] = None
         )
         return
 
+    try:
+        pending_sells = notion_repo.fetch_unconfirmed_sell_orders(ACCOUNT_TYPE)
+    except Exception as e:
+        _notify_warning_throttled(WARN_ORDER_STATUS_UNKNOWN,
+                                  f'[KIS] 미확인 매도 조회 실패 - 중복 방지를 위해 매도 보류: {e}')
+        return
     sellable = {h["ticker"]: h["sellable"] for h in balance.get("holdings", [])}
 
     for page_id, inp in holdings:
+        pending = [o for o in pending_sells if o['ticker'] == inp.ticker]
+        if pending:
+            if len(pending) == 1:
+                _reconcile_sell(token, page_id, inp, pending[0])
+            else:
+                _notify_warning_throttled(f'sell_reconcile:{inp.ticker}',
+                    f'[KIS] {inp.name} 미확인 매도 여러 건 - 수동 확인 필요')
+            continue
         qty = sellable.get(inp.ticker, 0)
         if qty <= 0:
             # 이 계좌에 없거나(수동 보유·다른 계좌) 이미 매도가 걸려 있다.
@@ -1177,30 +1228,12 @@ def run_auto_sell(holdings: Optional[list[tuple[str, core.HoldingInput]]] = None
         )
         logger.info("자동매도: %s(%s) %d주 -> %s", inp.name, inp.ticker, qty, result)
 
-        # 체결됐으면(청산은 항상 전량) 보유종목 점검표를 청산 처리한다.
-        # 이걸 안 하면 노션엔 계속 "보유"로 남아 상관군·리스크 집계가
-        # 이미 없는 포지션을 계속 세고, 사람도 앱에서 매도 여부를 알 수 없다.
+        # 접수와 체결은 다르다. 다음 실행에서도 주문중 기록으로 다시 확인한다.
         if result.get("status") == "sent":
-            try:
-                notion_repo.close_auto_holding(page_id)
-            except Exception as e:          # noqa: BLE001
-                logger.error("[%s] 매도는 체결됐으나 노션 청산 처리 실패: %s",
-                             inp.name, e)
-                _notify_failure(
-                    f"[KIS] ⚠ {inp.name} 매도는 체결됐지만 노션 기록 실패 - "
-                    "보유종목 점검표에서 구분을 수동으로 '청산'으로 바꿔주세요"
-                )
-
-            # 점검표 청산 처리와 별개로 매매일지에도 남긴다 - 점검표는
-            # 현재 상태만 보여주고, 승률·R배수·지연일수는 청산 건이 쌓이는
-            # 매매일지에서만 나온다. 위 청산 처리가 실패해도 이건 시도한다
-            # (둘은 독립적인 기록이고, 하나 실패했다고 나머지까지 버리면
-            # 감사 공백만 커진다).
-            _record_ledger_after_sell(
-                token, page_id, inp, qty=qty, ref_price=price,
-                reason=reason, order_no=result.get("order_no", ""),
-                today=today,
-            )
+            sellable[inp.ticker] = 0
+            _reconcile_sell(token, page_id, inp, dict(
+                page_id=result.get('page_id', ''), order_no=result.get('order_no', ''),
+                qty=qty, reason=reason, order_day=today.isoformat()))
 
 
 # ── 추가매수(피라미딩) ──────────────────────────────────────
@@ -1330,8 +1363,16 @@ def run_auto_pyramid(holdings: Optional[list] = None) -> None:
     group_units = dict(corr["groups"])
     total_units = corr["total_units"]
     sector_map = _get_sector_map()
+    try:
+        pending_sell_tickers = {o['ticker'] for o in
+                               notion_repo.fetch_unconfirmed_sell_orders(ACCOUNT_TYPE)}
+    except Exception as e:
+        logger.warning('미확인 매도 조회 실패 - 추가매수 보류: %s', e)
+        return
 
     for inp in holdings:
+        if inp.ticker in pending_sell_tickers:
+            continue
         held_qty = held.get(inp.ticker, 0)
         if held_qty <= 0:
             continue
@@ -1412,12 +1453,13 @@ def run_auto_pyramid(holdings: Optional[list] = None) -> None:
             )
 
 
-def get_order_execution(access_token: str, order_no: str) -> dict | None:
-    """오늘 주문의 체결 여부를 조회한다. 체결 전이거나 못 찾으면 None."""
+def get_order_execution(access_token: str, order_no: str,
+                        *, order_day: Optional[date] = None) -> dict | None:
+    """지정일(기본 오늘) 주문 체결 조회. 체결 전이거나 못 찾으면 None."""
     app_key = os.environ["KIS_APP_KEY"]
     app_secret = os.environ["KIS_APP_SECRET"]
     cano, acnt_prdt_cd = _parse_account(os.environ["KIS_ACCOUNT"])
-    today = _today().strftime("%Y%m%d")
+    today = (order_day or _today()).strftime("%Y%m%d")
 
     headers = {
         "content-type": "application/json; charset=utf-8",
@@ -1519,6 +1561,11 @@ def get_account_balance(access_token: str) -> dict:
     resp.raise_for_status()
     data = resp.json()
 
+    # 오류/불완전 응답을 빈 잔고로 해석하면 청산을 잘못 확정할 수 있다.
+    if data.get('rt_cd') != '0' or not isinstance(data.get('output1'), list) or not data.get('output2'):
+        raise RuntimeError('잔고 조회 응답이 유효하지 않습니다')
+    if resp.headers.get('tr_cont', '') in ('F', 'M'):
+        raise RuntimeError('잔고 연속조회 필요 - 전체 잔고 확인 전 처리 보류')
     output2 = data.get("output2") or [{}]
     row = output2[0]
     holdings = [
