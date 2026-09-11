@@ -96,6 +96,18 @@
       "gap_atr": 0.103,
       "unit_shares": 859,
       "status": "진입가능"
+    },
+    "405100": {
+      "time": "10:53",
+      "name": "큐알티",
+      "sector": "일반서비스",
+      "market": "KOSDAQ",
+      "price": 14590.0,
+      "high20": 14510.0,
+      "atr20": 865.0,
+      "gap_atr": 0.092,
+      "unit_shares": 578,
+      "status": "진입가능"
     }
   }
 }
