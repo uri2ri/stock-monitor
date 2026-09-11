@@ -11,7 +11,9 @@
       "atr20": 445.0,
       "gap_atr": 0.202,
       "unit_shares": 1123,
-      "status": "진입가능"
+      "status": "진입가능",
+      "price_10am": 6720.0,
+      "time_10am": "10:03"
     },
     "005440": {
       "time": "09:03",
@@ -23,7 +25,9 @@
       "atr20": 580.0,
       "gap_atr": 0.052,
       "unit_shares": 862,
-      "status": "진입가능"
+      "status": "진입가능",
+      "price_10am": 13240.0,
+      "time_10am": "10:03"
     },
     "112610": {
       "time": "09:03",
@@ -35,7 +39,9 @@
       "atr20": 2936.0,
       "gap_atr": 0.068,
       "unit_shares": 170,
-      "status": "진입가능"
+      "status": "진입가능",
+      "price_10am": 52500.0,
+      "time_10am": "10:03"
     },
     "001820": {
       "time": "09:03",
@@ -47,7 +53,9 @@
       "atr20": 10838.0,
       "gap_atr": 0.028,
       "unit_shares": 46,
-      "status": "진입가능"
+      "status": "진입가능",
+      "price_10am": 136700.0,
+      "time_10am": "10:03"
     },
     "000150": {
       "time": "09:13",
@@ -59,7 +67,9 @@
       "atr20": 101587.0,
       "gap_atr": 0.069,
       "unit_shares": 4,
-      "status": "진입가능"
+      "status": "진입가능",
+      "price_10am": 1366000.0,
+      "time_10am": "10:03"
     },
     "204270": {
       "time": "09:13",
@@ -71,7 +81,21 @@
       "atr20": 1616.0,
       "gap_atr": 0.681,
       "unit_shares": 309,
-      "status": "추격금지"
+      "status": "추격금지",
+      "price_10am": 22900.0,
+      "time_10am": "10:03"
+    },
+    "138930": {
+      "time": "10:03",
+      "name": "BNK금융지주",
+      "sector": "금융",
+      "market": "KOSPI",
+      "price": 16090.0,
+      "high20": 16030.0,
+      "atr20": 582.0,
+      "gap_atr": 0.103,
+      "unit_shares": 859,
+      "status": "진입가능"
     }
   }
 }
