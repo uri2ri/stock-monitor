@@ -168,6 +168,18 @@
       "gap_atr": 0.032,
       "unit_shares": 158,
       "status": "진입가능"
+    },
+    "001120": {
+      "time": "13:13",
+      "name": "LX인터내셔널",
+      "sector": "유통",
+      "market": "KOSPI",
+      "price": 40950.0,
+      "high20": 40850.0,
+      "atr20": 1481.0,
+      "gap_atr": 0.068,
+      "unit_shares": 337,
+      "status": "진입가능"
     }
   }
 }
