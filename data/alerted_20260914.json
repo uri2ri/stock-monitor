@@ -196,6 +196,18 @@
       "gap_atr": 0.101,
       "unit_shares": 1262,
       "status": "진입가능"
+    },
+    "080580": {
+      "time": "11:23",
+      "name": "오킨스전자",
+      "sector": "전기전자",
+      "market": "KOSDAQ",
+      "price": 22000.0,
+      "high20": 21900.0,
+      "atr20": 1693.0,
+      "gap_atr": 0.059,
+      "unit_shares": 295,
+      "status": "진입가능"
     }
   }
 }
