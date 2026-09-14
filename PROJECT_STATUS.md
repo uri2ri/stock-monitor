@@ -1,5 +1,11 @@
 # PROJECT STATUS
 
+## 포지션 연결 설계 — 2026-09-14
+
+- [POSITION_ORDER_LINK_PLAN.md](POSITION_ORDER_LINK_PLAN.md)에 두 구현 비교, relation 변경 요청, 기존 주문 이관, 이미 청산된 포지션 복구, 필수 테스트를 정리했다.
+- 기반은 PR #4 `c8bb33a`. 별도 브랜치 `8aee408`의 자동 만료/재매도 정책은 도입하지 않는다.
+- 상태: 설계 완료. 코드 구현·Notion 스키마 변경·데이터 이관·배포 미실행. 외부 변경 승인 범위는 자동주문 DB의 단방향 `보유종목` relation 1개 추가이며, 기존 레코드 연결은 별도 승인 대상이다.
+
 ## 배포 전 재검토 — 2026-09-14 (Codex)
 
 - PR #4: https://github.com/uri2ri/stock-monitor/pull/4 — OPEN / Draft. 점검 시작 head `a174a8b`, 자동 검사 결과 없음. 최종 head는 PR에서 확인한다.
