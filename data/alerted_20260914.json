@@ -24,6 +24,30 @@
       "gap_atr": 0.265,
       "unit_shares": 1396,
       "status": "진입가능"
+    },
+    "316140": {
+      "time": "09:13",
+      "name": "우리금융지주",
+      "sector": "금융",
+      "market": "KOSPI",
+      "price": 35750.0,
+      "high20": 35600.0,
+      "atr20": 1303.0,
+      "gap_atr": 0.115,
+      "unit_shares": 383,
+      "status": "진입가능"
+    },
+    "004100": {
+      "time": "09:13",
+      "name": "태양금속",
+      "sector": "운송장비·부품",
+      "market": "KOSPI",
+      "price": 2920.0,
+      "high20": 2875.0,
+      "atr20": 117.0,
+      "gap_atr": 0.385,
+      "unit_shares": 4273,
+      "status": "진입가능"
     }
   }
 }
