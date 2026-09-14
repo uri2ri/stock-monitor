@@ -244,6 +244,18 @@
       "gap_atr": 0.042,
       "unit_shares": 2109,
       "status": "진입가능"
+    },
+    "138930": {
+      "time": "13:33",
+      "name": "BNK금융지주",
+      "sector": "금융",
+      "market": "KOSPI",
+      "price": 16260.0,
+      "high20": 16230.0,
+      "atr20": 603.0,
+      "gap_atr": 0.05,
+      "unit_shares": 829,
+      "status": "진입가능"
     }
   }
 }
