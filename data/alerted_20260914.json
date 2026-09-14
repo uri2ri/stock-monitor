@@ -124,6 +124,18 @@
       "gap_atr": 0.269,
       "unit_shares": 1035,
       "status": "진입가능"
+    },
+    "000430": {
+      "time": "10:43",
+      "name": "대원강업",
+      "sector": "운송장비·부품",
+      "market": "KOSPI",
+      "price": 4890.0,
+      "high20": 4880.0,
+      "atr20": 207.0,
+      "gap_atr": 0.048,
+      "unit_shares": 2415,
+      "status": "진입가능"
     }
   }
 }
