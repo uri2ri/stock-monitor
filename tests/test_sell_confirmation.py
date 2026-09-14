@@ -139,6 +139,9 @@ def test_close_failure_keeps_order_pending(env):
 @pytest.mark.parametrize('data, continuation', [
     ({'rt_cd': '1', 'msg1': '조회 오류'}, ''),
     ({'rt_cd': '0', 'output1': []}, 'M'),
+    ({'rt_cd': '0'}, ''),
+    ({'rt_cd': '0', 'output1': None}, ''),
+    ({'rt_cd': '0', 'output1': {}}, ''),
 ])
 def test_execution_query_error_raises_instead_of_silent_unfilled(monkeypatch, data, continuation):
     """조회 자체가 실패한 응답을 "미체결"로 조용히 해석하면 당일 내내
@@ -163,6 +166,20 @@ def test_execution_query_error_surfaces_same_day_notification(env):
     k.run_auto_sell([('holding', inp)])
     n.close_auto_holding.assert_not_called()
     k._notify_warning_throttled.assert_called()
+
+
+def test_ledger_uses_confirmed_quantity_not_stale_holding(monkeypatch):
+    monkeypatch.setattr(k.time, 'sleep', Mock())
+    monkeypatch.setattr(n, 'fetch_holding_buy_date', Mock(return_value=None))
+    monkeypatch.setattr(n, 'fetch_holding_avg_price', Mock(return_value=10000))
+    monkeypatch.setattr(n, 'has_ledger_for_holding', Mock(return_value=False))
+    monkeypatch.setattr(n, 'create_ledger_record', Mock())
+    inp = core.HoldingInput('000001', 'test', 'KOSPI', 10000, 200)
+    assert k._record_ledger_after_sell('dummy', 'holding', inp, qty=100,
+        ref_price=8900, reason='손절', order_no='123', today=date(2026, 9, 11),
+        confirmed_fill={'filled_qty': 100, 'avg_price': 8870})
+    assert n.create_ledger_record.call_args.kwargs['shares'] == 100
+    assert n.create_ledger_record.call_args.kwargs['exit_price'] == 8870
 
 
 def test_stale_pending_sell_does_not_block_reentered_position(env, monkeypatch):

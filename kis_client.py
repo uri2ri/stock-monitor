@@ -1056,7 +1056,8 @@ def _record_ledger_after_sell(
             name=inp.name, ticker=inp.ticker, market=inp.market,
             entry_price=avg_price,
             entry_atr=inp.entry_atr,
-            shares=inp.shares or qty,
+            # 노션 수량이 오래됐더라도 확인한 실제 체결수량으로 기록한다.
+            shares=qty,
             units=inp.units,
             exit_date=today,
             exit_price=exit_price,
@@ -1559,6 +1560,8 @@ def get_order_execution(access_token: str, order_no: str,
     # 예외로 올려 호출자가 알림을 보내게 한다.
     if data.get('rt_cd') != '0':
         raise RuntimeError(f"체결 조회 응답 오류: {data.get('msg1', '알 수 없는 오류')}")
+    if not isinstance(data.get('output1'), list):
+        raise RuntimeError('체결 조회 내역이 유효하지 않습니다')
     if resp.headers.get('tr_cont', '') in ('F', 'M'):
         raise RuntimeError('체결 조회 연속조회 필요 - 전체 내역 확인 전 처리 보류')
 
