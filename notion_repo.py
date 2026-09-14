@@ -1100,6 +1100,74 @@ def count_orders_today(ticker: str, day: date, *, side: str = SIDE_BUY,
     return count
 
 
+def fetch_latest_sell_order_today(ticker: str, day: date) -> Optional[dict]:
+    """오늘(day) 이 종목코드로 상태='성공'(주문 접수)인 매도 주문 중 가장 최근 것 1건.
+
+    자동매도(kis_client.run_auto_sell)가 이전 실행에서 낸 매도 주문의 전량
+    체결 여부를 다음 실행에서도 이어서 확인하는 데 쓴다. GitHub Actions는
+    실행마다 컨테이너가 새로 떠 로컬 변수(주문번호·주문수량)가 다음
+    실행으로 넘어가지 않으므로, 이 DB가 실행 간 상태를 잇는 유일한 저장소다.
+
+    "성공"은 접수(rt_cd=0)일 뿐 체결을 뜻하지 않는다 - 반환값의 order_no로
+    kis_client.get_order_execution()을 다시 조회해야 실제 체결 여부를 안다.
+
+    예외를 삼키지 않는다 - 실패하면 그대로 raise. 호출자는 조회 실패를
+    "체결 확인 불가"로 다뤄야 한다(청산·원장 확정 금지, fail-closed).
+    """
+    db_id = os.environ["NOTION_ORDERS_DB_ID"]
+    url = f"{NOTION_BASE}/databases/{db_id}/query"
+    payload: dict[str, Any] = {
+        "filter": {
+            "and": [
+                {"property": "종목코드", "rich_text": {"equals": ticker}},
+                _side_filter(SIDE_SELL),
+                *_day_range_filter("주문일시", day),
+                {"property": "상태", "select": {"equals": "성공"}},
+            ]
+        },
+        "sorts": [{"property": "주문일시", "direction": "descending"}],
+        "page_size": 1,
+    }
+    resp = requests.post(url, headers=_headers(), json=payload, timeout=30)
+    resp.raise_for_status()
+    results = resp.json().get("results", [])
+    if not results:
+        return None
+    props = results[0].get("properties", {})
+    return {
+        "order_no": _text(props.get("주문번호", {})),
+        "qty": _number(props.get("수량", {})) or 0,
+        "reason": _text(props.get("사유", {})),
+    }
+
+
+def ledger_exists_for_holding_today(holding_page_id: str, day: date) -> bool:
+    """오늘(day) 청산일로 이 보유종목(page_id)의 매매일지 청산 기록이 이미 있는가.
+
+    자동매도 체결 확정(매매일지 기록 + 점검표 청산 처리)이 한쪽만 실패하고
+    재시도될 때, 매매일지를 다시 만들지(중복) 판단하는 데 쓴다 - 이미
+    있으면 점검표 청산 처리만 재시도해야 한다.
+
+    예외를 삼키지 않는다 - 실패하면 그대로 raise. 호출자는 조회 실패를
+    "확인 불가"로 다뤄 이번 실행은 매매일지 재기록을 보류해야 한다
+    (중복 생성 위험을 감수하지 않는다, fail-closed).
+    """
+    db_id = os.environ["NOTION_LEDGER_DB_ID"]
+    url = f"{NOTION_BASE}/databases/{db_id}/query"
+    payload: dict[str, Any] = {
+        "filter": {
+            "and": [
+                {"property": "보유종목", "relation": {"contains": holding_page_id}},
+                *_day_range_filter("✱ 청산일", day),
+            ]
+        },
+        "page_size": 1,
+    }
+    resp = requests.post(url, headers=_headers(), json=payload, timeout=30)
+    resp.raise_for_status()
+    return len(resp.json().get("results", [])) > 0
+
+
 def latest_warning_at(reason: str) -> Optional[datetime]:
     """상태='경고' + 사유=reason인 가장 최근 행의 주문일시. 없으면 None.
 
@@ -1474,7 +1542,7 @@ def fetch_holding_avg_price(page_id: str) -> Optional[float]:
 def fetch_holding_buy_date(page_id: str) -> Optional[date]:
     """점검표 특정 행의 '매수일'만 조회한다 (단건 GET).
 
-    kis_client._record_ledger_after_sell()이 매매일지의 '진입일'을 채우는
+    kis_client._write_ledger_and_close()가 매매일지의 '진입일'을 채우는
     데 쓴다 - HoldingInput은 매수일을 들고 있지 않아(core.py는 건드리지
     않는다) 별도 조회가 필요하다. 실패해도 예외를 삼키고 None을 돌려준다 -
     매매일지 기록 자체는 이미 fail-open이라, 진입일 하나 못 채운다고

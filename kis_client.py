@@ -1013,30 +1013,24 @@ def _ledger_exit_reason(reason: str) -> str:
     raise ValueError(f"매매일지에 옮길 수 없는 청산 사유: {reason!r}")
 
 
-def _record_ledger_after_sell(
-    access_token: str, page_id: str, inp, *, qty: int, ref_price: float,
-    reason: str, order_no: str, today: date,
+def _write_ledger_and_close(
+    page_id: str, inp, *, qty: int, exit_price: float, reason: str,
+    order_no: str, today: date,
 ) -> None:
-    """자동매도로 청산한 포지션을 매매일지에 1행 남긴다.
+    """전량 체결이 확인된 청산을 매매일지에 남기고 점검표를 청산 처리한다.
 
-    fail-open이다: 여기서 실패해도 매도는 이미 체결됐으니 되돌리지 않는다.
-    대신 카톡으로 알린다 - 매도는 나갔는데 기록이 없는 건 감사 공백이라
-    조용히 넘어가면 안 된다. 반복 실패는 1시간 억제 대상이다.
+    순서가 중요하다: 매매일지 기록을 먼저 시도하고, 그게 성공했을 때만
+    점검표를 청산 처리한다. 반대 순서(청산 먼저)면 점검표가 "청산"으로
+    바뀐 뒤 매매일지 기록이 실패했을 때, 다음 실행은 이 행을 구분="보유"
+    필터로 더는 찾지 못해(fetch_holdings) 매매일지 공백을 영영 못 채운다.
+    매매일지를 먼저 쓰면, 점검표 청산만 실패해도 다음 실행이 같은 종목을
+    다시 찾아(_check_sell_fill의 ledger_exists_for_holding_today 확인으로
+    매매일지는 중복 기록하지 않고) 청산 처리만 재시도할 수 있다.
 
-    청산가는 실제 체결가를 조회해 쓴다(시장가라 판정 시점 현재가와 어긋날
-    수 있다). R배수가 이 값에서 나오므로 가능한 한 정확해야 한다 -
-    조회가 안 되면 판정 시점 현재가로 폴백한다.
+    fail-open이다: 여기서 실패해도 매도는 이미 체결됐으니 그 사실 자체를
+    되돌리지 않는다. 대신 카톡으로 알린다 - 매도는 체결됐는데 기록이
+    없는 건 감사 공백이라 조용히 넘어가면 안 된다.
     """
-    exit_price = ref_price
-    try:
-        time.sleep(1)  # 체결 처리 대기
-        fill = get_order_execution(access_token, order_no) if order_no else None
-        if fill and fill.get("avg_price"):
-            exit_price = float(fill["avg_price"])
-    except Exception as e:                  # noqa: BLE001
-        logger.warning("[%s] 매도 체결가 조회 실패 - 판정 시점 현재가로 기록합니다: %s",
-                       inp.ticker, e)
-
     # 진입일 - HoldingInput은 매수일을 안 들고 있어(core.py는 건드리지
     # 않는다) 점검표 행에서 따로 조회한다. 실패해도 None을 돌려주므로
     # (fetch_holding_buy_date 자체가 예외를 삼킨다) 매매일지 기록은 계속
@@ -1053,7 +1047,7 @@ def _record_ledger_after_sell(
             name=inp.name, ticker=inp.ticker, market=inp.market,
             entry_price=avg_price,
             entry_atr=inp.entry_atr,
-            shares=inp.shares or qty,
+            shares=qty,
             units=inp.units,
             exit_date=today,
             exit_price=exit_price,
@@ -1067,12 +1061,136 @@ def _record_ledger_after_sell(
             memo=f"자동매도 (주문번호 {order_no}) - {reason}",
         )
     except Exception as e:                  # noqa: BLE001
-        logger.error("[%s] 매도는 체결됐으나 매매일지 기록 실패: %s", inp.name, e)
+        logger.error("[%s] 매도 체결 확인됐으나 매매일지 기록 실패 - 다음 실행에서 재시도: %s",
+                     inp.name, e)
         _notify_warning_throttled(
             WARN_LEDGER_RECORD_FAILED,
-            f"[KIS] ⚠ {inp.name} 매도는 체결됐지만 매매일지 기록 실패 - "
-            f"승률·R배수 통계에서 빠집니다. 손으로 넣어주세요: {e}",
+            f"[KIS] ⚠ {inp.name} 매도 체결 확인됐지만 매매일지 기록 실패 - "
+            f"다음 실행에서 자동 재시도합니다(점검표는 아직 '보유'로 남습니다): {e}",
         )
+        return  # 점검표 청산은 매매일지 기록 성공 후에만 시도한다.
+
+    try:
+        notion_repo.close_auto_holding(page_id)
+    except Exception as e:                  # noqa: BLE001
+        logger.error("[%s] 매도 체결·매매일지 기록은 됐으나 점검표 청산 처리 실패: %s",
+                     inp.name, e)
+        _notify_failure(
+            f"[KIS] ⚠ {inp.name} 매도 체결·매매일지 기록 완료, 점검표 청산 처리만 "
+            "실패 - 다음 실행에서 자동 재시도합니다(매매일지 중복 기록 없음)"
+        )
+
+
+def _check_sell_fill(
+    token: str, page_id: str, inp, *, order_no: str, requested_qty: float,
+    reason: str, today: date,
+) -> None:
+    """이 매도 주문이 전량 체결됐는지 확인하고, 확인된 경우에만 청산을 확정한다.
+
+    "성공"(주문 접수, rt_cd=0)과 "체결"은 다르다 - 시장가 주문도 미체결·
+    부분체결로 남을 수 있다. 전량 체결을 확인하기 전엔 점검표 청산 처리도
+    매매일지 기록도 하지 않는다: 그 전에 확정하면 실제로는 안 팔린(또는
+    일부만 팔린) 수량이 노션에서 사라져 보이고, 확인 안 된 가격·수량으로
+    손익이 기록된다.
+
+    호출은 두 경로에서 온다: (1) 방금 낸 주문 직후(run_auto_sell, 같은
+    회차의 낙관적 1회 확인), (2) 이전 회차가 낸 주문이 아직 미확인일 때
+    (_finalize_pending_sell, 다음 회차 - 증권사 잔고의 매도가능수량이
+    이미 0이라 새 주문은 내지 않고 이 확인만 한다). 두 경로 모두 이
+    함수 하나로 처리해 확정 조건(전량 체결 + 유효 체결가 + 매매일지
+    미중복)을 한 곳에서만 관리한다 - 어느 쪽에서 불러도 임의 청산·
+    추정가 확정·중복 기록이 나오지 않는다.
+    """
+    if not order_no:
+        logger.warning("[%s] 매도 주문번호 없음 - 체결 확인 불가, 사람 확인 필요", inp.name)
+        return
+
+    try:
+        already_recorded = notion_repo.ledger_exists_for_holding_today(page_id, today)
+    except Exception as e:                  # noqa: BLE001
+        logger.warning("[%s] 매매일지 중복 확인 실패 - 이번 회차는 확정을 보류합니다: %s",
+                       inp.name, e)
+        return
+
+    if already_recorded:
+        # 매매일지는 이미 있다(직전 회차가 기록에는 성공하고 청산 처리만
+        # 실패한 경우) - 점검표 청산 처리만 재시도한다. 매매일지는 다시
+        # 만들지 않는다(중복 방지).
+        try:
+            notion_repo.close_auto_holding(page_id)
+        except Exception as e:              # noqa: BLE001
+            logger.error("[%s] 매매일지는 있으나 점검표 청산 처리 실패 - 다음 실행 재시도: %s",
+                         inp.name, e)
+        return
+
+    try:
+        fill = get_order_execution(token, order_no)
+    except Exception as e:                  # noqa: BLE001
+        logger.warning("[%s] 매도 체결 조회 실패 - 청산 미확정, 다음 실행에서 재확인: %s",
+                       inp.name, e)
+        _notify_warning_throttled(
+            WARN_ORDER_STATUS_UNKNOWN,
+            f"[KIS] ⚠ {inp.name} 매도 체결 조회 실패 - 청산 미확정, 다음 실행에서 재확인",
+        )
+        return
+
+    filled_qty = fill["filled_qty"] if fill else 0
+    if filled_qty <= 0:
+        logger.info("[%s] 매도 주문 접수됐으나 아직 미체결 - 다음 실행에서 재확인", inp.name)
+        return
+
+    if filled_qty < requested_qty:
+        logger.info("[%s] 매도 부분체결 %s/%s주 - 다음 실행에서 나머지 체결 재확인",
+                    inp.name, filled_qty, requested_qty)
+        return
+
+    avg_price = float(fill.get("avg_price") or 0)
+    if avg_price <= 0:
+        logger.warning("[%s] 전량 체결 확인됐으나 체결가 확인 불가 - 확정 보류, "
+                       "다음 실행에서 재확인", inp.name)
+        return
+
+    _write_ledger_and_close(
+        page_id, inp, qty=filled_qty, exit_price=avg_price, reason=reason,
+        order_no=order_no, today=today,
+    )
+
+
+def _finalize_pending_sell(token: str, page_id: str, inp, today: date) -> None:
+    """증권사 잔고상 매도가능수량이 0인 종목의 이전 매도 주문 체결을 확인한다.
+
+    run_auto_sell()이 새 매도를 판단하기 전, 이미 매도가능수량이 0인
+    종목(직전 회차가 낸 매도가 아직 미확인이거나 이미 체결까지 됐는데
+    확정 처리만 안 된 종목)을 여기로 보낸다. GitHub Actions는 실행마다
+    컨테이너가 새로 떠 로컬 변수가 안 남으므로, 그 주문의 주문번호·
+    수량·사유는 노션 "자동주문 기록" DB에서 다시 읽어온다
+    (fetch_latest_sell_order_today) - 이 조회가 실패하거나 오늘 이
+    시스템이 낸 매도 기록이 없으면 이번 회차는 그냥 건너뛴다(수동 매도
+    등 이 시스템이 모르는 사유일 수 있어 임의로 청산 처리하지 않는다).
+
+    보유종목 점검표 구분은 여기서 아무것도 안 해도 "보유"로 그대로
+    남는다 - 확정(_check_sell_fill -> _write_ledger_and_close) 전까지는
+    다음 실행도 이 종목을 계속 판단 대상(holdings)에 포함시켜야
+    잔여 보유 감시가 조회 실패 한 번으로 빠지지 않는다.
+    """
+    try:
+        order = notion_repo.fetch_latest_sell_order_today(inp.ticker, today)
+    except Exception as e:                  # noqa: BLE001
+        logger.warning("[%s] 오늘 매도 주문 기록 조회 실패 - 이번 회차는 건너뜁니다: %s",
+                       inp.name, e)
+        return
+
+    if order is None:
+        logger.info(
+            "[%s] 매도가능수량 0이나 오늘 이 시스템이 낸 매도 기록 없음 - "
+            "수동 매도 등으로 추정, 확인 필요", inp.name,
+        )
+        return
+
+    _check_sell_fill(
+        token, page_id, inp, order_no=order["order_no"],
+        requested_qty=order["qty"], reason=order["reason"], today=today,
+    )
 
 
 def run_auto_sell(holdings: Optional[list[tuple[str, core.HoldingInput]]] = None) -> None:
@@ -1100,10 +1218,15 @@ def run_auto_sell(holdings: Optional[list[tuple[str, core.HoldingInput]]] = None
     수량은 노션 보유수량이 아니라 실제 주문가능수량을 쓴다 - 둘이 어긋날 때
     (수동 매매·부분 체결) 증권사에 있는 만큼만 파는 게 항상 안전하다.
 
-    매도가 체결되면(청산은 항상 전량이므로 "성공"=완전 청산) 보유종목
-    점검표의 구분을 "청산"으로 바꾼다 - 이걸 안 하면 실제로는 팔린
-    종목이 노션엔 "보유"로 계속 남아서, 상관군·리스크 리포트가 이미
-    없는 포지션을 계속 세고 사람이 앱에서 봐도 매도된 걸 알 길이 없다.
+    주문 접수("sent", rt_cd=0)는 체결이 아니다 - 시장가도 미체결·부분체결로
+    남을 수 있어, 접수만으로 점검표를 청산 처리하거나 매매일지를 확정
+    기록하지 않는다(_check_sell_fill). 전량 체결이 확인돼야 비로소
+    보유종목 점검표의 구분을 "청산"으로 바꾸고(_write_ledger_and_close) -
+    이걸 안 하면 실제로는 팔린 종목이 노션엔 "보유"로 계속 남아서,
+    상관군·리스크 리포트가 이미 없는 포지션을 계속 세고 사람이 앱에서
+    봐도 매도된 걸 알 길이 없다. 미체결·부분체결·조회 실패로 아직
+    확정 못 한 종목은 다음 회차에도 이 함수가 계속 이어서 확인한다
+    (_finalize_pending_sell - 매도가능수량 0인 종목 전용 경로).
     """
     if not _auto_trade_configured():
         return
@@ -1158,7 +1281,12 @@ def run_auto_sell(holdings: Optional[list[tuple[str, core.HoldingInput]]] = None
     for page_id, inp in holdings:
         qty = sellable.get(inp.ticker, 0)
         if qty <= 0:
-            # 이 계좌에 없거나(수동 보유·다른 계좌) 이미 매도가 걸려 있다.
+            # 이 계좌에 없거나(수동 보유·다른 계좌), 직전 회차가 낸 매도가
+            # 아직 미확인이거나, 이미 체결됐는데 확정 처리만 안 됐다.
+            # 새 주문은 내지 않고(중복 매도 방지) 이전 매도의 체결 여부만
+            # 확인한다 - 확인되기 전까진 이 종목을 "청산"으로 확정하지 않고
+            # 다음 회차에도 계속 이 목록(holdings)에 남아 감시가 이어진다.
+            _finalize_pending_sell(token, page_id, inp, today)
             continue
 
         try:
@@ -1177,29 +1305,16 @@ def run_auto_sell(holdings: Optional[list[tuple[str, core.HoldingInput]]] = None
         )
         logger.info("자동매도: %s(%s) %d주 -> %s", inp.name, inp.ticker, qty, result)
 
-        # 체결됐으면(청산은 항상 전량) 보유종목 점검표를 청산 처리한다.
-        # 이걸 안 하면 노션엔 계속 "보유"로 남아 상관군·리스크 집계가
-        # 이미 없는 포지션을 계속 세고, 사람도 앱에서 매도 여부를 알 수 없다.
+        # 주문 접수("sent")는 체결을 뜻하지 않는다(시장가도 미체결·부분체결로
+        # 남을 수 있다) - 여기서 낙관적으로 1회 확인해보고, 전량 체결이
+        # 아니면 확정하지 않는다. 못 다 판 나머지는 다음 회차에 매도가능
+        # 수량이 0인 채로 다시 만나(위 qty<=0 분기) _finalize_pending_sell이
+        # 이어서 확인한다.
         if result.get("status") == "sent":
-            try:
-                notion_repo.close_auto_holding(page_id)
-            except Exception as e:          # noqa: BLE001
-                logger.error("[%s] 매도는 체결됐으나 노션 청산 처리 실패: %s",
-                             inp.name, e)
-                _notify_failure(
-                    f"[KIS] ⚠ {inp.name} 매도는 체결됐지만 노션 기록 실패 - "
-                    "보유종목 점검표에서 구분을 수동으로 '청산'으로 바꿔주세요"
-                )
-
-            # 점검표 청산 처리와 별개로 매매일지에도 남긴다 - 점검표는
-            # 현재 상태만 보여주고, 승률·R배수·지연일수는 청산 건이 쌓이는
-            # 매매일지에서만 나온다. 위 청산 처리가 실패해도 이건 시도한다
-            # (둘은 독립적인 기록이고, 하나 실패했다고 나머지까지 버리면
-            # 감사 공백만 커진다).
-            _record_ledger_after_sell(
-                token, page_id, inp, qty=qty, ref_price=price,
-                reason=reason, order_no=result.get("order_no", ""),
-                today=today,
+            time.sleep(1)  # 체결 처리 대기
+            _check_sell_fill(
+                token, page_id, inp, order_no=result.get("order_no", ""),
+                requested_qty=qty, reason=reason, today=today,
             )
 
 
