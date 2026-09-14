@@ -172,6 +172,30 @@
       "gap_atr": 0.107,
       "unit_shares": 594,
       "status": "진입가능"
+    },
+    "004990": {
+      "time": "11:13",
+      "name": "롯데지주",
+      "sector": "금융",
+      "market": "KOSPI",
+      "price": 25400.0,
+      "high20": 25325.0,
+      "atr20": 844.0,
+      "gap_atr": 0.089,
+      "unit_shares": 592,
+      "status": "진입가능"
+    },
+    "156100": {
+      "time": "11:13",
+      "name": "엘앤케이바이오",
+      "sector": "의료·정밀기기",
+      "market": "KOSDAQ",
+      "price": 5660.0,
+      "high20": 5620.0,
+      "atr20": 396.0,
+      "gap_atr": 0.101,
+      "unit_shares": 1262,
+      "status": "진입가능"
     }
   }
 }
