@@ -280,6 +280,18 @@
       "gap_atr": 0.046,
       "unit_shares": 2283,
       "status": "진입가능"
+    },
+    "105560": {
+      "time": "15:03",
+      "name": "KB금융",
+      "sector": "금융",
+      "market": "KOSPI",
+      "price": 181000.0,
+      "high20": 180700.0,
+      "atr20": 6466.0,
+      "gap_atr": 0.046,
+      "unit_shares": 77,
+      "status": "진입가능"
     }
   }
 }
