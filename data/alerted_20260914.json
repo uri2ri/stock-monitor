@@ -72,6 +72,18 @@
       "gap_atr": 0.037,
       "unit_shares": 1831,
       "status": "진입가능"
+    },
+    "216080": {
+      "time": "09:43",
+      "name": "제테마",
+      "sector": "제약",
+      "market": "KOSDAQ",
+      "price": 6920.0,
+      "high20": 6860.0,
+      "atr20": 439.0,
+      "gap_atr": 0.137,
+      "unit_shares": 1138,
+      "status": "진입가능"
     }
   }
 }
