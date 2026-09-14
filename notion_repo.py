@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import logging
 import os
+from uuid import UUID
 from datetime import date, datetime
 from typing import Any, Optional
 from zoneinfo import ZoneInfo
@@ -444,6 +445,54 @@ def create_ledger_record(
     return page_id
 
 
+def holding_identity(page_id: str) -> dict:
+    """관계 대상의 DB·종목·운용·상태 검증용. 청산된 행도 읽는다."""
+    page_id = str(UUID(page_id))
+    resp = requests.get(f'{NOTION_BASE}/pages/{page_id}', headers=_headers(), timeout=30)
+    resp.raise_for_status()
+    page = resp.json()
+    if page.get('archived') or page.get('in_trash'):
+        raise ValueError('삭제된 보유종목 관계')
+    if UUID(page.get('parent', {}).get('database_id', '')) != UUID(os.environ['NOTION_DB_ID']):
+        raise ValueError('보유종목 관계 DB 불일치')
+    props = page['properties']
+    result = dict(ticker=_text(props.get('종목코드', {})).strip(),
+                  managed_by=_select(props.get('운용', {})),
+                  status=_select(props.get('구분', {})))
+    if result['managed_by'] != MANAGED_AUTO or result['status'] not in ('보유', '청산'):
+        raise ValueError('자동 보유/청산 포지션이 아닌 관계')
+    return result
+
+
+def ledger_matches_sell(page_id: str, order_no: str, qty: int, price: float,
+                        order_day: date) -> bool:
+    """일지 존재만으로 성공 처리하지 않고 단일 주문의 기록 증거를 대조한다."""
+    resp = requests.post(
+        f"{NOTION_BASE}/databases/{os.environ['NOTION_LEDGER_DB_ID']}/query",
+        headers=_headers(), json={'filter': {'property': '보유종목',
+        'relation': {'contains': page_id}}, 'page_size': 2}, timeout=30)
+    resp.raise_for_status()
+    data = resp.json()
+    if data.get('has_more') or len(data.get('results', [])) != 1:
+        return False
+    props = data['results'][0]['properties']
+    return (f'주문번호 {order_no})' in _text(props.get('청산 메모', {}))
+            and _number(props.get('✱ 매수 수량', {})) == qty
+            and _number(props.get('✱ 청산가', {})) == round(price)
+            and _date_val(props.get('✱ 청산일', {})) == order_day)
+
+
+def has_ledger_for_holding(page_id: str) -> bool:
+    """보유 포지션의 청산 일지 존재 여부. 오류 시 중복 생성을 막는다."""
+    resp = requests.post(
+        f"{NOTION_BASE}/databases/{os.environ['NOTION_LEDGER_DB_ID']}/query",
+        headers=_headers(), json={"filter": {
+            "property": "보유종목", "relation": {"contains": page_id}}, "page_size": 1},
+        timeout=30)
+    resp.raise_for_status()
+    return bool(resp.json().get('results'))
+
+
 def close_auto_holding(page_id: str) -> None:
     """자동매도 체결 후 보유종목 점검표에서 이 행을 청산 처리한다.
 
@@ -812,6 +861,7 @@ def create_order_record(
     when: datetime,
     side: str = SIDE_BUY,
     order_type: str = ORDER_NEW,
+    holding_page_id: Optional[str] = None,
 ) -> str:
     """자동주문 기록 DB에 주문 시도 1건을 남긴다. 성공·실패·거부 모두 기록한다.
 
@@ -822,6 +872,11 @@ def create_order_record(
     Returns:
         생성된 page_id
     """
+    if side == SIDE_SELL:
+        holding_page_id = str(UUID(holding_page_id or ''))
+        identity = holding_identity(holding_page_id)
+        if identity['ticker'] != ticker or identity['status'] != '보유':
+            raise ValueError('매도 대상 포지션 불일치')
     db_id = os.environ["NOTION_ORDERS_DB_ID"]
     payload = {
         "parent": {"database_id": db_id},
@@ -836,6 +891,8 @@ def create_order_record(
             "사유": _rich_text(reason),
             "계좌구분": {"select": {"name": account_type}},
             "매매구분": {"select": {"name": side}},
+            **({'보유종목': {'relation': [{'id': holding_page_id}]}}
+               if side == SIDE_SELL else {}),
             # 매도에는 신규/추가 구분이 없다 - 청산은 항상 전량이다.
             **({"주문유형": {"select": {"name": order_type}}}
                if side == SIDE_BUY else {}),
@@ -1212,6 +1269,39 @@ def update_evening_signal(
     resp.raise_for_status()
     logger.info("[저녁감사] 점검표 신호 갱신: page_id=%s -> %s (%s)",
                 page_id, signal_type or "해소", signal_date)
+
+
+def fetch_unconfirmed_sell_orders(account_type: str) -> list[dict]:
+    """날짜를 넘겨도 남는 미확인 매도 주문. 조회 오류는 호출자에게 전달한다."""
+    payload = {"filter": {"and": [
+        {"property": "계좌구분", "select": {"equals": account_type}},
+        _side_filter(SIDE_SELL),
+        {"or": [{"property": "상태", "select": {"equals": s}}
+                for s in ("주문중", "실패")]},
+    ]}, "page_size": 100}
+    rows = []
+    while True:
+        resp = requests.post(
+            f"{NOTION_BASE}/databases/{os.environ['NOTION_ORDERS_DB_ID']}/query",
+            headers=_headers(), json=payload, timeout=30)
+        resp.raise_for_status()
+        data = resp.json()
+        for page in data.get('results', []):
+            props = page.get('properties', {})
+            relations = props.get('보유종목', {}).get('relation', [])
+            rows.append(dict(
+                page_id=page['id'], ticker=_text(props.get('종목코드', {})),
+                holding_page_id=relations[0]['id'] if len(relations) == 1 else None,
+                relation_count=len(relations),
+                account_type=_select(props.get('계좌구분', {})),
+                order_no=_text(props.get('주문번호', {})),
+                qty=_number(props.get('수량', {})),
+                reason=_text(props.get('사유', {})),
+                order_day=(props.get('주문일시', {}).get('date') or {}).get('start', '')[:10],
+            ))
+        if not data.get('has_more'):
+            return rows
+        payload['start_cursor'] = data['next_cursor']
 
 
 def fetch_orders_today(day: date) -> list[dict]:

@@ -4,6 +4,9 @@
 노션 DB의 보유 종목을 매일 아침 점검해 손절선을 갱신하고,
 카카오톡 요약과 메일 상세 리포트를 보낸다.
 
+작업 이력·검증 결과·남은 작업은 [PROJECT_STATUS.md](PROJECT_STATUS.md),
+매도 체결 확인 변경의 상세는 [SELL_CONFIRMATION.md](SELL_CONFIRMATION.md)를 참고하세요.
+
 ## 구성
 
 | 파일 | 역할 |
