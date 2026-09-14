@@ -220,6 +220,18 @@
       "gap_atr": 0.023,
       "unit_shares": 1165,
       "status": "진입가능"
+    },
+    "261780": {
+      "time": "12:13",
+      "name": "아리바이오랩",
+      "sector": "일반서비스",
+      "market": "KOSDAQ",
+      "price": 3817.0,
+      "high20": 3800.0,
+      "atr20": 290.0,
+      "gap_atr": 0.059,
+      "unit_shares": 1724,
+      "status": "진입가능"
     }
   }
 }
