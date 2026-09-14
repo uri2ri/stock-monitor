@@ -1,0 +1,29 @@
+{
+  "date": "20260914",
+  "alerted": {
+    "052710": {
+      "time": "09:03",
+      "name": "아모텍",
+      "sector": "전기전자",
+      "market": "KOSDAQ",
+      "price": 15270.0,
+      "high20": 15130.0,
+      "atr20": 1597.0,
+      "gap_atr": 0.088,
+      "unit_shares": 313,
+      "status": "진입가능"
+    },
+    "443670": {
+      "time": "09:03",
+      "name": "에스피소프트",
+      "sector": "IT 서비스",
+      "market": "KOSDAQ",
+      "price": 4850.0,
+      "high20": 4755.0,
+      "atr20": 358.0,
+      "gap_atr": 0.265,
+      "unit_shares": 1396,
+      "status": "진입가능"
+    }
+  }
+}
