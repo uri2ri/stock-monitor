@@ -208,6 +208,18 @@
       "gap_atr": 0.059,
       "unit_shares": 295,
       "status": "진입가능"
+    },
+    "377450": {
+      "time": "11:43",
+      "name": "리파인",
+      "sector": "IT 서비스",
+      "market": "KOSDAQ",
+      "price": 17090.0,
+      "high20": 17080.0,
+      "atr20": 429.0,
+      "gap_atr": 0.023,
+      "unit_shares": 1165,
+      "status": "진입가능"
     }
   }
 }
