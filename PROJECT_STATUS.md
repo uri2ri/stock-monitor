@@ -56,15 +56,32 @@
   의 신규(ORDER_NEW) 전용 예산만 낮춘 것이라 추가매수(`MAX_PYRAMID_ORDERS_PER_DAY`)
   ·청산(`run_auto_sell`)에는 영향 없음. **재개 시 사람이 3으로 되돌려야 함**
   (자동 복구 아님) — 점검 결과를 보고 결정.
-- 운영 보류 중 발견된 부작용 수정 완료(2026-09-11): `MAX_ORDERS_PER_DAY=0`
-  이어도 `select_buy_candidates()`가 후보별 가격·유닛금액·상관군·현금
-  검사를 그대로 거쳐 후보마다 거절 카톡을 반복 발송하던 문제. 이제 상한이
-  0이면 계좌 조회·후보별 검사·거절 알림 없이 바로 빈 목록을 반환하고
+- 운영 보류 중 발견된 부작용 수정 완료(2026-09-11, PR #3 **병합 완료** —
+  `main`, merge commit `ba27ff7c`): `MAX_ORDERS_PER_DAY=0`이어도
+  `select_buy_candidates()`가 후보별 가격·유닛금액·상관군·현금 검사를
+  그대로 거쳐 후보마다 거절 카톡을 반복 발송하던 문제. 이제 상한이 0이면
+  계좌 조회·후보별 검사·거절 알림 없이 바로 빈 목록을 반환하고
   로그(`신규매수 운영 보류: 일일 상한 0`)만 남김. 상한이 정상값(예: 3)이고
   그날 소진돼 `remaining_slots == 0`이 된 경우는 대상이 아니며 기존
   후보별 검사·"우선순위 밀림" 알림 그대로 유지. 자동매도·추가매수·주문
   기록 기반 재시도 정책은 영향 없음(별도 캡·경로 사용). 상한값 자체는
   여전히 0 — 재개는 위 항목대로 사람이 결정.
+- **병합 후 실거래 로그로 검증 완료(2026-09-11 02:1x UTC)**: 병합 커밋
+  `ba27ff7c` 이후 첫 자동매매 실행(Actions run #984, #985 — head_sha
+  `ba27ff7c`/`99c16ff`)의 로그를 읽기 전용으로 확인.
+  1. head_sha가 병합 커밋 이후 — 병합된 코드로 실행됨 확인
+  2. 로그에 `신규매수 운영 보류: 일일 상한 0` 및 바로 다음 줄
+     `자동매수 후보 없음 (게이트 통과 0건, 후보 9건)` 정확히 출력됨
+  3. 후보 9건에 대해 가격상한·현금부족 등 거절 카톡(`_notify_failure`)
+     **0건** — 반복 거절 알림 중단 확인. 이번 회차 발송된 카톡 1통은
+     신규 돌파(대양전기공업, "진입가능") 최초 알림이라 반복 거절과는 무관
+  4. 보유종목 로드·계좌 조회·"재시도 대상 8종목(이전 회차 알림·아직
+     미체결)" 로그로 청산·주문 기록 기반 재시도 정책이 평소대로 계속
+     실행됨을 확인(이번 회차엔 매도 조건 충족 종목이 없어 청산 자체는
+     발생하지 않음 — 정상적인 "해당 없음")
+  - 워크플로 수동 실행·주문·알림 생성 없이 기존 정기 실행 로그만 조회
+  - 확인용으로 걸어둔 1회성 예약(`trig_01H7KxKvW2MX1UZcEajsib2m`)은
+    실행 완료 후 자동 종료
 
 ## 현재 문제
 - 보유종목 검색 오류 확인 필요
@@ -97,20 +114,27 @@
   결과를 보고 사람이 결정해야 함 (자동 복구 없음)
 
 ## 최근 정상 기준
-- commit: `5b80f4d` (`main`, PR #2 병합 `d2f29e1` + 운영 보류 `b3adc7f` +
-  야간 스캔 `5b80f4d` 이후 최신)
+- commit: `ba27ff7c` (`main`, PR #2 병합 `d2f29e1` + 운영 보류 `b3adc7f` +
+  PR #3 병합 `ba27ff7c` 이후 최신)
 - PR: https://github.com/uri2ri/stock-monitor/pull/2 (병합됨, `main`)
+- PR: https://github.com/uri2ri/stock-monitor/pull/3 (병합됨, `main`,
+  2026-09-11 02:01 UTC)
 
-## PR #3 (Draft, 별도 PR — PR #2와 무관)
+## PR #3 (병합 완료 — PR #2와는 별개 PR)
 - 브랜치: `claude/holdings-search-error-kfynqa`, base `main`
-- https://github.com/uri2ri/stock-monitor/pull/3
-- `main`(당시 최신 `cb14d02`) 대비 diff: 6 files, +184/-8
+- https://github.com/uri2ri/stock-monitor/pull/3 — **병합됨**
+  (merge commit `ba27ff7c`, 2026-09-11 02:01 UTC, 병합 주체: `uri2ri`)
+- `main`(당시 `cb14d02`) 대비 diff: 6 files, +200/-8
   - `kis_client.py`(최소 수정 8줄) — 신규매수 운영 보류(상한 0)에서 후보별
     거절 카톡 반복 발송 수정
   - `tests/test_zero_cap_holds_new_buy.py`(신규 5건)
   - `test_multi_candidate_reservation.py`·`test_order_state_retry_policy.py`·
     `test_bug3_final_price_reverify.py` 기존 6건에 `MAX_ORDERS_PER_DAY=3`
-    monkeypatch 추가(총 18줄) — 운영 보류 설정(0) 의존 제거, 검증 목적 유지
+    monkeypatch 추가 — 운영 보류 설정(0) 의존 제거, 검증 목적 유지
   - `PROJECT_STATUS.md`(문서, 최종 테스트 결과 반영)
+- 병합 시점 테스트: `python -m pytest tests/ -q` → 68 passed, 0 failed
+  (커밋 `2780fd6` 기준)
+- 병합 후 실거래 로그 검증 완료 — 위 "병합 후 실거래 로그로 검증 완료"
+  항목 참고
 - 프로덕션 상한은 `kis_client.py:108` `MAX_ORDERS_PER_DAY = 0` 그대로 유지
-- 상태: Draft, 미병합 — `main` 병합·배포·실주문·외부 알림·노션 쓰기 미실행
+  (이 PR에서 변경하지 않음 — 재개 여부는 별도로 사람이 결정)
