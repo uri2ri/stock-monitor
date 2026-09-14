@@ -84,6 +84,18 @@
       "gap_atr": 0.137,
       "unit_shares": 1138,
       "status": "진입가능"
+    },
+    "252990": {
+      "time": "09:53",
+      "name": "샘씨엔에스",
+      "sector": "전기전자",
+      "market": "KOSDAQ",
+      "price": 16430.0,
+      "high20": 16320.0,
+      "atr20": 1308.0,
+      "gap_atr": 0.084,
+      "unit_shares": 382,
+      "status": "진입가능"
     }
   }
 }
