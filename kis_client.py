@@ -916,7 +916,8 @@ def _send_market_sell(access_token: str, stock_code: str, qty: int) -> dict:
 def place_market_sell_order(access_token: str, stock_code: str, qty: int,
                              *, name: Optional[str] = None,
                              reason: str = "",
-                             ref_price: float = 0.0) -> dict:
+                             ref_price: float = 0.0,
+                             holding_page_id: Optional[str] = None) -> dict:
     """모의투자 시장가 매도 주문 1건을 시도한다 (청산은 항상 전량).
 
     기록 순서는 매수와 같다: 사전 기록("주문중", fail-closed) -> 전송 ->
@@ -931,11 +932,14 @@ def place_market_sell_order(access_token: str, stock_code: str, qty: int,
     display_name = name or stock_code
 
     try:
+        if not holding_page_id or not _valid_sell_qty(qty):
+            raise ValueError('매도 포지션 관계/수량 미확인')
         page_id = notion_repo.create_order_record(
             name=display_name, ticker=stock_code, order_no="", qty=qty,
             price=ref_price, status="주문중", reason=reason,
             account_type=ACCOUNT_TYPE, when=datetime.now(KST),
             side=notion_repo.SIDE_SELL,
+            holding_page_id=holding_page_id,
         )
     except Exception as e:                  # noqa: BLE001
         msg = f"[KIS] 매도 주문 건너뜀 - 사전 기록 실패로 주문 중단: {stock_code} {e}"
@@ -1051,7 +1055,7 @@ def _record_ledger_after_sell(
 
     try:
         if notion_repo.has_ledger_for_holding(page_id):
-            return True
+            return notion_repo.ledger_matches_sell(page_id, order_no, qty, exit_price, today)
         notion_repo.create_ledger_record(
             name=inp.name, ticker=inp.ticker, market=inp.market,
             entry_price=avg_price,
@@ -1117,18 +1121,63 @@ def _split_stale_pending_sells(pending: list[dict], page_id: Optional[str]
     return stale, current
 
 
+def _valid_sell_qty(value) -> bool:
+    try:
+        return not isinstance(value, bool) and math.isfinite(float(value)) and float(value) > 0 and float(value).is_integer()
+    except (TypeError, ValueError):
+        return False
+
+
+def _linked_pending(pending: list[dict], page_id: Optional[str]) -> list[dict]:
+    return [o for o in pending if not o.get('holding_page_id')
+            or o['holding_page_id'].replace('-', '') == (page_id or '').replace('-', '')]
+
+
+def _recover_closed_sell(token: str, order: dict) -> bool:
+    """보유 목록에 없는 청산 포지션의 최종 주문 갱신만 복구한다."""
+    page_id = order.get('holding_page_id')
+    if not page_id or order.get('account_type') != ACCOUNT_TYPE:
+        return False
+    identity = notion_repo.holding_identity(page_id)
+    if identity['ticker'] != order['ticker']:
+        raise ValueError('관계 종목 불일치')
+    if identity['status'] != '청산':
+        return False
+    if not order.get('order_no') or not _valid_sell_qty(order.get('qty')):
+        raise ValueError('매도 주문번호/수량 미확인')
+    day = date.fromisoformat(order['order_day'])
+    fill = get_order_execution(token, order['order_no'], order_day=day)
+    if (not fill or not _valid_sell_qty(fill.get('filled_qty'))
+            or fill['filled_qty'] != order['qty'] or not _is_valid_price(fill.get('avg_price'))):
+        raise ValueError('옛 포지션 매도 체결 미확인')
+    if not notion_repo.ledger_matches_sell(page_id, order['order_no'], int(fill['filled_qty']), fill['avg_price'], day):
+        raise ValueError('옛 포지션 일지/주문 증거 불일치')
+    notion_repo.update_order_record(order['page_id'], status='성공',
+                                    order_no=order['order_no'], reason=order['reason'])
+    return True
+
+
 def _reconcile_sell(token: str, page_id: str, inp, order: dict) -> None:
     """전체 체결과 실제 잔고 0을 모두 확인한 경우에만 청산한다."""
     try:
+        if not order.get('holding_page_id') or not _linked_pending([order], page_id):
+            raise ValueError('미연결 매도 - 기존 주문 연결 확인 필요')
+        if order.get('account_type') != ACCOUNT_TYPE or not _valid_sell_qty(order.get('qty')):
+            raise ValueError('주문 계좌/수량 불일치')
+        identity = notion_repo.holding_identity(page_id)
+        if identity['ticker'] != inp.ticker or order['ticker'] != inp.ticker or identity['status'] != '보유':
+            raise ValueError('매도 포지션 불일치')
         if not order.get('order_no'):
             raise ValueError('주문번호 미확인 - 증권사 주문 내역 수동 확인 필요')
         order_day = date.fromisoformat(order['order_day'])
         fill = get_order_execution(token, order['order_no'], order_day=order_day)
-        if not fill or fill['filled_qty'] < order['qty']:
+        if not fill or not _valid_sell_qty(fill.get('filled_qty')) or fill['filled_qty'] < order['qty']:
             logger.info('[%s] 매도 미체결/부분체결 - 보유 유지', inp.ticker)
             if order_day < _today():
                 raise ValueError('이전 거래일 매도 미완료 - 취소/잔여수량 수동 확인 필요')
             return
+        if fill['filled_qty'] != order['qty']:
+            raise ValueError('주문 수량과 체결 수량 불일치')
         if not _is_valid_price(fill.get('avg_price')):
             raise ValueError('매도 체결가 확인 불가')
         balance = get_account_balance(token)
@@ -1211,9 +1260,6 @@ def run_auto_sell(holdings: Optional[list[tuple[str, core.HoldingInput]]] = None
             )
             return
 
-    if not holdings:
-        return
-
     today = _today()
     token = get_access_token()
 
@@ -1233,16 +1279,21 @@ def run_auto_sell(holdings: Optional[list[tuple[str, core.HoldingInput]]] = None
         _notify_warning_throttled(WARN_ORDER_STATUS_UNKNOWN,
                                   f'[KIS] 미확인 매도 조회 실패 - 중복 방지를 위해 매도 보류: {e}')
         return
+    remaining = []
+    for order in pending_sells:
+        try:
+            if _recover_closed_sell(token, order):
+                continue
+        except Exception as e:
+            _notify_warning_throttled(f"sell_recovery:{order['page_id']}",
+                                      f"[KIS] 매도 기록 복구 보류: {e}")
+        remaining.append(order)
+    pending_sells = remaining
     sellable = {h["ticker"]: h["sellable"] for h in balance.get("holdings", [])}
 
     for page_id, inp in holdings:
         pending_all = [o for o in pending_sells if o['ticker'] == inp.ticker]
-        stale, pending = _split_stale_pending_sells(pending_all, page_id)
-        if stale:
-            _notify_warning_throttled(
-                f'sell_stale:{inp.ticker}:{page_id}',
-                f'[KIS] {inp.name} 재진입 이전 매도 기록 {len(stale)}건 잔존 - '
-                f'수동 확인/정리 필요')
+        pending = _linked_pending(pending_all, page_id)
         if pending:
             if len(pending) == 1:
                 _reconcile_sell(token, page_id, inp, pending[0])
@@ -1268,6 +1319,7 @@ def run_auto_sell(holdings: Optional[list[tuple[str, core.HoldingInput]]] = None
 
         result = place_market_sell_order(
             token, inp.ticker, qty, name=inp.name, reason=reason, ref_price=price,
+            holding_page_id=page_id,
         )
         logger.info("자동매도: %s(%s) %d주 -> %s", inp.name, inp.ticker, qty, result)
 
@@ -1276,6 +1328,7 @@ def run_auto_sell(holdings: Optional[list[tuple[str, core.HoldingInput]]] = None
             sellable[inp.ticker] = 0
             _reconcile_sell(token, page_id, inp, dict(
                 page_id=result.get('page_id', ''), order_no=result.get('order_no', ''),
+                holding_page_id=page_id, account_type=ACCOUNT_TYPE, ticker=inp.ticker,
                 qty=qty, reason=reason, order_day=today.isoformat()))
 
 
@@ -1426,12 +1479,7 @@ def run_auto_pyramid(holdings: Optional[list] = None) -> None:
                 logger.warning('[%s] 보유종목 조회 실패 - 추가매수 보류: %s',
                                inp.ticker, e)
                 continue
-            stale, pending = _split_stale_pending_sells(pending, page_id)
-            if stale:
-                _notify_warning_throttled(
-                    f'pyramid_stale:{inp.ticker}',
-                    f'[KIS] {inp.name} 재진입 이전 매도 기록 {len(stale)}건 잔존 - '
-                    f'수동 확인/정리 필요')
+            pending = _linked_pending(pending, page_id)
             if pending:
                 continue
         held_qty = held.get(inp.ticker, 0)
@@ -1770,6 +1818,13 @@ def select_buy_candidates(access_token: str, candidates: list[dict]) -> list[dic
 
     balance = get_account_balance(access_token)
     account_size = balance["account_size"]
+    try:
+        pending_sell_tickers = {o['ticker'] for o in
+                               notion_repo.fetch_unconfirmed_sell_orders(ACCOUNT_TYPE)}
+    except Exception as e:
+        _notify_warning_throttled(WARN_ORDER_STATUS_UNKNOWN,
+                                  f'[KIS] 미확인 매도 조회 실패 - 신규매수 보류: {e}')
+        return []
 
     corr = get_mock_account_corr_units(account_size, balance["holdings"])
     if balance["holdings"] and not corr["groups"]:
@@ -1804,6 +1859,9 @@ def select_buy_candidates(access_token: str, candidates: list[dict]) -> list[dic
     selected: list[dict] = []
     for c in ordered:
         name, price, atr = c["name"], c["price"], c["atr20"]
+        if c['ticker'] in pending_sell_tickers:
+            logger.info('[%s] 미확인 매도 기록 - 신규매수 보류', name)
+            continue
 
         # 2. 이미 보유 중인 종목인지 확인 - 아래 5번 상관군 캡은 "이 종목의
         #    기존 유닛은 0"을 전제로 계산한다(stock_units_after = 1). 이미

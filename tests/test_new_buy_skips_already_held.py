@@ -39,6 +39,7 @@ def _setup(monkeypatch, *, find_page):
                         lambda size, holdings: {"groups": {}, "total_units": 0})
     monkeypatch.setattr(notion_repo, "count_success_orders_today", lambda day, acct: 0)
     monkeypatch.setattr(notion_repo, "find_auto_holding_page", find_page)
+    monkeypatch.setattr(notion_repo, "fetch_unconfirmed_sell_orders", lambda *a: [])
     monkeypatch.setattr(kis_client, "get_price_quote",
                         lambda token, ticker: {"price": 10_000.0, "market_warned": False})
     monkeypatch.setattr(kis_client, "_notify_failure", mock.Mock())

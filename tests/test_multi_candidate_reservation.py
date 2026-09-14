@@ -38,6 +38,7 @@ def _setup_common(monkeypatch, cash: float, fresh_prices: dict[str, float]):
                         lambda size, holdings: {"groups": {}, "total_units": 0})
     monkeypatch.setattr(notion_repo, "count_success_orders_today", lambda day, acct: 0)
     monkeypatch.setattr(notion_repo, "find_auto_holding_page", lambda ticker: None)
+    monkeypatch.setattr(notion_repo, "fetch_unconfirmed_sell_orders", lambda *a: [])
     monkeypatch.setattr(kis_client, "_notify_failure", lambda msg: None)
     monkeypatch.setattr(kis_client, "_notify_warning_throttled", lambda key, msg: None)
     monkeypatch.setattr(

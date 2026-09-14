@@ -9,6 +9,7 @@ import notion_repo as n
 def env(monkeypatch):
     inp = core.HoldingInput('000001', 'test', 'KOSPI', 10000, 100, prev_stop_loss=9000)
     order = dict(page_id='order', ticker=inp.ticker, order_no='123', qty=100,
+                 holding_page_id='holding', account_type=k.ACCOUNT_TYPE,
                  reason='손절 (장중)', order_day='2026-09-11')
     for name in ('_auto_trade_configured', '_within_trading_hours', '_is_trading_day'):
         monkeypatch.setattr(k, name, Mock(return_value=True))
@@ -22,6 +23,7 @@ def env(monkeypatch):
     monkeypatch.setattr(k, 'place_market_sell_order', Mock())
     monkeypatch.setattr(n, 'fetch_unconfirmed_sell_orders', Mock(return_value=[order]))
     monkeypatch.setattr(n, 'close_auto_holding', Mock())
+    monkeypatch.setattr(n, 'holding_identity', Mock(return_value={'ticker': inp.ticker, 'status': '보유'}))
     monkeypatch.setattr(n, 'update_order_record', Mock())
     return inp, order
 
@@ -91,7 +93,7 @@ def test_sell_acceptance_stays_pending(monkeypatch, env):
     monkeypatch.setattr(k, '_send_market_sell', Mock(return_value={'rt_cd': '0', 'output': {'ODNO': '123'}}))
     # Exercise the real sender despite the integration fixture's stub.
     # Retrieve the saved implementation captured at collection time.
-    result = REAL_SELL('dummy', '000001', 100, reason='손절')
+    result = REAL_SELL('dummy', '000001', 100, reason='손절', holding_page_id='holding')
     assert result['status'] == 'sent'
     assert n.update_order_record.call_args.kwargs['status'] == '주문중'
 
@@ -120,6 +122,7 @@ def test_existing_ledger_prevents_duplicate(monkeypatch):
     monkeypatch.setattr(n, 'fetch_holding_buy_date', Mock(return_value=None))
     monkeypatch.setattr(n, 'fetch_holding_avg_price', Mock(return_value=10000))
     monkeypatch.setattr(n, 'has_ledger_for_holding', Mock(return_value=True))
+    monkeypatch.setattr(n, 'ledger_matches_sell', Mock(return_value=True))
     monkeypatch.setattr(n, 'create_ledger_record', Mock())
     inp = core.HoldingInput('000001', 'test', 'KOSPI', 10000, 100)
     assert k._record_ledger_after_sell('dummy', 'holding', inp, qty=100,
@@ -196,9 +199,8 @@ def test_stale_pending_sell_does_not_block_reentered_position(env, monkeypatch):
     k.get_order_execution.assert_not_called()
     n.close_auto_holding.assert_not_called()
     n.update_order_record.assert_not_called()
-    stale_msgs = [c.args[1] for c in k._notify_warning_throttled.call_args_list
-                  if '재진입 이전' in c.args[1]]
-    assert stale_msgs, "재진입 이전 매도 기록에 대한 별도 알림이 있어야 한다"
+    # 명시적 관계가 다른 포지션이면 날짜 비교 없이 새 포지션과 분리된다.
+    n.fetch_holding_buy_date.assert_not_called()
 
 
 def test_same_day_or_later_pending_sell_still_blocks_reentered_position(env, monkeypatch):
@@ -206,6 +208,7 @@ def test_same_day_or_later_pending_sell_still_blocks_reentered_position(env, mon
     여전히 안전한 쪽으로 현재 포지션의 주문으로 취급해 막아야 한다."""
     inp, order = env
     order['order_day'] = '2026-09-11'
+    order['holding_page_id'] = 'new_holding_page'
     monkeypatch.setattr(n, 'fetch_holding_buy_date', Mock(return_value=date(2026, 9, 11)))
     k.get_order_execution.return_value = {'filled_qty': 100, 'avg_price': 8870}
     k.run_auto_sell([('new_holding_page', inp)])
