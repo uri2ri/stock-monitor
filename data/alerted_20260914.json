@@ -268,6 +268,18 @@
       "gap_atr": 2.788,
       "unit_shares": 4424,
       "status": "추격금지"
+    },
+    "094800": {
+      "time": "14:43",
+      "name": "맵스리얼티",
+      "sector": "미분류",
+      "market": "KOSPI",
+      "price": 7300.0,
+      "high20": 7290.0,
+      "atr20": 219.0,
+      "gap_atr": 0.046,
+      "unit_shares": 2283,
+      "status": "진입가능"
     }
   }
 }
