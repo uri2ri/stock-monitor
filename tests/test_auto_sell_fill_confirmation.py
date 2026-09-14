@@ -1,40 +1,43 @@
-"""자동매도 체결 확인 버그 회귀 테스트.
+"""자동매도 체결 확인 회귀 테스트 (접수/체결 분리 + 날짜를 넘긴 복구).
 
-문제: place_market_sell_order()는 주문 API 응답(rt_cd=0)만 보고
-status="sent"를 돌려주는데, 이건 "주문 접수"이지 "전량 체결"이 아니다.
-예전 run_auto_sell()은 "sent"만 보고 곧바로 보유종목 점검표를 청산
-처리하고, 체결가 조회가 실패하거나 미체결/부분체결이어도 판정 시점
-가격으로 매매일지를 확정 기록했다 - 미체결·부분체결인데도 노션에서는
-청산된 것처럼 보여 잔여 보유 감시가 빠지고 손익 기록이 틀릴 수 있었다.
+1차 수정(_check_sell_fill/_write_ledger_and_close)에서 "접수"(rt_cd=0)와
+"전량 체결"을 분리했다. 이 파일은 그 위에서 추가 리뷰로 드러난 문제들을
+검증한다:
 
-수정 후 흐름(_check_sell_fill/_write_ledger_and_close/_finalize_pending_sell):
-  - "성공"(주문 접수)과 "전량 체결"을 분리한다 - 접수만으로는 아무것도
-    확정하지 않는다.
-  - 전량 체결(filled_qty >= requested_qty) + 유효한 체결가(avg_price > 0)를
-    모두 확인해야만 매매일지를 기록하고, 그게 성공해야만 점검표를
-    청산 처리한다(순서 고정 - 반대로 하면 청산 처리 후 매매일지 기록
-    실패 시 다음 실행이 이 행을 더는 못 찾는다).
-  - 매매일지는 ledger_exists_for_holding_today()로 중복 생성을 막는다.
-  - 미체결·부분체결·조회 실패는 노션(자동주문 기록 DB)에 이미 남아있는
-    주문 기록을 다음 실행이 fetch_latest_sell_order_today()로 다시 읽어
-    이어서 확인한다 - 로컬 변수가 아니라 노션이 실행 간 상태를 잇는다.
+  - 날짜가 바뀌면 복구가 끊김: fetch_latest_sell_order_today()/
+    ledger_exists_for_holding_today()/get_order_execution()이 모두 "오늘"
+    에만 한정돼 있었다 - 전날 낸 주문은 다음 거래일에 다시 조회가 안 됐다.
+    -> fetch_pending_sell_orders(since=매수일)/ledger_exists_for_holding
+    (날짜 무관)/get_order_execution(order_date=주문일~오늘)로 교체.
+    매매일지의 청산일도 재처리 날짜가 아니라 실제 주문일을 쓴다.
+  - 미확정 주문 추적: 매도가능수량이 0일 때만 이전 주문을 확인하던 걸,
+    수량과 무관하게 항상 먼저 확인하도록 바꿨다(_reconcile_pending_sell_orders).
+    "주문중"/"실패"(접수 여부 불명)도 "주문 없음"으로 취급하지 않고
+    신규 매도를 보류한다. 여러 건이 있으면 전부 확인한다(최신 1건만 X).
+  - 숫자 유효성: 체결가는 math.isfinite(price) and price>0, 수량은 유효한
+    양의 정수만 인정한다(_is_valid_qty) - 수량 누락(None)을 0으로 대체해
+    "0 >= None 요청량"처럼 잘못 전량체결로 인정하지 않는다.
+  - 개별 주문의 전량체결 == 포지션 전체 청산이 아니다 - 증권사 잔고에
+    잔여 보유가 남아 있으면 그 주문 하나만 소화하고 포지션은 닫지 않는다.
 
 실 네트워크(KIS·노션·카카오)는 전혀 부르지 않는다 - notion_repo.*와
-kis_client의 KIS 호출 지점을 모두 monkeypatch로 대체한다.
+kis_client의 KIS 호출 지점을 모두 monkeypatch로 대체한다. 핵심 조회
+함수(fetch_pending_sell_orders/ledger_exists_for_holding/get_order_execution)
+까지 실제로 대체해 날짜·필터 문제가 다른 mock에 가려지지 않게 한다.
 """
 
 from __future__ import annotations
 
 from datetime import date
+from pathlib import Path
 from unittest import mock
-
-import pytest
 
 import core
 import kis_client
 import notion_repo
 
-TODAY = date(2026, 9, 14)
+TODAY = date(2026, 9, 15)      # 다음 거래일(오늘 회차)
+YESTERDAY = date(2026, 9, 14)  # 전날(주문이 실제로 나간 날)
 
 
 def _holding(ticker: str = "005930", name: str = "삼성전자") -> core.HoldingInput:
@@ -46,270 +49,515 @@ def _holding(ticker: str = "005930", name: str = "삼성전자") -> core.Holding
     )
 
 
-def _no_dup_ledger(monkeypatch, exists: bool = False) -> None:
-    monkeypatch.setattr(notion_repo, "ledger_exists_for_holding_today",
-                        lambda *a, **k: exists)
+def _pending_order(*, order_no="ORD1", qty=10.0, reason="손절 (아침 배치 판정)",
+                    status="성공", order_date=YESTERDAY) -> dict:
+    return {"order_no": order_no, "qty": qty, "reason": reason,
+            "status": status, "order_date": order_date}
 
 
-# ── _check_sell_fill(): 접수 vs 체결 분리 ──────────────────────
+# ── _is_valid_qty(): 수량 유효성 ────────────────────────────────
 
-def test_zero_fill_does_not_close_or_record_ledger(monkeypatch):
-    """접수 성공, 체결 0주 -> 청산 처리·확정 원장 기록 없음."""
-    _no_dup_ledger(monkeypatch)
-    monkeypatch.setattr(kis_client, "get_order_execution", lambda *a, **k: None)
-    close_mock = mock.Mock()
+def test_is_valid_qty_rejects_none_nan_inf_negative_fraction():
+    assert kis_client._is_valid_qty(None) is False
+    assert kis_client._is_valid_qty(float("nan")) is False
+    assert kis_client._is_valid_qty(float("inf")) is False
+    assert kis_client._is_valid_qty(-1) is False
+    assert kis_client._is_valid_qty(1.5) is False
+
+
+def test_is_valid_qty_zero_only_valid_with_allow_zero():
+    assert kis_client._is_valid_qty(0) is False
+    assert kis_client._is_valid_qty(0, allow_zero=True) is True
+    assert kis_client._is_valid_qty(10) is True
+    assert kis_client._is_valid_qty(10.0, allow_zero=True) is True
+
+
+# ── _check_sell_fill(): 체결 상태 확인(노션 쓰기 없음) ───────────
+
+def test_missing_requested_qty_is_waiting_and_never_queries_kis():
+    """요청 수량 정보가 없으면(None) 0으로 대체해 전량체결로 오인하지 않고
+    KIS 조회 자체를 하지 않는다 - 판단 근거가 없다."""
+    execution_mock = mock.Mock()
+    with mock.patch.object(kis_client, "get_order_execution", execution_mock), \
+         mock.patch.object(notion_repo, "ledger_exists_for_holding",
+                            mock.Mock(return_value=False)):
+        outcome, filled_qty, avg_price = kis_client._check_sell_fill(
+            "token", "page-1", order_no="ORD1", order_date=YESTERDAY,
+            today=TODAY, requested_qty=None,
+        )
+    assert outcome == "waiting"
+    execution_mock.assert_not_called()
+
+
+def test_ledger_exists_short_circuits_before_order_no_check():
+    """매매일지가 이미 있으면(중복 방지) 주문번호가 없어도 곧바로 확정
+    경로(already_recorded)로 - order_no 유효성보다 이 확인이 먼저다."""
+    with mock.patch.object(notion_repo, "ledger_exists_for_holding",
+                            mock.Mock(return_value=True)):
+        outcome, _, _ = kis_client._check_sell_fill(
+            "token", "page-1", order_no="", order_date=YESTERDAY,
+            today=TODAY, requested_qty=10,
+        )
+    assert outcome == "already_recorded"
+
+
+def test_missing_order_no_is_waiting_when_not_already_recorded():
+    with mock.patch.object(notion_repo, "ledger_exists_for_holding",
+                            mock.Mock(return_value=False)):
+        outcome, _, _ = kis_client._check_sell_fill(
+            "token", "page-1", order_no="", order_date=YESTERDAY,
+            today=TODAY, requested_qty=10,
+        )
+    assert outcome == "waiting"
+
+
+def test_execution_lookup_not_found_is_waiting_not_expired():
+    """조회 기간 안에서 주문번호 자체를 못 찾으면(None) "미체결로 만료"가
+    아니라 "확인 불가"로 대기한다 - 조회 문제로 놓친 걸 만료로 단정하면
+    이미 체결된 걸 못 보고 새로 매도해버릴 위험이 있다."""
+    with mock.patch.object(notion_repo, "ledger_exists_for_holding",
+                            mock.Mock(return_value=False)), \
+         mock.patch.object(kis_client, "get_order_execution",
+                            mock.Mock(return_value=None)):
+        outcome, filled_qty, _ = kis_client._check_sell_fill(
+            "token", "page-1", order_no="ORD1", order_date=YESTERDAY,
+            today=TODAY, requested_qty=10,
+        )
+    assert outcome == "waiting"
+    assert filled_qty == 0
+
+
+def test_execution_lookup_exception_is_waiting():
+    with mock.patch.object(notion_repo, "ledger_exists_for_holding",
+                            mock.Mock(return_value=False)), \
+         mock.patch.object(kis_client, "get_order_execution",
+                            mock.Mock(side_effect=TimeoutError("응답 없음"))), \
+         mock.patch.object(kis_client, "_notify_warning_throttled", lambda k, m: None):
+        outcome, _, _ = kis_client._check_sell_fill(
+            "token", "page-1", order_no="ORD1", order_date=YESTERDAY,
+            today=TODAY, requested_qty=10,
+        )
+    assert outcome == "waiting"
+
+
+def test_same_day_partial_fill_waits_not_expired():
+    """당일 주문이 부분체결이면 아직 장중일 수 있어 만료로 단정하지 않는다."""
+    with mock.patch.object(notion_repo, "ledger_exists_for_holding",
+                            mock.Mock(return_value=False)), \
+         mock.patch.object(kis_client, "get_order_execution",
+                            mock.Mock(return_value={"filled_qty": 4, "avg_price": 9_900.0})):
+        outcome, filled_qty, _ = kis_client._check_sell_fill(
+            "token", "page-1", order_no="ORD1", order_date=TODAY,
+            today=TODAY, requested_qty=10,
+        )
+    assert outcome == "waiting"
+    assert filled_qty == 4
+
+
+def test_previous_day_zero_fill_is_confirmed_expired_none():
+    """전날 낸 주문이 전량 미체결이면(당일가 주문 - 장마감에 자동 취소)
+    다음 거래일엔 더 기다릴 필요 없이 만료로 확정한다."""
+    with mock.patch.object(notion_repo, "ledger_exists_for_holding",
+                            mock.Mock(return_value=False)), \
+         mock.patch.object(kis_client, "get_order_execution",
+                            mock.Mock(return_value={"filled_qty": 0, "avg_price": 0.0})):
+        outcome, filled_qty, _ = kis_client._check_sell_fill(
+            "token", "page-1", order_no="ORD1", order_date=YESTERDAY,
+            today=TODAY, requested_qty=10,
+        )
+    assert outcome == "confirmed_expired_none"
+    assert filled_qty == 0
+
+
+def test_previous_day_partial_fill_is_confirmed_expired_partial():
+    with mock.patch.object(notion_repo, "ledger_exists_for_holding",
+                            mock.Mock(return_value=False)), \
+         mock.patch.object(kis_client, "get_order_execution",
+                            mock.Mock(return_value={"filled_qty": 4, "avg_price": 9_900.0})):
+        outcome, filled_qty, _ = kis_client._check_sell_fill(
+            "token", "page-1", order_no="ORD1", order_date=YESTERDAY,
+            today=TODAY, requested_qty=10,
+        )
+    assert outcome == "confirmed_expired_partial"
+    assert filled_qty == 4
+
+
+def test_invalid_filled_qty_is_waiting():
+    with mock.patch.object(notion_repo, "ledger_exists_for_holding",
+                            mock.Mock(return_value=False)), \
+         mock.patch.object(kis_client, "get_order_execution",
+                            mock.Mock(return_value={"filled_qty": float("nan"),
+                                                     "avg_price": 9_900.0})):
+        outcome, _, _ = kis_client._check_sell_fill(
+            "token", "page-1", order_no="ORD1", order_date=YESTERDAY,
+            today=TODAY, requested_qty=10,
+        )
+    assert outcome == "waiting"
+
+
+def test_full_fill_is_confirmed_full_regardless_of_day():
+    with mock.patch.object(notion_repo, "ledger_exists_for_holding",
+                            mock.Mock(return_value=False)), \
+         mock.patch.object(kis_client, "get_order_execution",
+                            mock.Mock(return_value={"filled_qty": 10, "avg_price": 9_950.0})):
+        outcome, filled_qty, avg_price = kis_client._check_sell_fill(
+            "token", "page-1", order_no="ORD1", order_date=YESTERDAY,
+            today=TODAY, requested_qty=10,
+        )
+    assert outcome == "confirmed_full"
+    assert filled_qty == 10
+    assert avg_price == 9_950.0
+
+
+# ── _apply_sell_fill_outcome(): 확정 처리 ────────────────────────
+
+def test_apply_already_recorded_only_retries_close():
     ledger_mock = mock.Mock()
-    monkeypatch.setattr(notion_repo, "close_auto_holding", close_mock)
-    monkeypatch.setattr(notion_repo, "create_ledger_record", ledger_mock)
-
-    kis_client._check_sell_fill(
-        "token", "page-1", _holding(), order_no="ORD1", requested_qty=10,
-        reason="손절 (장중 10,000 ≤ 손절선 10,500)", today=TODAY,
-    )
-
-    close_mock.assert_not_called()
-    ledger_mock.assert_not_called()
-
-
-def test_order_lookup_failure_does_not_close_or_record_or_estimate(monkeypatch):
-    """체결 조회 실패 -> 임의 청산·추정 손익 기록 없음."""
-    _no_dup_ledger(monkeypatch)
-    monkeypatch.setattr(kis_client, "get_order_execution",
-                        mock.Mock(side_effect=TimeoutError("응답 없음")))
-    monkeypatch.setattr(kis_client, "_notify_warning_throttled", lambda k, m: None)
     close_mock = mock.Mock()
+    with mock.patch.object(notion_repo, "create_ledger_record", ledger_mock), \
+         mock.patch.object(notion_repo, "close_auto_holding", close_mock):
+        result = kis_client._apply_sell_fill_outcome(
+            "page-1", _holding(), "already_recorded", 0, None,
+            reason="손절", order_no="ORD1", exit_date=YESTERDAY, sellable_now=0,
+        )
+    assert result == "closed"
+    ledger_mock.assert_not_called()
+    close_mock.assert_called_once_with("page-1")
+
+
+def test_apply_waiting_writes_nothing():
     ledger_mock = mock.Mock()
-    monkeypatch.setattr(notion_repo, "close_auto_holding", close_mock)
-    monkeypatch.setattr(notion_repo, "create_ledger_record", ledger_mock)
-
-    kis_client._check_sell_fill(
-        "token", "page-1", _holding(), order_no="ORD1", requested_qty=10,
-        reason="손절 (아침 배치 판정)", today=TODAY,
-    )
-
-    close_mock.assert_not_called()
-    ledger_mock.assert_not_called()
-
-
-def test_missing_order_no_does_not_close_or_record(monkeypatch):
-    """주문번호를 확인할 수 없으면(접수 여부 불명) 아무것도 확정하지 않는다."""
     close_mock = mock.Mock()
+    with mock.patch.object(notion_repo, "create_ledger_record", ledger_mock), \
+         mock.patch.object(notion_repo, "close_auto_holding", close_mock):
+        result = kis_client._apply_sell_fill_outcome(
+            "page-1", _holding(), "waiting", 4, 9_900.0,
+            reason="손절", order_no="ORD1", exit_date=YESTERDAY, sellable_now=6,
+        )
+    assert result == "waiting"
+    ledger_mock.assert_not_called()
+    close_mock.assert_not_called()
+
+
+def test_apply_confirmed_expired_none_releases_without_writes():
     ledger_mock = mock.Mock()
-    monkeypatch.setattr(notion_repo, "close_auto_holding", close_mock)
-    monkeypatch.setattr(notion_repo, "create_ledger_record", ledger_mock)
-    lookup_mock = mock.Mock()
-    monkeypatch.setattr(notion_repo, "ledger_exists_for_holding_today", lookup_mock)
-
-    kis_client._check_sell_fill(
-        "token", "page-1", _holding(), order_no="", requested_qty=10,
-        reason="손절 (아침 배치 판정)", today=TODAY,
-    )
-
-    close_mock.assert_not_called()
-    ledger_mock.assert_not_called()
-    lookup_mock.assert_not_called()
-
-
-def test_partial_fill_does_not_finalize(monkeypatch):
-    """부분체결 - 최종 확정(청산·원장) 없이 다음 실행을 위해 남겨둔다."""
-    _no_dup_ledger(monkeypatch)
-    monkeypatch.setattr(kis_client, "get_order_execution",
-                        lambda *a, **k: {"filled_qty": 4, "avg_price": 9_900.0})
     close_mock = mock.Mock()
+    with mock.patch.object(notion_repo, "create_ledger_record", ledger_mock), \
+         mock.patch.object(notion_repo, "close_auto_holding", close_mock), \
+         mock.patch.object(kis_client, "_notify_warning_throttled", lambda k, m: None):
+        result = kis_client._apply_sell_fill_outcome(
+            "page-1", _holding(), "confirmed_expired_none", 0, None,
+            reason="손절", order_no="ORD1", exit_date=YESTERDAY, sellable_now=10,
+        )
+    assert result == "released"
+    ledger_mock.assert_not_called()
+    close_mock.assert_not_called()
+
+
+def test_apply_confirmed_expired_partial_releases_and_warns_without_ledger():
+    """부분체결 후 만료 - 확인된 체결분이 있어도 전량청산 모델이라 매매일지엔
+    반영하지 않는다(알려진 한계). 잔여 보유 판단으로는 넘어간다(released)."""
     ledger_mock = mock.Mock()
-    monkeypatch.setattr(notion_repo, "close_auto_holding", close_mock)
-    monkeypatch.setattr(notion_repo, "create_ledger_record", ledger_mock)
-
-    kis_client._check_sell_fill(
-        "token", "page-1", _holding(), order_no="ORD1", requested_qty=10,
-        reason="손절 (아침 배치 판정)", today=TODAY,
-    )
-
-    close_mock.assert_not_called()
-    ledger_mock.assert_not_called()
-
-
-def test_full_fill_unknown_price_does_not_finalize(monkeypatch):
-    """전량 체결이 잡혀도 체결가(avg_price)가 0/무효면 확정 기록하지 않는다."""
-    _no_dup_ledger(monkeypatch)
-    monkeypatch.setattr(kis_client, "get_order_execution",
-                        lambda *a, **k: {"filled_qty": 10, "avg_price": 0.0})
     close_mock = mock.Mock()
+    warn_mock = mock.Mock()
+    with mock.patch.object(notion_repo, "create_ledger_record", ledger_mock), \
+         mock.patch.object(notion_repo, "close_auto_holding", close_mock), \
+         mock.patch.object(kis_client, "_notify_warning_throttled", warn_mock):
+        result = kis_client._apply_sell_fill_outcome(
+            "page-1", _holding(), "confirmed_expired_partial", 4, 9_900.0,
+            reason="손절", order_no="ORD1", exit_date=YESTERDAY, sellable_now=6,
+        )
+    assert result == "released"
+    ledger_mock.assert_not_called()
+    close_mock.assert_not_called()
+    warn_mock.assert_called_once()
+
+
+def test_apply_confirmed_full_with_remaining_sellable_does_not_close_position():
+    """개별 주문의 전량체결을 곧바로 포지션 전체 청산으로 보지 않는다 -
+    증권사 잔고에 잔여 보유가 남아 있으면 이 주문만 소화하고 열어 둔다."""
     ledger_mock = mock.Mock()
-    monkeypatch.setattr(notion_repo, "close_auto_holding", close_mock)
-    monkeypatch.setattr(notion_repo, "create_ledger_record", ledger_mock)
-
-    kis_client._check_sell_fill(
-        "token", "page-1", _holding(), order_no="ORD1", requested_qty=10,
-        reason="손절 (아침 배치 판정)", today=TODAY,
-    )
-
-    close_mock.assert_not_called()
-    ledger_mock.assert_not_called()
-
-
-def test_full_fill_valid_price_records_correct_qty_and_price(monkeypatch):
-    """전량 체결 + 유효 체결가 -> 올바른 수량·가격으로 청산 기록."""
-    _no_dup_ledger(monkeypatch)
-    monkeypatch.setattr(kis_client, "get_order_execution",
-                        lambda *a, **k: {"filled_qty": 10, "avg_price": 9_950.0})
-    monkeypatch.setattr(notion_repo, "fetch_holding_buy_date", lambda pid: None)
-    monkeypatch.setattr(notion_repo, "fetch_holding_avg_price", lambda pid: 10_000.0)
     close_mock = mock.Mock()
-    ledger_mock = mock.Mock(return_value="ledger-page-1")
-    monkeypatch.setattr(notion_repo, "close_auto_holding", close_mock)
-    monkeypatch.setattr(notion_repo, "create_ledger_record", ledger_mock)
+    with mock.patch.object(notion_repo, "create_ledger_record", ledger_mock), \
+         mock.patch.object(notion_repo, "close_auto_holding", close_mock):
+        result = kis_client._apply_sell_fill_outcome(
+            "page-1", _holding(), "confirmed_full", 10, 9_950.0,
+            reason="손절", order_no="ORD1", exit_date=YESTERDAY, sellable_now=5,
+        )
+    assert result == "released"
+    ledger_mock.assert_not_called()
+    close_mock.assert_not_called()
 
-    kis_client._check_sell_fill(
-        "token", "page-1", _holding(), order_no="ORD1", requested_qty=10,
-        reason="손절 (아침 배치 판정)", today=TODAY,
-    )
 
+def test_apply_confirmed_full_invalid_price_waits():
+    for bad_price in (0.0, -1.0, float("nan"), float("inf"), None):
+        ledger_mock = mock.Mock()
+        close_mock = mock.Mock()
+        with mock.patch.object(notion_repo, "create_ledger_record", ledger_mock), \
+             mock.patch.object(notion_repo, "close_auto_holding", close_mock):
+            result = kis_client._apply_sell_fill_outcome(
+                "page-1", _holding(), "confirmed_full", 10, bad_price,
+                reason="손절", order_no="ORD1", exit_date=YESTERDAY, sellable_now=None,
+            )
+        assert result == "waiting", f"가격 {bad_price!r}은 무효 처리돼야 한다"
+        ledger_mock.assert_not_called()
+        close_mock.assert_not_called()
+
+
+def test_apply_confirmed_full_valid_price_writes_ledger_with_actual_order_date():
+    """청산일은 재처리 날짜(exit_date로 넘긴 실제 주문일)를 쓴다 - "오늘"이
+    아니다."""
+    inp = _holding()
+    ledger_mock = mock.Mock(return_value="ledger-1")
+    close_mock = mock.Mock()
+    with mock.patch.object(notion_repo, "create_ledger_record", ledger_mock), \
+         mock.patch.object(notion_repo, "close_auto_holding", close_mock), \
+         mock.patch.object(notion_repo, "fetch_holding_buy_date", lambda pid: None), \
+         mock.patch.object(notion_repo, "fetch_holding_avg_price", lambda pid: 10_000.0):
+        result = kis_client._apply_sell_fill_outcome(
+            "page-1", inp, "confirmed_full", 10, 9_950.0,
+            reason="손절 (아침 배치 판정)", order_no="ORD1",
+            exit_date=YESTERDAY, sellable_now=0,
+        )
+    assert result == "closed"
     ledger_mock.assert_called_once()
+    assert ledger_mock.call_args.kwargs["exit_date"] == YESTERDAY
     assert ledger_mock.call_args.kwargs["shares"] == 10
     assert ledger_mock.call_args.kwargs["exit_price"] == 9_950.0
-    assert ledger_mock.call_args.kwargs["exit_reason"] == notion_repo.LEDGER_EXIT_STOP
     close_mock.assert_called_once_with("page-1")
 
 
-# ── 부분체결 -> 다음 실행 전량체결: 중복 없이 한 번만 기록 ─────
+# ── _reconcile_pending_sell_orders(): 날짜를 넘긴 복구 통합 ──────
 
-def test_partial_then_full_fill_across_runs_finalizes_exactly_once(monkeypatch):
-    """1회차 부분체결(미확정) -> 2회차 전량체결 확인 시, 새 주문 없이
-    노션에 이미 남은 주문 기록(fetch_latest_sell_order_today)을 이어받아
-    확정하고, 매매일지는 정확히 1번만 생성된다."""
+def test_recovery_previous_day_full_fill_after_ledger_failure_closes_with_order_date():
+    """전날 전량 체결됐지만 원장 기록이 실패해 미확정으로 남은 주문을,
+    다음 거래일에 sellable=0으로 복구한다. 청산일은 실제 주문일(전날)."""
     inp = _holding()
-    ledger_mock = mock.Mock(return_value="ledger-1")
-    close_mock = mock.Mock()
-    monkeypatch.setattr(notion_repo, "close_auto_holding", close_mock)
-    monkeypatch.setattr(notion_repo, "create_ledger_record", ledger_mock)
-    monkeypatch.setattr(notion_repo, "fetch_holding_buy_date", lambda pid: None)
-    monkeypatch.setattr(notion_repo, "fetch_holding_avg_price", lambda pid: 10_000.0)
+    with mock.patch.object(notion_repo, "fetch_holding_buy_date",
+                            mock.Mock(return_value=date(2026, 9, 1))), \
+         mock.patch.object(notion_repo, "fetch_pending_sell_orders",
+                            mock.Mock(return_value=[_pending_order()])) as fetch_mock, \
+         mock.patch.object(notion_repo, "ledger_exists_for_holding",
+                            mock.Mock(return_value=False)), \
+         mock.patch.object(kis_client, "get_order_execution",
+                            mock.Mock(return_value={"filled_qty": 10, "avg_price": 9_950.0})), \
+         mock.patch.object(notion_repo, "fetch_holding_avg_price", lambda pid: 10_000.0), \
+         mock.patch.object(notion_repo, "create_ledger_record",
+                            mock.Mock(return_value="ledger-1")) as ledger_mock, \
+         mock.patch.object(notion_repo, "close_auto_holding", mock.Mock()) as close_mock:
+        result = kis_client._reconcile_pending_sell_orders("token", "page-1", inp, TODAY, 0)
 
-    # 1회차: 방금 낸 주문의 낙관적 확인 - 부분체결(4/10)이라 확정 안 됨.
-    ledger_exists = mock.Mock(return_value=False)
-    monkeypatch.setattr(notion_repo, "ledger_exists_for_holding_today", ledger_exists)
-    monkeypatch.setattr(kis_client, "get_order_execution",
-                        lambda *a, **k: {"filled_qty": 4, "avg_price": 9_900.0})
-    kis_client._check_sell_fill(
-        "token", "page-1", inp, order_no="ORD1", requested_qty=10,
-        reason="손절 (아침 배치 판정)", today=TODAY,
-    )
-    ledger_mock.assert_not_called()
-    close_mock.assert_not_called()
-
-    # 2회차: 새 프로세스(컨테이너)라고 가정 - _finalize_pending_sell이
-    # 매도가능수량 0인 이 종목의 주문 기록을 노션에서 다시 읽어와 이어서
-    # 확인한다. 이번엔 전량 체결.
-    fetch_order_mock = mock.Mock(
-        return_value={"order_no": "ORD1", "qty": 10.0, "reason": "손절 (아침 배치 판정)"}
-    )
-    monkeypatch.setattr(notion_repo, "fetch_latest_sell_order_today", fetch_order_mock)
-    monkeypatch.setattr(kis_client, "get_order_execution",
-                        lambda *a, **k: {"filled_qty": 10, "avg_price": 9_950.0})
-
-    kis_client._finalize_pending_sell("token", "page-1", inp, TODAY)
-
-    fetch_order_mock.assert_called_once_with(inp.ticker, TODAY)
+    assert result == "closed"
+    fetch_mock.assert_called_once_with(inp.ticker, kis_client.ACCOUNT_TYPE,
+                                        since=date(2026, 9, 1))
     ledger_mock.assert_called_once()
-    assert ledger_mock.call_args.kwargs["shares"] == 10
+    assert ledger_mock.call_args.kwargs["exit_date"] == YESTERDAY, (
+        "재처리 회차(TODAY)가 아니라 실제 주문일(YESTERDAY)이 청산일이어야 한다"
+    )
     close_mock.assert_called_once_with("page-1")
 
 
-def test_finalize_pending_sell_skips_when_no_order_record_found(monkeypatch):
-    """매도가능수량이 0인데 이 시스템이 낸 매도 기록이 없으면(수동 매도 등
-    추정) 임의로 청산 처리하지 않는다."""
-    monkeypatch.setattr(notion_repo, "fetch_latest_sell_order_today",
-                        lambda *a, **k: None)
-    close_mock = mock.Mock()
-    ledger_mock = mock.Mock()
-    monkeypatch.setattr(notion_repo, "close_auto_holding", close_mock)
-    monkeypatch.setattr(notion_repo, "create_ledger_record", ledger_mock)
-
-    kis_client._finalize_pending_sell("token", "page-1", _holding(), TODAY)
-
-    close_mock.assert_not_called()
-    ledger_mock.assert_not_called()
-
-
-def test_finalize_pending_sell_lookup_failure_leaves_holding_untouched(monkeypatch):
-    """오늘 주문 기록 조회 자체가 실패해도(접수 여부 불명) 청산 처리하지
-    않는다 - 다음 실행에서 다시 시도한다."""
-    monkeypatch.setattr(notion_repo, "fetch_latest_sell_order_today",
-                        mock.Mock(side_effect=RuntimeError("노션 조회 실패")))
-    close_mock = mock.Mock()
-    monkeypatch.setattr(notion_repo, "close_auto_holding", close_mock)
-
-    kis_client._finalize_pending_sell("token", "page-1", _holding(), TODAY)
-
-    close_mock.assert_not_called()
-
-
-# ── 청산 처리·원장 기록 중 한쪽만 실패 -> 다음 실행 복구, 중복 없음 ──
-
-def test_ledger_recorded_but_close_failed_recovers_close_only_next_run(monkeypatch):
-    """1회차: 매매일지는 기록됐지만 점검표 청산 처리가 실패. 2회차: 매매일지가
-    이미 있으므로 다시 만들지 않고 청산 처리만 재시도한다."""
+def test_recovery_previous_day_ledger_success_close_failure_recovers_without_duplicate():
+    """전날 원장 기록은 성공했지만 점검표 청산 처리가 실패한 경우, 다음
+    거래일엔 매매일지를 다시 만들지 않고 청산 처리만 재시도한다."""
     inp = _holding()
-    ledger_mock = mock.Mock(return_value="ledger-1")
-    monkeypatch.setattr(notion_repo, "create_ledger_record", ledger_mock)
-    monkeypatch.setattr(notion_repo, "fetch_holding_buy_date", lambda pid: None)
-    monkeypatch.setattr(notion_repo, "fetch_holding_avg_price", lambda pid: 10_000.0)
-    monkeypatch.setattr(notion_repo, "ledger_exists_for_holding_today",
-                        lambda *a, **k: False)
-    monkeypatch.setattr(kis_client, "get_order_execution",
-                        lambda *a, **k: {"filled_qty": 10, "avg_price": 9_950.0})
+    with mock.patch.object(notion_repo, "fetch_holding_buy_date",
+                            mock.Mock(return_value=date(2026, 9, 1))), \
+         mock.patch.object(notion_repo, "fetch_pending_sell_orders",
+                            mock.Mock(return_value=[_pending_order()])), \
+         mock.patch.object(notion_repo, "ledger_exists_for_holding",
+                            mock.Mock(return_value=True)) as ledger_exists_mock, \
+         mock.patch.object(kis_client, "get_order_execution", mock.Mock()) as execution_mock, \
+         mock.patch.object(notion_repo, "create_ledger_record", mock.Mock()) as ledger_mock, \
+         mock.patch.object(notion_repo, "close_auto_holding", mock.Mock()) as close_mock:
+        result = kis_client._reconcile_pending_sell_orders("token", "page-1", inp, TODAY, 0)
 
-    close_mock_1 = mock.Mock(side_effect=RuntimeError("노션 API 오류"))
-    monkeypatch.setattr(notion_repo, "close_auto_holding", close_mock_1)
-    monkeypatch.setattr(kis_client, "_notify_failure", lambda msg: None)
+    assert result == "closed"
+    ledger_exists_mock.assert_called_once_with("page-1")
+    ledger_mock.assert_not_called()
+    execution_mock.assert_not_called(), "매매일지가 이미 있으면 체결 재조회조차 필요 없다"
+    close_mock.assert_called_once_with("page-1")
 
-    kis_client._check_sell_fill(
-        "token", "page-1", inp, order_no="ORD1", requested_qty=10,
-        reason="손절 (아침 배치 판정)", today=TODAY,
-    )
+
+def test_recovery_ambiguous_status_blocks_new_sell_without_treating_as_no_order():
+    """접수 후 상태 기록 실패("실패") 또는 응답 시간초과로 남은 주문은
+    "주문 없음"으로 취급하지 않고, 확인 전까지 신규 매도를 보류한다."""
+    inp = _holding()
+    for status in ("실패", "주문중"):
+        with mock.patch.object(notion_repo, "fetch_holding_buy_date",
+                                mock.Mock(return_value=date(2026, 9, 1))), \
+             mock.patch.object(
+                 notion_repo, "fetch_pending_sell_orders",
+                 mock.Mock(return_value=[_pending_order(status=status, order_no="")]),
+             ), \
+             mock.patch.object(kis_client, "get_order_execution", mock.Mock()) as execution_mock, \
+             mock.patch.object(notion_repo, "close_auto_holding", mock.Mock()) as close_mock, \
+             mock.patch.object(kis_client, "_notify_warning_throttled", mock.Mock()) as warn_mock:
+            result = kis_client._reconcile_pending_sell_orders(
+                "token", "page-1", inp, TODAY, 6,
+            )
+        assert result == "blocked", f"상태={status}는 확인 전까지 보류해야 한다"
+        execution_mock.assert_not_called()
+        close_mock.assert_not_called()
+        warn_mock.assert_called_once()
+
+
+def test_recovery_pending_exists_but_sellable_positive_still_checks_pending_first():
+    """매도가능수량이 양수여도(0이 아니어도) 미확정 주문이 있으면 먼저
+    확인한다 - 예전엔 sellable<=0일 때만 확인했다."""
+    inp = _holding()
+    with mock.patch.object(notion_repo, "fetch_holding_buy_date",
+                            mock.Mock(return_value=date(2026, 9, 1))), \
+         mock.patch.object(
+             notion_repo, "fetch_pending_sell_orders",
+             mock.Mock(return_value=[_pending_order(qty=10.0)]),
+         ) as fetch_mock, \
+         mock.patch.object(notion_repo, "ledger_exists_for_holding",
+                            mock.Mock(return_value=False)), \
+         mock.patch.object(kis_client, "get_order_execution",
+                            mock.Mock(return_value={"filled_qty": 4, "avg_price": 9_900.0})), \
+         mock.patch.object(kis_client, "_notify_warning_throttled", lambda k, m: None):
+        result = kis_client._reconcile_pending_sell_orders(
+            "token", "page-1", inp, TODAY, 6,  # sellable=6 (양수)
+        )
+
+    fetch_mock.assert_called_once()
+    # 전날 주문이 부분체결(4/10) 후 만료 -> released, 남은 판단은 이어진다.
+    assert result == "clear"
+
+
+def test_recovery_multiple_orders_for_same_position_all_checked_not_just_latest():
+    """같은 포지션에 매도 주문이 여러 건 남아 있으면 전부 확인한다(최신
+    1건만 보고 나머지를 버리지 않는다)."""
+    # ORD_A: 전날 전체(10주) 요청했으나 부분체결(6주)만 되고 잔량은 만료.
+    # ORD_B: 그 뒤(같은 전날) 남은 4주에 대해 새로 낸 주문 - 이번엔 전량체결.
+    # 매도는 항상 전량이라 이 둘이 이 포지션의 요청량을 나눠 갖는 게 아니라,
+    # 각자 "그 시점 전체 잔여"를 요청한 개별 시도다.
+    inp = _holding()
+    order_a = _pending_order(order_no="ORD_A", qty=10.0, order_date=YESTERDAY)
+    order_b = _pending_order(order_no="ORD_B", qty=4.0, order_date=YESTERDAY)
+
+    def _fake_execution(token, order_no, order_date=None):
+        if order_no == "ORD_A":
+            return {"filled_qty": 6, "avg_price": 9_900.0}
+        if order_no == "ORD_B":
+            return {"filled_qty": 4, "avg_price": 9_950.0}
+        raise AssertionError(f"예상치 못한 주문번호: {order_no}")
+
+    seen_order_nos: list[str] = []
+
+    def _tracking_execution(token, order_no, order_date=None):
+        seen_order_nos.append(order_no)
+        return _fake_execution(token, order_no, order_date)
+
+    with mock.patch.object(notion_repo, "fetch_holding_buy_date",
+                            mock.Mock(return_value=date(2026, 9, 1))), \
+         mock.patch.object(notion_repo, "fetch_pending_sell_orders",
+                            mock.Mock(return_value=[order_a, order_b])), \
+         mock.patch.object(notion_repo, "ledger_exists_for_holding",
+                            mock.Mock(return_value=False)), \
+         mock.patch.object(kis_client, "get_order_execution", _tracking_execution), \
+         mock.patch.object(notion_repo, "fetch_holding_avg_price", lambda pid: 10_000.0), \
+         mock.patch.object(kis_client, "_notify_warning_throttled", lambda k, m: None), \
+         mock.patch.object(notion_repo, "create_ledger_record",
+                            mock.Mock(return_value="ledger-1")) as ledger_mock, \
+         mock.patch.object(notion_repo, "close_auto_holding", mock.Mock()) as close_mock:
+        result = kis_client._reconcile_pending_sell_orders("token", "page-1", inp, TODAY, 0)
+
+    assert seen_order_nos == ["ORD_A", "ORD_B"], "두 주문 모두 확인해야 한다(최신 1건만 X)"
+    assert result == "closed"
+    # ORD_A(부분체결 후 만료)는 원장에 반영되지 않고, ORD_B(전량체결)가
+    # 최종 청산으로 이어진다.
     ledger_mock.assert_called_once()
-    close_mock_1.assert_called_once()
+    assert ledger_mock.call_args.kwargs["shares"] == 4
+    close_mock.assert_called_once_with("page-1")
 
-    # 2회차 - 매매일지가 이미 있다(ledger_exists_for_holding_today=True).
-    monkeypatch.setattr(notion_repo, "ledger_exists_for_holding_today",
-                        lambda *a, **k: True)
-    close_mock_2 = mock.Mock()
-    monkeypatch.setattr(notion_repo, "close_auto_holding", close_mock_2)
 
-    kis_client._check_sell_fill(
-        "token", "page-1", inp, order_no="ORD1", requested_qty=10,
-        reason="손절 (아침 배치 판정)", today=TODAY,
+def test_recovery_buy_date_lookup_failure_falls_back_to_today_only_scope():
+    """매수일을 못 구하면(과거 포지션과 섞이지 않게) 조회 범위를 오늘로만
+    좁힌다 - 예전(당일 한정) 동작으로 안전하게 후퇴."""
+    inp = _holding()
+    with mock.patch.object(notion_repo, "fetch_holding_buy_date",
+                            mock.Mock(return_value=None)), \
+         mock.patch.object(notion_repo, "fetch_pending_sell_orders",
+                            mock.Mock(return_value=[])) as fetch_mock:
+        result = kis_client._reconcile_pending_sell_orders("token", "page-1", inp, TODAY, 0)
+
+    fetch_mock.assert_called_once_with(inp.ticker, kis_client.ACCOUNT_TYPE, since=TODAY)
+    assert result == "clear"
+
+
+def test_recovery_lookup_failure_blocks_new_sell():
+    inp = _holding()
+    with mock.patch.object(notion_repo, "fetch_holding_buy_date",
+                            mock.Mock(return_value=date(2026, 9, 1))), \
+         mock.patch.object(notion_repo, "fetch_pending_sell_orders",
+                            mock.Mock(side_effect=RuntimeError("노션 조회 실패"))):
+        result = kis_client._reconcile_pending_sell_orders("token", "page-1", inp, TODAY, 5)
+
+    assert result == "blocked"
+
+
+# ── get_order_execution(): 조회 기간 확장 + 못 찾음/0체결 구분 ───
+
+def test_get_order_execution_queries_from_order_date_to_today(monkeypatch):
+    captured = {}
+
+    class _Resp:
+        def raise_for_status(self):
+            pass
+
+        def json(self):
+            return {"output1": []}
+
+    def _fake_get(url, headers, params, timeout):
+        captured["params"] = params
+        return _Resp()
+
+    monkeypatch.setattr(kis_client, "_today", lambda: TODAY)
+    monkeypatch.setattr(kis_client.requests, "get", _fake_get)
+    monkeypatch.setenv("KIS_APP_KEY", "k")
+    monkeypatch.setenv("KIS_APP_SECRET", "s")
+    monkeypatch.setenv("KIS_ACCOUNT", "12345678-01")
+
+    result = kis_client.get_order_execution("token", "ORD1", order_date=YESTERDAY)
+
+    assert result is None
+    assert captured["params"]["INQR_STRT_DT"] == YESTERDAY.strftime("%Y%m%d")
+    assert captured["params"]["INQR_END_DT"] == TODAY.strftime("%Y%m%d")
+
+
+def test_get_order_execution_distinguishes_zero_fill_from_not_found(monkeypatch):
+    class _Resp:
+        def __init__(self, rows):
+            self._rows = rows
+
+        def raise_for_status(self):
+            pass
+
+        def json(self):
+            return {"output1": self._rows}
+
+    monkeypatch.setattr(kis_client, "_today", lambda: TODAY)
+    monkeypatch.setenv("KIS_APP_KEY", "k")
+    monkeypatch.setenv("KIS_APP_SECRET", "s")
+    monkeypatch.setenv("KIS_ACCOUNT", "12345678-01")
+
+    # 찾음, 0체결
+    monkeypatch.setattr(
+        kis_client.requests, "get",
+        lambda *a, **k: _Resp([{"odno": "ORD1", "tot_ccld_qty": "0", "avg_prvs": "0"}]),
     )
+    found_zero = kis_client.get_order_execution("token", "ORD1", order_date=YESTERDAY)
+    assert found_zero == {"filled_qty": 0, "avg_price": 0.0}
 
-    assert ledger_mock.call_count == 1, "매매일지가 중복 생성되면 안 된다"
-    close_mock_2.assert_called_once_with("page-1")
-
-
-def test_ledger_write_failure_blocks_close_this_run(monkeypatch):
-    """매매일지 기록이 실패하면 점검표 청산 처리를 시도하지 않는다 - 반대
-    순서(청산 먼저)였다면 다음 실행이 이 행을 구분='보유'로 더는 못 찾아
-    매매일지 공백이 영영 안 채워진다."""
-    _no_dup_ledger(monkeypatch)
-    monkeypatch.setattr(kis_client, "get_order_execution",
-                        lambda *a, **k: {"filled_qty": 10, "avg_price": 9_950.0})
-    monkeypatch.setattr(notion_repo, "fetch_holding_buy_date", lambda pid: None)
-    monkeypatch.setattr(notion_repo, "fetch_holding_avg_price", lambda pid: 10_000.0)
-    monkeypatch.setattr(notion_repo, "create_ledger_record",
-                        mock.Mock(side_effect=RuntimeError("노션 API 오류")))
-    monkeypatch.setattr(kis_client, "_notify_warning_throttled", lambda k, m: None)
-    close_mock = mock.Mock()
-    monkeypatch.setattr(notion_repo, "close_auto_holding", close_mock)
-
-    kis_client._check_sell_fill(
-        "token", "page-1", _holding(), order_no="ORD1", requested_qty=10,
-        reason="손절 (아침 배치 판정)", today=TODAY,
-    )
-
-    close_mock.assert_not_called()
+    # 못 찾음
+    monkeypatch.setattr(kis_client.requests, "get", lambda *a, **k: _Resp([]))
+    not_found = kis_client.get_order_execution("token", "ORD1", order_date=YESTERDAY)
+    assert not_found is None
 
 
-# ── run_auto_sell() 통합: 미체결 종목은 새 주문 없이 계속 추적된다 ──
+# ── run_auto_sell() 통합 ─────────────────────────────────────────
 
 def _stub_gates(monkeypatch) -> None:
     monkeypatch.setattr(kis_client, "_auto_trade_configured", lambda: True)
@@ -319,31 +567,63 @@ def _stub_gates(monkeypatch) -> None:
     monkeypatch.setattr(kis_client, "_today", lambda: TODAY)
 
 
-def test_run_auto_sell_pending_ticker_does_not_resend_order(monkeypatch):
-    """매도가능수량이 0(직전 매도 미확인)인 종목은 새 매도 주문을 내지
-    않고 체결 확인만 한다 - 중복 주문 방지."""
+def test_run_auto_sell_checks_pending_before_new_sell_even_when_sellable_positive(monkeypatch):
+    """매도가능수량이 양수라도 미확정 주문이 있으면 그걸 먼저 정리한다.
+    이번엔 전날 부분체결 후 만료라 released로 풀리고, 남은 수량(6)에 대해
+    이 회차 안에서 새 매도가 나간다."""
     _stub_gates(monkeypatch)
     inp = _holding()
     monkeypatch.setattr(
         kis_client, "get_account_balance",
         lambda token: {"account_size": 1.0, "available_cash": 1.0,
-                       "holdings": [{"ticker": inp.ticker, "qty": 10, "sellable": 0}]},
+                       "holdings": [{"ticker": inp.ticker, "qty": 6, "sellable": 6}]},
     )
+    monkeypatch.setattr(notion_repo, "fetch_holding_buy_date", lambda pid: date(2026, 9, 1))
+    monkeypatch.setattr(
+        notion_repo, "fetch_pending_sell_orders",
+        lambda *a, **k: [_pending_order(qty=10.0)],
+    )
+    monkeypatch.setattr(notion_repo, "ledger_exists_for_holding", lambda pid: False)
+    monkeypatch.setattr(kis_client, "get_order_execution",
+                        lambda *a, **k: {"filled_qty": 4, "avg_price": 9_900.0})
+    monkeypatch.setattr(kis_client, "_notify_warning_throttled", lambda k, m: None)
+    monkeypatch.setattr(kis_client, "get_current_price", lambda token, ticker: "10000")
+    place_mock = mock.Mock(return_value={"status": "sent", "order_no": "ORD_NEW"})
+    monkeypatch.setattr(kis_client, "place_market_sell_order", place_mock)
+    monkeypatch.setattr(kis_client, "time", mock.Mock(sleep=lambda s: None))
+
+    kis_client.run_auto_sell(holdings=[("page-1", inp)])
+
+    place_mock.assert_called_once()
+    assert place_mock.call_args.args[2] == 6, "잔여 매도가능수량(6주) 그대로 새 매도를 내야 한다"
+
+
+def test_run_auto_sell_blocked_by_ambiguous_order_never_places_new_sell(monkeypatch):
+    """상태 불명 주문이 있으면 매도가능수량이 양수여도 신규 매도를 내지 않는다."""
+    _stub_gates(monkeypatch)
+    inp = _holding()
+    monkeypatch.setattr(
+        kis_client, "get_account_balance",
+        lambda token: {"account_size": 1.0, "available_cash": 1.0,
+                       "holdings": [{"ticker": inp.ticker, "qty": 6, "sellable": 6}]},
+    )
+    monkeypatch.setattr(notion_repo, "fetch_holding_buy_date", lambda pid: date(2026, 9, 1))
+    monkeypatch.setattr(
+        notion_repo, "fetch_pending_sell_orders",
+        lambda *a, **k: [_pending_order(status="실패", order_no="")],
+    )
+    monkeypatch.setattr(kis_client, "_notify_warning_throttled", lambda k, m: None)
     place_mock = mock.Mock()
     monkeypatch.setattr(kis_client, "place_market_sell_order", place_mock)
-    finalize_mock = mock.Mock()
-    monkeypatch.setattr(kis_client, "_finalize_pending_sell", finalize_mock)
 
     kis_client.run_auto_sell(holdings=[("page-1", inp)])
 
     place_mock.assert_not_called()
-    finalize_mock.assert_called_once()
-    assert finalize_mock.call_args.args[1] == "page-1"
 
 
 def test_run_auto_sell_full_fill_confirmed_inline(monkeypatch):
     """매도 가능한 종목이 조건을 충족해 주문을 내고, 같은 회차에 전량
-    체결까지 확인되면 청산·원장 기록이 이뤄진다."""
+    체결까지 확인되면 청산·원장 기록이 이뤄진다(기존 당일 경로 유지)."""
     _stub_gates(monkeypatch)
     inp = _holding()
     monkeypatch.setattr(
@@ -351,18 +631,17 @@ def test_run_auto_sell_full_fill_confirmed_inline(monkeypatch):
         lambda token: {"account_size": 1.0, "available_cash": 1.0,
                        "holdings": [{"ticker": inp.ticker, "qty": 10, "sellable": 10}]},
     )
+    monkeypatch.setattr(notion_repo, "fetch_holding_buy_date", lambda pid: date(2026, 9, 1))
+    monkeypatch.setattr(notion_repo, "fetch_pending_sell_orders", lambda *a, **k: [])
     monkeypatch.setattr(kis_client, "get_current_price", lambda token, ticker: "10000")
     monkeypatch.setattr(
         kis_client, "place_market_sell_order",
         lambda *a, **k: {"status": "sent", "order_no": "ORD1"},
     )
-    monkeypatch.setattr(kis_client, "time",
-                        mock.Mock(sleep=lambda s: None))
+    monkeypatch.setattr(kis_client, "time", mock.Mock(sleep=lambda s: None))
     monkeypatch.setattr(kis_client, "get_order_execution",
                         lambda *a, **k: {"filled_qty": 10, "avg_price": 9_950.0})
-    monkeypatch.setattr(notion_repo, "ledger_exists_for_holding_today",
-                        lambda *a, **k: False)
-    monkeypatch.setattr(notion_repo, "fetch_holding_buy_date", lambda pid: None)
+    monkeypatch.setattr(notion_repo, "ledger_exists_for_holding", lambda pid: False)
     monkeypatch.setattr(notion_repo, "fetch_holding_avg_price", lambda pid: 10_000.0)
     ledger_mock = mock.Mock(return_value="ledger-1")
     close_mock = mock.Mock()
@@ -373,33 +652,32 @@ def test_run_auto_sell_full_fill_confirmed_inline(monkeypatch):
 
     ledger_mock.assert_called_once()
     assert ledger_mock.call_args.kwargs["shares"] == 10
+    assert ledger_mock.call_args.kwargs["exit_date"] == TODAY
     close_mock.assert_called_once_with("page-1")
 
 
 def test_run_auto_sell_zero_fill_leaves_holding_open_no_dup_next_call(monkeypatch):
     """접수 성공, 체결 0주 -> 이번 회차엔 청산도 원장 기록도 없고, 매도
-    가능수량이 여전히 0인 다음 회차도 새 주문을 내지 않는다(중복 방지)."""
+    가능수량이 여전히 0인 다음 회차(같은 날)도 새 주문을 내지 않는다."""
     _stub_gates(monkeypatch)
     inp = _holding()
     monkeypatch.setattr(kis_client, "get_current_price", lambda token, ticker: "10000")
-    monkeypatch.setattr(
-        kis_client, "place_market_sell_order",
-        lambda *a, **k: {"status": "sent", "order_no": "ORD1"},
-    )
     monkeypatch.setattr(kis_client, "time", mock.Mock(sleep=lambda s: None))
-    monkeypatch.setattr(notion_repo, "ledger_exists_for_holding_today",
-                        lambda *a, **k: False)
+    monkeypatch.setattr(notion_repo, "ledger_exists_for_holding", lambda pid: False)
+    monkeypatch.setattr(notion_repo, "fetch_holding_buy_date", lambda pid: date(2026, 9, 1))
     ledger_mock = mock.Mock()
     close_mock = mock.Mock()
     monkeypatch.setattr(notion_repo, "create_ledger_record", ledger_mock)
     monkeypatch.setattr(notion_repo, "close_auto_holding", close_mock)
 
-    # 1회차: 매도가능수량 10 -> 매도 주문을 낸다. 체결 확인은 0주.
+    # 1회차: 매도가능수량 10, 미확정 주문 없음 -> 매도 주문을 낸다. 체결
+    # 확인은 조회 자체에서 주문을 못 찾음(당일이라 여전히 대기).
     monkeypatch.setattr(
         kis_client, "get_account_balance",
         lambda token: {"account_size": 1.0, "available_cash": 1.0,
                        "holdings": [{"ticker": inp.ticker, "qty": 10, "sellable": 10}]},
     )
+    monkeypatch.setattr(notion_repo, "fetch_pending_sell_orders", lambda *a, **k: [])
     monkeypatch.setattr(kis_client, "get_order_execution", lambda *a, **k: None)
     place_mock = mock.Mock(return_value={"status": "sent", "order_no": "ORD1"})
     monkeypatch.setattr(kis_client, "place_market_sell_order", place_mock)
@@ -410,21 +688,75 @@ def test_run_auto_sell_zero_fill_leaves_holding_open_no_dup_next_call(monkeypatc
     close_mock.assert_not_called()
     assert place_mock.call_count == 1
 
-    # 2회차: 아직 미체결이라 매도가능수량은 여전히 0 - 새 주문을 내면 안 된다.
+    # 2회차(같은 날, 아직 미체결) - 매도가능수량 0, 미확정 주문 1건 남음.
     monkeypatch.setattr(
         kis_client, "get_account_balance",
         lambda token: {"account_size": 1.0, "available_cash": 1.0,
                        "holdings": [{"ticker": inp.ticker, "qty": 10, "sellable": 0}]},
     )
-    monkeypatch.setattr(notion_repo, "fetch_latest_sell_order_today",
-                        lambda *a, **k: {"order_no": "ORD1", "qty": 10.0,
-                                         "reason": "손절 (아침 배치 판정)"})
+    monkeypatch.setattr(
+        notion_repo, "fetch_pending_sell_orders",
+        lambda *a, **k: [_pending_order(qty=10.0, order_date=TODAY)],
+    )
 
     kis_client.run_auto_sell(holdings=[("page-1", inp)])
 
     assert place_mock.call_count == 1, "미체결 상태에서는 같은 종목을 다시 주문하면 안 된다"
     ledger_mock.assert_not_called()
     close_mock.assert_not_called()
+
+
+def test_run_auto_sell_recovers_previous_trading_day_fill_across_process_restart(monkeypatch):
+    """run_auto_sell()부터 끝까지 - 전날 회차(별도 프로세스로 간주)가 낸
+    매도가 전량 체결됐지만 원장 실패로 미확정이던 걸, 다음 거래일 회차가
+    새 프로세스에서 노션 조회만으로 이어받아 복구한다(로컬 상태 없음)."""
+    _stub_gates(monkeypatch)
+    inp = _holding()
+    monkeypatch.setattr(
+        kis_client, "get_account_balance",
+        lambda token: {"account_size": 1.0, "available_cash": 1.0,
+                       "holdings": [{"ticker": inp.ticker, "qty": 10, "sellable": 0}]},
+    )
+    monkeypatch.setattr(notion_repo, "fetch_holding_buy_date", lambda pid: date(2026, 9, 1))
+    monkeypatch.setattr(
+        notion_repo, "fetch_pending_sell_orders",
+        lambda *a, **k: [_pending_order(order_no="ORD1", qty=10.0, order_date=YESTERDAY)],
+    )
+    monkeypatch.setattr(notion_repo, "ledger_exists_for_holding", lambda pid: False)
+    monkeypatch.setattr(kis_client, "get_order_execution",
+                        lambda *a, **k: {"filled_qty": 10, "avg_price": 9_950.0})
+    monkeypatch.setattr(notion_repo, "fetch_holding_avg_price", lambda pid: 10_000.0)
+    ledger_mock = mock.Mock(return_value="ledger-1")
+    close_mock = mock.Mock()
+    monkeypatch.setattr(notion_repo, "create_ledger_record", ledger_mock)
+    monkeypatch.setattr(notion_repo, "close_auto_holding", close_mock)
+    place_mock = mock.Mock()
+    monkeypatch.setattr(kis_client, "place_market_sell_order", place_mock)
+
+    kis_client.run_auto_sell(holdings=[("page-1", inp)])
+
+    place_mock.assert_not_called(), "복구만으로 끝나야 한다 - 새 매도를 또 내면 안 된다"
+    ledger_mock.assert_called_once()
+    assert ledger_mock.call_args.kwargs["exit_date"] == YESTERDAY
+    close_mock.assert_called_once_with("page-1")
+
+
+# ── 워크플로 필수 환경변수 ────────────────────────────────────────
+
+def test_auto_trade_workflow_passes_notion_ledger_db_id_to_watch_step():
+    """자동매도 체결 확정(ledger_exists_for_holding/create_ledger_record)은
+    NOTION_LEDGER_DB_ID가 필요하다 - 워크플로 "watch" 스텝에 실제로
+    전달되는지 확인한다(비밀값은 매핑 문자열 그대로만 확인, 실제 값은
+    다루지 않는다)."""
+    workflow_path = Path(__file__).resolve().parent.parent / ".github/workflows/auto-trade.yml"
+    content = workflow_path.read_text(encoding="utf-8")
+
+    start = content.index('name: "Watch for breakouts and auto-trade"'.replace('"', ""))
+    # 다음 스텝("- name:")이 시작되기 전까지만 본다.
+    next_step = content.index("\n      - name:", start)
+    step_block = content[start:next_step]
+
+    assert "NOTION_LEDGER_DB_ID: ${{ secrets.NOTION_LEDGER_DB_ID }}" in step_block
 
 
 # ── 기존 신규매수·추가매수 경로 무변경 확인 ────────────────────
@@ -449,9 +781,9 @@ def test_pyramid_add_path_does_not_use_sell_fill_helpers(monkeypatch):
     """추가매수(run_auto_pyramid) 경로는 place_market_buy_order를 그대로
     재사용할 뿐, 이번에 추가한 매도 체결 확인 헬퍼를 전혀 부르지 않는다."""
     check_fill_mock = mock.Mock()
-    finalize_mock = mock.Mock()
+    reconcile_mock = mock.Mock()
     monkeypatch.setattr(kis_client, "_check_sell_fill", check_fill_mock)
-    monkeypatch.setattr(kis_client, "_finalize_pending_sell", finalize_mock)
+    monkeypatch.setattr(kis_client, "_reconcile_pending_sell_orders", reconcile_mock)
     monkeypatch.setattr(kis_client, "_auto_trade_configured", lambda: True)
     monkeypatch.setattr(kis_client, "_auto_trade_paused", lambda: False)
     monkeypatch.setattr(kis_client, "_within_trading_hours", lambda *a, **k: True)
@@ -460,4 +792,4 @@ def test_pyramid_add_path_does_not_use_sell_fill_helpers(monkeypatch):
     kis_client.run_auto_pyramid(holdings=[])
 
     check_fill_mock.assert_not_called()
-    finalize_mock.assert_not_called()
+    reconcile_mock.assert_not_called()

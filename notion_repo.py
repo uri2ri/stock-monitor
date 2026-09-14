@@ -82,6 +82,24 @@ def _date_val(prop: dict) -> Optional[date]:
     return None
 
 
+def _order_datetime_date(prop: dict) -> Optional[date]:
+    """주문일시처럼 시각+시간대까지 있는 date 프로퍼티에서 KST 기준 날짜만 뽑는다.
+
+    _date_val()의 date.fromisoformat()은 순수 날짜(YYYY-MM-DD) 문자열만
+    받는다 - 주문일시는 datetime.now(KST).isoformat()로 저장돼 시각+시간대가
+    붙어 있어 그대로 쓰면 ValueError가 난다. datetime.fromisoformat()으로
+    받은 뒤 KST로 변환한 날짜를 돌려준다(자정 근처 주문이 다른 시간대
+    계산으로 하루 밀리지 않게).
+    """
+    d = prop.get("date")
+    if not (d and isinstance(d, dict) and d.get("start")):
+        return None
+    dt = datetime.fromisoformat(d["start"])
+    if dt.tzinfo is None:
+        dt = dt.replace(tzinfo=_KST)
+    return dt.astimezone(_KST).date()
+
+
 # ── 읽기: 보유 종목 조회 ────────────────────────────────────
 
 def fetch_holdings(managed_by: Optional[str] = None) -> list[tuple[str, HoldingInput]]:
@@ -1100,53 +1118,95 @@ def count_orders_today(ticker: str, day: date, *, side: str = SIDE_BUY,
     return count
 
 
-def fetch_latest_sell_order_today(ticker: str, day: date) -> Optional[dict]:
-    """오늘(day) 이 종목코드로 상태='성공'(주문 접수)인 매도 주문 중 가장 최근 것 1건.
+def fetch_pending_sell_orders(ticker: str, account_type: str, since: date) -> list[dict]:
+    """이 종목코드의 미확정 매도 주문(상태 성공/주문중/실패) 전부를 오래된 순으로.
 
     자동매도(kis_client.run_auto_sell)가 이전 실행에서 낸 매도 주문의 전량
     체결 여부를 다음 실행에서도 이어서 확인하는 데 쓴다. GitHub Actions는
     실행마다 컨테이너가 새로 떠 로컬 변수(주문번호·주문수량)가 다음
     실행으로 넘어가지 않으므로, 이 DB가 실행 간 상태를 잇는 유일한 저장소다.
 
-    "성공"은 접수(rt_cd=0)일 뿐 체결을 뜻하지 않는다 - 반환값의 order_no로
+    "오늘"로 좁히지 않는다 - 날짜가 바뀌면(다음 거래일) 그 전날 주문의
+    체결 확인이 끊기던 문제가 있었다. 대신 since(호출자가 넘기는, 이
+    보유종목의 매수일)부터 지금까지 전부 본다 - 같은 종목코드가 과거에
+    이미 청산된 별개 포지션의 매도 기록과 섞이지 않도록, 이 포지션이
+    생기기 전 기록은 애초에 대상에서 뺀다(계좌구분도 함께 걸러 다른
+    계좌 기록과도 안 섞는다).
+
+    _side_filter(SIDE_SELL)로 걸러 매수 기록은 섞이지 않는다. "성공"은
+    접수(rt_cd=0)일 뿐 체결을 뜻하지 않는다 - 반환값의 order_no로
     kis_client.get_order_execution()을 다시 조회해야 실제 체결 여부를 안다.
+    "주문중"/"실패"는 접수 자체가 됐는지 불명(응답 시간초과·기록 갱신
+    실패)이라 order_no가 비어 있을 수 있다 - 호출자는 이런 행을 "주문
+    없음"으로 취급하면 안 되고, 사람이 확인하기 전까지 신규 매도를
+    보류해야 한다.
+
+    최신 1건만 보지 않는다 - 여러 건이 남아 있으면(재시도·부분체결 등)
+    전부 돌려줘 호출자가 모두 확인하게 한다.
 
     예외를 삼키지 않는다 - 실패하면 그대로 raise. 호출자는 조회 실패를
-    "체결 확인 불가"로 다뤄야 한다(청산·원장 확정 금지, fail-closed).
+    "확인 불가"로 다뤄야 한다(청산·원장 확정 금지, 신규 매도도 보류,
+    fail-closed).
     """
     db_id = os.environ["NOTION_ORDERS_DB_ID"]
     url = f"{NOTION_BASE}/databases/{db_id}/query"
+    start = f"{since.isoformat()}T00:00:00+09:00"
     payload: dict[str, Any] = {
         "filter": {
             "and": [
                 {"property": "종목코드", "rich_text": {"equals": ticker}},
+                {"property": "계좌구분", "select": {"equals": account_type}},
                 _side_filter(SIDE_SELL),
-                *_day_range_filter("주문일시", day),
-                {"property": "상태", "select": {"equals": "성공"}},
+                {"property": "주문일시", "date": {"on_or_after": start}},
+                {"or": [
+                    {"property": "상태", "select": {"equals": "성공"}},
+                    {"property": "상태", "select": {"equals": "주문중"}},
+                    {"property": "상태", "select": {"equals": "실패"}},
+                ]},
             ]
         },
-        "sorts": [{"property": "주문일시", "direction": "descending"}],
-        "page_size": 1,
-    }
-    resp = requests.post(url, headers=_headers(), json=payload, timeout=30)
-    resp.raise_for_status()
-    results = resp.json().get("results", [])
-    if not results:
-        return None
-    props = results[0].get("properties", {})
-    return {
-        "order_no": _text(props.get("주문번호", {})),
-        "qty": _number(props.get("수량", {})) or 0,
-        "reason": _text(props.get("사유", {})),
+        "sorts": [{"property": "주문일시", "direction": "ascending"}],
+        "page_size": 100,
     }
 
+    orders: list[dict] = []
+    has_more = True
+    start_cursor: Optional[str] = None
+    while has_more:
+        if start_cursor:
+            payload["start_cursor"] = start_cursor
+        resp = requests.post(url, headers=_headers(), json=payload, timeout=30)
+        resp.raise_for_status()
+        data = resp.json()
+        for page in data.get("results", []):
+            props = page.get("properties", {})
+            orders.append({
+                "order_no": _text(props.get("주문번호", {})),
+                "qty": _number(props.get("수량", {})),  # 누락이면 None (0으로 대체하지 않음)
+                "reason": _text(props.get("사유", {})),
+                "status": _select(props.get("상태", {})),
+                "order_date": _order_datetime_date(props.get("주문일시", {})),
+            })
+        has_more = data.get("has_more", False)
+        start_cursor = data.get("next_cursor")
 
-def ledger_exists_for_holding_today(holding_page_id: str, day: date) -> bool:
-    """오늘(day) 청산일로 이 보유종목(page_id)의 매매일지 청산 기록이 이미 있는가.
+    return orders
+
+
+def ledger_exists_for_holding(holding_page_id: str) -> bool:
+    """이 보유종목(page_id)의 매매일지 청산 기록이 이미 있는가 (날짜 무관).
 
     자동매도 체결 확정(매매일지 기록 + 점검표 청산 처리)이 한쪽만 실패하고
     재시도될 때, 매매일지를 다시 만들지(중복) 판단하는 데 쓴다 - 이미
     있으면 점검표 청산 처리만 재시도해야 한다.
+
+    청산일로 날짜를 좁히지 않는다(예전엔 day를 받아 "오늘 청산일"로만
+    찾았다) - 매매일지 기록은 성공했는데 점검표 청산만 실패한 채 다음
+    거래일로 넘어가면, 그 매매일지의 ✱ 청산일은 실제 체결일(전날)로
+    이미 박혀 있어 "오늘" 기준 조회로는 못 찾고 매매일지를 중복 생성할
+    위험이 있었다. 이 점검표 행(page_id)은 한 번 열린 포지션당 한 번만
+    쓰이고 청산은 항상 전량이라, "이 page_id를 가리키는 매매일지가 있는가"
+    자체가 날짜와 무관하게 유일한 판단 기준이 된다.
 
     예외를 삼키지 않는다 - 실패하면 그대로 raise. 호출자는 조회 실패를
     "확인 불가"로 다뤄 이번 실행은 매매일지 재기록을 보류해야 한다
@@ -1155,12 +1215,7 @@ def ledger_exists_for_holding_today(holding_page_id: str, day: date) -> bool:
     db_id = os.environ["NOTION_LEDGER_DB_ID"]
     url = f"{NOTION_BASE}/databases/{db_id}/query"
     payload: dict[str, Any] = {
-        "filter": {
-            "and": [
-                {"property": "보유종목", "relation": {"contains": holding_page_id}},
-                *_day_range_filter("✱ 청산일", day),
-            ]
-        },
+        "filter": {"property": "보유종목", "relation": {"contains": holding_page_id}},
         "page_size": 1,
     }
     resp = requests.post(url, headers=_headers(), json=payload, timeout=30)

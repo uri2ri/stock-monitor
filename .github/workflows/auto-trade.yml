@@ -65,6 +65,12 @@ jobs:
           NOTION_ORDERS_DB_ID: ${{ secrets.NOTION_ORDERS_DB_ID }}
           # 자동매도가 보유 종목(손절선·최근 판정)을 읽는 DB
           NOTION_DB_ID: ${{ secrets.NOTION_DB_ID }}
+          # 자동매도 체결 확정(매매일지 기록 + 중복 방지 조회)에 필요 -
+          # 없으면 ledger_exists_for_holding()·create_ledger_record()가
+          # KeyError로 실패해 체결 확인이 매 실행 "확인 불가"로 막힌다
+          # (fail-closed라 매도 자체·중복 방지는 깨지지 않지만, 실제 체결된
+          # 매도가 점검표에서 영원히 "보유"로 남는다).
+          NOTION_LEDGER_DB_ID: ${{ secrets.NOTION_LEDGER_DB_ID }}
           # KIS 접근토큰 캐시 - 없어도 캐싱만 건너뛰고 거래는 그대로 진행된다
           NOTION_TOKEN_CACHE_DB_ID: ${{ secrets.NOTION_TOKEN_CACHE_DB_ID }}
           # 자동매매 정지/재개 스위치 - 신규 진입·추가매수 전용(자동매도는 무관).
