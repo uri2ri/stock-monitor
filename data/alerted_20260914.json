@@ -292,6 +292,18 @@
       "gap_atr": 0.046,
       "unit_shares": 77,
       "status": "진입가능"
+    },
+    "003540": {
+      "time": "15:23",
+      "name": "대신증권",
+      "sector": "증권",
+      "market": "KOSPI",
+      "price": 27500.0,
+      "high20": 27450.0,
+      "atr20": 951.0,
+      "gap_atr": 0.053,
+      "unit_shares": 525,
+      "status": "진입가능"
     }
   }
 }
