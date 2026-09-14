@@ -256,6 +256,18 @@
       "gap_atr": 0.05,
       "unit_shares": 829,
       "status": "진입가능"
+    },
+    "001230": {
+      "time": "14:33",
+      "name": "동국홀딩스",
+      "sector": "금융",
+      "market": "KOSPI",
+      "price": 2405.0,
+      "high20": 2090.0,
+      "atr20": 113.0,
+      "gap_atr": 2.788,
+      "unit_shares": 4424,
+      "status": "추격금지"
     }
   }
 }
