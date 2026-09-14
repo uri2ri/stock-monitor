@@ -232,6 +232,18 @@
       "gap_atr": 0.059,
       "unit_shares": 1724,
       "status": "진입가능"
+    },
+    "000390": {
+      "time": "13:13",
+      "name": "SP삼화",
+      "sector": "화학",
+      "market": "KOSPI",
+      "price": 6790.0,
+      "high20": 6780.0,
+      "atr20": 237.0,
+      "gap_atr": 0.042,
+      "unit_shares": 2109,
+      "status": "진입가능"
     }
   }
 }
