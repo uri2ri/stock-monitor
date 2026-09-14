@@ -136,6 +136,18 @@
       "gap_atr": 0.048,
       "unit_shares": 2415,
       "status": "진입가능"
+    },
+    "035510": {
+      "time": "10:53",
+      "name": "신세계 I&C",
+      "sector": "IT 서비스",
+      "market": "KOSPI",
+      "price": 16760.0,
+      "high20": 16640.0,
+      "atr20": 676.0,
+      "gap_atr": 0.178,
+      "unit_shares": 739,
+      "status": "진입가능"
     }
   }
 }
