@@ -36,6 +36,18 @@
       "gap_atr": 0.403,
       "unit_shares": 1677,
       "status": "진입가능"
+    },
+    "021240": {
+      "time": "09:13",
+      "name": "코웨이",
+      "sector": "일반서비스",
+      "market": "KOSPI",
+      "price": 103100.0,
+      "high20": 102600.0,
+      "atr20": 4278.0,
+      "gap_atr": 0.117,
+      "unit_shares": 116,
+      "status": "진입가능"
     }
   }
 }
