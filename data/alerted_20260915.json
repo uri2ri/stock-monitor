@@ -190,6 +190,18 @@
       "gap_atr": 0.031,
       "unit_shares": 1538,
       "status": "진입가능"
+    },
+    "229640": {
+      "time": "11:43",
+      "name": "LS에코에너지",
+      "sector": "금융",
+      "market": "KOSPI",
+      "price": 50700.0,
+      "high20": 50600.0,
+      "atr20": 3413.0,
+      "gap_atr": 0.029,
+      "unit_shares": 146,
+      "status": "진입가능"
     }
   }
 }
