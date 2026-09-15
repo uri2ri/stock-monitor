@@ -96,6 +96,18 @@
       "gap_atr": 0.188,
       "unit_shares": 37,
       "status": "진입가능"
+    },
+    "437730": {
+      "time": "09:34",
+      "name": "삼현",
+      "sector": "운송장비·부품",
+      "market": "KOSDAQ",
+      "price": 48100.0,
+      "high20": 42950.0,
+      "atr20": 3108.0,
+      "gap_atr": 1.657,
+      "unit_shares": 160,
+      "status": "추격금지"
     }
   }
 }
