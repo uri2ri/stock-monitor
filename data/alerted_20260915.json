@@ -178,6 +178,18 @@
       "gap_atr": 1.399,
       "unit_shares": 2057,
       "status": "추격금지"
+    },
+    "340450": {
+      "time": "11:23",
+      "name": "지씨지놈",
+      "sector": "일반서비스",
+      "market": "KOSDAQ",
+      "price": 6120.0,
+      "high20": 6110.0,
+      "atr20": 325.0,
+      "gap_atr": 0.031,
+      "unit_shares": 1538,
+      "status": "진입가능"
     }
   }
 }
