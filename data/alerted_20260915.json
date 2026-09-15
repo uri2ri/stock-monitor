@@ -108,6 +108,30 @@
       "gap_atr": 1.657,
       "unit_shares": 160,
       "status": "추격금지"
+    },
+    "093370": {
+      "time": "09:43",
+      "name": "후성",
+      "sector": "화학",
+      "market": "KOSPI",
+      "price": 14910.0,
+      "high20": 14740.0,
+      "atr20": 1074.0,
+      "gap_atr": 0.158,
+      "unit_shares": 465,
+      "status": "진입가능"
+    },
+    "474650": {
+      "time": "09:43",
+      "name": "링크솔루션",
+      "sector": "기계·장비",
+      "market": "KOSDAQ",
+      "price": 27950.0,
+      "high20": 27500.0,
+      "atr20": 2346.0,
+      "gap_atr": 0.192,
+      "unit_shares": 213,
+      "status": "진입가능"
     }
   }
 }
