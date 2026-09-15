@@ -226,6 +226,18 @@
       "gap_atr": 0.291,
       "unit_shares": 373,
       "status": "진입가능"
+    },
+    "453340": {
+      "time": "13:53",
+      "name": "현대그린푸드",
+      "sector": "유통",
+      "market": "KOSPI",
+      "price": 19210.0,
+      "high20": 19140.0,
+      "atr20": 590.0,
+      "gap_atr": 0.119,
+      "unit_shares": 847,
+      "status": "진입가능"
     }
   }
 }
