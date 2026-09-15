@@ -48,6 +48,54 @@
       "gap_atr": 0.117,
       "unit_shares": 116,
       "status": "진입가능"
+    },
+    "000390": {
+      "time": "09:23",
+      "name": "SP삼화",
+      "sector": "화학",
+      "market": "KOSPI",
+      "price": 6840.0,
+      "high20": 6810.0,
+      "atr20": 237.0,
+      "gap_atr": 0.127,
+      "unit_shares": 2109,
+      "status": "진입가능"
+    },
+    "108490": {
+      "time": "09:23",
+      "name": "로보티즈",
+      "sector": "기계·장비",
+      "market": "KOSDAQ",
+      "price": 342000.0,
+      "high20": 339000.0,
+      "atr20": 25204.0,
+      "gap_atr": 0.119,
+      "unit_shares": 19,
+      "status": "진입가능"
+    },
+    "004020": {
+      "time": "09:23",
+      "name": "현대제철",
+      "sector": "금속",
+      "market": "KOSPI",
+      "price": 34250.0,
+      "high20": 34150.0,
+      "atr20": 1655.0,
+      "gap_atr": 0.06,
+      "unit_shares": 302,
+      "status": "진입가능"
+    },
+    "031980": {
+      "time": "09:23",
+      "name": "피에스케이홀딩스",
+      "sector": "기계·장비",
+      "market": "KOSDAQ",
+      "price": 169700.0,
+      "high20": 167200.0,
+      "atr20": 13321.0,
+      "gap_atr": 0.188,
+      "unit_shares": 37,
+      "status": "진입가능"
     }
   }
 }
