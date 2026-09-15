@@ -214,6 +214,18 @@
       "gap_atr": 0.104,
       "unit_shares": 2604,
       "status": "진입가능"
+    },
+    "456010": {
+      "time": "13:13",
+      "name": "아이씨티케이",
+      "sector": "전기전자",
+      "market": "KOSDAQ",
+      "price": 18990.0,
+      "high20": 18600.0,
+      "atr20": 1340.0,
+      "gap_atr": 0.291,
+      "unit_shares": 373,
+      "status": "진입가능"
     }
   }
 }
