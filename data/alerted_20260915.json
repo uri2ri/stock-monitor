@@ -202,6 +202,18 @@
       "gap_atr": 0.029,
       "unit_shares": 146,
       "status": "진입가능"
+    },
+    "053300": {
+      "time": "12:13",
+      "name": "한국정보인증",
+      "sector": "IT 서비스",
+      "market": "KOSDAQ",
+      "price": 5320.0,
+      "high20": 5300.0,
+      "atr20": 192.0,
+      "gap_atr": 0.104,
+      "unit_shares": 2604,
+      "status": "진입가능"
     }
   }
 }
