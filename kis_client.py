@@ -175,6 +175,101 @@ TOKEN_RETRIES = 1
 TOKEN_RETRY_WAIT_SECONDS = 2
 
 
+# ── 조회(읽기) 재시도 ───────────────────────────────────────
+#
+# 현재가 조회(inquire-price)와 잔고조회(inquire-balance)에만 쓴다. 이 둘은
+# 판정에 꼭 필요한 입력인데, 실패하면 호출부가 전부 "이번 회차 건너뜀"으로
+# 빠진다 - 2026-09-15 실측으로 09:23·09:33·09:43 현재가 조회 HTTP 500,
+# 13:23·15:03 잔고조회 10초 시간초과가 났고 그 회차의 매도 판정(13:23은
+# 추가매수까지)이 통째로 생략됐다. 워크플로 자체는 성공으로 끝나서 겉으로는
+# 드러나지도 않는다. 서버가 일시적으로 흔들린 것이므로 짧게 한두 번 더
+# 물어보면 대개 같은 회차 안에서 복구된다.
+#
+# 재시도 대상은 "서버가 판단을 돌려주지 못한" 실패로 한정한다:
+#   - 연결 오류·읽기 시간초과 (requests.ConnectionError/Timeout)
+#   - 일시적 5xx (500/502/503/504)
+# 다음은 다시 걸어도 같은 답이 오므로 재시도하지 않는다:
+#   - 인증·권한·잘못된 요청 등 4xx. 429(유량 초과)도 여기 포함한다 -
+#     KIS는 유량 제한을 건 호출을 곧바로 다시 받아주지 않고, 재시도가
+#     오히려 제한을 키운다. 토큰 발급이 4xx를 재시도하지 않는 기존 정책
+#     (위 TOKEN_* 주석)과 같은 판단이다.
+#   - HTTP 200 안의 KIS 오류/불완전 응답(rt_cd != '0', stck_prpr 없음,
+#     연속조회 필요). 의미가 확인되지 않은 코드를 일시 장애로 넘겨짚지
+#     않는다 - 기존 검증에 그대로 맡겨 판정을 보류시킨다.
+#   - 501·505처럼 "이 요청은 원래 안 된다"는 뜻의 5xx.
+READ_RETRIES = 2                        # 최초 호출 포함 최대 3회
+READ_RETRY_WAITS = (1.0, 2.0)           # 재시도 직전 점증 대기(초)
+READ_RETRY_STATUS = frozenset({500, 502, 503, 504})
+
+# 프로세스 전체(자동매도 + 추가매수 + 신규매수가 한 실행을 공유한다)에서
+# 재시도에 더 쓸 수 있는 총 시간. 여러 종목이 동시에 흔들리면 종목마다
+# 재시도가 쌓여 워크플로 제한(intraday/auto-trade 모두 8분)을 잡아먹는다 -
+# 한 번의 재시도 주기는 최악이 대기 1s + 요청 10s + 대기 2s + 요청 10s =
+# 약 23초라, 예산을 넘어선 뒤부터는 재시도 없이 1회 호출로만 떨어뜨린다.
+# 이미 시작한 주기는 끊지 않으므로 최악의 추가 소요는 예산 + 1주기
+# (60 + 23 ≈ 83초)로 묶인다.
+READ_RETRY_TOTAL_BUDGET_SECONDS = 60.0
+_read_retry_spent = 0.0
+
+
+def _reset_read_retry_budget() -> None:
+    """재시도 예산을 초기화한다 (프로세스 시작 상태로)."""
+    global _read_retry_spent
+    _read_retry_spent = 0.0
+
+
+def _is_retryable_read_error(e: Exception) -> bool:
+    """이 조회 실패가 "다시 물어보면 달라질 수 있는" 종류인가."""
+    if isinstance(e, (requests.ConnectionError, requests.Timeout)):
+        return True
+    if isinstance(e, requests.HTTPError):
+        resp = getattr(e, "response", None)
+        status = getattr(resp, "status_code", None)
+        return status in READ_RETRY_STATUS
+    return False
+
+
+def _read_with_retry(label: str, call):
+    """조회 call()을 일시적 실패에 한해 제한된 횟수만큼 다시 시도한다.
+
+    call()은 네트워크 호출까지만 담당한다 - 응답 내용 검증(rt_cd, 필수
+    필드 등)은 호출부가 이 함수 밖에서 해야 재시도 대상이 아닌 오류가
+    잘못 반복되지 않는다.
+
+    끝까지 실패하면 마지막 예외를 그대로 올린다 - 호출부의 기존 예외
+    처리(판정 보류)가 그대로 동작한다. 빈 값·대체값으로 바꾸지 않는다.
+    """
+    global _read_retry_spent
+    started = None
+    try:
+        for attempt in range(READ_RETRIES + 1):
+            try:
+                result = call()
+                if attempt:
+                    logger.info("%s 재시도 %d회째 성공", label, attempt)
+                return result
+            except Exception as e:          # noqa: BLE001
+                if attempt >= READ_RETRIES or not _is_retryable_read_error(e):
+                    if attempt:
+                        logger.warning("%s 재시도 %d회 후에도 실패 (%s)",
+                                       label, attempt, type(e).__name__)
+                    raise
+                if started is None:
+                    started = time.monotonic()
+                    if _read_retry_spent >= READ_RETRY_TOTAL_BUDGET_SECONDS:
+                        logger.warning("%s 실패 - 재시도 예산 소진으로 재시도 없이 보류 (%s)",
+                                       label, type(e).__name__)
+                        raise
+                wait = READ_RETRY_WAITS[min(attempt, len(READ_RETRY_WAITS) - 1)]
+                logger.warning("%s 일시 실패 (%s) - %.1f초 뒤 재시도 (%d/%d)",
+                               label, type(e).__name__, wait,
+                               attempt + 1, READ_RETRIES)
+                time.sleep(wait)
+    finally:
+        if started is not None:
+            _read_retry_spent += time.monotonic() - started
+
+
 # 이 프로세스 실행 동안만 유효한 토큰 캐시. GitHub Actions는 실행마다 새
 # 컨테이너라 다음 실행으로 새지 않는다 - 실행 간 영속 캐싱은 아래 노션
 # 캐시(NOTION_TOKEN_CACHE_DB_ID)가 맡고, 이건 그것과 별개로 한 실행
@@ -352,13 +447,21 @@ def _fetch_price_quote(access_token: str, stock_code: str) -> dict:
         "FID_INPUT_ISCD": stock_code,
     }
 
-    resp = requests.get(
-        f"{BASE_URL}/uapi/domestic-stock/v1/quotations/inquire-price",
-        headers=headers,
-        params=params,
-        timeout=10,
-    )
-    resp.raise_for_status()
+    def _call():
+        resp = requests.get(
+            f"{BASE_URL}/uapi/domestic-stock/v1/quotations/inquire-price",
+            headers=headers,
+            params=params,
+            timeout=10,
+        )
+        resp.raise_for_status()
+        return resp
+
+    # 재시도는 네트워크 호출까지만이다. 아래 응답 검증(stck_prpr 없음 =
+    # KIS가 200으로 돌려준 오류)은 다시 걸어도 같으므로 재시도하지 않는다.
+    # get_current_price()·get_price_quote()가 모두 이 함수 하나를 지나므로
+    # 재시도가 겹쳐 호출 수가 곱해지지 않는다.
+    resp = _read_with_retry(f"현재가 조회({stock_code})", _call)
     data = resp.json()
 
     output = data.get("output", {})
@@ -1672,13 +1775,19 @@ def get_account_balance(access_token: str) -> dict:
         "CTX_AREA_FK100": "",
         "CTX_AREA_NK100": "",
     }
-    resp = requests.get(
-        f"{BASE_URL}/uapi/domestic-stock/v1/trading/inquire-balance",
-        headers=headers,
-        params=params,
-        timeout=10,
-    )
-    resp.raise_for_status()
+    def _call():
+        resp = requests.get(
+            f"{BASE_URL}/uapi/domestic-stock/v1/trading/inquire-balance",
+            headers=headers,
+            params=params,
+            timeout=10,
+        )
+        resp.raise_for_status()
+        return resp
+
+    # 재시도는 네트워크 호출까지만이다. 아래 응답 검증(rt_cd·output 형태·
+    # 연속조회 필요)은 재시도 대상이 아니라 그대로 예외로 올려 보류시킨다.
+    resp = _read_with_retry("잔고조회", _call)
     data = resp.json()
 
     # 오류/불완전 응답을 빈 잔고로 해석하면 청산을 잘못 확정할 수 있다.
