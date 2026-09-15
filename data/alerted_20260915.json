@@ -166,6 +166,18 @@
       "gap_atr": 0.046,
       "unit_shares": 115,
       "status": "진입가능"
+    },
+    "054920": {
+      "time": "10:53",
+      "name": "한컴위드",
+      "sector": "IT 서비스",
+      "market": "KOSDAQ",
+      "price": 4505.0,
+      "high20": 4165.0,
+      "atr20": 243.0,
+      "gap_atr": 1.399,
+      "unit_shares": 2057,
+      "status": "추격금지"
     }
   }
 }
