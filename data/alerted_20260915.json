@@ -1,0 +1,41 @@
+{
+  "date": "20260915",
+  "alerted": {
+    "053800": {
+      "time": "09:03",
+      "name": "안랩",
+      "sector": "IT 서비스",
+      "market": "KOSDAQ",
+      "price": 63200.0,
+      "high20": 61900.0,
+      "atr20": 2020.0,
+      "gap_atr": 0.644,
+      "unit_shares": 247,
+      "status": "추격금지"
+    },
+    "014950": {
+      "time": "09:03",
+      "name": "삼익제약",
+      "sector": "제약",
+      "market": "KOSDAQ",
+      "price": 10260.0,
+      "high20": 9960.0,
+      "atr20": 997.0,
+      "gap_atr": 0.301,
+      "unit_shares": 501,
+      "status": "진입가능"
+    },
+    "158430": {
+      "time": "09:03",
+      "name": "아톤",
+      "sector": "IT 서비스",
+      "market": "KOSDAQ",
+      "price": 5220.0,
+      "high20": 5100.0,
+      "atr20": 298.0,
+      "gap_atr": 0.403,
+      "unit_shares": 1677,
+      "status": "진입가능"
+    }
+  }
+}
