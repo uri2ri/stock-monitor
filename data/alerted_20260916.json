@@ -156,6 +156,42 @@
       "gap_atr": 0.051,
       "unit_shares": 126,
       "status": "진입가능"
+    },
+    "000990": {
+      "time": "09:33",
+      "name": "DB하이텍",
+      "sector": "전기전자",
+      "market": "KOSPI",
+      "price": 121000.0,
+      "high20": 120000.0,
+      "atr20": 8416.0,
+      "gap_atr": 0.119,
+      "unit_shares": 59,
+      "status": "진입가능"
+    },
+    "217590": {
+      "time": "09:33",
+      "name": "티엠씨",
+      "sector": "전기전자",
+      "market": "KOSPI",
+      "price": 13640.0,
+      "high20": 13490.0,
+      "atr20": 1126.0,
+      "gap_atr": 0.133,
+      "unit_shares": 444,
+      "status": "진입가능"
+    },
+    "042370": {
+      "time": "09:33",
+      "name": "비츠로테크",
+      "sector": "금융",
+      "market": "KOSDAQ",
+      "price": 8970.0,
+      "high20": 8910.0,
+      "atr20": 473.0,
+      "gap_atr": 0.127,
+      "unit_shares": 1057,
+      "status": "진입가능"
     }
   }
 }
