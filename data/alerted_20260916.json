@@ -72,6 +72,42 @@
       "gap_atr": 0.939,
       "unit_shares": 594,
       "status": "추격금지"
+    },
+    "005070": {
+      "time": "09:13",
+      "name": "코스모신소재",
+      "sector": "화학",
+      "market": "KOSPI",
+      "price": 42300.0,
+      "high20": 41950.0,
+      "atr20": 2274.0,
+      "gap_atr": 0.154,
+      "unit_shares": 219,
+      "status": "진입가능"
+    },
+    "021240": {
+      "time": "09:13",
+      "name": "코웨이",
+      "sector": "일반서비스",
+      "market": "KOSPI",
+      "price": 105300.0,
+      "high20": 104000.0,
+      "atr20": 4354.0,
+      "gap_atr": 0.299,
+      "unit_shares": 114,
+      "status": "진입가능"
+    },
+    "452280": {
+      "time": "09:13",
+      "name": "한선엔지니어링",
+      "sector": "금속",
+      "market": "KOSDAQ",
+      "price": 11790.0,
+      "high20": 11370.0,
+      "atr20": 1047.0,
+      "gap_atr": 0.401,
+      "unit_shares": 477,
+      "status": "진입가능"
     }
   }
 }
