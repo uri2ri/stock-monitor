@@ -264,6 +264,18 @@
       "gap_atr": 0.337,
       "unit_shares": 1984,
       "status": "진입가능"
+    },
+    "488900": {
+      "time": "10:13",
+      "name": "비츠로넥스텍",
+      "sector": "운송장비·부품",
+      "market": "KOSDAQ",
+      "price": 10690.0,
+      "high20": 10680.0,
+      "atr20": 666.0,
+      "gap_atr": 0.015,
+      "unit_shares": 750,
+      "status": "진입가능"
     }
   }
 }
