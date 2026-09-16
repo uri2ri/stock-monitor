@@ -8,8 +8,72 @@ from __future__ import annotations
 from datetime import date
 
 import pandas as pd
+import requests
 
 import screener
+
+
+# .env.example에 있는 키 전부. 테스트가 시작될 때 이 값들을 환경에서
+# 지워, 실제 .env·CI 시크릿이 들어 있는 머신에서도 테스트가 진짜
+# 자격증명을 읽지 못하게 한다.
+CREDENTIAL_ENV_VARS = (
+    "NOTION_TOKEN", "NOTION_DB_ID", "NOTION_ORDERS_DB_ID",
+    "NOTION_TOKEN_CACHE_DB_ID", "NOTION_LEDGER_DB_ID",
+    "NOTION_AUTO_TRADE_CONTROL_DB_ID",
+    "KAKAO_REST_API_KEY", "KAKAO_CLIENT_SECRET", "KAKAO_REFRESH_TOKEN",
+    "GMAIL_ADDRESS", "GMAIL_APP_PASSWORD", "GMAIL_TO",
+    "KIS_APP_KEY", "KIS_APP_SECRET", "KIS_ACCOUNT",
+    "TOTAL_CAPITAL",
+)
+
+# requests의 모듈 수준 진입점. 코드가 쓰는 건 get/post 정도지만, 차단은
+# 전 메서드에 걸어 새 경로가 생겨도 테스트에서 실 호출로 새지 않게 한다.
+_REQUESTS_ENTRYPOINTS = (
+    "request", "get", "post", "put", "patch", "delete", "head", "options",
+)
+
+
+def scrub_credential_env(monkeypatch) -> None:
+    """실제 자격증명을 테스트 프로세스의 환경에서 제거한다.
+
+    주의: kis_client·notion_repo는 import 시점에 load_dotenv()를 한 번
+    부르고, 그 import는 테스트 픽스처보다 먼저 일어난다 - 즉 "`.env`
+    로딩 자체를 막는" 건 픽스처로는 불가능하다. 대신 로딩된 결과를
+    여기서 지운다. 자격증명은 전부 함수 호출 시점에 os.environ에서
+    읽히므로(모듈 상수로 굳지 않는다) 이걸로 실제 값이 쓰일 여지가
+    없어진다. 값을 읽거나 출력하지 않고 지우기만 한다.
+    """
+    for name in CREDENTIAL_ENV_VARS:
+        monkeypatch.delenv(name, raising=False)
+
+
+def block_external_http(monkeypatch) -> None:
+    """테스트 중 실 HTTP 요청을 모든 메서드에서 차단한다.
+
+    requests의 모듈 수준 함수(get/post/put/patch/delete/head/options/
+    request)와 그 아래 Session.request를 전부 막는다 - Session을 직접
+    만들어 쓰는 경로나 아직 mock하지 않은 메서드로 새 나가면 조용히
+    네트워크를 타는 대신 AssertionError로 즉시 드러난다.
+
+    이 프로젝트의 모듈들(kis_client/notion_repo/kakao)은 같은 requests
+    모듈 객체를 공유하므로 한 번만 걸면 전부에 적용된다. 필요한 조회
+    응답만 개별 테스트가 해당 메서드를 mock해서 열어준다.
+    """
+    def _blocked(name):
+        def _raise(*args, **kwargs):
+            raise AssertionError(
+                f"테스트가 실 HTTP 요청을 시도했습니다: requests.{name}")
+        return _raise
+
+    for name in _REQUESTS_ENTRYPOINTS:
+        monkeypatch.setattr(requests, name, _blocked(name), raising=False)
+
+    def _blocked_session_request(self, method, url, *args, **kwargs):
+        raise AssertionError(
+            f"테스트가 실 HTTP 요청을 시도했습니다: Session.request({method})")
+
+    monkeypatch.setattr(requests.sessions.Session, "request",
+                        _blocked_session_request)
 
 
 def mock_trading_days(monkeypatch, expected_date: date) -> None:

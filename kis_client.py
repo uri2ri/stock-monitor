@@ -203,11 +203,18 @@ READ_RETRY_STATUS = frozenset({500, 502, 503, 504})
 
 # 프로세스 전체(자동매도 + 추가매수 + 신규매수가 한 실행을 공유한다)에서
 # 재시도에 더 쓸 수 있는 총 시간. 여러 종목이 동시에 흔들리면 종목마다
-# 재시도가 쌓여 워크플로 제한(intraday/auto-trade 모두 8분)을 잡아먹는다 -
-# 한 번의 재시도 주기는 최악이 대기 1s + 요청 10s + 대기 2s + 요청 10s =
-# 약 23초라, 예산을 넘어선 뒤부터는 재시도 없이 1회 호출로만 떨어뜨린다.
-# 이미 시작한 주기는 끊지 않으므로 최악의 추가 소요는 예산 + 1주기
-# (60 + 23 ≈ 83초)로 묶인다.
+# 재시도가 쌓여 워크플로 제한(intraday/auto-trade 모두 8분)을 잡아먹는다.
+# 남은 예산은 재시도 묶음을 시작할 때뿐 아니라 매 대기 직전과 대기 뒤
+# 다음 호출 직전에도 다시 확인한다 - 예산이 재시도 도중 소진되면 거기서
+# 멈추고 마지막 조회 오류를 그대로 올려 기존 보류 경로로 넘긴다.
+#
+# 이 예산은 "재시도를 얼마나 더 할지"를 억제하는 근사 상한이지, 실행
+# 시간의 엄밀한 상한이 아니다. requests의 timeout=10은 연결·읽기 각
+# 단계에서 "무응답으로 기다리는" 한도일 뿐 한 요청의 총 소요를 10초로
+# 묶어주지 않는다(서버가 응답을 조금씩 흘려보내면 그만큼 길어진다).
+# 진행 중인 호출도 중간에 끊지 않으므로, 초과분은 "마지막으로 시작한
+# 호출 하나" 만큼 남는다 - 정확한 추가 소요 상한을 보장하지는 않는다.
+# 워크플로 쪽 8분 제한이 최종 안전장치다.
 READ_RETRY_TOTAL_BUDGET_SECONDS = 60.0
 _read_retry_spent = 0.0
 
@@ -216,6 +223,19 @@ def _reset_read_retry_budget() -> None:
     """재시도 예산을 초기화한다 (프로세스 시작 상태로)."""
     global _read_retry_spent
     _read_retry_spent = 0.0
+
+
+def _read_retry_budget_left(started: Optional[float]) -> float:
+    """재시도에 더 쓸 수 있는 남은 시간(초).
+
+    _read_retry_spent는 재시도 묶음이 끝날 때 한 번에 더해지므로, 진행
+    중인 묶음(started)의 경과 시간을 여기서 같이 빼야 "재시도 도중"의
+    소진을 알아챌 수 있다.
+    """
+    spent = _read_retry_spent
+    if started is not None:
+        spent += time.monotonic() - started
+    return READ_RETRY_TOTAL_BUDGET_SECONDS - spent
 
 
 def _is_retryable_read_error(e: Exception) -> bool:
@@ -238,6 +258,8 @@ def _read_with_retry(label: str, call):
 
     끝까지 실패하면 마지막 예외를 그대로 올린다 - 호출부의 기존 예외
     처리(판정 보류)가 그대로 동작한다. 빈 값·대체값으로 바꾸지 않는다.
+    전역 재시도 예산이 도중에 소진된 경우도 마찬가지로 마지막 조회
+    오류를 그대로 올려 같은 보류 경로로 넘긴다.
     """
     global _read_retry_spent
     started = None
@@ -254,17 +276,26 @@ def _read_with_retry(label: str, call):
                         logger.warning("%s 재시도 %d회 후에도 실패 (%s)",
                                        label, attempt, type(e).__name__)
                     raise
+                # 대기 직전: 예산이 남아 있어야 다음 시도를 시작한다.
+                if _read_retry_budget_left(started) <= 0:
+                    logger.warning(
+                        "%s 실패 - 재시도 예산 소진으로 보류 (%d회 시도, %s)",
+                        label, attempt + 1, type(e).__name__)
+                    raise
                 if started is None:
                     started = time.monotonic()
-                    if _read_retry_spent >= READ_RETRY_TOTAL_BUDGET_SECONDS:
-                        logger.warning("%s 실패 - 재시도 예산 소진으로 재시도 없이 보류 (%s)",
-                                       label, type(e).__name__)
-                        raise
                 wait = READ_RETRY_WAITS[min(attempt, len(READ_RETRY_WAITS) - 1)]
                 logger.warning("%s 일시 실패 (%s) - %.1f초 뒤 재시도 (%d/%d)",
                                label, type(e).__name__, wait,
                                attempt + 1, READ_RETRIES)
                 time.sleep(wait)
+                # 대기 뒤 호출 직전: 대기·직전 호출로 예산이 넘어갔으면
+                # 여기서 멈추고 마지막 조회 오류를 그대로 올린다.
+                if _read_retry_budget_left(started) <= 0:
+                    logger.warning(
+                        "%s 실패 - 대기 중 재시도 예산 소진으로 보류 (%d회 시도, %s)",
+                        label, attempt + 1, type(e).__name__)
+                    raise
     finally:
         if started is not None:
             _read_retry_spent += time.monotonic() - started
