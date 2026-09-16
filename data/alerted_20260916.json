@@ -324,6 +324,30 @@
       "gap_atr": 0.169,
       "unit_shares": 768,
       "status": "진입가능"
+    },
+    "261780": {
+      "time": "14:23",
+      "name": "아리바이오랩",
+      "sector": "일반서비스",
+      "market": "KOSDAQ",
+      "price": 3975.0,
+      "high20": 3965.0,
+      "atr20": 301.0,
+      "gap_atr": 0.033,
+      "unit_shares": 1661,
+      "status": "진입가능"
+    },
+    "014680": {
+      "time": "14:23",
+      "name": "한솔케미칼",
+      "sector": "화학",
+      "market": "KOSPI",
+      "price": 213000.0,
+      "high20": 212000.0,
+      "atr20": 12068.0,
+      "gap_atr": 0.083,
+      "unit_shares": 41,
+      "status": "진입가능"
     }
   }
 }
