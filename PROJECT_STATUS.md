@@ -1,5 +1,29 @@
 # PROJECT STATUS
 
+## 상태 점검 — 2026-09-16 (읽기 전용 확인, 코드 변경 없음)
+
+- **작업 브랜치**: `claude/holdings-search-error-kfynqa` head `ca84cdb`,
+  origin과 동기화 완료(미푸시 커밋·미커밋 변경 없음). `origin/main` 대비
+  앞선 커밋은 재시도 관련 2건(`f3c61b5`, `ca84cdb`)뿐이고 **이 브랜치로
+  열린 PR은 없다** — 커밋·푸시만 돼 있고 병합 대기열에는 올라가 있지 않다.
+- **테스트 재실행**: `python -m pytest tests/ -q` → **160 passed**
+  (아래 재시도 섹션에 적힌 수치와 일치). 확인만 했고 코드는 건드리지 않았다.
+- **열린 PR**: #1 `fix/backtest-execution-accounting`(Draft, 2026-09-09
+  이후 변동 없음) 하나뿐이며 이번 재시도 작업과는 무관하다.
+- **`fix/auto-sell-recovery-review` 브랜치는 superseded**: 원격에 4커밋
+  (`7b92e00`까지)이 남아 있고 여전히 main 미병합이다. 그 브랜치가 지적·
+  수정했던 4건(워크플로 `NOTION_LEDGER_DB_ID` 누락, 날짜 경계로 끊기는
+  복구, 미확정 주문 추적 순서, 수량·가격 유효성)은 **PR #4 계열의 포지션
+  연결 구현으로 main에 이미 다른 방식으로 반영돼 있다** — `origin/main`에
+  `_reconcile_sell`·`_recover_closed_sell`·`_valid_sell_qty`(kis_client.py),
+  `fetch_unconfirmed_sell_orders`·`has_ledger_for_holding`·
+  `ledger_matches_sell`(notion_repo.py), 워크플로의 `NOTION_LEDGER_DB_ID`가
+  모두 존재함을 확인했다. 따라서 지금 그 브랜치를 병합하면 날짜 추정
+  기반의 옛 구현으로 되돌리는 셈이라 **병합 대상이 아니다**. 브랜치 정리
+  (삭제) 여부는 사람이 결정한다.
+- 이번 항목은 문서만 추가했다. 병합·배포·워크플로 실행·주문·알림·노션
+  데이터 변경은 하지 않았고, 신규매수 상한 0은 그대로다.
+
 ## 현재가·잔고 조회 재시도 추가 — 2026-09-15
 
 - **문제**: KIS 조회가 일시적으로 실패하면 그 회차의 판정이 통째로 생략된다.
