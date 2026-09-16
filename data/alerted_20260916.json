@@ -300,6 +300,18 @@
       "gap_atr": 0.038,
       "unit_shares": 189,
       "status": "진입가능"
+    },
+    "107640": {
+      "time": "12:13",
+      "name": "한중엔시에스",
+      "sector": "전기전자",
+      "market": "KOSDAQ",
+      "price": 43700.0,
+      "high20": 43650.0,
+      "atr20": 2644.0,
+      "gap_atr": 0.019,
+      "unit_shares": 189,
+      "status": "진입가능"
     }
   }
 }
