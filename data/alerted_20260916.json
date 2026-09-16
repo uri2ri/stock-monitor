@@ -288,6 +288,18 @@
       "gap_atr": 0.088,
       "unit_shares": 219,
       "status": "진입가능"
+    },
+    "452430": {
+      "time": "11:23",
+      "name": "사피엔반도체",
+      "sector": "전기전자",
+      "market": "KOSDAQ",
+      "price": 38600.0,
+      "high20": 38500.0,
+      "atr20": 2644.0,
+      "gap_atr": 0.038,
+      "unit_shares": 189,
+      "status": "진입가능"
     }
   }
 }
