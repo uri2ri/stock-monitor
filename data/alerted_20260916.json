@@ -1,0 +1,77 @@
+{
+  "date": "20260916",
+  "alerted": {
+    "295310": {
+      "time": "09:03",
+      "name": "에이치브이엠",
+      "sector": "금속",
+      "market": "KOSDAQ",
+      "price": 53800.0,
+      "high20": 53300.0,
+      "atr20": 4393.0,
+      "gap_atr": 0.114,
+      "unit_shares": 113,
+      "status": "진입가능"
+    },
+    "192650": {
+      "time": "09:03",
+      "name": "드림텍",
+      "sector": "전기전자",
+      "market": "KOSPI",
+      "price": 7290.0,
+      "high20": 6880.0,
+      "atr20": 409.0,
+      "gap_atr": 1.002,
+      "unit_shares": 1222,
+      "status": "추격금지"
+    },
+    "033640": {
+      "time": "09:03",
+      "name": "네패스",
+      "sector": "전기전자",
+      "market": "KOSDAQ",
+      "price": 24550.0,
+      "high20": 24300.0,
+      "atr20": 1779.0,
+      "gap_atr": 0.141,
+      "unit_shares": 281,
+      "status": "진입가능"
+    },
+    "032500": {
+      "time": "09:03",
+      "name": "케이엠더블유",
+      "sector": "전기전자",
+      "market": "KOSDAQ",
+      "price": 17680.0,
+      "high20": 16700.0,
+      "atr20": 1225.0,
+      "gap_atr": 0.8,
+      "unit_shares": 408,
+      "status": "추격금지"
+    },
+    "229640": {
+      "time": "09:03",
+      "name": "LS에코에너지",
+      "sector": "금융",
+      "market": "KOSPI",
+      "price": 58800.0,
+      "high20": 51900.0,
+      "atr20": 3490.0,
+      "gap_atr": 1.977,
+      "unit_shares": 143,
+      "status": "추격금지"
+    },
+    "417200": {
+      "time": "09:03",
+      "name": "LS머트리얼즈",
+      "sector": "전기전자",
+      "market": "KOSDAQ",
+      "price": 13690.0,
+      "high20": 12900.0,
+      "atr20": 841.0,
+      "gap_atr": 0.939,
+      "unit_shares": 594,
+      "status": "추격금지"
+    }
+  }
+}
