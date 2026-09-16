@@ -108,6 +108,54 @@
       "gap_atr": 0.401,
       "unit_shares": 477,
       "status": "진입가능"
+    },
+    "340450": {
+      "time": "09:23",
+      "name": "지씨지놈",
+      "sector": "일반서비스",
+      "market": "KOSDAQ",
+      "price": 6320.0,
+      "high20": 6160.0,
+      "atr20": 323.0,
+      "gap_atr": 0.495,
+      "unit_shares": 1547,
+      "status": "진입가능"
+    },
+    "080580": {
+      "time": "09:23",
+      "name": "오킨스전자",
+      "sector": "전기전자",
+      "market": "KOSDAQ",
+      "price": 22400.0,
+      "high20": 22300.0,
+      "atr20": 1660.0,
+      "gap_atr": 0.06,
+      "unit_shares": 301,
+      "status": "진입가능"
+    },
+    "023530": {
+      "time": "09:23",
+      "name": "롯데쇼핑",
+      "sector": "유통",
+      "market": "KOSPI",
+      "price": 122000.0,
+      "high20": 121900.0,
+      "atr20": 7983.0,
+      "gap_atr": 0.013,
+      "unit_shares": 62,
+      "status": "진입가능"
+    },
+    "218410": {
+      "time": "09:23",
+      "name": "RFHIC",
+      "sector": "전기전자",
+      "market": "KOSDAQ",
+      "price": 52900.0,
+      "high20": 52700.0,
+      "atr20": 3946.0,
+      "gap_atr": 0.051,
+      "unit_shares": 126,
+      "status": "진입가능"
     }
   }
 }
