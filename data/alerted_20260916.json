@@ -276,6 +276,18 @@
       "gap_atr": 0.015,
       "unit_shares": 750,
       "status": "진입가능"
+    },
+    "138080": {
+      "time": "10:53",
+      "name": "오이솔루션",
+      "sector": "전기전자",
+      "market": "KOSDAQ",
+      "price": 25200.0,
+      "high20": 25000.0,
+      "atr20": 2283.0,
+      "gap_atr": 0.088,
+      "unit_shares": 219,
+      "status": "진입가능"
     }
   }
 }
