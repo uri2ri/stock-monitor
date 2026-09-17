@@ -1,0 +1,61 @@
+name: Diagnose Fill (체결 내역 읽기 전용)
+
+# 접수된 주문이 "미체결"로 판정되는 원인을 보기 위한 1회성 읽기 조회다.
+# intraday_watch.py를 돌리지 않는다 - 돌파감시·자동매도·추가매수·신규매수
+# 어느 것도 이 워크플로에서는 실행되지 않는다.
+#
+# 자격증명은 KIS 조회에 필요한 3개만 넘긴다. NOTION_*·KAKAO_*를 주지
+# 않으므로 노션 읽기/쓰기도, 카톡 발송도 구조적으로 불가능하다.
+
+on:
+  workflow_dispatch:
+    inputs:
+      order_no:
+        description: "주문번호 (노션 '주문번호' 칸 값 그대로, 예: 0000006229)"
+        required: true
+        type: string
+      order_date:
+        description: "주문일 YYYY-MM-DD (예: 2026-09-17)"
+        required: true
+        type: string
+
+# 자동매매와 같은 계좌를 조회하므로 겹쳐 돌 이유가 없다. auto-trade와는
+# 별도 그룹이라 진단이 매매 실행을 취소시키지도, 그 반대도 아니다.
+concurrency:
+  group: diagnose-fill
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      # 조회 자체는 requests만 쓰지만, 진단 스크립트가 kis_client를
+      # import해 TR ID·URL·파라미터·토큰 발급을 실제 실행 경로와 똑같이
+      # 재사용한다(그래야 결과가 증거가 된다). kis_client -> core ->
+      # pandas·pykrx 의존이 딸려오므로 전체 requirements를 설치한다.
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Inspect fill (read-only)
+        env:
+          KIS_APP_KEY: ${{ secrets.KIS_APP_KEY }}
+          KIS_APP_SECRET: ${{ secrets.KIS_APP_SECRET }}
+          KIS_ACCOUNT: ${{ secrets.KIS_ACCOUNT }}
+        run: |
+          python tools/inspect_fill.py \
+            --order-no "${{ inputs.order_no }}" \
+            --date "${{ inputs.order_date }}"
