@@ -84,6 +84,42 @@
       "gap_atr": 0.088,
       "unit_shares": 294,
       "status": "진입가능"
+    },
+    "036170": {
+      "time": "09:23",
+      "name": "에이치엠넥스",
+      "sector": "전기전자",
+      "market": "KOSDAQ",
+      "price": 2635.0,
+      "high20": 2620.0,
+      "atr20": 214.0,
+      "gap_atr": 0.07,
+      "unit_shares": 2336,
+      "status": "진입가능"
+    },
+    "327260": {
+      "time": "09:23",
+      "name": "RF머트리얼즈",
+      "sector": "전기전자",
+      "market": "KOSDAQ",
+      "price": 49100.0,
+      "high20": 47450.0,
+      "atr20": 5128.0,
+      "gap_atr": 0.322,
+      "unit_shares": 97,
+      "status": "진입가능"
+    },
+    "043260": {
+      "time": "09:23",
+      "name": "성호전자",
+      "sector": "전기전자",
+      "market": "KOSDAQ",
+      "price": 21000.0,
+      "high20": 20400.0,
+      "atr20": 2084.0,
+      "gap_atr": 0.288,
+      "unit_shares": 239,
+      "status": "진입가능"
     }
   }
 }
