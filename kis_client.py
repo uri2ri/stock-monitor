@@ -1696,6 +1696,29 @@ def run_auto_pyramid(holdings: Optional[list] = None) -> None:
             )
 
 
+def _same_order_no(response_odno, wanted: str) -> bool:
+    """체결 조회 응답의 odno가 우리가 보관한 주문번호와 같은 주문인지.
+
+    주문 응답의 ODNO는 0으로 채운 10자리인데 조회 응답의 odno는 표기가
+    다를 수 있어, **0 패딩 차이만** 흡수한다. 아래는 모두 "같지 않음"이다:
+      - 어느 한쪽이 빈 값 - 주문번호 미확인 행이라 매칭 대상이 아니다
+      - 숫자인데 0뿐인 값("0", "0000000000") - 유효한 주문번호가 아니다
+        (그대로 정규화하면 둘 다 ""가 되어 서로 같아져버린다)
+      - 한쪽만 숫자 - 원문이 정확히 같을 때만 인정한다
+
+    0을 떼고 비교하지 접미사로 비교하지 않는다 - "16229"와 "0000006229"는
+    여전히 다른 주문이다.
+    """
+    a = str(response_odno or "").strip()
+    b = str(wanted or "").strip()
+    if not a or not b:
+        return False
+    if a.isdigit() and b.isdigit():
+        a, b = a.lstrip("0"), b.lstrip("0")
+        return bool(a) and a == b
+    return not a.isdigit() and not b.isdigit() and a == b
+
+
 def get_order_execution(access_token: str, order_no: str,
                         *, order_day: Optional[date] = None) -> dict | None:
     """지정일(기본 오늘) 주문 체결 조회. 체결 전이거나 못 찾으면 None."""
@@ -1747,17 +1770,28 @@ def get_order_execution(access_token: str, order_no: str,
     if resp.headers.get('tr_cont', '') in ('F', 'M'):
         raise RuntimeError('체결 조회 연속조회 필요 - 전체 내역 확인 전 처리 보류')
 
-    for row in data.get("output1", []):
-        if row.get("odno") != order_no:
-            continue
-        filled_qty = int(row.get("tot_ccld_qty") or 0)
-        if filled_qty <= 0:
-            return None
-        return {
-            "filled_qty": filled_qty,
-            "avg_price": float(row.get("avg_prvs") or 0),
-        }
-    return None
+    rows = data["output1"]
+    matched = [row for row in rows if _same_order_no(row.get("odno"), order_no)]
+    # 같은 주문번호가 두 행 이상이면 어느 쪽이 그 주문인지 우리가 정할 수
+    # 없다 - 넘겨짚고 청산하느니 보류시킨다(이 모듈의 fail-closed 원칙).
+    if len(matched) > 1:
+        raise RuntimeError('체결 조회에 같은 주문번호가 여러 건 - 수동 확인 필요')
+    if not matched:
+        # "주문번호를 아예 못 찾음"과 "찾았는데 아직 미체결"은 원인이 전혀
+        # 다르다(전자는 조회 범위·번호 표기 문제일 수 있다). 호출자에게는
+        # 똑같이 None이지만 로그로는 구분해 남긴다.
+        logger.info("체결 조회: 주문번호 미발견 (조회 %d건, 조회일 %s)",
+                    len(rows), today)
+        return None
+
+    row = matched[0]
+    filled_qty = int(row.get("tot_ccld_qty") or 0)
+    if filled_qty <= 0:
+        return None
+    return {
+        "filled_qty": filled_qty,
+        "avg_price": float(row.get("avg_prvs") or 0),
+    }
 
 
 # ── 자금 게이트 ─────────────────────────────────────────────
