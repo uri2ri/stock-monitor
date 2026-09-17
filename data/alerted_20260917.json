@@ -304,6 +304,18 @@
       "gap_atr": 0.065,
       "unit_shares": 1075,
       "status": "진입가능"
+    },
+    "443670": {
+      "time": "15:33",
+      "name": "에스피소프트",
+      "sector": "IT 서비스",
+      "market": "KOSDAQ",
+      "price": 5670.0,
+      "high20": 5640.0,
+      "atr20": 402.0,
+      "gap_atr": 0.075,
+      "unit_shares": 1243,
+      "status": "진입가능"
     }
   }
 }
