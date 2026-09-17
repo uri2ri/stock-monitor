@@ -144,6 +144,18 @@
       "gap_atr": 0.447,
       "unit_shares": 1396,
       "status": "진입가능"
+    },
+    "013030": {
+      "time": "09:43",
+      "name": "하이록코리아",
+      "sector": "금속",
+      "market": "KOSDAQ",
+      "price": 35200.0,
+      "high20": 35000.0,
+      "atr20": 1230.0,
+      "gap_atr": 0.163,
+      "unit_shares": 406,
+      "status": "진입가능"
     }
   }
 }
