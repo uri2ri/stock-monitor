@@ -256,6 +256,18 @@
       "gap_atr": 0.02,
       "unit_shares": 198,
       "status": "진입가능"
+    },
+    "219130": {
+      "time": "11:23",
+      "name": "타이거일렉",
+      "sector": "전기전자",
+      "market": "KOSDAQ",
+      "price": 77900.0,
+      "high20": 75800.0,
+      "atr20": 6252.0,
+      "gap_atr": 0.336,
+      "unit_shares": 79,
+      "status": "진입가능"
     }
   }
 }
