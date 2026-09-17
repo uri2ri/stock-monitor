@@ -232,6 +232,18 @@
       "gap_atr": 0.035,
       "unit_shares": 172,
       "status": "진입가능"
+    },
+    "099320": {
+      "time": "11:03",
+      "name": "쎄트렉아이",
+      "sector": "운송장비·부품",
+      "market": "KOSDAQ",
+      "price": 78300.0,
+      "high20": 77900.0,
+      "atr20": 4968.0,
+      "gap_atr": 0.081,
+      "unit_shares": 100,
+      "status": "진입가능"
     }
   }
 }
