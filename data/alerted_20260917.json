@@ -220,6 +220,18 @@
       "gap_atr": 0.013,
       "unit_shares": 653,
       "status": "진입가능"
+    },
+    "121600": {
+      "time": "10:53",
+      "name": "나노신소재",
+      "sector": "화학",
+      "market": "KOSDAQ",
+      "price": 51900.0,
+      "high20": 51800.0,
+      "atr20": 2893.0,
+      "gap_atr": 0.035,
+      "unit_shares": 172,
+      "status": "진입가능"
     }
   }
 }
