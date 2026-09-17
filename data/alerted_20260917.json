@@ -280,6 +280,30 @@
       "gap_atr": 0.033,
       "unit_shares": 81,
       "status": "진입가능"
+    },
+    "126730": {
+      "time": "13:53",
+      "name": "코칩",
+      "sector": "전기전자",
+      "market": "KOSDAQ",
+      "price": 24050.0,
+      "high20": 23950.0,
+      "atr20": 2122.0,
+      "gap_atr": 0.047,
+      "unit_shares": 235,
+      "status": "진입가능"
+    },
+    "032580": {
+      "time": "13:53",
+      "name": "피델릭스",
+      "sector": "전기전자",
+      "market": "KOSDAQ",
+      "price": 5220.0,
+      "high20": 5190.0,
+      "atr20": 465.0,
+      "gap_atr": 0.065,
+      "unit_shares": 1075,
+      "status": "진입가능"
     }
   }
 }
