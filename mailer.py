@@ -21,6 +21,7 @@ from datetime import date
 from email.message import EmailMessage
 from typing import Optional, Sequence
 
+from breakout_view import report_html, report_text
 from core import (
     MANAGED_NON_TURTLE, HoldingInput, HoldingResult, PortfolioRisk,
     build_stock_link, today_kst,
@@ -849,6 +850,7 @@ def send_report_mail(
     today: Optional[date] = None,
     favorites: Sequence[dict] = (),
     stop_updates: Sequence[ReportRow] = (),
+    breakout_tracks: Sequence[dict] = (),
 ) -> bool:
     """상세 리포트를 Gmail SMTP로 발송한다.
 
@@ -890,11 +892,12 @@ def send_report_mail(
     msg["From"] = sender
     msg["To"] = ", ".join(recipients)
 
-    msg.set_content(
-        _build_text(rows, risk, has_errors, today, favorites, stop_updates)
-    )
+    summary = report_text(breakout_tracks)
+    msg.set_content(_build_text(rows, risk, has_errors, today, favorites, stop_updates)
+                    + ('\n\n' + summary if summary else ''))
     msg.add_alternative(
-        _build_html(rows, risk, has_errors, today, favorites, stop_updates),
+        _build_html(rows, risk, has_errors, today, favorites, stop_updates)
+        + report_html(breakout_tracks),
         subtype="html",
     )
     # 차트 추가 시:
