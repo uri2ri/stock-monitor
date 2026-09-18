@@ -360,6 +360,18 @@
       "gap_atr": 0.035,
       "unit_shares": 865,
       "status": "진입가능"
+    },
+    "007340": {
+      "time": "09:53",
+      "name": "DN오토모티브",
+      "sector": "전기전자",
+      "market": "KOSPI",
+      "price": 49700.0,
+      "high20": 49500.0,
+      "atr20": 3008.0,
+      "gap_atr": 0.066,
+      "unit_shares": 166,
+      "status": "진입가능"
     }
   }
 }
