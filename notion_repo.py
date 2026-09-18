@@ -1731,3 +1731,253 @@ def get_auto_trade_status() -> Optional[str]:
 
     props = results[0].get("properties", {})
     return _select(props.get("상태", {})) or None
+
+
+# ── 돌파 추적 DB ────────────────────────────────────────────
+#
+# 보유종목 점검표·매매일지·자동주문 기록·즐겨찾기와 **완전히 별개 DB**다.
+# 서로의 칸을 읽거나 쓰지 않는다 - 저 DB들은 실제 보유·주문의 근거라
+# "사지 않은 종목"이 섞이면 그 자체로 오염이고, 상관군 유닛·리스크
+# 집계에도 조용히 흘러든다.
+#
+# 이 섹션의 함수는 다른 섹션과 같은 정책으로 **예외를 삼키지 않는다**.
+# 격리는 호출부(breakout_tracker._guard)가 한 겹으로 맡는다 - 거기서
+# 실패를 흡수하므로 장중 감시·자동매수 경로는 영향받지 않는다.
+#
+# DB를 아직 만들지 않았으면 NOTION_BREAKOUT_TRACK_DB_ID가 비어 있고,
+# breakout_tracker.is_enabled()가 False라 이 함수들은 호출되지 않는다.
+# 스키마와 설정 방법은 BREAKOUT_TRACKING.md 참고.
+
+BREAKOUT_TRACK_DB_ENV = "NOTION_BREAKOUT_TRACK_DB_ID"
+
+# 칸 이름 ↔ 내부 키. 노션 칸 이름을 바꿀 일이 생기면 여기만 고친다.
+BT_NAME = "종목명"
+BT_TICKER = "코드"
+BT_FIRST_AT = "최초감지"
+BT_FIRST_THRESHOLD = "최초기준선"
+BT_FIRST_PRICE = "최초가격"
+BT_FIRST_ATR = "최초ATR"
+BT_STATUS = "추적상태"
+BT_CLOSED_REASON = "종료사유"
+BT_CLOSED_AT = "종료일"
+BT_OUTCOME = "자동매수결과"
+BT_OUTCOME_REASON = "미진입사유"
+BT_OUTCOME_AT = "결과기록"
+BT_LATEST_CLOSE = "최신종가"
+BT_LATEST_DATE = "가격기준일"
+BT_LATEST_ATR = "최신ATR"
+BT_LATEST_LINE = "최신돌파선"
+BT_CHANGE_PCT = "최초선대비%"
+BT_ATR_MULT = "최초선대비ATR배수"
+BT_DIST = "돌파선까지"
+BT_DIST_ATR = "돌파선까지ATR배수"
+BT_LEVEL = "기준선대비"
+BT_NEW_BREAKOUT = "새돌파"
+BT_REFRESH = "갱신상태"
+BT_REFRESH_NOTE = "갱신메모"
+BT_USER_MEMO = "관망메모"
+
+# 코드가 절대 쓰지 않는 칸. 사용자가 직접 적는 관망 사유라, 자동매수
+# 사유(미진입사유)와 섞이면 "시스템이 막은 것"과 "내가 안 산 것"이
+# 구분되지 않는다.
+BT_READ_ONLY_PROPS = (BT_USER_MEMO,)
+
+
+def _datetime_prop(value) -> dict:
+    """date/datetime을 노션 date 프로퍼티로. None이면 빈 칸."""
+    if value is None:
+        return {"date": None}
+    if isinstance(value, datetime):
+        return {"date": {"start": value.isoformat()}}
+    return {"date": {"start": value.isoformat()}}
+
+
+def _datetime_val(prop: dict):
+    """노션 date 프로퍼티 → datetime(시각 있음) 또는 date(날짜만). 없으면 None."""
+    d = prop.get("date")
+    if not (d and isinstance(d, dict) and d.get("start")):
+        return None
+    raw = d["start"]
+    try:
+        if len(raw) <= 10:
+            return date.fromisoformat(raw)
+        parsed = datetime.fromisoformat(raw)
+    except ValueError:
+        logger.warning("돌파 추적: 날짜 파싱 실패 (%s)", raw)
+        return None
+    if parsed.tzinfo is None:
+        parsed = parsed.replace(tzinfo=_KST)
+    return parsed.astimezone(_KST)
+
+
+# 내부 키 → (노션 칸, 변환 함수). update에서 넘어온 키만 골라 쓴다.
+_BT_WRITERS = {
+    "name": (BT_NAME, lambda v: {"title": [{"type": "text",
+                                            "text": {"content": str(v)}}]}),
+    "ticker": (BT_TICKER, lambda v: _rich_text(str(v))),
+    "first_detected_at": (BT_FIRST_AT, _datetime_prop),
+    "first_threshold": (BT_FIRST_THRESHOLD, lambda v: {"number": v}),
+    "first_price": (BT_FIRST_PRICE, lambda v: {"number": v}),
+    "first_atr": (BT_FIRST_ATR, lambda v: {"number": v}),
+    "status": (BT_STATUS, lambda v: {"select": {"name": v} if v else None}),
+    "closed_reason": (BT_CLOSED_REASON,
+                      lambda v: {"select": {"name": v} if v else None}),
+    "closed_at": (BT_CLOSED_AT, _datetime_prop),
+    "outcome": (BT_OUTCOME, lambda v: {"select": {"name": v} if v else None}),
+    "outcome_reason": (BT_OUTCOME_REASON, lambda v: _rich_text(v or "")),
+    "outcome_at": (BT_OUTCOME_AT, _datetime_prop),
+    "latest_close": (BT_LATEST_CLOSE, lambda v: {"number": v}),
+    "latest_date": (BT_LATEST_DATE, _datetime_prop),
+    "latest_atr": (BT_LATEST_ATR, lambda v: {"number": v}),
+    "latest_line": (BT_LATEST_LINE, lambda v: {"number": v}),
+    "change_pct": (BT_CHANGE_PCT, lambda v: {"number": v}),
+    "atr_mult": (BT_ATR_MULT, lambda v: {"number": v}),
+    "dist_to_line": (BT_DIST, lambda v: {"number": v}),
+    "dist_to_line_atr": (BT_DIST_ATR, lambda v: {"number": v}),
+    "level_state": (BT_LEVEL, lambda v: {"select": {"name": v} if v else None}),
+    "new_breakout": (BT_NEW_BREAKOUT,
+                     lambda v: {"select": {"name": v} if v else None}),
+    "refresh_state": (BT_REFRESH, lambda v: {"select": {"name": v} if v else None}),
+    "refresh_note": (BT_REFRESH_NOTE, lambda v: _rich_text(v or "")),
+}
+
+
+def _bt_properties(fields: dict) -> dict:
+    """내부 키 dict → 노션 properties. 모르는 키와 읽기 전용 칸은 버린다."""
+    props: dict[str, Any] = {}
+    for key, value in fields.items():
+        writer = _BT_WRITERS.get(key)
+        if writer is None:
+            logger.debug("돌파 추적: 알 수 없는 칸 무시 (%s)", key)
+            continue
+        prop_name, convert = writer
+        if prop_name in BT_READ_ONLY_PROPS:
+            continue
+        props[prop_name] = convert(value)
+    return props
+
+
+def _bt_from_page(page: dict) -> dict:
+    props = page.get("properties", {})
+    return {
+        "key": page["id"],
+        "page_id": page["id"],
+        "name": _text(props.get(BT_NAME, {})).strip(),
+        "ticker": _text(props.get(BT_TICKER, {})).strip(),
+        "first_detected_at": _datetime_val(props.get(BT_FIRST_AT, {})),
+        "first_threshold": _number(props.get(BT_FIRST_THRESHOLD, {})),
+        "first_price": _number(props.get(BT_FIRST_PRICE, {})),
+        "first_atr": _number(props.get(BT_FIRST_ATR, {})),
+        "status": _select(props.get(BT_STATUS, {})),
+        "closed_reason": _select(props.get(BT_CLOSED_REASON, {})),
+        "closed_at": _date_val(props.get(BT_CLOSED_AT, {})),
+        "outcome": _select(props.get(BT_OUTCOME, {})),
+        "outcome_reason": _text(props.get(BT_OUTCOME_REASON, {})).strip(),
+        "outcome_at": _datetime_val(props.get(BT_OUTCOME_AT, {})),
+        "latest_close": _number(props.get(BT_LATEST_CLOSE, {})),
+        "latest_date": _date_val(props.get(BT_LATEST_DATE, {})),
+        "latest_atr": _number(props.get(BT_LATEST_ATR, {})),
+        "latest_line": _number(props.get(BT_LATEST_LINE, {})),
+        "change_pct": _number(props.get(BT_CHANGE_PCT, {})),
+        "atr_mult": _number(props.get(BT_ATR_MULT, {})),
+        "dist_to_line": _number(props.get(BT_DIST, {})),
+        "dist_to_line_atr": _number(props.get(BT_DIST_ATR, {})),
+        "level_state": _select(props.get(BT_LEVEL, {})),
+        "new_breakout": _select(props.get(BT_NEW_BREAKOUT, {})),
+        "refresh_state": _select(props.get(BT_REFRESH, {})),
+        "refresh_note": _text(props.get(BT_REFRESH_NOTE, {})).strip(),
+        "user_memo": _text(props.get(BT_USER_MEMO, {})).strip(),
+    }
+
+
+def find_active_breakout_track(ticker: str) -> Optional[dict]:
+    """해당 종목의 '추적중' 기록 1건. 없으면 None.
+
+    조회 실패는 그대로 raise한다 - 호출부(breakout_tracker)가 fail-closed로
+    "모르면 새로 만들지 않는다"로 처리한다.
+    """
+    db_id = os.environ[BREAKOUT_TRACK_DB_ENV]
+    payload: dict[str, Any] = {
+        "filter": {"and": [
+            {"property": BT_TICKER, "rich_text": {"equals": ticker}},
+            {"property": BT_STATUS, "select": {"equals": "추적중"}},
+        ]},
+        "page_size": 2,
+    }
+    resp = requests.post(f"{NOTION_BASE}/databases/{db_id}/query",
+                         headers=_headers(), json=payload, timeout=30)
+    resp.raise_for_status()
+    results = resp.json().get("results", [])
+    if not results:
+        return None
+    if len(results) > 1:
+        logger.warning("돌파 추적: %s의 '추적중' 기록이 여러 건입니다 - "
+                       "가장 먼저 조회된 건만 씁니다", ticker)
+    return _bt_from_page(results[0])
+
+
+def fetch_breakout_tracks(include_closed: bool = False) -> list[dict]:
+    """돌파 추적 DB 조회. 기본은 '추적중'만."""
+    db_id = os.environ[BREAKOUT_TRACK_DB_ENV]
+    url = f"{NOTION_BASE}/databases/{db_id}/query"
+    payload: dict[str, Any] = {"page_size": 100}
+    if not include_closed:
+        payload["filter"] = {"property": BT_STATUS, "select": {"equals": "추적중"}}
+
+    out: list[dict] = []
+    has_more = True
+    start_cursor: Optional[str] = None
+    while has_more:
+        if start_cursor:
+            payload["start_cursor"] = start_cursor
+        resp = requests.post(url, headers=_headers(), json=payload, timeout=30)
+        resp.raise_for_status()
+        data = resp.json()
+        for page in data.get("results", []):
+            try:
+                item = _bt_from_page(page)
+            except Exception:
+                logger.exception("돌파 추적 행 파싱 실패: page_id=%s", page.get("id"))
+                continue
+            if not item["ticker"]:
+                logger.warning("돌파 추적: 코드 없는 행 무시 page_id=%s", page.get("id"))
+                continue
+            out.append(item)
+        has_more = data.get("has_more", False)
+        start_cursor = data.get("next_cursor")
+
+    logger.info("노션에서 돌파 추적 %d건 로드", len(out))
+    return out
+
+
+def create_breakout_track(record: dict) -> str:
+    """추적 기록 생성. 중복 확인은 호출부가 먼저 한다 (find_active_breakout_track)."""
+    db_id = os.environ[BREAKOUT_TRACK_DB_ENV]
+    payload = {
+        "parent": {"database_id": db_id},
+        "properties": _bt_properties(record),
+    }
+    resp = requests.post(f"{NOTION_BASE}/pages", headers=_headers(),
+                         json=payload, timeout=30)
+    resp.raise_for_status()
+    page_id = resp.json()["id"]
+    logger.info("돌파 추적 생성: %s(%s) page_id=%s",
+                record.get("name"), record.get("ticker"), page_id)
+    return page_id
+
+
+def update_breakout_track(page_id: str, fields: dict) -> None:
+    """추적 기록의 일부 칸만 갱신한다.
+
+    최초 값(최초감지·최초기준선·최초가격·최초ATR)도 기술적으로는 쓸 수
+    있지만, 호출부(breakout_tracker)가 생성 시점 외에는 절대 넘기지
+    않는다 - 최초 값 보존은 그쪽 규칙이고 여기는 그 규칙을 강제하지
+    않는 얇은 계층이다. 사용자 관망메모만 구조적으로 막는다.
+    """
+    props = _bt_properties(fields)
+    if not props:
+        return
+    resp = requests.patch(f"{NOTION_BASE}/pages/{page_id}", headers=_headers(),
+                          json={"properties": props}, timeout=30)
+    resp.raise_for_status()
+    logger.info("돌파 추적 갱신: page_id=%s (%s)", page_id, ", ".join(props))

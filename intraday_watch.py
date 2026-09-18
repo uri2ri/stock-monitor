@@ -35,6 +35,7 @@ from zoneinfo import ZoneInfo
 import pandas as pd
 import requests
 
+import breakout_tracker
 import core
 import kakao
 import kis_client
@@ -650,6 +651,24 @@ def run(dry_run: bool = False) -> int:
             if hit:
                 hits.append(hit)
 
+    # 돌파 후 미진입 추적 - 판정이 난 시점에 기록을 남긴다. 추격금지도
+    # 포함한다("돌파 판정은 났다"가 기록 조건이고, 왜 안 샀는지는 아래
+    # 결과 기록이 따로 남긴다). 추적 DB가 설정돼 있지 않거나 노션이
+    # 실패하면 breakout_tracker가 안에서 흡수하므로 여기서 아무 일도
+    # 일어나지 않는다 - 알림·자동매수 경로는 그대로다. dry_run에선
+    # 기록하지 않는다(미리보기 모드에서 영속 데이터를 만들면 안 된다).
+    if hits and not dry_run:
+        breakout_tracker.record_breakouts(hits, now)
+        for h in hits:
+            if h["status"] != STATUS_ENTER:
+                # 추격 구간은 아래 enterable에 넣지 않는다 = 이번 회차에
+                # 주문을 내지 않았다는 실제 실행 결과다.
+                breakout_tracker.record_no_entry(
+                    h["ticker"],
+                    f"추격 구간(+{h['gap_atr']:.2f}N) - 매수 대상 제외",
+                    now,
+                )
+
     if not hits and not retry:
         logger.info("신규 돌파 없음 · 재시도 대상 없음 (감시 %d종목)", len(pending))
         return 0
@@ -702,6 +721,13 @@ def run(dry_run: bool = False) -> int:
                 "야간 스캔 신선도 불량(scan_date=%s, 기대=%s) - 신규 진입 %d건 보류",
                 scan_date_str, expected_scan_date_str, len(enterable),
             )
+            for c in enterable:
+                breakout_tracker.record_no_entry(
+                    c["ticker"],
+                    f"야간 스캔 신선도 불량(scan_date={scan_date_str or '없음'}) "
+                    f"- 신규 진입 보류",
+                    now,
+                )
         else:
             try:
                 kis_client.run_auto_trade(enterable)
