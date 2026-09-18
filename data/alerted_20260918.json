@@ -530,6 +530,18 @@
       "gap_atr": 0.039,
       "unit_shares": 982,
       "status": "진입가능"
+    },
+    "458870": {
+      "time": "12:43",
+      "name": "씨어스",
+      "sector": "의료·정밀기기",
+      "market": "KOSDAQ",
+      "price": 24750.0,
+      "high20": 24700.0,
+      "atr20": 1847.0,
+      "gap_atr": 0.027,
+      "unit_shares": 270,
+      "status": "진입가능"
     }
   }
 }
