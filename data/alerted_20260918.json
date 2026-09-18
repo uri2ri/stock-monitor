@@ -554,6 +554,18 @@
       "gap_atr": 0.339,
       "unit_shares": 282,
       "status": "진입가능"
+    },
+    "195870": {
+      "time": "14:13",
+      "name": "해성디에스",
+      "sector": "전기전자",
+      "market": "KOSPI",
+      "price": 57900.0,
+      "high20": 57500.0,
+      "atr20": 4146.0,
+      "gap_atr": 0.096,
+      "unit_shares": 120,
+      "status": "진입가능"
     }
   }
 }
