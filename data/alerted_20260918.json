@@ -252,6 +252,78 @@
       "gap_atr": 0.143,
       "unit_shares": 1187,
       "status": "진입가능"
+    },
+    "156100": {
+      "time": "09:33",
+      "name": "엘앤케이바이오",
+      "sector": "의료·정밀기기",
+      "market": "KOSDAQ",
+      "price": 6030.0,
+      "high20": 5990.0,
+      "atr20": 414.0,
+      "gap_atr": 0.097,
+      "unit_shares": 1207,
+      "status": "진입가능"
+    },
+    "272210": {
+      "time": "09:33",
+      "name": "한화시스템",
+      "sector": "전기전자",
+      "market": "KOSPI",
+      "price": 80100.0,
+      "high20": 78700.0,
+      "atr20": 4919.0,
+      "gap_atr": 0.285,
+      "unit_shares": 101,
+      "status": "진입가능"
+    },
+    "121600": {
+      "time": "09:33",
+      "name": "나노신소재",
+      "sector": "화학",
+      "market": "KOSDAQ",
+      "price": 53100.0,
+      "high20": 52500.0,
+      "atr20": 2886.0,
+      "gap_atr": 0.208,
+      "unit_shares": 173,
+      "status": "진입가능"
+    },
+    "013580": {
+      "time": "09:33",
+      "name": "계룡건설",
+      "sector": "건설",
+      "market": "KOSPI",
+      "price": 23350.0,
+      "high20": 23300.0,
+      "atr20": 1074.0,
+      "gap_atr": 0.047,
+      "unit_shares": 465,
+      "status": "진입가능"
+    },
+    "217590": {
+      "time": "09:33",
+      "name": "티엠씨",
+      "sector": "전기전자",
+      "market": "KOSPI",
+      "price": 14540.0,
+      "high20": 14340.0,
+      "atr20": 1137.0,
+      "gap_atr": 0.176,
+      "unit_shares": 439,
+      "status": "진입가능"
+    },
+    "052710": {
+      "time": "09:33",
+      "name": "아모텍",
+      "sector": "전기전자",
+      "market": "KOSDAQ",
+      "price": 17450.0,
+      "high20": 16920.0,
+      "atr20": 1527.0,
+      "gap_atr": 0.347,
+      "unit_shares": 327,
+      "status": "진입가능"
     }
   }
 }
