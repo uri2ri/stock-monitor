@@ -494,6 +494,18 @@
       "gap_atr": 0.013,
       "unit_shares": 648,
       "status": "진입가능"
+    },
+    "0015N0": {
+      "time": "11:03",
+      "name": "아로마티카",
+      "sector": "화학",
+      "market": "KOSDAQ",
+      "price": 13560.0,
+      "high20": 13500.0,
+      "atr20": 1103.0,
+      "gap_atr": 0.054,
+      "unit_shares": 453,
+      "status": "진입가능"
     }
   }
 }
