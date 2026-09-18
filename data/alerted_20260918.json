@@ -470,6 +470,30 @@
       "gap_atr": 0.128,
       "unit_shares": 107,
       "status": "진입가능"
+    },
+    "140410": {
+      "time": "10:33",
+      "name": "메지온",
+      "sector": "일반서비스",
+      "market": "KOSDAQ",
+      "price": 74900.0,
+      "high20": 74500.0,
+      "atr20": 4492.0,
+      "gap_atr": 0.089,
+      "unit_shares": 111,
+      "status": "진입가능"
+    },
+    "004710": {
+      "time": "10:33",
+      "name": "한솔테크닉스",
+      "sector": "전기전자",
+      "market": "KOSPI",
+      "price": 9800.0,
+      "high20": 9790.0,
+      "atr20": 771.0,
+      "gap_atr": 0.013,
+      "unit_shares": 648,
+      "status": "진입가능"
     }
   }
 }
