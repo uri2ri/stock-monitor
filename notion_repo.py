@@ -1296,6 +1296,9 @@ def fetch_unconfirmed_sell_orders(account_type: str) -> list[dict]:
                 account_type=_select(props.get('계좌구분', {})),
                 order_no=_text(props.get('주문번호', {})),
                 qty=_number(props.get('수량', {})),
+                # 주문 시점 참고가. 체결 조회가 끝내 안 될 때 청산가를 추정하는
+                # 유일한 근거라 함께 읽어둔다 (kis_client._settle_sell_by_balance).
+                price=_number(props.get('주문가', {})),
                 reason=_text(props.get('사유', {})),
                 order_day=(props.get('주문일시', {}).get('date') or {}).get('start', '')[:10],
             ))

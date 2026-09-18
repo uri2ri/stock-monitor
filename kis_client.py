@@ -175,6 +175,132 @@ TOKEN_RETRIES = 1
 TOKEN_RETRY_WAIT_SECONDS = 2
 
 
+# ── 조회(읽기) 재시도 ───────────────────────────────────────
+#
+# 현재가 조회(inquire-price)와 잔고조회(inquire-balance)에만 쓴다. 이 둘은
+# 판정에 꼭 필요한 입력인데, 실패하면 호출부가 전부 "이번 회차 건너뜀"으로
+# 빠진다 - 2026-09-15 실측으로 09:23·09:33·09:43 현재가 조회 HTTP 500,
+# 13:23·15:03 잔고조회 10초 시간초과가 났고 그 회차의 매도 판정(13:23은
+# 추가매수까지)이 통째로 생략됐다. 워크플로 자체는 성공으로 끝나서 겉으로는
+# 드러나지도 않는다. 서버가 일시적으로 흔들린 것이므로 짧게 한두 번 더
+# 물어보면 대개 같은 회차 안에서 복구된다.
+#
+# 재시도 대상은 "서버가 판단을 돌려주지 못한" 실패로 한정한다:
+#   - 연결 오류·읽기 시간초과 (requests.ConnectionError/Timeout)
+#   - 일시적 5xx (500/502/503/504)
+# 다음은 다시 걸어도 같은 답이 오므로 재시도하지 않는다:
+#   - 인증·권한·잘못된 요청 등 4xx. 429(유량 초과)도 여기 포함한다 -
+#     KIS는 유량 제한을 건 호출을 곧바로 다시 받아주지 않고, 재시도가
+#     오히려 제한을 키운다. 토큰 발급이 4xx를 재시도하지 않는 기존 정책
+#     (위 TOKEN_* 주석)과 같은 판단이다.
+#   - HTTP 200 안의 KIS 오류/불완전 응답(rt_cd != '0', stck_prpr 없음,
+#     연속조회 필요). 의미가 확인되지 않은 코드를 일시 장애로 넘겨짚지
+#     않는다 - 기존 검증에 그대로 맡겨 판정을 보류시킨다.
+#   - 501·505처럼 "이 요청은 원래 안 된다"는 뜻의 5xx.
+READ_RETRIES = 2                        # 최초 호출 포함 최대 3회
+READ_RETRY_WAITS = (1.0, 2.0)           # 재시도 직전 점증 대기(초)
+READ_RETRY_STATUS = frozenset({500, 502, 503, 504})
+
+# 프로세스 전체(자동매도 + 추가매수 + 신규매수가 한 실행을 공유한다)에서
+# 재시도에 더 쓸 수 있는 총 시간. 여러 종목이 동시에 흔들리면 종목마다
+# 재시도가 쌓여 워크플로 제한(intraday/auto-trade 모두 8분)을 잡아먹는다.
+# 남은 예산은 재시도 묶음을 시작할 때뿐 아니라 매 대기 직전과 대기 뒤
+# 다음 호출 직전에도 다시 확인한다 - 예산이 재시도 도중 소진되면 거기서
+# 멈추고 마지막 조회 오류를 그대로 올려 기존 보류 경로로 넘긴다.
+#
+# 이 예산은 "재시도를 얼마나 더 할지"를 억제하는 근사 상한이지, 실행
+# 시간의 엄밀한 상한이 아니다. requests의 timeout=10은 연결·읽기 각
+# 단계에서 "무응답으로 기다리는" 한도일 뿐 한 요청의 총 소요를 10초로
+# 묶어주지 않는다(서버가 응답을 조금씩 흘려보내면 그만큼 길어진다).
+# 진행 중인 호출도 중간에 끊지 않으므로, 초과분은 "마지막으로 시작한
+# 호출 하나" 만큼 남는다 - 정확한 추가 소요 상한을 보장하지는 않는다.
+# 워크플로 쪽 8분 제한이 최종 안전장치다.
+READ_RETRY_TOTAL_BUDGET_SECONDS = 60.0
+_read_retry_spent = 0.0
+
+
+def _reset_read_retry_budget() -> None:
+    """재시도 예산을 초기화한다 (프로세스 시작 상태로)."""
+    global _read_retry_spent
+    _read_retry_spent = 0.0
+
+
+def _read_retry_budget_left(started: Optional[float]) -> float:
+    """재시도에 더 쓸 수 있는 남은 시간(초).
+
+    _read_retry_spent는 재시도 묶음이 끝날 때 한 번에 더해지므로, 진행
+    중인 묶음(started)의 경과 시간을 여기서 같이 빼야 "재시도 도중"의
+    소진을 알아챌 수 있다.
+    """
+    spent = _read_retry_spent
+    if started is not None:
+        spent += time.monotonic() - started
+    return READ_RETRY_TOTAL_BUDGET_SECONDS - spent
+
+
+def _is_retryable_read_error(e: Exception) -> bool:
+    """이 조회 실패가 "다시 물어보면 달라질 수 있는" 종류인가."""
+    if isinstance(e, (requests.ConnectionError, requests.Timeout)):
+        return True
+    if isinstance(e, requests.HTTPError):
+        resp = getattr(e, "response", None)
+        status = getattr(resp, "status_code", None)
+        return status in READ_RETRY_STATUS
+    return False
+
+
+def _read_with_retry(label: str, call):
+    """조회 call()을 일시적 실패에 한해 제한된 횟수만큼 다시 시도한다.
+
+    call()은 네트워크 호출까지만 담당한다 - 응답 내용 검증(rt_cd, 필수
+    필드 등)은 호출부가 이 함수 밖에서 해야 재시도 대상이 아닌 오류가
+    잘못 반복되지 않는다.
+
+    끝까지 실패하면 마지막 예외를 그대로 올린다 - 호출부의 기존 예외
+    처리(판정 보류)가 그대로 동작한다. 빈 값·대체값으로 바꾸지 않는다.
+    전역 재시도 예산이 도중에 소진된 경우도 마찬가지로 마지막 조회
+    오류를 그대로 올려 같은 보류 경로로 넘긴다.
+    """
+    global _read_retry_spent
+    started = None
+    try:
+        for attempt in range(READ_RETRIES + 1):
+            try:
+                result = call()
+                if attempt:
+                    logger.info("%s 재시도 %d회째 성공", label, attempt)
+                return result
+            except Exception as e:          # noqa: BLE001
+                if attempt >= READ_RETRIES or not _is_retryable_read_error(e):
+                    if attempt:
+                        logger.warning("%s 재시도 %d회 후에도 실패 (%s)",
+                                       label, attempt, type(e).__name__)
+                    raise
+                # 대기 직전: 예산이 남아 있어야 다음 시도를 시작한다.
+                if _read_retry_budget_left(started) <= 0:
+                    logger.warning(
+                        "%s 실패 - 재시도 예산 소진으로 보류 (%d회 시도, %s)",
+                        label, attempt + 1, type(e).__name__)
+                    raise
+                if started is None:
+                    started = time.monotonic()
+                wait = READ_RETRY_WAITS[min(attempt, len(READ_RETRY_WAITS) - 1)]
+                logger.warning("%s 일시 실패 (%s) - %.1f초 뒤 재시도 (%d/%d)",
+                               label, type(e).__name__, wait,
+                               attempt + 1, READ_RETRIES)
+                time.sleep(wait)
+                # 대기 뒤 호출 직전: 대기·직전 호출로 예산이 넘어갔으면
+                # 여기서 멈추고 마지막 조회 오류를 그대로 올린다.
+                if _read_retry_budget_left(started) <= 0:
+                    logger.warning(
+                        "%s 실패 - 대기 중 재시도 예산 소진으로 보류 (%d회 시도, %s)",
+                        label, attempt + 1, type(e).__name__)
+                    raise
+    finally:
+        if started is not None:
+            _read_retry_spent += time.monotonic() - started
+
+
 # 이 프로세스 실행 동안만 유효한 토큰 캐시. GitHub Actions는 실행마다 새
 # 컨테이너라 다음 실행으로 새지 않는다 - 실행 간 영속 캐싱은 아래 노션
 # 캐시(NOTION_TOKEN_CACHE_DB_ID)가 맡고, 이건 그것과 별개로 한 실행
@@ -352,13 +478,21 @@ def _fetch_price_quote(access_token: str, stock_code: str) -> dict:
         "FID_INPUT_ISCD": stock_code,
     }
 
-    resp = requests.get(
-        f"{BASE_URL}/uapi/domestic-stock/v1/quotations/inquire-price",
-        headers=headers,
-        params=params,
-        timeout=10,
-    )
-    resp.raise_for_status()
+    def _call():
+        resp = requests.get(
+            f"{BASE_URL}/uapi/domestic-stock/v1/quotations/inquire-price",
+            headers=headers,
+            params=params,
+            timeout=10,
+        )
+        resp.raise_for_status()
+        return resp
+
+    # 재시도는 네트워크 호출까지만이다. 아래 응답 검증(stck_prpr 없음 =
+    # KIS가 200으로 돌려준 오류)은 다시 걸어도 같으므로 재시도하지 않는다.
+    # get_current_price()·get_price_quote()가 모두 이 함수 하나를 지나므로
+    # 재시도가 겹쳐 호출 수가 곱해지지 않는다.
+    resp = _read_with_retry(f"현재가 조회({stock_code})", _call)
     data = resp.json()
 
     output = data.get("output", {})
@@ -1021,6 +1155,7 @@ def _ledger_exit_reason(reason: str) -> str:
 def _record_ledger_after_sell(
     access_token: str, page_id: str, inp, *, qty: int, ref_price: float,
     reason: str, order_no: str, today: date, confirmed_fill: Optional[dict] = None,
+    estimated_price: bool = False,
 ) -> bool:
     """자동매도로 청산한 포지션을 매매일지에 1행 남긴다.
 
@@ -1031,16 +1166,21 @@ def _record_ledger_after_sell(
     청산가는 실제 체결가를 조회해 쓴다(시장가라 판정 시점 현재가와 어긋날
     수 있다). R배수가 이 값에서 나오므로 가능한 한 정확해야 한다 -
     조회가 안 되면 판정 시점 현재가로 폴백한다.
+
+    estimated_price=True면 체결 조회를 아예 다시 하지 않고 ref_price를 그대로
+    청산가로 쓴다(_settle_sell_by_balance 전용 - 이미 조회가 안 되는 게
+    확인된 상태라 또 부르는 건 시간만 쓴다). 대신 추정치임을 메모에 남긴다.
     """
     exit_price = ref_price
-    try:
-        time.sleep(1)  # 체결 처리 대기
-        fill = confirmed_fill or (get_order_execution(access_token, order_no) if order_no else None)
-        if fill and fill.get("avg_price"):
-            exit_price = float(fill["avg_price"])
-    except Exception as e:                  # noqa: BLE001
-        logger.warning("[%s] 매도 체결가 조회 실패 - 판정 시점 현재가로 기록합니다: %s",
-                       inp.ticker, e)
+    if not estimated_price:
+        try:
+            time.sleep(1)  # 체결 처리 대기
+            fill = confirmed_fill or (get_order_execution(access_token, order_no) if order_no else None)
+            if fill and fill.get("avg_price"):
+                exit_price = float(fill["avg_price"])
+        except Exception as e:              # noqa: BLE001
+            logger.warning("[%s] 매도 체결가 조회 실패 - 판정 시점 현재가로 기록합니다: %s",
+                           inp.ticker, e)
 
     # 진입일 - HoldingInput은 매수일을 안 들고 있어(core.py는 건드리지
     # 않는다) 점검표 행에서 따로 조회한다. 실패해도 None을 돌려주므로
@@ -1072,7 +1212,9 @@ def _record_ledger_after_sell(
             signal_date=inp.evening_signal_date or today,
             entry_date=entry_date,
             holding_page_id=page_id,
-            memo=f"자동매도 (주문번호 {order_no}) - {reason}",
+            memo=(f"자동매도 (주문번호 {order_no}) - {reason}"
+                  + (" / 체결 확인 조회 미반영 - 증권사 잔고에 없어 전량 체결로 확정,"
+                     " 청산가는 주문 시 참고가(추정치)" if estimated_price else "")),
         )
         return True
     except Exception as e:                  # noqa: BLE001
@@ -1157,6 +1299,60 @@ def _recover_closed_sell(token: str, order: dict) -> bool:
     return True
 
 
+def _settle_sell_by_balance(token: str, page_id: str, inp, order: dict,
+                             order_day: date) -> None:
+    """체결 조회로 끝내 확인이 안 되는 이전 거래일 매도를 잔고를 근거로 확정한다.
+
+    체결 조회(`get_order_execution`)가 실제로 체결된 주문을 계속 "미체결"로
+    돌려주는 일이 있다 - 2026-09-17 GS(주문번호 0000006229)가 그랬다. 매도
+    직후 D+2 가용현금이 매도대금만큼 늘었는데도 일별주문체결조회는 그 주문을
+    잡아주지 않았고, 그 결과 점검표는 계속 "보유", 주문은 "주문중"으로 남아
+    매 회차 "이전 거래일 매도 미완료" 경고만 반복됐다(장부 공백 + 알림 소음).
+
+    조회를 믿지 못할 때 남는 유일한 독립 증거가 증권사 잔고다: 이 계좌에
+    해당 종목이 한 주도 없으면 주문 수량(= 주문 시점 매도가능수량 전량)이
+    전부 나갔다는 뜻이다. 잔고가 남아 있으면 진짜 미체결·부분체결이므로
+    기존대로 사람 확인 경고를 올린다.
+
+    당일 주문에는 쓰지 않는다(호출부에서 이전 거래일만 넘긴다) - 장중에는
+    아직 체결 처리 중일 수 있어 잔고만으로 단정하면 안 된다.
+
+    한계: 체결가를 알 수 없어 주문 시 기록해둔 참고가(주문가)로 적는다.
+    R배수·손익이 이 값에서 나오므로 매매일지 메모에 추정치임을 남기고 카톡도
+    한 번 보낸다 - 사람이 실제 체결가를 알면 고칠 수 있어야 한다. 사람이
+    같은 종목을 수동으로 처분해 잔고가 0이 된 경우도 이 경로를 타는데,
+    그때도 "판 건 맞고 가격만 추정"이라 장부를 닫는 편이 낫다고 본다.
+    """
+    ref_price = order.get('price')
+    if not _is_valid_price(ref_price):
+        raise ValueError('이전 거래일 매도 미완료 - 주문 참고가 없어 청산가 추정 불가, 수동 확인 필요')
+
+    balance = get_account_balance(token)
+    if any(h['ticker'] == inp.ticker and h['qty'] > 0 for h in balance['holdings']):
+        raise ValueError('이전 거래일 매도 미완료 - 취소/잔여수량 수동 확인 필요')
+
+    qty = int(order['qty'])
+    logger.warning(
+        '[%s] 체결 조회는 미체결이나 잔고에 없음 - 전량 체결로 확정합니다'
+        ' (주문 %s주 %s, 청산가는 주문 참고가 %s원 추정)',
+        inp.ticker, qty, order_day, f"{float(ref_price):,.0f}",
+    )
+    if not _record_ledger_after_sell(
+        token, page_id, inp, qty=qty, ref_price=float(ref_price),
+        reason=order['reason'], order_no=order['order_no'], today=order_day,
+        estimated_price=True,
+    ):
+        return
+    notion_repo.close_auto_holding(page_id)
+    notion_repo.update_order_record(order['page_id'], status='성공',
+                                    order_no=order['order_no'], reason=order['reason'])
+    _notify_warning_throttled(
+        f'sell_settled_estimate:{inp.ticker}',
+        f'[KIS] {inp.name} 매도 체결 확인 조회가 끝내 안 돼 잔고 기준으로 청산 확정했습니다 '
+        f'({qty}주, {order_day}). 청산가는 주문 시 참고가 {float(ref_price):,.0f}원으로 '
+        f'기록한 추정치이니 실제 체결가를 아시면 매매일지를 고쳐주세요.')
+
+
 def _reconcile_sell(token: str, page_id: str, inp, order: dict) -> None:
     """전체 체결과 실제 잔고 0을 모두 확인한 경우에만 청산한다."""
     try:
@@ -1174,7 +1370,7 @@ def _reconcile_sell(token: str, page_id: str, inp, order: dict) -> None:
         if not fill or not _valid_sell_qty(fill.get('filled_qty')) or fill['filled_qty'] < order['qty']:
             logger.info('[%s] 매도 미체결/부분체결 - 보유 유지', inp.ticker)
             if order_day < _today():
-                raise ValueError('이전 거래일 매도 미완료 - 취소/잔여수량 수동 확인 필요')
+                _settle_sell_by_balance(token, page_id, inp, order, order_day)
             return
         if fill['filled_qty'] != order['qty']:
             raise ValueError('주문 수량과 체결 수량 불일치')
@@ -1562,6 +1758,29 @@ def run_auto_pyramid(holdings: Optional[list] = None) -> None:
             )
 
 
+def _same_order_no(response_odno, wanted: str) -> bool:
+    """체결 조회 응답의 odno가 우리가 보관한 주문번호와 같은 주문인지.
+
+    주문 응답의 ODNO는 0으로 채운 10자리인데 조회 응답의 odno는 표기가
+    다를 수 있어, **0 패딩 차이만** 흡수한다. 아래는 모두 "같지 않음"이다:
+      - 어느 한쪽이 빈 값 - 주문번호 미확인 행이라 매칭 대상이 아니다
+      - 숫자인데 0뿐인 값("0", "0000000000") - 유효한 주문번호가 아니다
+        (그대로 정규화하면 둘 다 ""가 되어 서로 같아져버린다)
+      - 한쪽만 숫자 - 원문이 정확히 같을 때만 인정한다
+
+    0을 떼고 비교하지 접미사로 비교하지 않는다 - "16229"와 "0000006229"는
+    여전히 다른 주문이다.
+    """
+    a = str(response_odno or "").strip()
+    b = str(wanted or "").strip()
+    if not a or not b:
+        return False
+    if a.isdigit() and b.isdigit():
+        a, b = a.lstrip("0"), b.lstrip("0")
+        return bool(a) and a == b
+    return not a.isdigit() and not b.isdigit() and a == b
+
+
 def get_order_execution(access_token: str, order_no: str,
                         *, order_day: Optional[date] = None) -> dict | None:
     """지정일(기본 오늘) 주문 체결 조회. 체결 전이거나 못 찾으면 None."""
@@ -1613,17 +1832,28 @@ def get_order_execution(access_token: str, order_no: str,
     if resp.headers.get('tr_cont', '') in ('F', 'M'):
         raise RuntimeError('체결 조회 연속조회 필요 - 전체 내역 확인 전 처리 보류')
 
-    for row in data.get("output1", []):
-        if row.get("odno") != order_no:
-            continue
-        filled_qty = int(row.get("tot_ccld_qty") or 0)
-        if filled_qty <= 0:
-            return None
-        return {
-            "filled_qty": filled_qty,
-            "avg_price": float(row.get("avg_prvs") or 0),
-        }
-    return None
+    rows = data["output1"]
+    matched = [row for row in rows if _same_order_no(row.get("odno"), order_no)]
+    # 같은 주문번호가 두 행 이상이면 어느 쪽이 그 주문인지 우리가 정할 수
+    # 없다 - 넘겨짚고 청산하느니 보류시킨다(이 모듈의 fail-closed 원칙).
+    if len(matched) > 1:
+        raise RuntimeError('체결 조회에 같은 주문번호가 여러 건 - 수동 확인 필요')
+    if not matched:
+        # "주문번호를 아예 못 찾음"과 "찾았는데 아직 미체결"은 원인이 전혀
+        # 다르다(전자는 조회 범위·번호 표기 문제일 수 있다). 호출자에게는
+        # 똑같이 None이지만 로그로는 구분해 남긴다.
+        logger.info("체결 조회: 주문번호 미발견 (조회 %d건, 조회일 %s)",
+                    len(rows), today)
+        return None
+
+    row = matched[0]
+    filled_qty = int(row.get("tot_ccld_qty") or 0)
+    if filled_qty <= 0:
+        return None
+    return {
+        "filled_qty": filled_qty,
+        "avg_price": float(row.get("avg_prvs") or 0),
+    }
 
 
 # ── 자금 게이트 ─────────────────────────────────────────────
@@ -1672,13 +1902,19 @@ def get_account_balance(access_token: str) -> dict:
         "CTX_AREA_FK100": "",
         "CTX_AREA_NK100": "",
     }
-    resp = requests.get(
-        f"{BASE_URL}/uapi/domestic-stock/v1/trading/inquire-balance",
-        headers=headers,
-        params=params,
-        timeout=10,
-    )
-    resp.raise_for_status()
+    def _call():
+        resp = requests.get(
+            f"{BASE_URL}/uapi/domestic-stock/v1/trading/inquire-balance",
+            headers=headers,
+            params=params,
+            timeout=10,
+        )
+        resp.raise_for_status()
+        return resp
+
+    # 재시도는 네트워크 호출까지만이다. 아래 응답 검증(rt_cd·output 형태·
+    # 연속조회 필요)은 재시도 대상이 아니라 그대로 예외로 올려 보류시킨다.
+    resp = _read_with_retry("잔고조회", _call)
     data = resp.json()
 
     # 오류/불완전 응답을 빈 잔고로 해석하면 청산을 잘못 확정할 수 있다.
