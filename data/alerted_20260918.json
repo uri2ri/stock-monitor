@@ -458,6 +458,18 @@
       "gap_atr": 0.166,
       "unit_shares": 756,
       "status": "진입가능"
+    },
+    "119850": {
+      "time": "10:23",
+      "name": "지엔씨에너지",
+      "sector": "전기전자",
+      "market": "KOSDAQ",
+      "price": 55000.0,
+      "high20": 54400.0,
+      "atr20": 4671.0,
+      "gap_atr": 0.128,
+      "unit_shares": 107,
+      "status": "진입가능"
     }
   }
 }
