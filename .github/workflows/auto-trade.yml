@@ -52,6 +52,9 @@ jobs:
       - name: Watch for breakouts and auto-trade
         if: ${{ inputs.mode == 'watch' || inputs.mode == '' }}
         env:
+          # 유일한 추적 생성 writer. 기존 auto-trade concurrency 그룹으로 직렬화.
+          BREAKOUT_TRACK_WRITER: auto-trade
+          NOTION_BREAKOUT_TRACK_DB_ID: ${{ secrets.NOTION_BREAKOUT_TRACK_DB_ID }}
           KAKAO_REST_API_KEY: ${{ secrets.KAKAO_REST_API_KEY }}
           KAKAO_CLIENT_SECRET: ${{ secrets.KAKAO_CLIENT_SECRET }}
           KAKAO_REFRESH_TOKEN: ${{ secrets.KAKAO_REFRESH_TOKEN }}

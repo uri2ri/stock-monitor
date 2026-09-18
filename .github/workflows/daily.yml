@@ -35,6 +35,7 @@ jobs:
 
       - name: Run daily report
         env:
+          NOTION_BREAKOUT_TRACK_DB_ID: ${{ secrets.NOTION_BREAKOUT_TRACK_DB_ID }}
           NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
           NOTION_DB_ID: ${{ secrets.NOTION_DB_ID }}
           NOTION_FAVORITES_DB_ID: ${{ secrets.NOTION_FAVORITES_DB_ID }}
