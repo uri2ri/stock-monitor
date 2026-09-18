@@ -246,9 +246,17 @@ def test_reconcile_recovers_previous_day_order(sell_env, monkeypatch):
 
 
 def test_reconcile_escalates_previous_day_when_still_unconfirmed(sell_env, monkeypatch):
-    """전날 주문이 여전히 미확인이면 경고로 승격된다 (기존 동작 회귀)."""
+    """전날 주문이 미확인인데 잔고에도 남아 있으면 경고로 승격된다 (기존 동작 회귀).
+
+    잔고가 비어 있으면 _settle_sell_by_balance가 청산을 확정하는 별도 경로를
+    타므로(tests/test_sell_settle_by_balance.py), 여기서는 '진짜 미체결'만
+    남도록 주문 참고가와 잔여 보유를 모두 준다.
+    """
     inp, order = sell_env
     order['order_day'] = '2026-09-16'
+    order['price'] = 112400
+    monkeypatch.setattr(k, 'get_account_balance', Mock(return_value={
+        'holdings': [{'ticker': '078930', 'qty': 13, 'sellable': 13}]}))
     _respond(monkeypatch, [_row("16229")])
     k._reconcile_sell('tok', 'holding-page', inp, order)
     n.close_auto_holding.assert_not_called()
