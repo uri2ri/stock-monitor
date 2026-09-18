@@ -324,6 +324,42 @@
       "gap_atr": 0.347,
       "unit_shares": 327,
       "status": "진입가능"
+    },
+    "484120": {
+      "time": "09:43",
+      "name": "도우인시스",
+      "sector": "전기전자",
+      "market": "KOSDAQ",
+      "price": 22000.0,
+      "high20": 21900.0,
+      "atr20": 1406.0,
+      "gap_atr": 0.071,
+      "unit_shares": 355,
+      "status": "진입가능"
+    },
+    "200470": {
+      "time": "09:43",
+      "name": "에이팩트",
+      "sector": "전기전자",
+      "market": "KOSDAQ",
+      "price": 7335.0,
+      "high20": 7210.0,
+      "atr20": 524.0,
+      "gap_atr": 0.239,
+      "unit_shares": 954,
+      "status": "진입가능"
+    },
+    "031330": {
+      "time": "09:43",
+      "name": "에스에이엠티",
+      "sector": "유통",
+      "market": "KOSDAQ",
+      "price": 8400.0,
+      "high20": 8380.0,
+      "atr20": 578.0,
+      "gap_atr": 0.035,
+      "unit_shares": 865,
+      "status": "진입가능"
     }
   }
 }
