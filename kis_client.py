@@ -1158,30 +1158,18 @@ def _record_ledger_after_sell(
     reason: str, order_no: str, today: date, confirmed_fill: Optional[dict] = None,
     estimated_price: bool = False,
 ) -> bool:
-    """자동매도로 청산한 포지션을 매매일지에 1행 남긴다.
-
-    fail-open이다: 여기서 실패해도 매도는 이미 체결됐으니 되돌리지 않는다.
-    대신 카톡으로 알린다 - 매도는 나갔는데 기록이 없는 건 감사 공백이라
-    조용히 넘어가면 안 된다. 반복 실패는 1시간 억제 대상이다.
-
-    청산가는 실제 체결가를 조회해 쓴다(시장가라 판정 시점 현재가와 어긋날
-    수 있다). R배수가 이 값에서 나오므로 가능한 한 정확해야 한다 -
-    조회가 안 되면 판정 시점 현재가로 폴백한다.
-
-    estimated_price=True면 체결 조회를 아예 다시 하지 않고 ref_price를 그대로
-    청산가로 쓴다(_settle_sell_by_balance 전용 - 이미 조회가 안 되는 게
-    확인된 상태라 또 부르는 건 시간만 쓴다). 대신 추정치임을 메모에 남긴다.
-    """
-    exit_price = ref_price
-    if not estimated_price:
-        try:
-            time.sleep(1)  # 체결 처리 대기
-            fill = confirmed_fill or (get_order_execution(access_token, order_no) if order_no else None)
-            if fill and fill.get("avg_price"):
-                exit_price = float(fill["avg_price"])
-        except Exception as e:              # noqa: BLE001
-            logger.warning("[%s] 매도 체결가 조회 실패 - 판정 시점 현재가로 기록합니다: %s",
-                           inp.ticker, e)
+    """확인된 주문 체결가/수량만 일지에 기록한다. 참고가 폴백은 금지한다."""
+    if estimated_price:
+        return False
+    try:
+        fill = confirmed_fill or (get_order_execution(access_token, order_no, order_day=today) if order_no else None)
+        if (not fill or not _valid_sell_qty(fill.get("filled_qty"))
+                or fill["filled_qty"] != qty or not _is_valid_price(fill.get("avg_price"))):
+            return False
+        exit_price = float(fill["avg_price"])
+    except Exception as e:
+        logger.warning("[%s] 매도 체결 증빙 부족 - 일지 기록 보류: %s", inp.ticker, e)
+        return False
 
     # 진입일 - HoldingInput은 매수일을 안 들고 있어(core.py는 건드리지
     # 않는다) 점검표 행에서 따로 조회한다. 실패해도 None을 돌려주므로
@@ -1302,56 +1290,13 @@ def _recover_closed_sell(token: str, order: dict) -> bool:
 
 def _settle_sell_by_balance(token: str, page_id: str, inp, order: dict,
                              order_day: date) -> None:
-    """체결 조회로 끝내 확인이 안 되는 이전 거래일 매도를 잔고를 근거로 확정한다.
-
-    체결 조회(`get_order_execution`)가 실제로 체결된 주문을 계속 "미체결"로
-    돌려주는 일이 있다 - 2026-09-17 GS(주문번호 0000006229)가 그랬다. 매도
-    직후 D+2 가용현금이 매도대금만큼 늘었는데도 일별주문체결조회는 그 주문을
-    잡아주지 않았고, 그 결과 점검표는 계속 "보유", 주문은 "주문중"으로 남아
-    매 회차 "이전 거래일 매도 미완료" 경고만 반복됐다(장부 공백 + 알림 소음).
-
-    조회를 믿지 못할 때 남는 유일한 독립 증거가 증권사 잔고다: 이 계좌에
-    해당 종목이 한 주도 없으면 주문 수량(= 주문 시점 매도가능수량 전량)이
-    전부 나갔다는 뜻이다. 잔고가 남아 있으면 진짜 미체결·부분체결이므로
-    기존대로 사람 확인 경고를 올린다.
-
-    당일 주문에는 쓰지 않는다(호출부에서 이전 거래일만 넘긴다) - 장중에는
-    아직 체결 처리 중일 수 있어 잔고만으로 단정하면 안 된다.
-
-    한계: 체결가를 알 수 없어 주문 시 기록해둔 참고가(주문가)로 적는다.
-    R배수·손익이 이 값에서 나오므로 매매일지 메모에 추정치임을 남기고 카톡도
-    한 번 보낸다 - 사람이 실제 체결가를 알면 고칠 수 있어야 한다. 사람이
-    같은 종목을 수동으로 처분해 잔고가 0이 된 경우도 이 경로를 타는데,
-    그때도 "판 건 맞고 가격만 추정"이라 장부를 닫는 편이 낫다고 본다.
-    """
-    ref_price = order.get('price')
-    if not _is_valid_price(ref_price):
-        raise ValueError('이전 거래일 매도 미완료 - 주문 참고가 없어 청산가 추정 불가, 수동 확인 필요')
-
+    """잔고 관측은 체결 증빙이 아니다. 미확정 주문과 재주문 차단을 유지한다."""
     balance = get_account_balance(token)
     if any(h['ticker'] == inp.ticker and h['qty'] > 0 for h in balance['holdings']):
-        raise ValueError('이전 거래일 매도 미완료 - 취소/잔여수량 수동 확인 필요')
+        raise ValueError('이전 거래일 매도 미완료 - 잔여 보유 확인, 체결/취소 수동 확인 필요')
+    raise ValueError('잔고 없음 확인 - 주문 체결수량·체결가·체결일 및 회계 확인 미완료; 성공 확정 보류')
 
-    qty = int(order['qty'])
-    logger.warning(
-        '[%s] 체결 조회는 미체결이나 잔고에 없음 - 전량 체결로 확정합니다'
-        ' (주문 %s주 %s, 청산가는 주문 참고가 %s원 추정)',
-        inp.ticker, qty, order_day, f"{float(ref_price):,.0f}",
-    )
-    if not _record_ledger_after_sell(
-        token, page_id, inp, qty=qty, ref_price=float(ref_price),
-        reason=order['reason'], order_no=order['order_no'], today=order_day,
-        estimated_price=True,
-    ):
-        return
-    notion_repo.close_auto_holding(page_id)
-    notion_repo.update_order_record(order['page_id'], status='성공',
-                                    order_no=order['order_no'], reason=order['reason'])
-    _notify_warning_throttled(
-        f'sell_settled_estimate:{inp.ticker}',
-        f'[KIS] {inp.name} 매도 체결 확인 조회가 끝내 안 돼 잔고 기준으로 청산 확정했습니다 '
-        f'({qty}주, {order_day}). 청산가는 주문 시 참고가 {float(ref_price):,.0f}원으로 '
-        f'기록한 추정치이니 실제 체결가를 아시면 매매일지를 고쳐주세요.')
+
 
 
 def _reconcile_sell(token: str, page_id: str, inp, order: dict) -> None:
