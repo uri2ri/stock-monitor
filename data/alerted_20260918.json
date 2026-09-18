@@ -518,6 +518,18 @@
       "gap_atr": 0.207,
       "unit_shares": 2066,
       "status": "진입가능"
+    },
+    "217190": {
+      "time": "12:23",
+      "name": "제너셈",
+      "sector": "기계·장비",
+      "market": "KOSDAQ",
+      "price": 7470.0,
+      "high20": 7450.0,
+      "atr20": 509.0,
+      "gap_atr": 0.039,
+      "unit_shares": 982,
+      "status": "진입가능"
     }
   }
 }
