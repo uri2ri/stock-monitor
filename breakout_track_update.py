@@ -80,10 +80,6 @@ def main() -> int:
         return 0
 
     scan_frame = scan_all.load_scan()
-    if scan_frame is None or scan_frame.empty:
-        logger.warning("scan_latest.csv가 없거나 비어 있어 갱신하지 않습니다.")
-        return 0
-
     if args.dry_run:
         return _preview(scan_frame)
 
@@ -91,7 +87,7 @@ def main() -> int:
     if summary.get("error"):
         logger.warning("갱신 미완료: %s", summary["error"])
     logger.info("갱신 요약: %s", summary)
-    return 0
+    return 1 if summary.get('error') or summary.get('failed') else 0
 
 
 if __name__ == "__main__":

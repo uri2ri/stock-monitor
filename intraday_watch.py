@@ -571,6 +571,14 @@ def build_messages(
 # ── 실행 ────────────────────────────────────────────────────
 
 def run(dry_run: bool = False) -> int:
+    try:
+        return _run(dry_run)
+    finally:
+        if not dry_run:
+            breakout_tracker.flush_events()
+
+
+def _run(dry_run: bool = False) -> int:
     now = datetime.now(KST)
     day = now.strftime("%Y%m%d")
 

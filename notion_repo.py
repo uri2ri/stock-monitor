@@ -1776,6 +1776,10 @@ BT_NEW_BREAKOUT = "새돌파"
 BT_REFRESH = "갱신상태"
 BT_REFRESH_NOTE = "갱신메모"
 BT_USER_MEMO = "관망메모"
+# 이 추적 건에 대응하는 자동매수 주문. 종목만 같은 옛 주문의 결과가
+# 새 추적 건을 종료시키지 않도록 breakout_tracker가 대조하는 값이다.
+BT_ORDER_NO = "주문번호"
+BT_ORDER_DAY = "주문일"
 
 # 코드가 절대 쓰지 않는 칸. 사용자가 직접 적는 관망 사유라, 자동매수
 # 사유(미진입사유)와 섞이면 "시스템이 막은 것"과 "내가 안 산 것"이
@@ -1812,6 +1816,8 @@ def _datetime_val(prop: dict):
 
 # 내부 키 → (노션 칸, 변환 함수). update에서 넘어온 키만 골라 쓴다.
 _BT_WRITERS = {
+    "order_no": (BT_ORDER_NO, lambda v: _rich_text(v or "")),
+    "order_day": (BT_ORDER_DAY, _datetime_prop),
     "name": (BT_NAME, lambda v: {"title": [{"type": "text",
                                             "text": {"content": str(v)}}]}),
     "ticker": (BT_TICKER, lambda v: _rich_text(str(v))),
@@ -1860,6 +1866,8 @@ def _bt_properties(fields: dict) -> dict:
 def _bt_from_page(page: dict) -> dict:
     props = page.get("properties", {})
     return {
+        "order_no": _text(props.get(BT_ORDER_NO, {})).strip(),
+        "order_day": _date_val(props.get(BT_ORDER_DAY, {})),
         "key": page["id"],
         "page_id": page["id"],
         "name": _text(props.get(BT_NAME, {})).strip(),
@@ -1911,8 +1919,7 @@ def find_active_breakout_track(ticker: str) -> Optional[dict]:
     if not results:
         return None
     if len(results) > 1:
-        logger.warning("돌파 추적: %s의 '추적중' 기록이 여러 건입니다 - "
-                       "가장 먼저 조회된 건만 씁니다", ticker)
+        raise ValueError(f'복수 활성 추적: {ticker} - 자동 처리 보류')
     return _bt_from_page(results[0])
 
 
@@ -1974,7 +1981,8 @@ def update_breakout_track(page_id: str, fields: dict) -> None:
     않는다 - 최초 값 보존은 그쪽 규칙이고 여기는 그 규칙을 강제하지
     않는 얇은 계층이다. 사용자 관망메모만 구조적으로 막는다.
     """
-    props = _bt_properties(fields)
+    immutable = {'first_detected_at', 'first_threshold', 'first_price', 'first_atr', 'ticker', 'name'}
+    props = _bt_properties({k: v for k, v in fields.items() if k not in immutable})
     if not props:
         return
     resp = requests.patch(f"{NOTION_BASE}/pages/{page_id}", headers=_headers(),

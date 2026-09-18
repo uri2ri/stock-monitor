@@ -1971,7 +1971,8 @@ def get_mock_account_corr_units(account_size: float, holdings: list[dict]) -> di
     return {"total_units": total, "groups": groups}
 
 
-def _track_no_entry(candidate: dict, reason: str) -> None:
+def _track_no_entry(candidate: dict, reason: str,
+                    category: str = breakout_tracker.OUTCOME_NOT_ORDERED) -> None:
     """돌파 후 미진입 추적에 "주문을 내지 않았다"는 실제 실행 결과를 남긴다.
 
     여기서 남기는 건 **실제로 일어난 일**뿐이다 - 게이트가 막았다는
@@ -1982,13 +1983,14 @@ def _track_no_entry(candidate: dict, reason: str) -> None:
     """
     ticker = str(candidate.get("ticker") or "").strip()
     if ticker:
-        breakout_tracker.record_no_entry(ticker, reason)
+        breakout_tracker.record_no_entry(ticker, reason, category=category)
 
 
-def _track_no_entry_all(candidates: list[dict], reason: str) -> None:
+def _track_no_entry_all(candidates: list[dict], reason: str,
+                        category: str = breakout_tracker.OUTCOME_NOT_ORDERED) -> None:
     """후보 전체가 같은 사유로 한 번에 막힌 경우 (일일 상한 0 등)."""
     for candidate in candidates:
-        _track_no_entry(candidate, reason)
+        _track_no_entry(candidate, reason, category)
 
 
 def select_buy_candidates(access_token: str, candidates: list[dict]) -> list[dict]:
@@ -2016,7 +2018,8 @@ def select_buy_candidates(access_token: str, candidates: list[dict]) -> list[dic
         # 정상값일 때 남은 자리(remaining_slots)가 소진돼 0이 되는 경우와는
         # 다르다 - 그쪽은 기존 후보별 검사·알림 흐름을 그대로 탄다.
         logger.info("신규매수 운영 보류: 일일 상한 0")
-        _track_no_entry_all(candidates, "신규매수 일일 상한 0 (운영 보류)")
+        _track_no_entry_all(candidates, "신규매수 일일 상한 0 (운영 보류)",
+                            breakout_tracker.OUTCOME_CAP)
         return []
 
     balance = get_account_balance(access_token)
@@ -2137,6 +2140,7 @@ def select_buy_candidates(access_token: str, candidates: list[dict]) -> list[dic
                 f"상관군 캡(상관군 {sector or '미분류'} "
                 f"{group_units_after:g}/{core.MAX_UNITS_GROUP} · "
                 f"전체 {total_units_after:g}/{core.MAX_UNITS_TOTAL})",
+                breakout_tracker.OUTCOME_CAP,
             )
             continue
 
@@ -2146,6 +2150,7 @@ def select_buy_candidates(access_token: str, candidates: list[dict]) -> list[dic
             _track_no_entry(
                 c,
                 f"현금 부족(필요 {unit_amount:,.0f}원 · 가용 {cash_remaining:,.0f}원)",
+                breakout_tracker.OUTCOME_CASH,
             )
             continue
 
@@ -2154,7 +2159,8 @@ def select_buy_candidates(access_token: str, candidates: list[dict]) -> list[dic
         if len(selected) >= remaining_slots:
             _notify_failure(f"[KIS] 우선순위 밀림: {name}")
             _track_no_entry(
-                c, f"우선순위 밀림(오늘 남은 신규매수 자리 {remaining_slots}건 소진)")
+                c, f"우선순위 밀림(오늘 남은 신규매수 자리 {remaining_slots}건 소진)",
+                breakout_tracker.OUTCOME_CAP)
             continue
 
         # 8. 투자경고종목 등 시장경보 + 주문 직전 가격 재검증 - 여기까지
@@ -2344,7 +2350,8 @@ def run_auto_trade(candidates: list[dict]) -> None:
         status = result.get("status")
         ticker = c["ticker"]
         if status == "sent":
-            breakout_tracker.record_order_sent(ticker, result.get("order_no", ""))
+            breakout_tracker.record_order_sent(ticker, result.get("order_no", ""),
+                                               order_day=_today())
             _record_holding_after_buy(token, c, result.get("order_no", ""))
         elif status == "rejected":
             breakout_tracker.record_no_entry(
@@ -2395,7 +2402,8 @@ def _record_holding_after_buy(access_token: str, c: dict, order_no: str) -> None
     # 수량이 0이면 "주문접수"인 채로 남겨 둔다 - 여기서 닫아버리면
     # 체결되지 않은 주문을 체결로 기록하게 된다.
     if filled_qty > 0:
-        breakout_tracker.record_fill(ticker, filled_qty, buy_price)
+        breakout_tracker.record_fill(ticker, filled_qty, buy_price,
+                                     order_no=order_no, order_day=_today())
 
     memo = f"자동매수 편입 (주문번호 {order_no}) - 손절선은 다음 아침 배치부터 트레일링"
     # 산 이유: intraday_watch.judge()가 이미 계산해 candidates에 실어 보낸

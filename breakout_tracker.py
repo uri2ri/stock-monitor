@@ -30,7 +30,10 @@ breakout_tracker.py – 돌파 후 미진입 추적
 from __future__ import annotations
 
 import logging
+import math
 import os
+import threading
+from copy import deepcopy
 from datetime import date, datetime
 from typing import Any, Optional
 from zoneinfo import ZoneInfo
@@ -55,6 +58,8 @@ CLOSE_USER = "사용자종료"
 # 체결되지 않았다는 뜻이 아니다.
 OUTCOME_NONE = ""
 OUTCOME_NOT_ORDERED = "미주문"      # 게이트에서 막혀 주문 자체를 내지 않음
+OUTCOME_CASH = "자금부족"
+OUTCOME_CAP = "상한제한"
 OUTCOME_UNKNOWN = "상태미확인"       # 주문이 나갔는지 알 수 없음
 OUTCOME_ORDER_SENT = "주문접수"      # 주문은 접수됨 (체결 여부는 별개)
 OUTCOME_FILLED = "체결확인"          # 체결 수량을 확인함
@@ -65,6 +70,8 @@ OUTCOME_FILLED = "체결확인"          # 체결 수량을 확인함
 _OUTCOME_RANK = {
     OUTCOME_NONE: 0,
     OUTCOME_NOT_ORDERED: 1,
+    OUTCOME_CASH: 1,
+    OUTCOME_CAP: 1,
     OUTCOME_UNKNOWN: 2,
     OUTCOME_ORDER_SENT: 3,
     OUTCOME_FILLED: 4,
@@ -72,7 +79,7 @@ _OUTCOME_RANK = {
 
 # 미진입이 "확정"이라고 말할 수 있는 결과는 이것뿐이다. 나머지는
 # 화면에서 미확인으로 표시한다.
-CONFIRMED_NO_ENTRY = (OUTCOME_NOT_ORDERED,)
+CONFIRMED_NO_ENTRY = (OUTCOME_NOT_ORDERED, OUTCOME_CASH, OUTCOME_CAP)
 
 LEVEL_ABOVE = "최초선위"
 LEVEL_BELOW = "최초선아래"
@@ -86,6 +93,83 @@ REFRESH_OK = "갱신됨"
 REFRESH_FAIL = "갱신실패"
 
 DB_ENV = "NOTION_BREAKOUT_TRACK_DB_ID"
+_pending = []
+_held_tickers = set()
+_sent_tickers = set()
+_lock = threading.RLock()
+
+
+# 확정 종가로 인정하는 가장 이른 시각(KST). 정규장 종가가 확정되기 전의
+# 같은 날짜 데이터를 "그날 종가"로 받아들이지 않기 위한 하한선이다.
+CLOSE_CONFIRMED_HOUR = 16
+
+
+def _as_date(value):
+    """date/datetime 어느 쪽이 와도 KST 기준 날짜로 맞춘다."""
+    if isinstance(value, datetime):
+        return value.astimezone(KST).date()
+    return value
+
+
+def positive(value):
+    try:
+        return not isinstance(value, bool) and math.isfinite(float(value)) and float(value) > 0
+    except (TypeError, ValueError):
+        return False
+
+
+def local_time(value=None):
+    value = value or datetime.now(KST)
+    if value.tzinfo is None:
+        raise ValueError('시각에는 시간대가 필요합니다')
+    return value.astimezone(KST)
+
+
+def flush_events():
+    """매매 종료 후에만 호출. 목록/보유 조회 각 1회, 행별 쓰기 최대 1회.
+
+    Notion은 원자적 유일키가 없다. 운영 writer는 auto-trade 단일 workflow로
+    제한한다. 생성 응답 유실 시 같은 회차에서 재시도하지 않는다.
+    """
+    global _store, _held_tickers
+    with _lock:
+        events = list(_pending)
+        _pending.clear()
+        if not events or not is_enabled():
+            return
+        if isinstance(_store, NotionStore) and os.environ.get('BREAKOUT_TRACK_WRITER') != 'auto-trade':
+            logger.warning('돌파 추적 쓰기 비활성: 단일 writer 설정 필요')
+            return
+        backend = _store
+        try:
+            import notion_repo
+            rows = backend.list_tracks(include_closed=True)
+            holdings = notion_repo.fetch_holdings()
+            _held_tickers = {inp.ticker for _, inp in holdings}
+            memory = MemoryStore()
+            memory.rows = {r['key']: deepcopy(r) for r in rows}
+            original = deepcopy(memory.rows)
+            _store = memory
+            for row in memory.rows.values():
+                if (row.get('status') == STATUS_ACTIVE and row['ticker'] in _held_tickers
+                        and row.get('outcome') in (OUTCOME_NONE, *CONFIRMED_NO_ENTRY)):
+                    row.update(outcome=OUTCOME_UNKNOWN,
+                               outcome_reason='보유 관측 - 이 추적 건의 주문 체결 증빙은 미확인')
+            for label, fn, default in events:
+                _guard(label, fn, default)
+            for key, row in memory.rows.items():
+                if key not in original:
+                    backend.create(row)
+                else:
+                    changes = {k: v for k, v in row.items() if original[key].get(k) != v}
+                    if changes:
+                        backend.update(key, changes)
+        except Exception as e:
+            logger.warning('돌파 추적 저장 미완료(매매 결과 변경 없음): %s', e)
+        finally:
+            _store = backend
+            _held_tickers = set()
+            _sent_tickers.clear()
 
 
 # ── 저장소 ──────────────────────────────────────────────────
@@ -108,10 +192,11 @@ class MemoryStore:
         return True
 
     def find_active(self, ticker: str) -> Optional[dict]:
-        for key, row in self.rows.items():
-            if row.get("ticker") == ticker and row.get("status") == STATUS_ACTIVE:
-                return {**row, "key": key}
-        return None
+        matches = [{**row, 'key': key} for key, row in self.rows.items()
+                   if row.get('ticker') == ticker and row.get('status') == STATUS_ACTIVE]
+        if len(matches) > 1:
+            raise ValueError('복수 활성 추적 - 자동 갱신 보류')
+        return matches[0] if matches else None
 
     def list_tracks(self, include_closed: bool = False) -> list[dict]:
         out = []
@@ -188,8 +273,16 @@ def _guard(label: str, fn, default):
     if not is_enabled():
         logger.debug("돌파 추적 비활성 - %s 건너뜀", label)
         return default
+    if isinstance(_store, NotionStore) and not label.startswith('목록'):
+        # 주문 경로에서는 메모리에만 적는다. 네트워크/재시도/스레드 대기 없음.
+        if len(_pending) < 10000:
+            _pending.append((label, fn, default))
+        else:
+            logger.warning('돌파 추적 이벤트 한도 초과 - 기록 생략')
+        return default
     try:
-        return fn()
+        with _lock:
+            return fn()
     except Exception as e:                  # noqa: BLE001
         logger.warning("돌파 추적 %s 실패 - 기존 동작에는 영향 없습니다: %s",
                        label, e)
@@ -210,7 +303,7 @@ def _first_values_ok(hit: dict) -> bool:
             number = float(value)
         except (TypeError, ValueError):
             return False
-        if number <= 0:
+        if isinstance(value, bool) or not positive(number):
             return False
     return True
 
@@ -239,7 +332,7 @@ def record_breakout(hit: dict, now: Optional[datetime] = None) -> Optional[str]:
         )
         return None
 
-    now = now or datetime.now(KST)
+    now = local_time(now)
 
     def _do() -> Optional[str]:
         existing = _store.find_active(ticker)
@@ -248,6 +341,8 @@ def record_breakout(hit: dict, now: Optional[datetime] = None) -> Optional[str]:
             # 돌파해도 활성 추적 건의 "최초"는 처음 감지한 그 값이다.
             logger.info("[%s] 이미 추적 중 - 최초 기록을 유지합니다 (key=%s)",
                         ticker, existing.get("key"))
+            return None
+        if ticker in _held_tickers and ticker not in _sent_tickers:
             return None
         record = {
             "ticker": ticker,
@@ -283,8 +378,8 @@ def record_breakouts(hits: list[dict], now: Optional[datetime] = None) -> int:
 # ── 실행 결과(미진입 사유) ──────────────────────────────────
 
 def _set_outcome(ticker: str, outcome: str, reason: str,
-                 now: Optional[datetime] = None) -> bool:
-    now = now or datetime.now(KST)
+                 now: Optional[datetime] = None, *, order_no='', order_day=None) -> bool:
+    now = local_time(now)
 
     def _do() -> bool:
         track = _store.find_active(ticker)
@@ -294,16 +389,27 @@ def _set_outcome(ticker: str, outcome: str, reason: str,
             # 모르는 채로 기록이 생기면 갱신 자체가 성립하지 않는다.
             logger.debug("[%s] 활성 추적 기록 없음 - 결과 기록 생략", ticker)
             return False
+        first = track.get('first_detected_at')
+        if not isinstance(first, datetime) or now < first:
+            return False
+        if order_no and (order_day != now.date() or order_day < first.date()):
+            return False
         current = track.get("outcome") or OUTCOME_NONE
+        if (current == outcome and track.get('outcome_reason') == reason
+                and (not order_no or (track.get('order_no') == order_no and track.get('order_day') == order_day))):
+            return False
         if _OUTCOME_RANK.get(outcome, 0) < _OUTCOME_RANK.get(current, 0):
             logger.debug("[%s] 기존 결과(%s)가 더 확정적이라 %s로 덮지 않습니다",
                          ticker, current, outcome)
             return False
-        _store.update(track["key"], {
+        fields = {
             "outcome": outcome,
             "outcome_reason": reason,
             "outcome_at": now.astimezone(KST),
-        })
+        }
+        if order_no:
+            fields.update(order_no=order_no, order_day=order_day)
+        _store.update(track['key'], fields)
         logger.info("[%s] 돌파 추적 결과 기록: %s (%s)", ticker, outcome, reason)
         return True
 
@@ -311,9 +417,20 @@ def _set_outcome(ticker: str, outcome: str, reason: str,
 
 
 def record_no_entry(ticker: str, reason: str,
-                    now: Optional[datetime] = None) -> bool:
-    """주문을 내지 않았음이 확실한 경우. reason은 실제 실행 결과여야 한다."""
-    return _set_outcome(ticker, OUTCOME_NOT_ORDERED, reason, now)
+                    now: Optional[datetime] = None,
+                    category: str = OUTCOME_NOT_ORDERED) -> bool:
+    """주문을 내지 않았음이 확실한 경우. reason은 실제 실행 결과여야 한다.
+
+    category는 **호출부가 명시**한다. 사유 문구를 문자열로 뒤져서 분류하지
+    않는다 - 증권사 거부 메시지에 '상한가' 같은 말이 섞여 들어오면 자금·
+    상한과 무관한 건이 상한제한으로 둔갑한다. 분류를 모르면 기본값
+    '미주문'으로 남기고, 무엇이 막았는지는 reason 원문이 그대로 들고 있다.
+    """
+    if category not in CONFIRMED_NO_ENTRY:
+        logger.warning("[%s] 알 수 없는 미진입 분류(%s) - 미주문으로 기록합니다",
+                       ticker, category)
+        category = OUTCOME_NOT_ORDERED
+    return _set_outcome(ticker, category, reason, now)
 
 
 def record_unknown(ticker: str, reason: str,
@@ -323,17 +440,24 @@ def record_unknown(ticker: str, reason: str,
 
 
 def record_order_sent(ticker: str, order_no: str = "",
-                      now: Optional[datetime] = None) -> bool:
+                      now: Optional[datetime] = None, *, order_day=None) -> bool:
     """주문 접수. 체결 여부는 아직 모른다 - 추적을 닫지 않는다."""
-    detail = f"주문 접수(주문번호 {order_no})" if order_no else "주문 접수"
-    return _set_outcome(ticker, OUTCOME_ORDER_SENT, detail, now)
+    now = local_time(now)
+    if not order_no:
+        return record_unknown(ticker, '주문번호 없는 접수 결과 - 확인 필요', now)
+    _sent_tickers.add(ticker)
+    detail = f"주문 접수(주문번호 {order_no})"
+    return _set_outcome(ticker, OUTCOME_ORDER_SENT, detail, now,
+                        order_no=order_no, order_day=order_day or now.date())
 
 
 def record_fill(ticker: str, qty: Optional[int] = None,
                 price: Optional[float] = None,
-                now: Optional[datetime] = None) -> bool:
+                now: Optional[datetime] = None, *, order_no='', order_day=None) -> bool:
     """체결 확인. 근거 있는 종료 사건이므로 추적을 닫는다."""
-    now = now or datetime.now(KST)
+    now = local_time(now)
+    if not order_no or not order_day or not positive(qty) or not float(qty).is_integer() or not positive(price):
+        return False
     parts = ["체결 확인"]
     if qty:
         parts.append(f"{int(qty):,}주")
@@ -345,6 +469,10 @@ def record_fill(ticker: str, qty: Optional[int] = None,
         track = _store.find_active(ticker)
         if not track:
             logger.debug("[%s] 활성 추적 기록 없음 - 체결 기록 생략", ticker)
+            return False
+        if (track.get('order_no') != order_no or track.get('order_day') != order_day
+                or now < track['first_detected_at']
+                or order_day < track['first_detected_at'].date()):
             return False
         _store.update(track["key"], {
             "outcome": OUTCOME_FILLED,
@@ -363,7 +491,7 @@ def record_fill(ticker: str, qty: Optional[int] = None,
 def close_track(ticker: str, reason: str = CLOSE_USER,
                 now: Optional[datetime] = None) -> bool:
     """사용자 종료 등 근거 있는 사건으로 추적을 닫는다."""
-    now = now or datetime.now(KST)
+    now = local_time(now)
 
     def _do() -> bool:
         track = _store.find_active(ticker)
@@ -383,6 +511,21 @@ def close_track(ticker: str, reason: str = CLOSE_USER,
 # ── 일별 갱신 ───────────────────────────────────────────────
 
 def compute_daily(track: dict, row: Optional[dict]) -> dict:
+    try:
+        for key in ('first_threshold', 'first_atr'):
+            if not positive(track.get(key)):
+                raise ValueError(f'최초 값 확인 불가: {key}')
+        if row is not None:
+            for key in ('close', 'atr20', 'high20', 'high20_next'):
+                if not positive(row.get(key)):
+                    raise ValueError(f'종가/기준선 확인 불가: {key}')
+        return _compute_daily(track, row)
+    except (KeyError, TypeError, ValueError, OverflowError) as e:
+        return {'refresh_state': REFRESH_FAIL, 'refresh_note': str(e),
+                'level_state': LEVEL_UNKNOWN, 'new_breakout': NEW_BREAKOUT_UNKNOWN}
+
+
+def _compute_daily(track: dict, row: Optional[dict]) -> dict:
     """확정 종가 한 줄로 갱신 필드를 만든다. 저장하지 않는다(순수 계산).
 
     row는 scan_latest.csv의 한 행(dict)이다. None이면 그 종목이 스캔
@@ -431,12 +574,8 @@ def compute_daily(track: dict, row: Optional[dict]) -> dict:
 
     # "새 돌파"는 그날 종가가 그날까지의(당일 제외) 20일 고가를 넘었는가다 -
     # scan_all.py가 이미 status 칸에 같은 기준으로 적어둔 값을 그대로 읽는다.
-    status = str(row.get("status") or "")
-    if status:
-        fields["new_breakout"] = (NEW_BREAKOUT_YES if status == "돌파"
-                                  else NEW_BREAKOUT_NO)
-    else:
-        fields["new_breakout"] = NEW_BREAKOUT_UNKNOWN
+    # 당일 제외 고가로 당일 돌파를 판단. high20_next는 내일 기준선이다.
+    fields['new_breakout'] = NEW_BREAKOUT_YES if close > float(row['high20']) else NEW_BREAKOUT_NO
 
     # 최신 돌파선까지 남은 거리. 분모는 **최신 ATR**이다(최초 ATR이 아니다) -
     # "지금 기준으로 얼마나 더 가야 새 돌파인가"라서 지금의 변동성으로 재야
@@ -481,13 +620,14 @@ def refresh_from_scan(scan_frame, now: Optional[datetime] = None) -> dict:
         logger.info("%s", summary["error"])
         return summary
 
+    now = local_time(now)
     rows = scan_rows_by_ticker(scan_frame)
-    if not rows:
-        # 스캔 결과가 통째로 없다. 개별 종목의 '갱신실패'와는 다른
-        # 사건이라(인프라 문제) 기록을 일괄로 고치지 않고 그냥 멈춘다.
-        summary["error"] = "야간 스캔 결과가 비어 있어 갱신하지 않았습니다"
-        logger.warning("%s", summary["error"])
-        return summary
+    # 스캔 결과가 통째로 없는 건 종목별 사유(유동성 컷·거래정지)와 다른
+    # 사건이다. 갱신은 실패로 표시하되 종목별 원인으로 적지 않는다.
+    missing_scan = not rows
+    if missing_scan:
+        logger.warning("야간 스캔 결과가 비어 있습니다 - 활성 추적 건을 "
+                       "갱신실패로 표시하고 직전 값은 유지합니다")
 
     try:
         tracks = _store.list_tracks(include_closed=False)
@@ -504,6 +644,25 @@ def refresh_from_scan(scan_frame, now: Optional[datetime] = None) -> dict:
         row = rows.get(ticker)
         try:
             fields = compute_daily(track, row)
+            # 스캔이 통째로 비었을 때만 사유를 바꿔 단다. 최초 값이 깨져
+            # 실패한 건은 그쪽 사유를 그대로 둔다.
+            if missing_scan and fields.get('refresh_note', '').startswith('야간 스캔 결과에'):
+                fields['refresh_note'] = ("야간 스캔 결과 없음 - 전체 갱신 보류"
+                                          "(직전 값 유지)")
+            basis = fields.get('latest_date')
+            first_at = track.get('first_detected_at')
+            if basis and not isinstance(first_at, (date, datetime)):
+                fields = compute_daily(track, None)
+                fields['refresh_note'] = '최초 감지 시각 확인 불가 - 갱신 보류'
+            elif basis and (basis > now.date()
+                            or (basis == now.date() and now.hour < CLOSE_CONFIRMED_HOUR)
+                            or basis < _as_date(first_at)):
+                fields = compute_daily(track, None)
+                fields['refresh_note'] = '확정 종가 기준일/시각 검증 실패'
+            previous = track.get('latest_date')
+            if basis and previous and basis < previous:
+                fields = compute_daily(track, None)
+                fields['refresh_note'] = '이전 가격 기준일로 역행 불가 - 직전 값 유지'
         except Exception as e:              # noqa: BLE001
             logger.warning("[%s] 갱신 계산 실패: %s", ticker, e)
             summary["failed"] += 1
