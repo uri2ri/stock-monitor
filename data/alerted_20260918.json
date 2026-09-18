@@ -542,6 +542,18 @@
       "gap_atr": 0.027,
       "unit_shares": 270,
       "status": "진입가능"
+    },
+    "0007C0": {
+      "time": "13:33",
+      "name": "아크릴",
+      "sector": "IT 서비스",
+      "market": "KOSDAQ",
+      "price": 21450.0,
+      "high20": 20850.0,
+      "atr20": 1770.0,
+      "gap_atr": 0.339,
+      "unit_shares": 282,
+      "status": "진입가능"
     }
   }
 }
