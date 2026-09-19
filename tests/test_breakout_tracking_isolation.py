@@ -198,7 +198,8 @@ def test_order_path_makes_no_tracking_io_and_still_orders(monkeypatch):
 
     order.assert_called_once()
     assert touched == [], "주문 경로에서 추적 저장소를 건드리면 안 된다"
-    assert bt._pending, "기록은 큐에 쌓여 회차 끝에 처리돼야 한다"
+    import breakout_outbox
+    assert breakout_outbox.load()['events'], "기록은 로컬 영속 저널에 남아야 한다"
 
 
 def test_flush_failure_does_not_escape(monkeypatch):
@@ -214,7 +215,8 @@ def test_flush_failure_does_not_escape(monkeypatch):
     bt.record_breakout(_candidate("000390"))
     bt.flush_events()          # 예외가 나면 테스트가 실패한다
 
-    assert bt._pending == []
+    import breakout_outbox
+    assert breakout_outbox.load()['events'], '매매 종료 시 이벤트를 버리지 않는다'
 
 
 def test_intraday_run_flushes_even_when_the_round_raises(monkeypatch):

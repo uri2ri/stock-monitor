@@ -5,6 +5,7 @@ import pandas as pd
 import pytest
 import breakout_tracker as b
 import notion_repo as n
+import breakout_outbox as journal
 
 NOW = datetime(2026, 9, 18, 10, tzinfo=b.KST)
 HIT = dict(ticker='000390', name='가상종목', high20=100, price=105, atr20=5)
@@ -47,7 +48,7 @@ def test_same_process_concurrent_first_observation(store):
 
 def test_order_identity_and_new_episode(store):
     key = start()
-    b.record_order_sent('000390', 'old', NOW, order_day=NOW.date())
+    b.record_order_sent('000390', 'old', NOW, order_day=NOW.date(), qty=1)
     assert not b.record_fill('000390', 1, 105, NOW, order_no='wrong', order_day=NOW.date())
     assert not b.record_fill('000390', 1, 105, NOW, order_no='old', order_day=date(2026, 9, 17))
     assert b.record_fill('000390', 1, 105, NOW, order_no='old', order_day=NOW.date())
@@ -150,8 +151,12 @@ def test_no_io_until_flush_and_batched_writes(monkeypatch):
     read.assert_not_called()
     create.assert_not_called()
     b.flush_events()
+    read.assert_not_called()
+    journal.prepare(backend, set(), 'run1')
+    monkeypatch.setattr(backend, 'find_event', lambda _: None)
+    journal.deliver(backend, 'run1')
     read.assert_called_once()
-    n.fetch_holdings.assert_called_once()
+    n.fetch_holdings.assert_not_called()
     create.assert_called_once()
     assert create.call_args[0][0]['outcome'] == b.OUTCOME_CASH
 
@@ -166,6 +171,8 @@ def test_held_stock_not_recreated(monkeypatch):
     b.set_store(backend)
     start()
     b.flush_events()
+    journal.prepare(backend, {'000390'}, 'run1')
+    journal.deliver(backend, 'run1')
     create.assert_not_called()
 
 def test_duplicate_active_is_not_arbitrarily_selected(store):
@@ -224,6 +231,8 @@ def test_held_ticker_is_not_retracked_after_close(monkeypatch):
 
     b.record_breakout(HIT, NOW + timedelta(days=3))
     b.flush_events()
+    journal.prepare(backend, {'000390'}, 'run1')
+    journal.deliver(backend, 'run1')
 
     create.assert_not_called()
     update.assert_not_called()

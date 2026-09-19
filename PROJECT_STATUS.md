@@ -1,5 +1,12 @@
 # PROJECT STATUS
 
+## P1 영속 이벤트 복구 — 2026-09-20 (운영 미반영)
+
+- 메모리 큐를 비우던 경로를 로컬 fsync 저널과 별도 prepare/checkpoint/deliver 단계로 교체했다. Git commit/push가 실행 간 복원 원본이며 14일 artifact는 보조 수동 복구 자료다.
+- 관측ID 대조로 생성 응답 유실을 확인한다. 확인 불가 생성은 자동 재전송하지 않고 `ambiguous`로 보류한다. 성공한 계획만 제거하며 최초값과 실패 이벤트를 보존한다.
+- 로컬 저장 실패, 첫 push 전 강제 종료, checkpoint 실패 시 유실/수동 복구 한계를 [BREAKOUT_DURABILITY.md](BREAKOUT_DURABILITY.md)에 명시했다. 무손실을 보장한다고 보고하지 않는다.
+- 별도 추적 DB 속성/시크릿 준비 필요. 운영 DB 변경·실제 API 시험·워크플로 실행·병합·배포 없음. 후속 P2 검증 결과는 상단 최신 기록에 추가한다.
+
 ## 돌파 후 미진입 추적 마무리 — 2026-09-19 (운영 미반영)
 
 이전 세션이 남긴 WIP(`acead1a` + worktree 미커밋분)를 이어받아 마감했다.

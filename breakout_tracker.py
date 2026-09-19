@@ -63,6 +63,7 @@ OUTCOME_CAP = "상한제한"
 OUTCOME_UNKNOWN = "상태미확인"       # 주문이 나갔는지 알 수 없음
 OUTCOME_ORDER_SENT = "주문접수"      # 주문은 접수됨 (체결 여부는 별개)
 OUTCOME_FILLED = "체결확인"          # 체결 수량을 확인함
+OUTCOME_PARTIAL = "부분체결"
 
 # 결과를 덮어쓸 때의 우선순위. 약한 결과가 강한 결과를 지우지 못하게
 # 한다 - 특히 "주문접수/상태미확인"을 나중의 "미주문"으로 덮으면 화면에
@@ -75,6 +76,7 @@ _OUTCOME_RANK = {
     OUTCOME_UNKNOWN: 2,
     OUTCOME_ORDER_SENT: 3,
     OUTCOME_FILLED: 4,
+    OUTCOME_PARTIAL: 4,
 }
 
 # 미진입이 "확정"이라고 말할 수 있는 결과는 이것뿐이다. 나머지는
@@ -97,6 +99,8 @@ _pending = []
 _held_tickers = set()
 _sent_tickers = set()
 _lock = threading.RLock()
+_capture_event_id = None
+_strict_replay = False
 
 
 # 확정 종가로 인정하는 가장 이른 시각(KST). 정규장 종가가 확정되기 전의
@@ -126,50 +130,10 @@ def local_time(value=None):
 
 
 def flush_events():
-    """매매 종료 후에만 호출. 목록/보유 조회 각 1회, 행별 쓰기 최대 1회.
-
-    Notion은 원자적 유일키가 없다. 운영 writer는 auto-trade 단일 workflow로
-    제한한다. 생성 응답 유실 시 같은 회차에서 재시도하지 않는다.
-    """
-    global _store, _held_tickers
-    with _lock:
-        events = list(_pending)
-        _pending.clear()
-        if not events or not is_enabled():
-            return
-        if isinstance(_store, NotionStore) and os.environ.get('BREAKOUT_TRACK_WRITER') != 'auto-trade':
-            logger.warning('돌파 추적 쓰기 비활성: 단일 writer 설정 필요')
-            return
-        backend = _store
-        try:
-            import notion_repo
-            rows = backend.list_tracks(include_closed=True)
-            holdings = notion_repo.fetch_holdings()
-            _held_tickers = {inp.ticker for _, inp in holdings}
-            memory = MemoryStore()
-            memory.rows = {r['key']: deepcopy(r) for r in rows}
-            original = deepcopy(memory.rows)
-            _store = memory
-            for row in memory.rows.values():
-                if (row.get('status') == STATUS_ACTIVE and row['ticker'] in _held_tickers
-                        and row.get('outcome') in (OUTCOME_NONE, *CONFIRMED_NO_ENTRY)):
-                    row.update(outcome=OUTCOME_UNKNOWN,
-                               outcome_reason='보유 관측 - 이 추적 건의 주문 체결 증빙은 미확인')
-            for label, fn, default in events:
-                _guard(label, fn, default)
-            for key, row in memory.rows.items():
-                if key not in original:
-                    backend.create(row)
-                else:
-                    changes = {k: v for k, v in row.items() if original[key].get(k) != v}
-                    if changes:
-                        backend.update(key, changes)
-        except Exception as e:
-            logger.warning('돌파 추적 저장 미완료(매매 결과 변경 없음): %s', e)
-        finally:
-            _store = backend
-            _held_tickers = set()
-            _sent_tickers.clear()
+    """Trading finalizer: append already fsynced events; network worker is separate."""
+    # Workflow pushes the journal before the worker touches Notion. No network
+    # or retry here, even when trading exited early or raised an exception.
+    return None
 
 
 # ── 저장소 ──────────────────────────────────────────────────
@@ -237,6 +201,10 @@ class NotionStore:
         import notion_repo
         return notion_repo.create_breakout_track(record)
 
+    def find_event(self, event_id: str):
+        import notion_repo
+        return notion_repo.find_breakout_event(event_id)
+
     def update(self, key: str, fields: dict) -> None:
         import notion_repo
         notion_repo.update_breakout_track(key, fields)
@@ -268,22 +236,28 @@ def is_enabled() -> bool:
 
 # ── 안전 래퍼 ───────────────────────────────────────────────
 
-def _guard(label: str, fn, default):
+def _guard(label: str, fn, default, event=None):
     """추적 기능의 어떤 실패도 호출부로 새지 않게 막는다."""
     if not is_enabled():
         logger.debug("돌파 추적 비활성 - %s 건너뜀", label)
         return default
     if isinstance(_store, NotionStore) and not label.startswith('목록'):
-        # 주문 경로에서는 메모리에만 적는다. 네트워크/재시도/스레드 대기 없음.
-        if len(_pending) < 10000:
-            _pending.append((label, fn, default))
-        else:
-            logger.warning('돌파 추적 이벤트 한도 초과 - 기록 생략')
+        try:
+            if os.environ.get('BREAKOUT_TRACK_WRITER') != 'auto-trade':
+                return default
+            import breakout_outbox
+            if event is None:
+                raise ValueError('Missing serializable observation event')
+            breakout_outbox.append(*event)
+        except Exception as e:
+            logger.error('돌파 추적 영속 저장 실패 - 이벤트 유실 가능, 매매는 유지: %s', e)
         return default
     try:
         with _lock:
             return fn()
     except Exception as e:                  # noqa: BLE001
+        if _strict_replay:
+            raise
         logger.warning("돌파 추적 %s 실패 - 기존 동작에는 영향 없습니다: %s",
                        label, e)
         return default
@@ -345,6 +319,7 @@ def record_breakout(hit: dict, now: Optional[datetime] = None) -> Optional[str]:
         if ticker in _held_tickers and ticker not in _sent_tickers:
             return None
         record = {
+            'event_id': _capture_event_id,
             "ticker": ticker,
             "name": str(hit.get("name") or ticker),
             "first_detected_at": now.astimezone(KST),
@@ -361,7 +336,10 @@ def record_breakout(hit: dict, now: Optional[datetime] = None) -> Optional[str]:
                     f"{record['first_price']:,.0f}")
         return key
 
-    return _guard(f"최초 기록({ticker})", _do, None)
+    observation = dict(ticker=ticker, name=str(hit.get('name') or ticker),
+                       high20=float(hit['high20']), price=float(hit['price']), atr20=float(hit['atr20']))
+    return _guard(f"최초 기록({ticker})", _do, None,
+                  ('record_breakout', [observation, now], {}))
 
 
 def record_breakouts(hits: list[dict], now: Optional[datetime] = None) -> int:
@@ -378,7 +356,8 @@ def record_breakouts(hits: list[dict], now: Optional[datetime] = None) -> int:
 # ── 실행 결과(미진입 사유) ──────────────────────────────────
 
 def _set_outcome(ticker: str, outcome: str, reason: str,
-                 now: Optional[datetime] = None, *, order_no='', order_day=None) -> bool:
+                 now: Optional[datetime] = None, *, order_no='', order_day=None,
+                 identity=None) -> bool:
     now = local_time(now)
 
     def _do() -> bool:
@@ -394,6 +373,8 @@ def _set_outcome(ticker: str, outcome: str, reason: str,
             return False
         if order_no and (order_day != now.date() or order_day < first.date()):
             return False
+        if order_no and track.get('order_no') and (track['order_no'] != order_no or track.get('order_day') != order_day):
+            raise ValueError('추적 건의 기존 주문과 다른 주문 - 수동 대조 필요')
         current = track.get("outcome") or OUTCOME_NONE
         if (current == outcome and track.get('outcome_reason') == reason
                 and (not order_no or (track.get('order_no') == order_no and track.get('order_day') == order_day))):
@@ -409,11 +390,15 @@ def _set_outcome(ticker: str, outcome: str, reason: str,
         }
         if order_no:
             fields.update(order_no=order_no, order_day=order_day)
+            if identity:
+                fields.update(identity)
         _store.update(track['key'], fields)
         logger.info("[%s] 돌파 추적 결과 기록: %s (%s)", ticker, outcome, reason)
         return True
 
-    return _guard(f"결과 기록({ticker})", _do, False)
+    return _guard(f"결과 기록({ticker})", _do, False,
+                  ('_set_outcome', [ticker, outcome, reason, now],
+                   {'order_no': order_no, 'order_day': order_day, 'identity': identity}))
 
 
 def record_no_entry(ticker: str, reason: str,
@@ -440,7 +425,8 @@ def record_unknown(ticker: str, reason: str,
 
 
 def record_order_sent(ticker: str, order_no: str = "",
-                      now: Optional[datetime] = None, *, order_day=None) -> bool:
+                      now: Optional[datetime] = None, *, order_day=None,
+                      qty=None, account_type='모의', account_key='', side='매수') -> bool:
     """주문 접수. 체결 여부는 아직 모른다 - 추적을 닫지 않는다."""
     now = local_time(now)
     if not order_no:
@@ -448,7 +434,9 @@ def record_order_sent(ticker: str, order_no: str = "",
     _sent_tickers.add(ticker)
     detail = f"주문 접수(주문번호 {order_no})"
     return _set_outcome(ticker, OUTCOME_ORDER_SENT, detail, now,
-                        order_no=order_no, order_day=order_day or now.date())
+                        order_no=order_no, order_day=order_day or now.date(),
+                        identity={'order_qty': qty, 'account_type': account_type,
+                                  'account_key': account_key, 'order_side': side})
 
 
 def record_fill(ticker: str, qty: Optional[int] = None,
@@ -474,18 +462,27 @@ def record_fill(ticker: str, qty: Optional[int] = None,
                 or now < track['first_detected_at']
                 or order_day < track['first_detected_at'].date()):
             return False
+        requested = track.get('order_qty')
+        if not positive(requested) or not float(requested).is_integer() or qty > requested:
+            return False
+        partial = qty < requested
         _store.update(track["key"], {
-            "outcome": OUTCOME_FILLED,
+            "outcome": OUTCOME_PARTIAL if partial else OUTCOME_FILLED,
             "outcome_reason": detail,
             "outcome_at": now.astimezone(KST),
-            "status": STATUS_CLOSED,
-            "closed_reason": CLOSE_FILLED,
-            "closed_at": now.astimezone(KST).date(),
+            "filled_qty": qty,
+            "unverified_qty": requested - qty,
+            "execution_state": '잔여 주문 확인 필요' if partial else '전량체결확인',
+            "status": STATUS_ACTIVE if partial else STATUS_CLOSED,
+            "closed_reason": '' if partial else CLOSE_FILLED,
+            "closed_at": None if partial else now.astimezone(KST).date(),
         })
         logger.info("[%s] 돌파 추적 종료 - %s", ticker, detail)
         return True
 
-    return _guard(f"체결 기록({ticker})", _do, False)
+    return _guard(f"체결 기록({ticker})", _do, False,
+                  ('record_fill', [ticker, qty, price, now],
+                   {'order_no': order_no, 'order_day': order_day}))
 
 
 def close_track(ticker: str, reason: str = CLOSE_USER,
@@ -505,7 +502,8 @@ def close_track(ticker: str, reason: str = CLOSE_USER,
         logger.info("[%s] 돌파 추적 종료 - %s", ticker, reason)
         return True
 
-    return _guard(f"추적 종료({ticker})", _do, False)
+    return _guard(f"추적 종료({ticker})", _do, False,
+                  ('close_track', [ticker, reason, now], {}))
 
 
 # ── 일별 갱신 ───────────────────────────────────────────────

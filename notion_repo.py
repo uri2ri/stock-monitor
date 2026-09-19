@@ -1816,6 +1816,16 @@ def _datetime_val(prop: dict):
 
 # 내부 키 → (노션 칸, 변환 함수). update에서 넘어온 키만 골라 쓴다.
 _BT_WRITERS = {
+    'account_type': ('계좌구분', lambda v: _rich_text(v or '')),
+    'account_key': ('계좌연결키', lambda v: _rich_text(v or '')),
+    'order_side': ('매매구분', lambda v: _rich_text(v or '')),
+    'order_qty': ('주문수량', lambda v: {'number': v}),
+    'filled_qty': ('확인체결수량', lambda v: {'number': v}),
+    'unverified_qty': ('미확인잔여수량', lambda v: {'number': v}),
+    'execution_price': ('확인체결평균가', lambda v: {'number': v}),
+    'execution_state': ('체결확인상태', lambda v: _rich_text(v or '')),
+    'execution_checked_at': ('체결조회시각', _datetime_prop),
+    'event_id': ('관측ID', lambda v: _rich_text(v or '')),
     "order_no": (BT_ORDER_NO, lambda v: _rich_text(v or "")),
     "order_day": (BT_ORDER_DAY, _datetime_prop),
     "name": (BT_NAME, lambda v: {"title": [{"type": "text",
@@ -1866,6 +1876,16 @@ def _bt_properties(fields: dict) -> dict:
 def _bt_from_page(page: dict) -> dict:
     props = page.get("properties", {})
     return {
+        'account_type': _text(props.get('계좌구분', {})),
+        'account_key': _text(props.get('계좌연결키', {})),
+        'order_side': _text(props.get('매매구분', {})),
+        'order_qty': _number(props.get('주문수량', {})),
+        'filled_qty': _number(props.get('확인체결수량', {})),
+        'unverified_qty': _number(props.get('미확인잔여수량', {})),
+        'execution_price': _number(props.get('확인체결평균가', {})),
+        'execution_state': _text(props.get('체결확인상태', {})),
+        'execution_checked_at': _datetime_val(props.get('체결조회시각', {})),
+        'event_id': _text(props.get('관측ID', {})),
         "order_no": _text(props.get(BT_ORDER_NO, {})).strip(),
         "order_day": _date_val(props.get(BT_ORDER_DAY, {})),
         "key": page["id"],
@@ -1957,6 +1977,21 @@ def fetch_breakout_tracks(include_closed: bool = False) -> list[dict]:
     return out
 
 
+def find_breakout_event(event_id: str):
+    if not event_id:
+        raise ValueError('Missing observation ID')
+    response = requests.post(
+        f"{NOTION_BASE}/databases/{os.environ[BREAKOUT_TRACK_DB_ENV]}/query",
+        headers=_headers(), json={'filter': {'property': '관측ID',
+        'rich_text': {'equals': event_id}}, 'page_size': 2}, timeout=10)
+    response.raise_for_status()
+    data = response.json()
+    rows = data['results']
+    if data.get('has_more') or len(rows) > 1:
+        raise ValueError('Duplicate observation ID; manual review required')
+    return _bt_from_page(rows[0]) if rows else None
+
+
 def create_breakout_track(record: dict) -> str:
     """추적 기록 생성. 중복 확인은 호출부가 먼저 한다 (find_active_breakout_track)."""
     db_id = os.environ[BREAKOUT_TRACK_DB_ENV]
@@ -1981,7 +2016,7 @@ def update_breakout_track(page_id: str, fields: dict) -> None:
     않는다 - 최초 값 보존은 그쪽 규칙이고 여기는 그 규칙을 강제하지
     않는 얇은 계층이다. 사용자 관망메모만 구조적으로 막는다.
     """
-    immutable = {'first_detected_at', 'first_threshold', 'first_price', 'first_atr', 'ticker', 'name'}
+    immutable = {'event_id', 'first_detected_at', 'first_threshold', 'first_price', 'first_atr', 'ticker', 'name'}
     props = _bt_properties({k: v for k, v in fields.items() if k not in immutable})
     if not props:
         return

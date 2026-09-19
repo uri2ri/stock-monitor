@@ -3,6 +3,8 @@
 .streamlit/secrets.toml
 .venv*
 __pycache__/
+data/breakout_outbox.lock
+data/breakout_outbox.json.*
 *.pyc
 data/backtest_ohlcv.parquet
 data/sector_map_*.json

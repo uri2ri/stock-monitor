@@ -39,6 +39,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          # Restore the latest committed outbox, not the queued trigger's stale SHA.
+          ref: ${{ github.ref_name }}
 
       - name: Set up Python 3.11
         uses: actions/setup-python@v5
@@ -50,6 +53,7 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Watch for breakouts and auto-trade
+        id: watch
         if: ${{ inputs.mode == 'watch' || inputs.mode == '' }}
         env:
           # 유일한 추적 생성 writer. 기존 auto-trade concurrency 그룹으로 직렬화.
@@ -76,6 +80,53 @@ jobs:
           # 미설정이면 조회가 실패해 fail-closed로 매수가 막힌다.
           NOTION_AUTO_TRADE_CONTROL_DB_ID: ${{ secrets.NOTION_AUTO_TRADE_CONTROL_DB_ID }}
         run: python intraday_watch.py
+
+      - name: Prepare durable observation plans (no external writes)
+        id: track_prepare
+        if: ${{ always() && (steps.watch.outcome == 'success' || steps.watch.outcome == 'failure') }}
+        env:
+          BREAKOUT_TRACK_WRITER: auto-trade
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+          NOTION_DB_ID: ${{ secrets.NOTION_DB_ID }}
+          NOTION_BREAKOUT_TRACK_DB_ID: ${{ secrets.NOTION_BREAKOUT_TRACK_DB_ID }}
+        run: python tools/breakout_worker.py prepare
+
+      - name: Push observation checkpoint BEFORE Notion delivery
+        id: track_checkpoint
+        if: ${{ always() && (steps.watch.outcome == 'success' || steps.watch.outcome == 'failure') }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if [ -f data/breakout_outbox.json ]; then
+            git add data/breakout_outbox.json
+          fi
+          if ! git diff --cached --quiet; then
+            git commit -m "chore(tracking): durable pre-delivery checkpoint [skip ci]"
+          fi
+          git pull --rebase --autostash origin ${{ github.ref_name }}
+          git push origin HEAD:${{ github.ref_name }}
+
+      - name: Deliver checkpointed observations
+        id: track_deliver
+        if: ${{ always() && steps.track_prepare.outcome == 'success' && steps.track_checkpoint.outcome == 'success' }}
+        timeout-minutes: 3
+        env:
+          KIS_APP_KEY: ${{ secrets.KIS_APP_KEY }}
+          KIS_APP_SECRET: ${{ secrets.KIS_APP_SECRET }}
+          KIS_ACCOUNT: ${{ secrets.KIS_ACCOUNT }}
+          BREAKOUT_TRACK_WRITER: auto-trade
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+          NOTION_BREAKOUT_TRACK_DB_ID: ${{ secrets.NOTION_BREAKOUT_TRACK_DB_ID }}
+        run: python tools/breakout_worker.py deliver
+
+      - name: Preserve outbox artifact for failed checkpoint recovery
+        if: ${{ always() && (steps.watch.outcome == 'success' || steps.watch.outcome == 'failure') }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: breakout-outbox-${{ github.run_id }}-${{ github.run_attempt }}
+          path: data/breakout_outbox.json
+          if-no-files-found: ignore
+          retention-days: 14
 
       # kis_client.py의 __main__ 블록(삼성전자 1주 모의매수 단발 테스트)을
       # 그대로 돌린다 - 돌파감시·시간게이트·자금게이트를 거치지 않는
@@ -140,11 +191,14 @@ jobs:
       # 알림 이력만 커밋한다 (intraday.yml과 같은 방식). 자동주문 기록은
       # 노션에 남으므로 이 저장소에는 커밋할 게 없다.
       - name: Commit alert log
-        if: success()
+        if: ${{ always() && (steps.watch.outcome == 'success' || steps.watch.outcome == 'failure') }}
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add data/alerted_*.json 2>/dev/null || true
+          if [ -f data/breakout_outbox.json ]; then
+            git add data/breakout_outbox.json
+          fi
           if git diff --cached --quiet; then
             echo "새 알림 없음 – 커밋하지 않습니다."
             exit 0
