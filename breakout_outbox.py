@@ -159,7 +159,7 @@ def prepare(backend, holdings, owner):
                 data['plans'].append({'id': uuid4().hex, 'owner': owner, 'events': ids,
                     'record': row, 'page_id': key if key in original else None,
                     'fields': {k: v for k, v in row.items() if original.get(key, {}).get(k) != v},
-                    'state': 'prepared'})
+                    'state': 'queued'})
             data['events'] = [e for e in data['events'] if e['id'] not in acknowledged]
             save(data)
         finally:
@@ -192,7 +192,7 @@ def _rotated(data, cursor, items):
     return items
 
 
-def deliver(backend, owner):
+def deliver(backend, owner, checkpoint=None):
     """Caller has pushed this prepared journal. Bounded attempts, per-plan ACK.
 
     A prior run's create is never reissued. An empty lookup is NOT proof that
@@ -227,9 +227,13 @@ def deliver(backend, owner):
                         if (found.get('ticker') != row['ticker']
                                 or found.get('first_detected_at') != row['first_detected_at']):
                             raise ValueError('Observation identity mismatch')
-                    elif plan['state'] == 'prepared' and plan['owner'] == owner:
+                    elif plan['state'] == 'queued' or (plan['state'] == 'prepared' and plan['owner'] == owner):
+                        if checkpoint is None:
+                            raise RuntimeError('Durable pre-POST checkpoint is required')
                         plan['state'] = 'creating'
+                        plan['owner'] = owner
                         save(data)  # local write-ahead before external POST
+                        checkpoint()  # Must reach durable remote storage BEFORE POST.
                         backend.create(row)
                     else:
                         plan['state'] = 'ambiguous'

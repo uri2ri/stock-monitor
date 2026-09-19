@@ -45,6 +45,13 @@ def observe(ticker='000390', now=AT, price=105):
                                             price=price, atr20=5), now], {})
 
 
+def deliver(backend, owner):
+    # Model the remote checkpoint independently of the local journal.
+    def checkpoint():
+        backend.checkpoint = deepcopy(j.load())
+    return j.deliver(backend, owner, checkpoint=checkpoint)
+
+
 def test_read_failure_retry_preserves_earliest(monkeypatch):
     backend = Backend()
     observe()
@@ -54,7 +61,7 @@ def test_read_failure_retry_preserves_earliest(monkeypatch):
             j.prepare(backend, set(), '1')
     observe(now=AT + timedelta(days=1), price=130)
     j.prepare(backend, set(), '2')
-    j.deliver(backend, '2')
+    deliver(backend, '2')
     row = next(iter(backend.rows.values()))
     assert (row['first_detected_at'], row['first_price'], row['first_atr']) == (AT, 105, 5)
     assert not j.load()['events']
@@ -75,12 +82,11 @@ def test_saved_response_lost_never_creates_twice():
     backend.lose_response = True
     observe()
     j.prepare(backend, set(), '1')
-    checkpoint = deepcopy(j.load())
-    assert j.deliver(backend, '1') == 1
+    assert deliver(backend, '1') == 1
     # Simulate final git push failure: next runner restores pre-delivery checkpoint.
-    j.save(checkpoint)
+    j.save(backend.checkpoint)
     j.prepare(backend, set(), '2')
-    assert j.deliver(backend, '2') == 0
+    assert deliver(backend, '2') == 0
     assert len(backend.calls) == len(backend.rows) == 1
     assert not j.load()['events']
 
@@ -90,9 +96,9 @@ def test_ambiguous_not_found_is_not_resent():
     backend.fail.add('000390')
     observe()
     j.prepare(backend, set(), '1')
-    j.deliver(backend, '1')
+    deliver(backend, '1')
     backend.fail.clear()
-    j.deliver(backend, '2')
+    deliver(backend, '2')
     assert len(backend.calls) == 1
     assert j.load()['plans'][0]['state'] == 'ambiguous'
     assert len(j.load()['events']) == 1
@@ -103,7 +109,7 @@ def test_partial_success_keeps_only_failed_events():
     good, bad = observe('000001'), observe('000002')
     backend.fail.add('000002')
     j.prepare(backend, set(), '1')
-    j.deliver(backend, '1')
+    deliver(backend, '1')
     assert [e['id'] for e in j.load()['events']] == [bad]
     assert backend.calls == ['000001', '000002']
 
@@ -155,7 +161,7 @@ def test_prepare_rotates_past_100_pending_events_after_restart():
     restart_process()
     j.prepare(backend, set(), '2')
     assert j.load()['plans'][0]['events'] == [good]
-    j.deliver(backend, '2')
+    deliver(backend, '2')
     assert [e['id'] for e in j.load()['events']] == pending
     assert j.load()['events'] == original[:100]
     assert backend.calls == ['999999']
@@ -171,14 +177,14 @@ def test_deliver_rotates_past_20_ambiguous_plans_after_restart():
         plan['state'] = 'ambiguous'
     j.save(data)
     original = deepcopy(data['plans'][:20])
-    j.deliver(backend, 'owner')
+    deliver(backend, 'owner')
     assert not backend.calls
     restart_process()
-    j.deliver(backend, 'owner')
+    deliver(backend, 'next-owner')
     assert backend.calls == ['000020']
     assert j.load()['plans'] == original
     restart_process()
-    j.deliver(backend, 'next-owner')
+    deliver(backend, 'third-owner')
     assert backend.calls == ['000020']
 
 
@@ -195,11 +201,11 @@ def test_rotated_followup_cannot_overtake_first_observation():
     assert [e['id'] for e in j.load()['events']] == [first, followup]
     restart_process()
     j.prepare(backend, set(), '2')
-    j.deliver(backend, '2')
+    deliver(backend, '2')
     row = next(iter(backend.rows.values()))
     assert (row['first_detected_at'], row['first_price']) == (AT, 105)
     j.prepare(backend, set(), '3')
-    j.deliver(backend, '3')
+    deliver(backend, '3')
     assert not j.load()['events']
     assert backend.calls == ['000001']
 
@@ -218,6 +224,83 @@ def test_rotated_plan_cannot_overtake_pending_same_ticker():
     data['deliver_cursor'] = first['id']
     j.save(data)
     restart_process()
-    j.deliver(backend, 'owner')
+    deliver(backend, 'owner')
     assert not backend.calls
     assert len(j.load()['plans']) == 2
+
+
+def test_queued_plan_requires_remote_checkpoint():
+    backend = Backend()
+    observe()
+    j.prepare(backend, set(), 'old')
+    j.deliver(backend, 'new')
+    assert not backend.calls
+    assert j.load()['plans'][0]['state'] == 'queued'
+
+
+@pytest.mark.parametrize('remote_saved', [False, True])
+def test_checkpoint_failure_never_posts_and_remote_restart_is_safe(remote_saved):
+    backend = Backend()
+    observe()
+    j.prepare(backend, set(), 'old')
+    remote = deepcopy(j.load())
+
+    def failing_checkpoint():
+        nonlocal remote
+        if remote_saved:
+            remote = deepcopy(j.load())
+        raise TimeoutError('push response lost')
+
+    j.deliver(backend, 'new', checkpoint=failing_checkpoint)
+    assert not backend.calls
+    j.save(remote)
+    restart_process()
+    deliver(backend, 'third')
+    assert len(backend.calls) == (0 if remote_saved else 1)
+
+
+def test_lost_post_and_failed_final_push_never_resends_even_same_owner():
+    backend = Backend()
+    backend.fail.add('000390')
+    observe()
+    j.prepare(backend, set(), 'owner')
+    deliver(backend, 'owner')
+    assert backend.checkpoint['plans'][0]['state'] == 'creating'
+    j.save(backend.checkpoint)
+    restart_process()
+    backend.fail.clear()
+    deliver(backend, 'owner')
+    deliver(backend, 'next-owner')
+    assert backend.calls == ['000390']
+
+
+def test_legacy_prepared_from_previous_owner_stays_ambiguous():
+    backend = Backend()
+    observe()
+    j.prepare(backend, set(), 'old')
+    data = j.load()
+    data['plans'][0]['state'] = 'prepared'
+    j.save(data)
+    deliver(backend, 'new')
+    assert not backend.calls
+    assert j.load()['plans'][0]['state'] == 'ambiguous'
+
+
+def test_worker_checkpoint_orders_commit_before_push(monkeypatch, tmp_path):
+    from tools import breakout_worker as worker
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setenv('BREAKOUT_OUTBOX_PATH', str(tmp_path / 'data/breakout_outbox.json'))
+    monkeypatch.setenv('GITHUB_REF_NAME', 'test-branch')
+    run = Mock()
+    monkeypatch.setattr(worker.subprocess, 'run', run)
+    worker.checkpoint_create()
+    commands = [c.args[0] for c in run.call_args_list]
+    assert [c[1] for c in commands] == ['add', 'commit', 'push']
+    assert '--only' in commands[1]
+    assert commands[2] == ['git', 'push', 'origin', 'HEAD:refs/heads/test-branch']
+    assert all(c.kwargs['check'] and c.kwargs['timeout'] <= 30 for c in run.call_args_list)
+    run.reset_mock()
+    run.side_effect = subprocess.CalledProcessError(1, 'git')
+    with pytest.raises(subprocess.CalledProcessError):
+        worker.checkpoint_create()
+    assert run.call_count == 1

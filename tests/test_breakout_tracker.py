@@ -154,7 +154,7 @@ def test_no_io_until_flush_and_batched_writes(monkeypatch):
     read.assert_not_called()
     journal.prepare(backend, set(), 'run1')
     monkeypatch.setattr(backend, 'find_event', lambda _: None)
-    journal.deliver(backend, 'run1')
+    journal.deliver(backend, 'run1', checkpoint=lambda: None)
     read.assert_called_once()
     n.fetch_holdings.assert_not_called()
     create.assert_called_once()
@@ -172,7 +172,7 @@ def test_held_stock_not_recreated(monkeypatch):
     start()
     b.flush_events()
     journal.prepare(backend, {'000390'}, 'run1')
-    journal.deliver(backend, 'run1')
+    journal.deliver(backend, 'run1', checkpoint=lambda: None)
     create.assert_not_called()
 
 def test_duplicate_active_is_not_arbitrarily_selected(store):
@@ -232,7 +232,7 @@ def test_held_ticker_is_not_retracked_after_close(monkeypatch):
     b.record_breakout(HIT, NOW + timedelta(days=3))
     b.flush_events()
     journal.prepare(backend, {'000390'}, 'run1')
-    journal.deliver(backend, 'run1')
+    journal.deliver(backend, 'run1', checkpoint=lambda: None)
 
     create.assert_not_called()
     update.assert_not_called()

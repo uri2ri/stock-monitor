@@ -11,6 +11,26 @@ import breakout_outbox as journal
 import breakout_tracker as tracker
 
 
+def checkpoint_create():
+    """Push the creating marker; any failure prevents the external POST.
+
+    No rebase/force: concurrent remote changes must fail closed. The existing
+    workflow owns serialization and configures the git identity beforehand.
+    """
+    relative = journal.path().resolve().relative_to(Path.cwd().resolve())
+    if relative.as_posix() != 'data/breakout_outbox.json':
+        raise RuntimeError('Unexpected production journal path')
+    branch = os.environ.get('GITHUB_REF_NAME', '')
+    if not branch:
+        raise RuntimeError('Missing checkpoint branch')
+    subprocess.run(['git', 'add', '--', str(relative)], check=True, timeout=15)
+    subprocess.run(['git', 'commit', '--only', '-m',
+                    'chore(tracking): pre-POST intent [skip ci]', '--', str(relative)],
+                   check=True, timeout=15)
+    subprocess.run(['git', 'push', 'origin', f'HEAD:refs/heads/{branch}'],
+                   check=True, timeout=30)
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('phase', choices=['prepare', 'deliver'])
@@ -31,7 +51,7 @@ def main():
             committed = subprocess.check_output(['git', 'show', 'HEAD:data/breakout_outbox.json'])
             if committed != journal.path().read_bytes():
                 raise RuntimeError('Journal is not checkpointed; refusing external writes')
-            journal.deliver(backend, owner)
+            journal.deliver(backend, owner, checkpoint=checkpoint_create)
         # Runs on quiet rounds too. Isolated from all trading decisions.
         import breakout_reconcile
         breakout_reconcile.run(backend)
