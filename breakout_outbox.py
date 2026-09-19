@@ -136,6 +136,13 @@ def prepare(backend, holdings, owner):
                 if not changed:
                     # Verified no-op; do not drop events attached to a pending write.
                     active = memory.find_active(ticker)
+                    if not active:
+                        # No target is not a successful save. This can be a held
+                        # ticker or an orphan outcome whose observation was lost.
+                        # Retain the evidence instead of inventing a new episode.
+                        blocked_tickers.add(ticker)
+                        log.warning('Observation target unresolved; retained %s', event['id'])
+                        continue
                     if active and active['key'] in groups:
                         groups[active['key']].append(event['id'])
                     else:

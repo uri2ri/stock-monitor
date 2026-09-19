@@ -127,3 +127,12 @@ def test_corrupt_journal_is_not_overwritten():
     with pytest.raises(ValueError):
         observe()
     assert j.path().read_bytes() == before
+
+
+def test_outcome_without_observation_is_retained():
+    ident = j.append('_set_outcome', ['000390', b.OUTCOME_ORDER_SENT, 'sent', AT],
+                     {'order_no': '123', 'order_day': AT.date()})
+    backend = Backend()
+    j.prepare(backend, set(), '1')
+    assert [e['id'] for e in j.load()['events']] == [ident]
+    assert not backend.calls
