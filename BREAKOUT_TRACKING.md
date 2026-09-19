@@ -28,13 +28,14 @@
 | --- | --- | --- |
 | `NOTION_BREAKOUT_TRACK_DB_ID` | auto-trade / daily / nightly-scan / 웹앱 | 기능 비활성 |
 | `NOTION_TOKEN` | 위와 같음 (기존 시크릿 재사용) | 기능 비활성 |
-| `BREAKOUT_TRACK_WRITER` | **auto-trade 워크플로에만** `auto-trade` | 추적 행을 만들거나 고치지 않는다(읽기는 그대로) |
+| `BREAKOUT_TRACK_WRITER` | **auto-trade 워크플로에만** `auto-trade` | 매매 경로의 관측 이벤트를 저널에 추가하지 않는다 |
 
 `BREAKOUT_TRACK_WRITER`는 **쓰기 주체를 하나로 묶는 장치**다. Notion에는 원자적
 유일키가 없어서 "조회 후 생성"만으로는 동시 실행에서 같은 돌파가 두 건으로
-갈라질 수 있다. 그래서 생성·갱신은 이미 `concurrency` 그룹으로 직렬화돼 있는
-auto-trade 워크플로 하나만 하도록 막았다. 다른 프로세스에서 기록을 시도하면
-경고만 남기고 쓰지 않는다.
+갈라질 수 있다. 그래서 이미 `concurrency` 그룹으로 직렬화돼 있는
+auto-trade 워크플로 하나가 최초 생성과 주문 결과 반영을 담당한다. 다른
+프로세스의 매매 관측 이벤트는 저널에 추가되지 않는다. 야간 종가 갱신은
+별도 nightly-scan 경로에서 최신 가격 관련 필드만 갱신하며, 웹앱은 읽기 전용이다.
 
 이건 **직렬화에 기댄 완화책이지 원자적 보장이 아니다.** 같은 워크플로를
 강제로 병렬 실행하면 중복이 생길 수 있다. 생성 응답 유실은 영속 관측ID 조회로
@@ -201,6 +202,9 @@ streamlit run tools/breakout_preview.py
 ```
 
 ## 7. 아직 안 한 것
+
+아래 운영 설정 상태는 구현 당시 기록이다. 현재 외부 DB·시크릿을 재조회하여
+확인한 결과가 아니다. 최신 적용 전 점검 범위는 [운영 적용 점검](BREAKOUT_READINESS.md)을 따른다.
 
 - 운영 Notion DB를 만들지 않았다. 시크릿도 넣지 않았다.
 - 워크플로는 코드에 배선만 해 뒀고 수동 실행하지 않았다.
