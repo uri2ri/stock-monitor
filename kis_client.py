@@ -42,6 +42,7 @@ from zoneinfo import ZoneInfo
 
 import requests
 
+import breakout_tracker
 import core
 import kakao
 import notion_repo
@@ -1157,30 +1158,18 @@ def _record_ledger_after_sell(
     reason: str, order_no: str, today: date, confirmed_fill: Optional[dict] = None,
     estimated_price: bool = False,
 ) -> bool:
-    """자동매도로 청산한 포지션을 매매일지에 1행 남긴다.
-
-    fail-open이다: 여기서 실패해도 매도는 이미 체결됐으니 되돌리지 않는다.
-    대신 카톡으로 알린다 - 매도는 나갔는데 기록이 없는 건 감사 공백이라
-    조용히 넘어가면 안 된다. 반복 실패는 1시간 억제 대상이다.
-
-    청산가는 실제 체결가를 조회해 쓴다(시장가라 판정 시점 현재가와 어긋날
-    수 있다). R배수가 이 값에서 나오므로 가능한 한 정확해야 한다 -
-    조회가 안 되면 판정 시점 현재가로 폴백한다.
-
-    estimated_price=True면 체결 조회를 아예 다시 하지 않고 ref_price를 그대로
-    청산가로 쓴다(_settle_sell_by_balance 전용 - 이미 조회가 안 되는 게
-    확인된 상태라 또 부르는 건 시간만 쓴다). 대신 추정치임을 메모에 남긴다.
-    """
-    exit_price = ref_price
-    if not estimated_price:
-        try:
-            time.sleep(1)  # 체결 처리 대기
-            fill = confirmed_fill or (get_order_execution(access_token, order_no) if order_no else None)
-            if fill and fill.get("avg_price"):
-                exit_price = float(fill["avg_price"])
-        except Exception as e:              # noqa: BLE001
-            logger.warning("[%s] 매도 체결가 조회 실패 - 판정 시점 현재가로 기록합니다: %s",
-                           inp.ticker, e)
+    """확인된 주문 체결가/수량만 일지에 기록한다. 참고가 폴백은 금지한다."""
+    if estimated_price:
+        return False
+    try:
+        fill = confirmed_fill or (get_order_execution(access_token, order_no, order_day=today) if order_no else None)
+        if (not fill or not _valid_sell_qty(fill.get("filled_qty"))
+                or fill["filled_qty"] != qty or not _is_valid_price(fill.get("avg_price"))):
+            return False
+        exit_price = float(fill["avg_price"])
+    except Exception as e:
+        logger.warning("[%s] 매도 체결 증빙 부족 - 일지 기록 보류: %s", inp.ticker, e)
+        return False
 
     # 진입일 - HoldingInput은 매수일을 안 들고 있어(core.py는 건드리지
     # 않는다) 점검표 행에서 따로 조회한다. 실패해도 None을 돌려주므로
@@ -1301,56 +1290,13 @@ def _recover_closed_sell(token: str, order: dict) -> bool:
 
 def _settle_sell_by_balance(token: str, page_id: str, inp, order: dict,
                              order_day: date) -> None:
-    """체결 조회로 끝내 확인이 안 되는 이전 거래일 매도를 잔고를 근거로 확정한다.
-
-    체결 조회(`get_order_execution`)가 실제로 체결된 주문을 계속 "미체결"로
-    돌려주는 일이 있다 - 2026-09-17 GS(주문번호 0000006229)가 그랬다. 매도
-    직후 D+2 가용현금이 매도대금만큼 늘었는데도 일별주문체결조회는 그 주문을
-    잡아주지 않았고, 그 결과 점검표는 계속 "보유", 주문은 "주문중"으로 남아
-    매 회차 "이전 거래일 매도 미완료" 경고만 반복됐다(장부 공백 + 알림 소음).
-
-    조회를 믿지 못할 때 남는 유일한 독립 증거가 증권사 잔고다: 이 계좌에
-    해당 종목이 한 주도 없으면 주문 수량(= 주문 시점 매도가능수량 전량)이
-    전부 나갔다는 뜻이다. 잔고가 남아 있으면 진짜 미체결·부분체결이므로
-    기존대로 사람 확인 경고를 올린다.
-
-    당일 주문에는 쓰지 않는다(호출부에서 이전 거래일만 넘긴다) - 장중에는
-    아직 체결 처리 중일 수 있어 잔고만으로 단정하면 안 된다.
-
-    한계: 체결가를 알 수 없어 주문 시 기록해둔 참고가(주문가)로 적는다.
-    R배수·손익이 이 값에서 나오므로 매매일지 메모에 추정치임을 남기고 카톡도
-    한 번 보낸다 - 사람이 실제 체결가를 알면 고칠 수 있어야 한다. 사람이
-    같은 종목을 수동으로 처분해 잔고가 0이 된 경우도 이 경로를 타는데,
-    그때도 "판 건 맞고 가격만 추정"이라 장부를 닫는 편이 낫다고 본다.
-    """
-    ref_price = order.get('price')
-    if not _is_valid_price(ref_price):
-        raise ValueError('이전 거래일 매도 미완료 - 주문 참고가 없어 청산가 추정 불가, 수동 확인 필요')
-
+    """잔고 관측은 체결 증빙이 아니다. 미확정 주문과 재주문 차단을 유지한다."""
     balance = get_account_balance(token)
     if any(h['ticker'] == inp.ticker and h['qty'] > 0 for h in balance['holdings']):
-        raise ValueError('이전 거래일 매도 미완료 - 취소/잔여수량 수동 확인 필요')
+        raise ValueError('이전 거래일 매도 미완료 - 잔여 보유 확인, 체결/취소 수동 확인 필요')
+    raise ValueError('잔고 없음 확인 - 주문 체결수량·체결가·체결일 및 회계 확인 미완료; 성공 확정 보류')
 
-    qty = int(order['qty'])
-    logger.warning(
-        '[%s] 체결 조회는 미체결이나 잔고에 없음 - 전량 체결로 확정합니다'
-        ' (주문 %s주 %s, 청산가는 주문 참고가 %s원 추정)',
-        inp.ticker, qty, order_day, f"{float(ref_price):,.0f}",
-    )
-    if not _record_ledger_after_sell(
-        token, page_id, inp, qty=qty, ref_price=float(ref_price),
-        reason=order['reason'], order_no=order['order_no'], today=order_day,
-        estimated_price=True,
-    ):
-        return
-    notion_repo.close_auto_holding(page_id)
-    notion_repo.update_order_record(order['page_id'], status='성공',
-                                    order_no=order['order_no'], reason=order['reason'])
-    _notify_warning_throttled(
-        f'sell_settled_estimate:{inp.ticker}',
-        f'[KIS] {inp.name} 매도 체결 확인 조회가 끝내 안 돼 잔고 기준으로 청산 확정했습니다 '
-        f'({qty}주, {order_day}). 청산가는 주문 시 참고가 {float(ref_price):,.0f}원으로 '
-        f'기록한 추정치이니 실제 체결가를 아시면 매매일지를 고쳐주세요.')
+
 
 
 def _reconcile_sell(token: str, page_id: str, inp, order: dict) -> None:
@@ -1782,11 +1728,18 @@ def _same_order_no(response_odno, wanted: str) -> bool:
 
 
 def get_order_execution(access_token: str, order_no: str,
-                        *, order_day: Optional[date] = None) -> dict | None:
+                        *, order_day: Optional[date] = None,
+                        tracking_identity: Optional[dict] = None) -> dict | None:
     """지정일(기본 오늘) 주문 체결 조회. 체결 전이거나 못 찾으면 None."""
     app_key = os.environ["KIS_APP_KEY"]
     app_secret = os.environ["KIS_APP_SECRET"]
     cano, acnt_prdt_cd = _parse_account(os.environ["KIS_ACCOUNT"])
+    if tracking_identity:
+        if (tracking_identity.get('account_type') != ACCOUNT_TYPE
+                or tracking_identity.get('order_side') != '매수'
+                or not tracking_identity.get('account_key')
+                or tracking_identity['account_key'] != tracking_account_key()):
+            raise ValueError('추적 주문 계좌/매매 구분 불일치')
     today = (order_day or _today()).strftime("%Y%m%d")
 
     headers = {
@@ -1844,9 +1797,11 @@ def get_order_execution(access_token: str, order_no: str,
         # 똑같이 None이지만 로그로는 구분해 남긴다.
         logger.info("체결 조회: 주문번호 미발견 (조회 %d건, 조회일 %s)",
                     len(rows), today)
-        return None
+        return {'state': 'not_found'} if tracking_identity else None
 
     row = matched[0]
+    if tracking_identity:
+        return _tracking_execution_row(row, tracking_identity, today)
     filled_qty = int(row.get("tot_ccld_qty") or 0)
     if filled_qty <= 0:
         return None
@@ -1854,6 +1809,28 @@ def get_order_execution(access_token: str, order_no: str,
         "filled_qty": filled_qty,
         "avg_price": float(row.get("avg_prvs") or 0),
     }
+
+
+def tracking_account_key():
+    """Opaque configuration binding, never store account numbers or credentials."""
+    import hashlib
+    account, key = os.environ.get('KIS_ACCOUNT', ''), os.environ.get('KIS_APP_KEY', '')
+    return hashlib.sha256((account + '|' + key).encode()).hexdigest() if account and key else ''
+
+
+def _tracking_execution_row(row, expected, day):
+    if (row.get('pdno') != expected['ticker'] or row.get('sll_buy_dvsn_cd') != '02'
+            or row.get('ord_dt') != day):
+        raise ValueError('추적 주문 종목/매수 구분/주문일 불일치')
+    requested = float(row.get('ord_qty', 'nan'))
+    filled = float(row.get('tot_ccld_qty', 'nan'))
+    price = float(row.get('avg_prvs') or 0)
+    if (not _valid_sell_qty(requested) or requested != expected.get('order_qty')
+            or not math.isfinite(filled) or filled < 0 or not filled.is_integer()
+            or filled > requested or (filled > 0 and not _is_valid_price(price))):
+        raise ValueError('추적 주문 체결수량/체결가 증빙 불일치')
+    return {'state': 'full' if filled == requested else ('partial' if filled else 'unfilled'),
+            'filled_qty': int(filled), 'avg_price': price}
 
 
 # ── 자금 게이트 ─────────────────────────────────────────────
@@ -2025,6 +2002,28 @@ def get_mock_account_corr_units(account_size: float, holdings: list[dict]) -> di
     return {"total_units": total, "groups": groups}
 
 
+def _track_no_entry(candidate: dict, reason: str,
+                    category: str = breakout_tracker.OUTCOME_NOT_ORDERED) -> None:
+    """돌파 후 미진입 추적에 "주문을 내지 않았다"는 실제 실행 결과를 남긴다.
+
+    여기서 남기는 건 **실제로 일어난 일**뿐이다 - 게이트가 막았다는
+    사실과 그 사유. 추정하거나 대표 사유로 뭉뚱그리지 않는다.
+
+    실패·미설정은 breakout_tracker 안에서 흡수된다. 이 호출의 성패는
+    매수 판정·주문 경로에 아무 영향을 주지 않는다 (반환값도 안 본다).
+    """
+    ticker = str(candidate.get("ticker") or "").strip()
+    if ticker:
+        breakout_tracker.record_no_entry(ticker, reason, category=category)
+
+
+def _track_no_entry_all(candidates: list[dict], reason: str,
+                        category: str = breakout_tracker.OUTCOME_NOT_ORDERED) -> None:
+    """후보 전체가 같은 사유로 한 번에 막힌 경우 (일일 상한 0 등)."""
+    for candidate in candidates:
+        _track_no_entry(candidate, reason, category)
+
+
 def select_buy_candidates(access_token: str, candidates: list[dict]) -> list[dict]:
     """매수 후보를 자금 게이트로 거른다. 실제 주문은 걸지 않는다 (호출자 몫).
 
@@ -2050,6 +2049,8 @@ def select_buy_candidates(access_token: str, candidates: list[dict]) -> list[dic
         # 정상값일 때 남은 자리(remaining_slots)가 소진돼 0이 되는 경우와는
         # 다르다 - 그쪽은 기존 후보별 검사·알림 흐름을 그대로 탄다.
         logger.info("신규매수 운영 보류: 일일 상한 0")
+        _track_no_entry_all(candidates, "신규매수 일일 상한 0 (운영 보류)",
+                            breakout_tracker.OUTCOME_CAP)
         return []
 
     balance = get_account_balance(access_token)
@@ -2060,6 +2061,7 @@ def select_buy_candidates(access_token: str, candidates: list[dict]) -> list[dic
     except Exception as e:
         _notify_warning_throttled(WARN_ORDER_STATUS_UNKNOWN,
                                   f'[KIS] 미확인 매도 조회 실패 - 신규매수 보류: {e}')
+        _track_no_entry_all(candidates, "미확인 매도 조회 실패 - 신규매수 보류")
         return []
 
     corr = get_mock_account_corr_units(account_size, balance["holdings"])
@@ -2088,6 +2090,7 @@ def select_buy_candidates(access_token: str, candidates: list[dict]) -> list[dic
             WARN_ORDER_STATUS_UNKNOWN,
             "[KIS] ⚠ 주문 상태 조회 실패 — 안전을 위해 주문 중단",
         )
+        _track_no_entry_all(candidates, "주문 상태 조회 실패 - 안전을 위해 주문 중단")
         return []
 
     remaining_slots = max(0, MAX_ORDERS_PER_DAY - already_success)
@@ -2097,6 +2100,7 @@ def select_buy_candidates(access_token: str, candidates: list[dict]) -> list[dic
         name, price, atr = c["name"], c["price"], c["atr20"]
         if c['ticker'] in pending_sell_tickers:
             logger.info('[%s] 미확인 매도 기록 - 신규매수 보류', name)
+            _track_no_entry(c, "미확인 매도 기록 있음 - 신규매수 보류")
             continue
 
         # 2. 이미 보유 중인 종목인지 확인 - 아래 5번 상관군 캡은 "이 종목의
@@ -2117,15 +2121,18 @@ def select_buy_candidates(access_token: str, candidates: list[dict]) -> list[dic
             msg = f"[KIS] 주문 직전 재검증 - 기존 보유 여부 확인 실패, 신규매수 보류: {name}"
             logger.warning("%s: %s", msg, e)
             _notify_failure(msg)
+            _track_no_entry(c, "기존 보유 여부 확인 실패 - 신규매수 보류")
             continue
         if already_held:
             logger.info("[%s] 이미 자동 보유 중 - 신규매수 후보에서 제외"
                         "(추가매수는 run_auto_pyramid 소관)", name)
+            _track_no_entry(c, "이미 자동 보유 중 - 신규매수 대상 아님")
             continue
 
         # 3. 가격 상한
         if price > MAX_STOCK_PRICE:
             _notify_failure(f"[KIS] 가격 상한 초과: {name}")
+            _track_no_entry(c, f"가격 상한 초과(상한 {MAX_STOCK_PRICE:,.0f}원)")
             continue
 
         # 4. 유닛금액 과다 - 핵심 게이트. 유닛주수는 스캔 시점 값을 재사용하지
@@ -2134,6 +2141,7 @@ def select_buy_candidates(access_token: str, candidates: list[dict]) -> list[dic
         unit_shares = core.calc_position(atr, account_size).unit_shares
         if unit_shares <= 0:
             _notify_failure(f"[KIS] 유닛 계산 불가(ATR 이상): {name}")
+            _track_no_entry(c, "유닛 계산 불가(ATR 이상)")
             continue
         unit_amount = unit_shares * price
         ratio = unit_amount / account_size if account_size > 0 else float("inf")
@@ -2144,6 +2152,7 @@ def select_buy_candidates(access_token: str, candidates: list[dict]) -> list[dic
             msg = f"[KIS] 유닛금액 과다(계좌 {ratio * 100:.1f}%): {name}"
             logger.info(msg)
             _notify_failure(msg)
+            _track_no_entry(c, f"유닛금액 과다(계좌 {ratio * 100:.1f}%)")
             continue
 
         # 5. 상관군 캡 (종목당 4유닛 · 상관군당 6유닛 · 전체 12유닛)
@@ -2157,17 +2166,32 @@ def select_buy_candidates(access_token: str, candidates: list[dict]) -> list[dic
                 or group_units_after > core.MAX_UNITS_GROUP
                 or total_units_after > core.MAX_UNITS_TOTAL):
             _notify_failure(f"[KIS] 상관군 캡: {name}")
+            _track_no_entry(
+                c,
+                f"상관군 캡(상관군 {sector or '미분류'} "
+                f"{group_units_after:g}/{core.MAX_UNITS_GROUP} · "
+                f"전체 {total_units_after:g}/{core.MAX_UNITS_TOTAL})",
+                breakout_tracker.OUTCOME_CAP,
+            )
             continue
 
         # 6. 현금 부족 - 마지막 그물
         if unit_amount > cash_remaining:
             _notify_failure(f"[KIS] 현금 부족: {name}")
+            _track_no_entry(
+                c,
+                f"현금 부족(필요 {unit_amount:,.0f}원 · 가용 {cash_remaining:,.0f}원)",
+                breakout_tracker.OUTCOME_CASH,
+            )
             continue
 
         # 7. 일일 주문 건수 상한 - 갭이 낮은(우선순위 높은) 순으로 이미
         #    남은 자리를 다 채웠으면 나머지는 자격이 있어도 밀린다.
         if len(selected) >= remaining_slots:
             _notify_failure(f"[KIS] 우선순위 밀림: {name}")
+            _track_no_entry(
+                c, f"우선순위 밀림(오늘 남은 신규매수 자리 {remaining_slots}건 소진)",
+                breakout_tracker.OUTCOME_CAP)
             continue
 
         # 8. 투자경고종목 등 시장경보 + 주문 직전 가격 재검증 - 여기까지
@@ -2195,6 +2219,7 @@ def select_buy_candidates(access_token: str, candidates: list[dict]) -> list[dic
             msg = f"[KIS] 주문 직전 재검증 - 최신 시세 조회 실패, 신규매수 보류: {name}"
             logger.warning("%s: %s", msg, e)
             _notify_failure(msg)
+            _track_no_entry(c, "주문 직전 재검증 - 최신 시세 조회 실패")
             continue
 
         if quote["market_warned"]:
@@ -2202,6 +2227,7 @@ def select_buy_candidates(access_token: str, candidates: list[dict]) -> list[dic
                 _market_warned_reason_key(c["ticker"]),
                 f"[KIS] 투자경고종목 제외: {name}",
             )
+            _track_no_entry(c, "투자경고종목 - 신규매수 제외")
             continue
 
         # 판정(네이버 시세)과 이 시점 사이에 가격이 움직였을 수 있다 -
@@ -2214,23 +2240,28 @@ def select_buy_candidates(access_token: str, candidates: list[dict]) -> list[dic
             msg = f"[KIS] 주문 직전 재검증 - 최신가가 유효하지 않음, 신규매수 보류: {name}"
             logger.info(msg)
             _notify_failure(msg)
+            _track_no_entry(c, "주문 직전 재검증 - 최신가가 유효하지 않음")
             continue
 
         high20 = c.get("high20")
         if fresh_price > MAX_STOCK_PRICE:
             _notify_failure(f"[KIS] 주문 직전 재검증 - 가격 상한 초과: {name}")
+            _track_no_entry(c, "주문 직전 재검증 - 가격 상한 초과(최신가 기준)")
             continue
 
         if high20 is None or atr <= 0:
             msg = f"[KIS] 주문 직전 재검증 - 돌파 기준선/ATR 확인 불가, 신규매수 보류: {name}"
             logger.info(msg)
             _notify_failure(msg)
+            _track_no_entry(c, "주문 직전 재검증 - 돌파 기준선/ATR 확인 불가")
             continue
 
         if fresh_price <= high20:
             msg = f"[KIS] 주문 직전 재검증 - 돌파 유지 안 됨: {name}"
             logger.info(msg)
             _notify_failure(msg)
+            _track_no_entry(
+                c, f"주문 직전 재검증 - 돌파 유지 안 됨(최신가 {fresh_price:,.0f})")
             continue
         gap_atr_now = (fresh_price - high20) / atr
         if gap_atr_now > core.CHASE_ATR_MULT:
@@ -2238,6 +2269,7 @@ def select_buy_candidates(access_token: str, candidates: list[dict]) -> list[dic
                    f"(+{gap_atr_now:.2f}N): {name}")
             logger.info(msg)
             _notify_failure(msg)
+            _track_no_entry(c, f"주문 직전 재검증 - 추격범위 초과(+{gap_atr_now:.2f}N)")
             continue
 
         fresh_unit_amount = unit_shares * fresh_price
@@ -2248,6 +2280,9 @@ def select_buy_candidates(access_token: str, candidates: list[dict]) -> list[dic
                    f"(최신가 기준 계좌 {fresh_ratio * 100:.1f}%): {name}")
             logger.info(msg)
             _notify_failure(msg)
+            _track_no_entry(
+                c, f"주문 직전 재검증 - 유닛금액 과다(최신가 기준 계좌 "
+                   f"{fresh_ratio * 100:.1f}%)")
             continue
         # 비용 포함(수수료 근사, ORDER_COST_RATE) 현금 여력 - 이 최종
         # 재검증에만 적용한다(위 6번 게이트는 그대로 비용 미포함).
@@ -2256,6 +2291,11 @@ def select_buy_candidates(access_token: str, candidates: list[dict]) -> list[dic
             msg = f"[KIS] 주문 직전 재검증 - 현금 부족(최신가+비용 기준): {name}"
             logger.info(msg)
             _notify_failure(msg)
+            _track_no_entry(
+                c,
+                f"현금 부족(최신가+비용 {fresh_unit_amount + fresh_cost:,.0f}원 · "
+                f"가용 {cash_remaining:,.0f}원)",
+            )
             continue
 
         price = fresh_price
@@ -2298,6 +2338,7 @@ def run_auto_trade(candidates: list[dict]) -> None:
 
     if _auto_trade_paused():
         logger.info("자동매매 일시정지 - 신규 진입 건너뜀")
+        _track_no_entry_all(candidates, "자동매매 일시정지 - 신규 진입 건너뜀")
         return
 
     # 유령 행 경고는 거래 시간 게이트보다 먼저 - 장 시작 전이라도 이전에
@@ -2310,10 +2351,15 @@ def run_auto_trade(candidates: list[dict]) -> None:
             "거래 시간(%s~%s) 아님 - 자동매수 건너뜀 (현재 %s)",
             TRADE_START_TIME, TRADE_END_TIME, datetime.now(KST).strftime("%H:%M"),
         )
+        _track_no_entry_all(
+            candidates,
+            f"거래 시간({TRADE_START_TIME}~{TRADE_END_TIME}) 밖 - 자동매수 건너뜀",
+        )
         return
 
     if not _is_trading_day():
         logger.info("휴장일 - 자동매수 건너뜀 (KIS 호출 생략)")
+        _track_no_entry_all(candidates, "휴장일 - 자동매수 건너뜀")
         return
 
     token = get_access_token()
@@ -2328,8 +2374,29 @@ def run_auto_trade(candidates: list[dict]) -> None:
             name=c["name"], ref_price=c["price"],
         )
         logger.info("자동매수: %s(%s) -> %s", c["name"], c["ticker"], result)
-        if result.get("status") == "sent":
+        # 돌파 후 미진입 추적에 주문 결과를 그대로 옮긴다. "접수"와
+        # "체결"을 구분하고(체결 확인은 _record_holding_after_buy가 남긴다),
+        # 전송 중 오류처럼 주문이 나갔는지 알 수 없는 경우는 미진입으로
+        # 단정하지 않고 상태미확인으로 남긴다.
+        status = result.get("status")
+        ticker = c["ticker"]
+        if status == "sent":
+            breakout_tracker.record_order_sent(ticker, result.get("order_no", ""),
+                                               order_day=_today(), qty=c['unit_shares'],
+                                               account_type=ACCOUNT_TYPE,
+                                               account_key=tracking_account_key())
             _record_holding_after_buy(token, c, result.get("order_no", ""))
+        elif status == "rejected":
+            breakout_tracker.record_no_entry(
+                ticker, f"주문 거부: {result.get('msg', '')}".strip())
+        elif status == "blocked":
+            breakout_tracker.record_no_entry(
+                ticker, f"주문 차단: {result.get('msg', '')}".strip())
+        elif status == "error":
+            breakout_tracker.record_unknown(
+                ticker,
+                f"주문 전송 오류 - 접수 여부 확인 필요: {result.get('msg', '')}".strip(),
+            )
 
 
 def _record_holding_after_buy(access_token: str, c: dict, order_no: str) -> None:
@@ -2361,6 +2428,9 @@ def _record_holding_after_buy(access_token: str, c: dict, order_no: str) -> None
     except Exception as e:                  # noqa: BLE001
         logger.warning("[%s] 체결가 조회 실패 - 돌파 시점 현재가로 기록합니다: %s",
                        ticker, e)
+
+    # Tracking confirmation is handled by the isolated worker with full account,
+    # ticker, side, date, order number and requested-quantity validation.
 
     memo = f"자동매수 편입 (주문번호 {order_no}) - 손절선은 다음 아침 배치부터 트레일링"
     # 산 이유: intraday_watch.judge()가 이미 계산해 candidates에 실어 보낸
