@@ -136,3 +136,88 @@ def test_outcome_without_observation_is_retained():
     j.prepare(backend, set(), '1')
     assert [e['id'] for e in j.load()['events']] == [ident]
     assert not backend.calls
+
+
+def restart_process():
+    subprocess.check_call([sys.executable, '-c',
+        "import breakout_outbox as j; j.save(j.load())"])
+    importlib.reload(j)
+
+
+def test_prepare_rotates_past_100_pending_events_after_restart():
+    backend = Backend()
+    pending = [j.append('_set_outcome', [f'{i:06}', b.OUTCOME_ORDER_SENT, 'sent', AT], {})
+               for i in range(100)]
+    good = observe('999999')
+    original = deepcopy(j.load()['events'])
+    j.prepare(backend, set(), '1')
+    assert not j.load()['plans']
+    restart_process()
+    j.prepare(backend, set(), '2')
+    assert j.load()['plans'][0]['events'] == [good]
+    j.deliver(backend, '2')
+    assert [e['id'] for e in j.load()['events']] == pending
+    assert j.load()['events'] == original[:100]
+    assert backend.calls == ['999999']
+
+
+def test_deliver_rotates_past_20_ambiguous_plans_after_restart():
+    backend = Backend()
+    for i in range(21):
+        observe(f'{i:06}')
+    j.prepare(backend, set(), 'owner')
+    data = j.load()
+    for plan in data['plans'][:20]:
+        plan['state'] = 'ambiguous'
+    j.save(data)
+    original = deepcopy(data['plans'][:20])
+    j.deliver(backend, 'owner')
+    assert not backend.calls
+    restart_process()
+    j.deliver(backend, 'owner')
+    assert backend.calls == ['000020']
+    assert j.load()['plans'] == original
+    restart_process()
+    j.deliver(backend, 'next-owner')
+    assert backend.calls == ['000020']
+
+
+def test_rotated_followup_cannot_overtake_first_observation():
+    backend = Backend()
+    first = observe('000001')
+    followup = observe('000001', now=AT + timedelta(days=1), price=130)
+    data = j.load()
+    data['prepare_cursor'] = first
+    j.save(data)
+    # Starts at the followup, but must preserve the earliest price/date.
+    j.prepare(backend, {'000001'}, '1')
+    assert not j.load()['plans']
+    assert [e['id'] for e in j.load()['events']] == [first, followup]
+    restart_process()
+    j.prepare(backend, set(), '2')
+    j.deliver(backend, '2')
+    row = next(iter(backend.rows.values()))
+    assert (row['first_detected_at'], row['first_price']) == (AT, 105)
+    j.prepare(backend, set(), '3')
+    j.deliver(backend, '3')
+    assert not j.load()['events']
+    assert backend.calls == ['000001']
+
+
+def test_rotated_plan_cannot_overtake_pending_same_ticker():
+    backend = Backend()
+    observe()
+    j.prepare(backend, set(), 'owner')
+    data = j.load()
+    first = data['plans'][0]
+    first['state'] = 'ambiguous'
+    later = deepcopy(first)
+    later.update(id='later', state='prepared')
+    later['record']['event_id'] = 'later-event'
+    data['plans'].append(later)
+    data['deliver_cursor'] = first['id']
+    j.save(data)
+    restart_process()
+    j.deliver(backend, 'owner')
+    assert not backend.calls
+    assert len(j.load()['plans']) == 2

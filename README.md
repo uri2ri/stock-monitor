@@ -67,3 +67,24 @@ GitHub Actions(`.github/workflows/daily.yml`)는 KST 평일 07:00에 자동 실�
 
 Gmail 앱 비밀번호는 [Google 계정 → 보안](https://myaccount.google.com/apppasswords)에서
 2단계 인증을 켠 뒤 "앱 비밀번호"를 생성해 나오는 16자리를 `GMAIL_APP_PASSWORD`에 넣는다.
+
+## 관측 outbox 처리 순서
+
+`breakout_outbox.py`는 저널의 `prepare_cursor`와 `deliver_cursor`에 마지막으로
+검사한 항목 ID를 저장하고 다음 회차에는 그 다음부터 순환한다. 기존 저널에
+커서가 없거나 해당 항목이 완료되어 삭제됐으면 가장 오래된 항목부터 시작한다.
+원본 이벤트·계획과 최초 관측값은 재정렬하거나 변경하지 않는다.
+
+prepare는 회차당 최대 100개 이벤트, deliver는 최대 20개 계획과 60초 제한을
+유지한다. 보류·동일 종목 순서 대기 항목도 검사 건수에 포함된다. 종목별로
+앞선 미완료 이벤트/계획이 있으면 후속 항목은 처리하지 않으며, 다른 종목은
+다음 회차에서 처리 기회를 받는다. 커서는 저널과 함께 저장되므로 재시작 후에도
+이어진다. deliver는 외부 요청 전에 커서를 저장하고, prepare의 커서는 계획과
+함께 저장한다. prepare 저장 이전 중단은 외부 쓰기 없이 이전 회차를 재시도한다.
+워크플로의 기존 저널 push 절차는 그대로 필요하다.
+
+생성 결과가 불명확한 계획은 조회로만 확인하고 POST를 자동 재전송하지 않는다.
+이 변경은 조회 범위, 건수·시간 제한, 기존 생성 중복 방지 정책을 완화하지 않는다.
+
+회귀 검증: `python -m pytest tests/test_breakout_outbox.py -q`.
+전체 검증: `python -m pytest -q`.

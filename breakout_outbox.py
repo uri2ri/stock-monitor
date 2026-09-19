@@ -117,10 +117,14 @@ def prepare(backend, holdings, owner):
                            if e['operation'] == '_set_outcome' and e['args'][1] == b.OUTCOME_ORDER_SENT}
         groups, acknowledged = {}, set()
         try:
-            for event in events[:MAX_BATCH]:
+            predecessors = _predecessors(events, _event_ticker)
+            handled = set()
+            for event in _rotated(data, 'prepare_cursor', events)[:MAX_BATCH]:
+                data['prepare_cursor'] = event['id']
                 op, args, kwargs = event['operation'], event['args'], event['kwargs']
                 ticker = args[0]['ticker'] if op == 'record_breakout' else args[0]
-                if ticker in blocked_tickers:
+                if ticker in blocked_tickers or (predecessors[event['id']] is not None
+                                                and predecessors[event['id']] not in handled):
                     continue
                 before = deepcopy(memory.rows)
                 b._capture_event_id = event['id']
@@ -149,6 +153,7 @@ def prepare(backend, holdings, owner):
                         acknowledged.add(event['id'])
                 for key in changed:
                     groups.setdefault(key, []).append(event['id'])
+                handled.add(event['id'])
             for key, ids in groups.items():
                 row = memory.rows[key]
                 data['plans'].append({'id': uuid4().hex, 'owner': owner, 'events': ids,
@@ -165,6 +170,28 @@ def prepare(backend, holdings, owner):
             b._strict_replay = False
 
 
+def _event_ticker(event):
+    return event['args'][0]['ticker'] if event['operation'] == 'record_breakout' else event['args'][0]
+
+
+def _predecessors(items, ticker):
+    """Keep journal order authoritative even when the scan starts mid-queue."""
+    previous, result = {}, {}
+    for item in items:
+        symbol = ticker(item)
+        result[item['id']] = previous.get(symbol)
+        previous[symbol] = item['id']
+    return result
+
+
+def _rotated(data, cursor, items):
+    # IDs survive removals/appends. A removed cursor resumes at the oldest item.
+    for index, item in enumerate(items):
+        if item['id'] == data.get(cursor):
+            return items[index + 1:] + items[:index + 1]
+    return items
+
+
 def deliver(backend, owner):
     """Caller has pushed this prepared journal. Bounded attempts, per-plan ACK.
 
@@ -175,9 +202,14 @@ def deliver(backend, owner):
         data = load()
         started = time.monotonic()
         completed, acknowledged = set(), set()
-        for plan in data['plans'][:20]:
+        predecessors = _predecessors(data['plans'], lambda p: p['record']['ticker'])
+        for plan in _rotated(data, 'deliver_cursor', data['plans'])[:20]:
             if time.monotonic() - started > 60:
                 break
+            data['deliver_cursor'] = plan['id']
+            save(data)  # Persist scan progress before a slow/ambiguous request.
+            if predecessors[plan['id']] is not None and predecessors[plan['id']] not in completed:
+                continue
             try:
                 row = plan['record']
                 if plan['page_id']:
