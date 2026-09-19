@@ -103,3 +103,8 @@ POST 전에 중단된 경우도 보수적으로 조회·수동 확인 대상으�
 
 회귀 검증: `python -m pytest tests/test_breakout_outbox.py -q`.
 전체 검증: `python -m pytest -q`.
+
+외부 접근을 차단한 검증은 `python tools/run_offline_tests.py -q`로 실행한다.
+outbox 테스트는 임시 로컬 bare Git 원격과 새 clone으로 실제 commit/push 순서,
+push 거절 시 POST 차단, 결과 유실 후 복원 시 중복 생성 차단, 무관한 staged
+파일 제외를 검증한다. 이 테스트는 GitHub·Notion·운영 저널을 사용하지 않는다.

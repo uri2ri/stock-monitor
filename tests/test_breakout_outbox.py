@@ -304,3 +304,63 @@ def test_worker_checkpoint_orders_commit_before_push(monkeypatch, tmp_path):
     with pytest.raises(subprocess.CalledProcessError):
         worker.checkpoint_create()
     assert run.call_count == 1
+
+
+@pytest.mark.parametrize('reject_push', [False, True])
+def test_real_git_checkpoint_and_fresh_checkout(monkeypatch, tmp_path, reject_push):
+    """Use only a local bare remote, never GitHub or a production journal."""
+    from tools import breakout_worker as worker
+    remote, checkout = tmp_path / 'remote.git', tmp_path / 'writer'
+
+    def git(*args, cwd=None):
+        return subprocess.check_output(['git', *args], cwd=cwd, stderr=subprocess.PIPE)
+
+    git('init', '--bare', str(remote))
+    git('init', '-b', 'test-branch', str(checkout))
+    git('config', 'user.name', 'Outbox test', cwd=checkout)
+    git('config', 'user.email', 'outbox@example.invalid', cwd=checkout)
+    git('remote', 'add', 'origin', str(remote), cwd=checkout)
+    monkeypatch.chdir(checkout)
+    monkeypatch.setenv('BREAKOUT_OUTBOX_PATH', str(checkout / 'data/breakout_outbox.json'))
+    monkeypatch.setenv('GITHUB_REF_NAME', 'test-branch')
+    backend = Backend()
+    observe()
+    j.prepare(backend, set(), 'old-owner')
+    git('add', 'data/breakout_outbox.json', cwd=checkout)
+    git('commit', '-m', 'initial queued checkpoint', cwd=checkout)
+    git('push', 'origin', 'test-branch', cwd=checkout)
+    # Other staged files must never leak into the checkpoint commit.
+    (checkout / 'unrelated.txt').write_text('unrelated change')
+    git('add', 'unrelated.txt', cwd=checkout)
+    if reject_push:
+        git('config', 'receive.denyNonFastForwards', 'true', cwd=remote)
+        # Make the local branch diverge from the remote so the normal push fails.
+        git('commit', '--amend', '--only', '-m', 'divergent history', cwd=checkout)
+
+    original_create = backend.create
+
+    def create_after_remote_check(row):
+        import json
+        saved = json.loads(git('--git-dir', str(remote), 'show',
+                               'test-branch:data/breakout_outbox.json'), object_hook=j.decode)
+        assert saved['plans'][0]['state'] == 'creating'
+        assert saved['plans'][0]['owner'] == 'new-owner'
+        assert saved['plans'][0]['record']['first_detected_at'] == AT
+        assert b'unrelated.txt' not in git('--git-dir', str(remote), 'ls-tree',
+                                           '--name-only', 'test-branch')
+        original_create(row)
+        raise TimeoutError('response and final result push lost')
+
+    monkeypatch.setattr(backend, 'create', create_after_remote_check)
+    j.deliver(backend, 'new-owner', checkpoint=worker.checkpoint_create)
+    assert len(backend.calls) == (0 if reject_push else 1)
+    fresh = tmp_path / 'fresh'
+    git('clone', '--branch', 'test-branch', str(remote), str(fresh))
+    monkeypatch.setenv('BREAKOUT_OUTBOX_PATH', str(fresh / 'data/breakout_outbox.json'))
+    assert j.load()['plans'][0]['state'] == ('queued' if reject_push else 'creating')
+    if not reject_push:
+        # Even an empty/delayed lookup cannot authorize another POST.
+        backend.rows.clear()
+        deliver(backend, 'third-owner')
+        assert len(backend.calls) == 1
+        assert j.load()['plans'][0]['state'] == 'ambiguous'
