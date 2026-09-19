@@ -1728,11 +1728,18 @@ def _same_order_no(response_odno, wanted: str) -> bool:
 
 
 def get_order_execution(access_token: str, order_no: str,
-                        *, order_day: Optional[date] = None) -> dict | None:
+                        *, order_day: Optional[date] = None,
+                        tracking_identity: Optional[dict] = None) -> dict | None:
     """지정일(기본 오늘) 주문 체결 조회. 체결 전이거나 못 찾으면 None."""
     app_key = os.environ["KIS_APP_KEY"]
     app_secret = os.environ["KIS_APP_SECRET"]
     cano, acnt_prdt_cd = _parse_account(os.environ["KIS_ACCOUNT"])
+    if tracking_identity:
+        if (tracking_identity.get('account_type') != ACCOUNT_TYPE
+                or tracking_identity.get('order_side') != '매수'
+                or not tracking_identity.get('account_key')
+                or tracking_identity['account_key'] != tracking_account_key()):
+            raise ValueError('추적 주문 계좌/매매 구분 불일치')
     today = (order_day or _today()).strftime("%Y%m%d")
 
     headers = {
@@ -1790,9 +1797,11 @@ def get_order_execution(access_token: str, order_no: str,
         # 똑같이 None이지만 로그로는 구분해 남긴다.
         logger.info("체결 조회: 주문번호 미발견 (조회 %d건, 조회일 %s)",
                     len(rows), today)
-        return None
+        return {'state': 'not_found'} if tracking_identity else None
 
     row = matched[0]
+    if tracking_identity:
+        return _tracking_execution_row(row, tracking_identity, today)
     filled_qty = int(row.get("tot_ccld_qty") or 0)
     if filled_qty <= 0:
         return None
@@ -1800,6 +1809,28 @@ def get_order_execution(access_token: str, order_no: str,
         "filled_qty": filled_qty,
         "avg_price": float(row.get("avg_prvs") or 0),
     }
+
+
+def tracking_account_key():
+    """Opaque configuration binding, never store account numbers or credentials."""
+    import hashlib
+    account, key = os.environ.get('KIS_ACCOUNT', ''), os.environ.get('KIS_APP_KEY', '')
+    return hashlib.sha256((account + '|' + key).encode()).hexdigest() if account and key else ''
+
+
+def _tracking_execution_row(row, expected, day):
+    if (row.get('pdno') != expected['ticker'] or row.get('sll_buy_dvsn_cd') != '02'
+            or row.get('ord_dt') != day):
+        raise ValueError('추적 주문 종목/매수 구분/주문일 불일치')
+    requested = float(row.get('ord_qty', 'nan'))
+    filled = float(row.get('tot_ccld_qty', 'nan'))
+    price = float(row.get('avg_prvs') or 0)
+    if (not _valid_sell_qty(requested) or requested != expected.get('order_qty')
+            or not math.isfinite(filled) or filled < 0 or not filled.is_integer()
+            or filled > requested or (filled > 0 and not _is_valid_price(price))):
+        raise ValueError('추적 주문 체결수량/체결가 증빙 불일치')
+    return {'state': 'full' if filled == requested else ('partial' if filled else 'unfilled'),
+            'filled_qty': int(filled), 'avg_price': price}
 
 
 # ── 자금 게이트 ─────────────────────────────────────────────
@@ -2351,7 +2382,9 @@ def run_auto_trade(candidates: list[dict]) -> None:
         ticker = c["ticker"]
         if status == "sent":
             breakout_tracker.record_order_sent(ticker, result.get("order_no", ""),
-                                               order_day=_today())
+                                               order_day=_today(), qty=c['unit_shares'],
+                                               account_type=ACCOUNT_TYPE,
+                                               account_key=tracking_account_key())
             _record_holding_after_buy(token, c, result.get("order_no", ""))
         elif status == "rejected":
             breakout_tracker.record_no_entry(
@@ -2385,7 +2418,6 @@ def _record_holding_after_buy(access_token: str, c: dict, order_no: str) -> None
     buy_price = float(c["price"])
     shares = int(c["unit_shares"])
 
-    filled_qty = 0
     try:
         time.sleep(1)  # 체결 처리 대기
         fill = get_order_execution(access_token, order_no) if order_no else None
@@ -2393,17 +2425,12 @@ def _record_holding_after_buy(access_token: str, c: dict, order_no: str) -> None
             buy_price = float(fill["avg_price"])
             if fill.get("filled_qty"):
                 shares = int(fill["filled_qty"])
-                filled_qty = int(fill["filled_qty"])
     except Exception as e:                  # noqa: BLE001
         logger.warning("[%s] 체결가 조회 실패 - 돌파 시점 현재가로 기록합니다: %s",
                        ticker, e)
 
-    # 체결 수량을 실제로 확인했을 때만 추적을 닫는다. 조회가 안 됐거나
-    # 수량이 0이면 "주문접수"인 채로 남겨 둔다 - 여기서 닫아버리면
-    # 체결되지 않은 주문을 체결로 기록하게 된다.
-    if filled_qty > 0:
-        breakout_tracker.record_fill(ticker, filled_qty, buy_price,
-                                     order_no=order_no, order_day=_today())
+    # Tracking confirmation is handled by the isolated worker with full account,
+    # ticker, side, date, order number and requested-quantity validation.
 
     memo = f"자동매수 편입 (주문번호 {order_no}) - 손절선은 다음 아침 배치부터 트레일링"
     # 산 이유: intraday_watch.judge()가 이미 계산해 candidates에 실어 보낸

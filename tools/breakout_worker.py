@@ -32,6 +32,9 @@ def main():
             if committed != journal.path().read_bytes():
                 raise RuntimeError('Journal is not checkpointed; refusing external writes')
             journal.deliver(backend, owner)
+        # Runs on quiet rounds too. Isolated from all trading decisions.
+        import breakout_reconcile
+        breakout_reconcile.run(backend)
     return 0
 
 

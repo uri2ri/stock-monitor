@@ -71,6 +71,9 @@ def render(st, tracks):
     st.write(f"다음 거래일 기준선: {fmt(t.get('latest_line'))} · 거리 {fmt(t.get('dist_to_line'))}원")
     st.write('결과 사유: ' + (t.get('outcome_reason') or '기록 없음'))
     st.write(f"주문일/번호: {t.get('order_day') or '—'} / {t.get('order_no') or '—'}")
+    if t.get('order_no'):
+        st.write(f"체결 관측: {t.get('execution_state') or '조회 대기'} · 확인 {fmt(t.get('filled_qty'))}주 · 미확인 잔여 {fmt(t.get('unverified_qty'))}주")
+        st.caption('미확인 잔여는 주문수량−확인체결수량입니다. 실제 미체결 주문 존속·취소를 확정하지 않습니다.')
     if t.get('refresh_state') == bt.REFRESH_FAIL:
         st.warning('갱신 실패: ' + (t.get('refresh_note') or '원인 미확인'))
     if t.get('closed_reason'):
