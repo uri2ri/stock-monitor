@@ -53,6 +53,9 @@ ROW_FIELDS = (
     "ccld_cndt_name",   # 체결조건
 )
 
+# 매매 경로(10초)보다 길게 잡는다 - 아래 _query() 주석 참고.
+QUERY_TIMEOUT_SECONDS = 30
+
 
 def _mask(account: str) -> str:
     cano, prdt = kis_client._parse_account(account)
@@ -79,27 +82,41 @@ def main() -> int:
 
     token = kis_client.get_access_token()
 
-    # get_order_execution()과 동일한 헤더·파라미터.
-    resp = requests.get(
-        f"{kis_client.BASE_URL}/uapi/domestic-stock/v1/trading/inquire-daily-ccld",
-        headers={
-            "content-type": "application/json; charset=utf-8",
-            "authorization": f"Bearer {token}",
-            "appkey": os.environ["KIS_APP_KEY"],
-            "appsecret": os.environ["KIS_APP_SECRET"],
-            "tr_id": kis_client.INQUIRE_CCLD_TR_ID,
-        },
-        params={
-            "CANO": cano, "ACNT_PRDT_CD": acnt_prdt_cd,
-            "INQR_STRT_DT": day, "INQR_END_DT": day,
-            "SLL_BUY_DVSN_CD": "00", "INQR_DVSN": "00",
-            "PDNO": "", "CCLD_DVSN": "00",
-            "ORD_GNO_BRNO": "", "ODNO": "",
-            "INQR_DVSN_3": "00", "INQR_DVSN_1": "",
-            "CTX_AREA_FK100": "", "CTX_AREA_NK100": "",
-        },
-        timeout=10,
-    )
+    # get_order_execution()과 동일한 헤더·파라미터. 다만 타임아웃은 길게
+    # 잡고 재시도를 건다 - 2026-09-18 진단 3회가 전부 이 조회의 10초 읽기
+    # 시간초과로 끝나 정작 보려던 응답을 한 번도 못 받았다. 진단은 매매
+    # 경로가 아니라 사람이 기다리는 1회성 조회라, 실행 시간을 조금 더 쓰더라도
+    # 답을 받아오는 쪽이 낫다(워크플로 제한 5분 안에 든다).
+    def _query():
+        return requests.get(
+            f"{kis_client.BASE_URL}/uapi/domestic-stock/v1/trading/inquire-daily-ccld",
+            headers={
+                "content-type": "application/json; charset=utf-8",
+                "authorization": f"Bearer {token}",
+                "appkey": os.environ["KIS_APP_KEY"],
+                "appsecret": os.environ["KIS_APP_SECRET"],
+                "tr_id": kis_client.INQUIRE_CCLD_TR_ID,
+            },
+            params={
+                "CANO": cano, "ACNT_PRDT_CD": acnt_prdt_cd,
+                "INQR_STRT_DT": day, "INQR_END_DT": day,
+                "SLL_BUY_DVSN_CD": "00", "INQR_DVSN": "00",
+                "PDNO": "", "CCLD_DVSN": "00",
+                "ORD_GNO_BRNO": "", "ODNO": "",
+                "INQR_DVSN_3": "00", "INQR_DVSN_1": "",
+                "CTX_AREA_FK100": "", "CTX_AREA_NK100": "",
+            },
+            timeout=QUERY_TIMEOUT_SECONDS,
+        )
+
+    try:
+        resp = kis_client._read_with_retry("체결 내역 조회", _query)
+    except Exception as e:                  # noqa: BLE001
+        print(f"[조회 실패] {type(e).__name__}: {e}", file=sys.stderr)
+        print("[조회 실패] KIS 응답 자체를 못 받았다 - 이 결과만으로는 "
+              "주문번호 표기 문제인지 체결수량 응답 문제인지 가릴 수 없다.",
+              file=sys.stderr)
+        return 1
     print(f"[응답] HTTP {resp.status_code} · tr_cont={resp.headers.get('tr_cont', '')!r}")
 
     data = resp.json()
@@ -120,7 +137,7 @@ def main() -> int:
         odno = str(row.get("odno") or "")
         if odno == args.order_no:
             exact += 1
-            print(f"      → 주문번호 정확일치 (현재 코드가 잡는 행)")
+            print("      → 주문번호 정확일치 (현재 코드가 잡는 행)")
         elif odno.strip().lstrip("0") and \
                 odno.strip().lstrip("0") == args.order_no.strip().lstrip("0"):
             padded += 1

@@ -16,6 +16,7 @@ import html
 import io
 import json
 import logging
+import os
 import re
 import zipfile
 import xml.etree.ElementTree as ET
@@ -41,6 +42,7 @@ TAB_BREAKOUT = "오늘의 돌파"
 TAB_SCAN = "전종목 스캔"
 TAB_FAVORITES = "즐겨찾기"
 TAB_CALCULATOR = "계산기"
+TAB_TRACKING = "돌파 후 미진입"
 
 # [계산기] 오타 방지 경고 임계값 – 계산을 막지는 않고 문구만 띄운다.
 CALC_DROP_RATIO = 0.1     # 진입후최고가가 매수가의 이 비율 이하면 오타 의심
@@ -2164,13 +2166,33 @@ def render_calculator(capital: float) -> None:
 st.session_state.setdefault("tab", TAB_ANALYSIS)
 _tab = st.segmented_control(
     "화면",
-    (TAB_ANALYSIS, TAB_BREAKOUT, TAB_SCAN, TAB_FAVORITES, TAB_CALCULATOR),
+    (TAB_ANALYSIS, TAB_BREAKOUT, TAB_SCAN, TAB_FAVORITES, TAB_CALCULATOR, TAB_TRACKING),
     key="tab",
     label_visibility="collapsed",
 )
 
 # 선택을 해제하면 None이 온다. 그때는 직전 탭을 유지한다.
-if _tab == TAB_BREAKOUT:
+if _tab == TAB_TRACKING:
+    # 읽기 전용 화면이다. 여기서 추적 기록을 만들거나 고치지 않는다.
+    import breakout_tracker
+    from breakout_view import render
+    for key in ('NOTION_TOKEN', breakout_tracker.DB_ENV):
+        value = read_secret(key)
+        if value:
+            os.environ[key] = value
+    if not breakout_tracker.is_enabled():
+        st.info('돌파 추적 DB 미설정 — 기능 비활성')
+    else:
+        # 조회 실패를 "대상 없음"으로 보여주면 안 되므로 _guard의 빈 목록
+        # 폴백을 쓰지 않고 저장소를 직접 부른 뒤 예외를 그대로 표시한다.
+        try:
+            tracks = breakout_tracker.sort_tracks(
+                breakout_tracker.get_store().list_tracks(include_closed=True))
+        except Exception:
+            st.warning('돌파 추적 목록 조회 실패 — 대상 없음으로 확정하지 않습니다.')
+        else:
+            render(st, tracks)
+elif _tab == TAB_BREAKOUT:
     render_breakout(capital, ai_unlocked)
 elif _tab == TAB_SCAN:
     render_scan(capital, ai_unlocked)

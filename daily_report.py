@@ -20,6 +20,7 @@ try:
 except ImportError:
     pass
 
+import breakout_tracker
 import core
 from core import HoldingInput, HoldingResult, calc_portfolio_risk, evaluate_holding
 from kakao import send_kakao_message
@@ -268,8 +269,12 @@ def main() -> None:
 
     # 6) 상세 리포트 메일 전송 (실패해도 전체 실행은 계속)
     try:
+        # list_tracks()는 실패해도 빈 목록을 돌려준다 - 추적 조회 때문에
+        # 아침 리포트가 안 나가는 일은 없어야 한다.
+        tracks = breakout_tracker.list_tracks()
         send_report_mail(
-            rows, risk, has_errors, favorites=favorites, stop_updates=stop_updates
+            rows, risk, has_errors, favorites=favorites, stop_updates=stop_updates,
+            breakout_tracks=tracks,
         )
     except Exception:
         logger.exception("메일 발송 실패")
