@@ -625,12 +625,30 @@ def _run(dry_run: bool = False) -> int:
     expected_scan_date_str = (f"{expected_scan_date:%Y%m%d}"
                               if expected_scan_date else "확인불가(거래일 달력 조회 실패)")
     if scan_is_stale and not dry_run:
-        kis_client._notify_warning_throttled(
-            kis_client.WARN_STALE_SCAN,
-            f"[KIS] ⚠ 야간 스캔 기준일이 오래됐습니다"
-            f"(scan_date={scan_date_str or '없음'}, 기대 {expected_scan_date_str}) - "
-            f"신규 진입을 보류합니다. 보유 종목 청산·추가매수는 정상 작동합니다.",
-        )
+        # 휴장일·장시간 밖에는 알림을 보내지 않는다. 그 시간엔 신규 진입
+        # 자체가 일어나지 않아("보류합니다"라고 알릴 대상이 없다) -
+        # run_auto_trade가 _within_trading_hours → _is_trading_day 두 게이트로
+        # 먼저 막는다. 2026-08-22(토)에 cron-job.org가 요일을 모른 채 계속
+        # 쏴서 토큰 발급 경고가 주말 내내 반복된 전례가 있어 그 두 게이트를
+        # 만든 것인데, 이 경고만 게이트를 타지 않고 있었다. 실제로
+        # 2026-09-20(일) 10분마다 실행되며 매시간 카톡이 나갔다.
+        #
+        # 판정이 안 되면 보낸다 - _is_trading_day()는 fail-open이고,
+        # 조용해지는 쪽으로 틀리면 진짜 낡은 스캔을 놓친다. 억제되는
+        # 경우에도 logger는 매 회차 남긴다(알림만 줄이고 기록은 줄이지 않는다).
+        if kis_client._within_trading_hours() and kis_client._is_trading_day():
+            kis_client._notify_warning_throttled(
+                kis_client.WARN_STALE_SCAN,
+                f"[KIS] ⚠ 야간 스캔 기준일이 오래됐습니다"
+                f"(scan_date={scan_date_str or '없음'}, 기대 {expected_scan_date_str}) - "
+                f"신규 진입을 보류합니다. 보유 종목 청산·추가매수는 정상 작동합니다.",
+            )
+        else:
+            logger.warning(
+                "야간 스캔 기준일 오래됨(scan_date=%s, 기대=%s) - 휴장일 또는 "
+                "장시간 밖이라 카톡은 보내지 않습니다(신규 진입 자체가 없음).",
+                scan_date_str or "없음", expected_scan_date_str,
+            )
 
     watch = load_watchlist()
 

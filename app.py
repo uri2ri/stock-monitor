@@ -27,7 +27,9 @@ import pandas as pd
 import plotly.graph_objects as go
 import requests
 import streamlit as st
-from pykrx import stock as krx
+# pykrx를 직접 import하지 않는다 - KRX 로그인 실패가 import 시점에
+# 프로세스를 죽이기 때문이다(krx_session 모듈 docstring 참고).
+from krx_session import stock as krx
 
 import build_ticker_stats
 import core

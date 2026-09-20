@@ -21,7 +21,9 @@ from typing import Optional
 from zoneinfo import ZoneInfo
 
 import pandas as pd
-from pykrx import stock as krx
+# pykrx를 직접 import하지 않는다 - KRX 로그인 실패가 import 시점에
+# 프로세스를 죽이기 때문이다(krx_session 모듈 docstring 참고).
+from krx_session import stock as krx
 
 logger = logging.getLogger(__name__)
 
