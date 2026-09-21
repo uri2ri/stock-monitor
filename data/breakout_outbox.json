@@ -323,9 +323,26 @@
         "order_day": null,
         "identity": null
       }
+    },
+    {
+      "id": "9ad11994ebad4f8a8f446c1c566b5a89",
+      "operation": "_set_outcome",
+      "args": [
+        "000390",
+        "상한제한",
+        "신규매수 일일 상한 0 (운영 보류)",
+        {
+          "__datetime__": "2026-09-21T12:04:25.394682+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
     }
   ],
   "plans": [],
-  "prepare_cursor": "3bc6b4a169e74dba974f78f4f1620e09",
+  "prepare_cursor": "7a1095d937ff46b6bb968c5862944b77",
   "deliver_cursor": "7fb539c58f33441b9c0b0aded4fa73af"
 }
