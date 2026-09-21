@@ -2,23 +2,6 @@
   "version": 1,
   "events": [
     {
-      "id": "93afb4093da14ffb8c563c9cfae8cd37",
-      "operation": "record_breakout",
-      "args": [
-        {
-          "ticker": "086390",
-          "name": "유니테스트",
-          "high20": 12240.0,
-          "price": 12250.0,
-          "atr20": 806.0
-        },
-        {
-          "__datetime__": "2026-09-21T09:03:36.879134+09:00"
-        }
-      ],
-      "kwargs": {}
-    },
-    {
       "id": "b66cab78fe4f4548bae68d263d9c62b7",
       "operation": "record_breakout",
       "args": [
@@ -206,23 +189,6 @@
       }
     },
     {
-      "id": "cad4660c4a914673879fb868311e6560",
-      "operation": "_set_outcome",
-      "args": [
-        "086390",
-        "미주문",
-        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        {
-          "__datetime__": "2026-09-21T09:03:49.148806+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
       "id": "aa4f7deb81df4194a17c423be4020fc4",
       "operation": "_set_outcome",
       "args": [
@@ -344,50 +310,6 @@
   ],
   "plans": [
     {
-      "id": "78e84df1122f45afa9d8879604b302e0",
-      "owner": "35546406507:1",
-      "events": [
-        "93afb4093da14ffb8c563c9cfae8cd37",
-        "cad4660c4a914673879fb868311e6560"
-      ],
-      "record": {
-        "event_id": "93afb4093da14ffb8c563c9cfae8cd37",
-        "ticker": "086390",
-        "name": "유니테스트",
-        "first_detected_at": {
-          "__datetime__": "2026-09-21T09:03:36.879134+09:00"
-        },
-        "first_threshold": 12240.0,
-        "first_price": 12250.0,
-        "first_atr": 806.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        "outcome_at": {
-          "__datetime__": "2026-09-21T09:03:49.148806+09:00"
-        }
-      },
-      "page_id": null,
-      "fields": {
-        "event_id": "93afb4093da14ffb8c563c9cfae8cd37",
-        "ticker": "086390",
-        "name": "유니테스트",
-        "first_detected_at": {
-          "__datetime__": "2026-09-21T09:03:36.879134+09:00"
-        },
-        "first_threshold": 12240.0,
-        "first_price": 12250.0,
-        "first_atr": 806.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        "outcome_at": {
-          "__datetime__": "2026-09-21T09:03:49.148806+09:00"
-        }
-      },
-      "state": "creating"
-    },
-    {
       "id": "7d5de49ddea14286a76d64b7612a9008",
       "owner": "35546406507:1",
       "events": [
@@ -429,7 +351,7 @@
           "__datetime__": "2026-09-21T09:03:49.150132+09:00"
         }
       },
-      "state": "queued"
+      "state": "creating"
     },
     {
       "id": "af14869ba5fc4deeb3a2986bc798843f",
@@ -741,5 +663,5 @@
     }
   ],
   "prepare_cursor": "1e971fc7031344098843696e2f8bc126",
-  "deliver_cursor": "78e84df1122f45afa9d8879604b302e0"
+  "deliver_cursor": "7d5de49ddea14286a76d64b7612a9008"
 }
