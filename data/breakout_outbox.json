@@ -376,40 +376,6 @@
       }
     },
     {
-      "id": "f7b8ff9134b9461ab5af4f9a6f8ab97c",
-      "operation": "record_breakout",
-      "args": [
-        {
-          "ticker": "079370",
-          "name": "제우스",
-          "high20": 11320.0,
-          "price": 11340.0,
-          "atr20": 666.0
-        },
-        {
-          "__datetime__": "2026-09-21T12:33:42.138618+09:00"
-        }
-      ],
-      "kwargs": {}
-    },
-    {
-      "id": "cb04dcc429f84b1aaf88835fdad5fa99",
-      "operation": "_set_outcome",
-      "args": [
-        "079370",
-        "상한제한",
-        "신규매수 일일 상한 0 (운영 보류)",
-        {
-          "__datetime__": "2026-09-21T12:34:26.558286+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
       "id": "00378a7106184a33981a1244d54004b6",
       "operation": "_set_outcome",
       "args": [
@@ -427,52 +393,7 @@
       }
     }
   ],
-  "plans": [
-    {
-      "id": "828e1a24bf6f43889ab14deb46cfda0c",
-      "owner": "35557888798:1",
-      "events": [
-        "f7b8ff9134b9461ab5af4f9a6f8ab97c",
-        "cb04dcc429f84b1aaf88835fdad5fa99"
-      ],
-      "record": {
-        "event_id": "f7b8ff9134b9461ab5af4f9a6f8ab97c",
-        "ticker": "079370",
-        "name": "제우스",
-        "first_detected_at": {
-          "__datetime__": "2026-09-21T12:33:42.138618+09:00"
-        },
-        "first_threshold": 11320.0,
-        "first_price": 11340.0,
-        "first_atr": 666.0,
-        "status": "추적중",
-        "outcome": "상한제한",
-        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
-        "outcome_at": {
-          "__datetime__": "2026-09-21T12:34:26.558286+09:00"
-        }
-      },
-      "page_id": null,
-      "fields": {
-        "event_id": "f7b8ff9134b9461ab5af4f9a6f8ab97c",
-        "ticker": "079370",
-        "name": "제우스",
-        "first_detected_at": {
-          "__datetime__": "2026-09-21T12:33:42.138618+09:00"
-        },
-        "first_threshold": 11320.0,
-        "first_price": 11340.0,
-        "first_atr": 666.0,
-        "status": "추적중",
-        "outcome": "상한제한",
-        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
-        "outcome_at": {
-          "__datetime__": "2026-09-21T12:34:26.558286+09:00"
-        }
-      },
-      "state": "creating"
-    }
-  ],
+  "plans": [],
   "prepare_cursor": "9ffdb500855f453b8742a8337cdb4c84",
   "deliver_cursor": "828e1a24bf6f43889ab14deb46cfda0c"
 }

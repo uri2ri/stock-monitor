@@ -368,6 +368,18 @@
       "gap_atr": 0.072,
       "unit_shares": 450,
       "status": "진입가능"
+    },
+    "079370": {
+      "time": "12:33",
+      "name": "제우스",
+      "sector": "기계·장비",
+      "market": "KOSDAQ",
+      "price": 11340.0,
+      "high20": 11320.0,
+      "atr20": 666.0,
+      "gap_atr": 0.03,
+      "unit_shares": 750,
+      "status": "진입가능"
     }
   }
 }
