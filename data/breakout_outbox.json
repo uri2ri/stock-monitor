@@ -708,9 +708,9 @@
           "__datetime__": "2026-09-21T14:54:34.586727+09:00"
         }
       },
-      "state": "queued"
+      "state": "creating"
     }
   ],
   "prepare_cursor": "7fba37f2391f4479a5b342d338e9411c",
-  "deliver_cursor": "06264a36fa7d4cfa8c83ddd4383d2a15"
+  "deliver_cursor": "e76015dd0f2540ca86ab00aea75de204"
 }
