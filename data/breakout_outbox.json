@@ -70,23 +70,6 @@
       }
     },
     {
-      "id": "96464d1edfcd4c22b7e6cfae276f2e7a",
-      "operation": "record_breakout",
-      "args": [
-        {
-          "ticker": "030530",
-          "name": "원익홀딩스",
-          "high20": 26750.0,
-          "price": 27150.0,
-          "atr20": 2102.0
-        },
-        {
-          "__datetime__": "2026-09-21T09:33:39.978846+09:00"
-        }
-      ],
-      "kwargs": {}
-    },
-    {
       "id": "065ab95cc9064a30b475bc4a7f5560ec",
       "operation": "record_breakout",
       "args": [
@@ -119,23 +102,6 @@
         }
       ],
       "kwargs": {}
-    },
-    {
-      "id": "dc5c8944167d4da1925f55a9c985d519",
-      "operation": "_set_outcome",
-      "args": [
-        "030530",
-        "상한제한",
-        "신규매수 일일 상한 0 (운영 보류)",
-        {
-          "__datetime__": "2026-09-21T09:34:23.900111+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
     },
     {
       "id": "5e48896ff57344a093a579dd8ee80290",
@@ -191,50 +157,6 @@
   ],
   "plans": [
     {
-      "id": "c1b67dab93984679b930250a2f0c51a1",
-      "owner": "35548051432:1",
-      "events": [
-        "96464d1edfcd4c22b7e6cfae276f2e7a",
-        "dc5c8944167d4da1925f55a9c985d519"
-      ],
-      "record": {
-        "event_id": "96464d1edfcd4c22b7e6cfae276f2e7a",
-        "ticker": "030530",
-        "name": "원익홀딩스",
-        "first_detected_at": {
-          "__datetime__": "2026-09-21T09:33:39.978846+09:00"
-        },
-        "first_threshold": 26750.0,
-        "first_price": 27150.0,
-        "first_atr": 2102.0,
-        "status": "추적중",
-        "outcome": "상한제한",
-        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
-        "outcome_at": {
-          "__datetime__": "2026-09-21T09:34:23.900111+09:00"
-        }
-      },
-      "page_id": null,
-      "fields": {
-        "event_id": "96464d1edfcd4c22b7e6cfae276f2e7a",
-        "ticker": "030530",
-        "name": "원익홀딩스",
-        "first_detected_at": {
-          "__datetime__": "2026-09-21T09:33:39.978846+09:00"
-        },
-        "first_threshold": 26750.0,
-        "first_price": 27150.0,
-        "first_atr": 2102.0,
-        "status": "추적중",
-        "outcome": "상한제한",
-        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
-        "outcome_at": {
-          "__datetime__": "2026-09-21T09:34:23.900111+09:00"
-        }
-      },
-      "state": "creating"
-    },
-    {
       "id": "e820bec436964ac8adc6a00b4182ffee",
       "owner": "35548051432:1",
       "events": [
@@ -276,7 +198,7 @@
           "__datetime__": "2026-09-21T09:34:23.901765+09:00"
         }
       },
-      "state": "queued"
+      "state": "creating"
     },
     {
       "id": "9351bf59607c4b7c969ddaa5cd735867",
@@ -324,5 +246,5 @@
     }
   ],
   "prepare_cursor": "181bf5b29a114054a543084e55f47996",
-  "deliver_cursor": "c1b67dab93984679b930250a2f0c51a1"
+  "deliver_cursor": "e820bec436964ac8adc6a00b4182ffee"
 }
