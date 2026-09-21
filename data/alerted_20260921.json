@@ -356,6 +356,18 @@
       "gap_atr": 0.048,
       "unit_shares": 2403,
       "status": "진입가능"
+    },
+    "452280": {
+      "time": "12:13",
+      "name": "한선엔지니어링",
+      "sector": "금속",
+      "market": "KOSDAQ",
+      "price": 14160.0,
+      "high20": 14080.0,
+      "atr20": 1109.0,
+      "gap_atr": 0.072,
+      "unit_shares": 450,
+      "status": "진입가능"
     }
   }
 }
