@@ -380,6 +380,18 @@
       "gap_atr": 0.03,
       "unit_shares": 750,
       "status": "진입가능"
+    },
+    "425040": {
+      "time": "12:43",
+      "name": "티이엠씨",
+      "sector": "화학",
+      "market": "KOSDAQ",
+      "price": 11270.0,
+      "high20": 10430.0,
+      "atr20": 649.0,
+      "gap_atr": 1.294,
+      "unit_shares": 770,
+      "status": "추격금지"
     }
   }
 }
