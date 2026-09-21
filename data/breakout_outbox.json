@@ -136,9 +136,105 @@
         "order_day": null,
         "identity": null
       }
+    },
+    {
+      "id": "a3d486d20dc643a78c7f04a3c45b1825",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "089790",
+          "name": "제이티",
+          "high20": 5690.0,
+          "price": 5880.0,
+          "atr20": 358.0
+        },
+        {
+          "__datetime__": "2026-09-21T10:13:40.495945+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "45b145ae7fb44d47bd292d002a200292",
+      "operation": "_set_outcome",
+      "args": [
+        "089790",
+        "미주문",
+        "추격 구간(+0.53N) - 매수 대상 제외",
+        {
+          "__datetime__": "2026-09-21T10:13:40.495945+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "8066512385354eb9956682b862610397",
+      "operation": "_set_outcome",
+      "args": [
+        "000390",
+        "상한제한",
+        "신규매수 일일 상한 0 (운영 보류)",
+        {
+          "__datetime__": "2026-09-21T10:14:22.233919+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
     }
   ],
-  "plans": [],
-  "prepare_cursor": "6732dc2ca84b44b38dcbe344ad143dcf",
+  "plans": [
+    {
+      "id": "f1c64d7801814584b73b3734d01eeb66",
+      "owner": "35550172819:1",
+      "events": [
+        "a3d486d20dc643a78c7f04a3c45b1825",
+        "45b145ae7fb44d47bd292d002a200292"
+      ],
+      "record": {
+        "event_id": "a3d486d20dc643a78c7f04a3c45b1825",
+        "ticker": "089790",
+        "name": "제이티",
+        "first_detected_at": {
+          "__datetime__": "2026-09-21T10:13:40.495945+09:00"
+        },
+        "first_threshold": 5690.0,
+        "first_price": 5880.0,
+        "first_atr": 358.0,
+        "status": "추적중",
+        "outcome": "미주문",
+        "outcome_reason": "추격 구간(+0.53N) - 매수 대상 제외",
+        "outcome_at": {
+          "__datetime__": "2026-09-21T10:13:40.495945+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "a3d486d20dc643a78c7f04a3c45b1825",
+        "ticker": "089790",
+        "name": "제이티",
+        "first_detected_at": {
+          "__datetime__": "2026-09-21T10:13:40.495945+09:00"
+        },
+        "first_threshold": 5690.0,
+        "first_price": 5880.0,
+        "first_atr": 358.0,
+        "status": "추적중",
+        "outcome": "미주문",
+        "outcome_reason": "추격 구간(+0.53N) - 매수 대상 제외",
+        "outcome_at": {
+          "__datetime__": "2026-09-21T10:13:40.495945+09:00"
+        }
+      },
+      "state": "queued"
+    }
+  ],
+  "prepare_cursor": "61450acc68e044d4b220b4b0e1fc44ff",
   "deliver_cursor": "1a14bf9b77e549bf89b29a67f6875343"
 }
