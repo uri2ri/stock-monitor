@@ -132,6 +132,18 @@
       "gap_atr": 0.235,
       "unit_shares": 42,
       "status": "진입가능"
+    },
+    "029460": {
+      "time": "09:13",
+      "name": "케이씨",
+      "sector": "의료·정밀기기",
+      "market": "KOSPI",
+      "price": 42450.0,
+      "high20": 41900.0,
+      "atr20": 1970.0,
+      "gap_atr": 0.279,
+      "unit_shares": 253,
+      "status": "진입가능"
     }
   }
 }
