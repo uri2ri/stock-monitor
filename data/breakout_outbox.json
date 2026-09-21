@@ -2,23 +2,6 @@
   "version": 1,
   "events": [
     {
-      "id": "bf01f1bae56b4cadb2b957098ead3dbc",
-      "operation": "record_breakout",
-      "args": [
-        {
-          "ticker": "281820",
-          "name": "케이씨텍",
-          "high20": 74200.0,
-          "price": 74500.0,
-          "atr20": 5920.0
-        },
-        {
-          "__datetime__": "2026-09-21T09:03:36.879134+09:00"
-        }
-      ],
-      "kwargs": {}
-    },
-    {
       "id": "a0402a83eb484200bf70c30e31df5c6b",
       "operation": "record_breakout",
       "args": [
@@ -68,23 +51,6 @@
         }
       ],
       "kwargs": {}
-    },
-    {
-      "id": "32d174c795d1412dabb27541a5127510",
-      "operation": "_set_outcome",
-      "args": [
-        "281820",
-        "미주문",
-        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        {
-          "__datetime__": "2026-09-21T09:03:49.153928+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
     },
     {
       "id": "720f988a016d4176bfea483b9612101e",
@@ -140,50 +106,6 @@
   ],
   "plans": [
     {
-      "id": "6c4154691c824c6db6c8dc41e8ef23b0",
-      "owner": "35546406507:1",
-      "events": [
-        "bf01f1bae56b4cadb2b957098ead3dbc",
-        "32d174c795d1412dabb27541a5127510"
-      ],
-      "record": {
-        "event_id": "bf01f1bae56b4cadb2b957098ead3dbc",
-        "ticker": "281820",
-        "name": "케이씨텍",
-        "first_detected_at": {
-          "__datetime__": "2026-09-21T09:03:36.879134+09:00"
-        },
-        "first_threshold": 74200.0,
-        "first_price": 74500.0,
-        "first_atr": 5920.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        "outcome_at": {
-          "__datetime__": "2026-09-21T09:03:49.153928+09:00"
-        }
-      },
-      "page_id": null,
-      "fields": {
-        "event_id": "bf01f1bae56b4cadb2b957098ead3dbc",
-        "ticker": "281820",
-        "name": "케이씨텍",
-        "first_detected_at": {
-          "__datetime__": "2026-09-21T09:03:36.879134+09:00"
-        },
-        "first_threshold": 74200.0,
-        "first_price": 74500.0,
-        "first_atr": 5920.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        "outcome_at": {
-          "__datetime__": "2026-09-21T09:03:49.153928+09:00"
-        }
-      },
-      "state": "creating"
-    },
-    {
       "id": "31ae83eb030f4316971fa2a0e98fdcd4",
       "owner": "35546406507:1",
       "events": [
@@ -225,7 +147,7 @@
           "__datetime__": "2026-09-21T09:03:49.170101+09:00"
         }
       },
-      "state": "queued"
+      "state": "creating"
     },
     {
       "id": "8226dba7dd674cee8f91b8d97ead0727",
@@ -273,5 +195,5 @@
     }
   ],
   "prepare_cursor": "1e971fc7031344098843696e2f8bc126",
-  "deliver_cursor": "6c4154691c824c6db6c8dc41e8ef23b0"
+  "deliver_cursor": "31ae83eb030f4316971fa2a0e98fdcd4"
 }
