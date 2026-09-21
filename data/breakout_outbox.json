@@ -187,9 +187,105 @@
         "order_day": null,
         "identity": null
       }
+    },
+    {
+      "id": "e4d5d09e76304761b5278c6c5f8e117c",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "000430",
+          "name": "대원강업",
+          "high20": 4970.0,
+          "price": 4980.0,
+          "atr20": 208.0
+        },
+        {
+          "__datetime__": "2026-09-21T10:43:41.228758+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "67755eaa8de64cfd89a0efaaa4b3afc1",
+      "operation": "_set_outcome",
+      "args": [
+        "000430",
+        "상한제한",
+        "신규매수 일일 상한 0 (운영 보류)",
+        {
+          "__datetime__": "2026-09-21T10:44:23.330259+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "cb91d60f5bc848e19a7847719781bc1f",
+      "operation": "_set_outcome",
+      "args": [
+        "000390",
+        "상한제한",
+        "신규매수 일일 상한 0 (운영 보류)",
+        {
+          "__datetime__": "2026-09-21T10:44:23.343978+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
     }
   ],
-  "plans": [],
-  "prepare_cursor": "a327c522cbb64f7e81652217e57b1818",
+  "plans": [
+    {
+      "id": "7fb539c58f33441b9c0b0aded4fa73af",
+      "owner": "35551798401:1",
+      "events": [
+        "e4d5d09e76304761b5278c6c5f8e117c",
+        "67755eaa8de64cfd89a0efaaa4b3afc1"
+      ],
+      "record": {
+        "event_id": "e4d5d09e76304761b5278c6c5f8e117c",
+        "ticker": "000430",
+        "name": "대원강업",
+        "first_detected_at": {
+          "__datetime__": "2026-09-21T10:43:41.228758+09:00"
+        },
+        "first_threshold": 4970.0,
+        "first_price": 4980.0,
+        "first_atr": 208.0,
+        "status": "추적중",
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-21T10:44:23.330259+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "e4d5d09e76304761b5278c6c5f8e117c",
+        "ticker": "000430",
+        "name": "대원강업",
+        "first_detected_at": {
+          "__datetime__": "2026-09-21T10:43:41.228758+09:00"
+        },
+        "first_threshold": 4970.0,
+        "first_price": 4980.0,
+        "first_atr": 208.0,
+        "status": "추적중",
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-21T10:44:23.330259+09:00"
+        }
+      },
+      "state": "queued"
+    }
+  ],
+  "prepare_cursor": "3a175455cddf45dc84e74374e2e9cf62",
   "deliver_cursor": "f1c64d7801814584b73b3734d01eeb66"
 }
