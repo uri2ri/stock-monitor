@@ -232,9 +232,9 @@
           "__datetime__": "2026-09-21T10:13:40.495945+09:00"
         }
       },
-      "state": "queued"
+      "state": "creating"
     }
   ],
   "prepare_cursor": "61450acc68e044d4b220b4b0e1fc44ff",
-  "deliver_cursor": "1a14bf9b77e549bf89b29a67f6875343"
+  "deliver_cursor": "f1c64d7801814584b73b3734d01eeb66"
 }
