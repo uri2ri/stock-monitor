@@ -340,9 +340,105 @@
         "order_day": null,
         "identity": null
       }
+    },
+    {
+      "id": "67ece07e34f84f428b5cf252f0f891f0",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "452280",
+          "name": "한선엔지니어링",
+          "high20": 14080.0,
+          "price": 14160.0,
+          "atr20": 1109.0
+        },
+        {
+          "__datetime__": "2026-09-21T12:13:34.767283+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "01de88f9e95d4ff5ba0b36e9f2b67134",
+      "operation": "_set_outcome",
+      "args": [
+        "452280",
+        "상한제한",
+        "신규매수 일일 상한 0 (운영 보류)",
+        {
+          "__datetime__": "2026-09-21T12:14:44.048785+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "a880cf627f98498f8efed52fd9fd8512",
+      "operation": "_set_outcome",
+      "args": [
+        "000390",
+        "상한제한",
+        "신규매수 일일 상한 0 (운영 보류)",
+        {
+          "__datetime__": "2026-09-21T12:14:44.067630+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
     }
   ],
-  "plans": [],
-  "prepare_cursor": "7a1095d937ff46b6bb968c5862944b77",
+  "plans": [
+    {
+      "id": "3a819ecc58d640cb9418cec355c3c129",
+      "owner": "35556774852:1",
+      "events": [
+        "67ece07e34f84f428b5cf252f0f891f0",
+        "01de88f9e95d4ff5ba0b36e9f2b67134"
+      ],
+      "record": {
+        "event_id": "67ece07e34f84f428b5cf252f0f891f0",
+        "ticker": "452280",
+        "name": "한선엔지니어링",
+        "first_detected_at": {
+          "__datetime__": "2026-09-21T12:13:34.767283+09:00"
+        },
+        "first_threshold": 14080.0,
+        "first_price": 14160.0,
+        "first_atr": 1109.0,
+        "status": "추적중",
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-21T12:14:44.048785+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "67ece07e34f84f428b5cf252f0f891f0",
+        "ticker": "452280",
+        "name": "한선엔지니어링",
+        "first_detected_at": {
+          "__datetime__": "2026-09-21T12:13:34.767283+09:00"
+        },
+        "first_threshold": 14080.0,
+        "first_price": 14160.0,
+        "first_atr": 1109.0,
+        "status": "추적중",
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-21T12:14:44.048785+09:00"
+        }
+      },
+      "state": "queued"
+    }
+  ],
+  "prepare_cursor": "0ff333f6c39249bfa884c681ccf3402b",
   "deliver_cursor": "7fb539c58f33441b9c0b0aded4fa73af"
 }
