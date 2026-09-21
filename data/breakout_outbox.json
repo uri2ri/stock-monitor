@@ -70,40 +70,6 @@
       }
     },
     {
-      "id": "4118820d5936478ab89b0aa1564f8898",
-      "operation": "record_breakout",
-      "args": [
-        {
-          "ticker": "163730",
-          "name": "핑거",
-          "high20": 10500.0,
-          "price": 10600.0,
-          "atr20": 798.0
-        },
-        {
-          "__datetime__": "2026-09-21T09:33:39.978846+09:00"
-        }
-      ],
-      "kwargs": {}
-    },
-    {
-      "id": "89e9736f7c2644d3803e2b7e8ee4fe70",
-      "operation": "_set_outcome",
-      "args": [
-        "163730",
-        "상한제한",
-        "신규매수 일일 상한 0 (운영 보류)",
-        {
-          "__datetime__": "2026-09-21T09:34:23.903109+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
       "id": "a23b7157888949fd88d4a433f0b4c7c3",
       "operation": "_set_outcome",
       "args": [
@@ -121,52 +87,7 @@
       }
     }
   ],
-  "plans": [
-    {
-      "id": "9351bf59607c4b7c969ddaa5cd735867",
-      "owner": "35548051432:1",
-      "events": [
-        "4118820d5936478ab89b0aa1564f8898",
-        "89e9736f7c2644d3803e2b7e8ee4fe70"
-      ],
-      "record": {
-        "event_id": "4118820d5936478ab89b0aa1564f8898",
-        "ticker": "163730",
-        "name": "핑거",
-        "first_detected_at": {
-          "__datetime__": "2026-09-21T09:33:39.978846+09:00"
-        },
-        "first_threshold": 10500.0,
-        "first_price": 10600.0,
-        "first_atr": 798.0,
-        "status": "추적중",
-        "outcome": "상한제한",
-        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
-        "outcome_at": {
-          "__datetime__": "2026-09-21T09:34:23.903109+09:00"
-        }
-      },
-      "page_id": null,
-      "fields": {
-        "event_id": "4118820d5936478ab89b0aa1564f8898",
-        "ticker": "163730",
-        "name": "핑거",
-        "first_detected_at": {
-          "__datetime__": "2026-09-21T09:33:39.978846+09:00"
-        },
-        "first_threshold": 10500.0,
-        "first_price": 10600.0,
-        "first_atr": 798.0,
-        "status": "추적중",
-        "outcome": "상한제한",
-        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
-        "outcome_at": {
-          "__datetime__": "2026-09-21T09:34:23.903109+09:00"
-        }
-      },
-      "state": "creating"
-    }
-  ],
+  "plans": [],
   "prepare_cursor": "181bf5b29a114054a543084e55f47996",
   "deliver_cursor": "9351bf59607c4b7c969ddaa5cd735867"
 }

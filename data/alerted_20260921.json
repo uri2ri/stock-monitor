@@ -180,6 +180,42 @@
       "gap_atr": 0.921,
       "unit_shares": 263,
       "status": "추격금지"
+    },
+    "030530": {
+      "time": "09:33",
+      "name": "원익홀딩스",
+      "sector": "화학",
+      "market": "KOSDAQ",
+      "price": 27150.0,
+      "high20": 26750.0,
+      "atr20": 2102.0,
+      "gap_atr": 0.19,
+      "unit_shares": 237,
+      "status": "진입가능"
+    },
+    "232680": {
+      "time": "09:33",
+      "name": "라온로보틱스",
+      "sector": "기계·장비",
+      "market": "KOSDAQ",
+      "price": 9930.0,
+      "high20": 9910.0,
+      "atr20": 621.0,
+      "gap_atr": 0.032,
+      "unit_shares": 805,
+      "status": "진입가능"
+    },
+    "163730": {
+      "time": "09:33",
+      "name": "핑거",
+      "sector": "IT 서비스",
+      "market": "KOSDAQ",
+      "price": 10600.0,
+      "high20": 10500.0,
+      "atr20": 798.0,
+      "gap_atr": 0.125,
+      "unit_shares": 626,
+      "status": "진입가능"
     }
   }
 }
