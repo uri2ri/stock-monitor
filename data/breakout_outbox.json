@@ -121,40 +121,6 @@
       }
     },
     {
-      "id": "19566e51f45344beab1013bcd7a56214",
-      "operation": "record_breakout",
-      "args": [
-        {
-          "ticker": "053610",
-          "name": "프로텍",
-          "high20": 66700.0,
-          "price": 67100.0,
-          "atr20": 4331.0
-        },
-        {
-          "__datetime__": "2026-09-21T10:03:30.995207+09:00"
-        }
-      ],
-      "kwargs": {}
-    },
-    {
-      "id": "4b31f120b4eb4eff933ffb62542c025a",
-      "operation": "_set_outcome",
-      "args": [
-        "053610",
-        "상한제한",
-        "신규매수 일일 상한 0 (운영 보류)",
-        {
-          "__datetime__": "2026-09-21T10:04:28.621525+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
       "id": "2d513403fe624ff9820e92ee5f52888f",
       "operation": "_set_outcome",
       "args": [
@@ -172,52 +138,7 @@
       }
     }
   ],
-  "plans": [
-    {
-      "id": "1a14bf9b77e549bf89b29a67f6875343",
-      "owner": "35549618672:1",
-      "events": [
-        "19566e51f45344beab1013bcd7a56214",
-        "4b31f120b4eb4eff933ffb62542c025a"
-      ],
-      "record": {
-        "event_id": "19566e51f45344beab1013bcd7a56214",
-        "ticker": "053610",
-        "name": "프로텍",
-        "first_detected_at": {
-          "__datetime__": "2026-09-21T10:03:30.995207+09:00"
-        },
-        "first_threshold": 66700.0,
-        "first_price": 67100.0,
-        "first_atr": 4331.0,
-        "status": "추적중",
-        "outcome": "상한제한",
-        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
-        "outcome_at": {
-          "__datetime__": "2026-09-21T10:04:28.621525+09:00"
-        }
-      },
-      "page_id": null,
-      "fields": {
-        "event_id": "19566e51f45344beab1013bcd7a56214",
-        "ticker": "053610",
-        "name": "프로텍",
-        "first_detected_at": {
-          "__datetime__": "2026-09-21T10:03:30.995207+09:00"
-        },
-        "first_threshold": 66700.0,
-        "first_price": 67100.0,
-        "first_atr": 4331.0,
-        "status": "추적중",
-        "outcome": "상한제한",
-        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
-        "outcome_at": {
-          "__datetime__": "2026-09-21T10:04:28.621525+09:00"
-        }
-      },
-      "state": "creating"
-    }
-  ],
+  "plans": [],
   "prepare_cursor": "6732dc2ca84b44b38dcbe344ad143dcf",
   "deliver_cursor": "1a14bf9b77e549bf89b29a67f6875343"
 }
