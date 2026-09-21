@@ -419,7 +419,7 @@
           "__datetime__": "2026-09-21T09:03:49.147063+09:00"
         }
       },
-      "state": "queued"
+      "state": "creating"
     },
     {
       "id": "78e84df1122f45afa9d8879604b302e0",
@@ -818,5 +818,6 @@
       "state": "queued"
     }
   ],
-  "prepare_cursor": "1e971fc7031344098843696e2f8bc126"
+  "prepare_cursor": "1e971fc7031344098843696e2f8bc126",
+  "deliver_cursor": "63bb5e730df0461ebcfdc1734e6062f8"
 }
