@@ -1,0 +1,822 @@
+{
+  "version": 1,
+  "events": [
+    {
+      "id": "1c7ea2ccc74648eeb677dc19c661c9ed",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "214430",
+          "name": "아이쓰리시스템",
+          "high20": 62900.0,
+          "price": 63100.0,
+          "atr20": 3688.0
+        },
+        {
+          "__datetime__": "2026-09-21T09:03:36.879134+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "93afb4093da14ffb8c563c9cfae8cd37",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "086390",
+          "name": "유니테스트",
+          "high20": 12240.0,
+          "price": 12250.0,
+          "atr20": 806.0
+        },
+        {
+          "__datetime__": "2026-09-21T09:03:36.879134+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "b66cab78fe4f4548bae68d263d9c62b7",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "036540",
+          "name": "SFA반도체",
+          "high20": 9110.0,
+          "price": 9300.0,
+          "atr20": 571.0
+        },
+        {
+          "__datetime__": "2026-09-21T09:03:36.879134+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "96018ca7ede4461d88c52c447c2902b6",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "144960",
+          "name": "뉴파워프라즈마",
+          "high20": 10400.0,
+          "price": 11420.0,
+          "atr20": 760.0
+        },
+        {
+          "__datetime__": "2026-09-21T09:03:36.879134+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "ece9b198d26f48f8a208d9e2f9112b8d",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "067310",
+          "name": "하나마이크론",
+          "high20": 39150.0,
+          "price": 40400.0,
+          "atr20": 2856.0
+        },
+        {
+          "__datetime__": "2026-09-21T09:03:36.879134+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "9a85cb60f8c2490a83b46e12a3eeb2cd",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "204270",
+          "name": "제이앤티씨",
+          "high20": 23850.0,
+          "price": 25900.0,
+          "atr20": 1615.0
+        },
+        {
+          "__datetime__": "2026-09-21T09:03:36.879134+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "3c2b809a2fab4bad83946752aeda29de",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "079550",
+          "name": "LIG디펜스앤에어로스페이스",
+          "high20": 754000.0,
+          "price": 755000.0,
+          "atr20": 49310.0
+        },
+        {
+          "__datetime__": "2026-09-21T09:03:36.879134+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "bf01f1bae56b4cadb2b957098ead3dbc",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "281820",
+          "name": "케이씨텍",
+          "high20": 74200.0,
+          "price": 74500.0,
+          "atr20": 5920.0
+        },
+        {
+          "__datetime__": "2026-09-21T09:03:36.879134+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "a0402a83eb484200bf70c30e31df5c6b",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "000390",
+          "name": "SP삼화",
+          "high20": 7140.0,
+          "price": 7150.0,
+          "atr20": 242.0
+        },
+        {
+          "__datetime__": "2026-09-21T09:03:36.879134+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "c634f43511a042bc8af3ef7923393526",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "094360",
+          "name": "칩스앤미디어",
+          "high20": 11140.0,
+          "price": 11180.0,
+          "atr20": 533.0
+        },
+        {
+          "__datetime__": "2026-09-21T09:03:36.879134+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "b31dbc295b9e49df9b7ace1263965e41",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "001820",
+          "name": "삼화콘덴서",
+          "high20": 151000.0,
+          "price": 153800.0,
+          "atr20": 11896.0
+        },
+        {
+          "__datetime__": "2026-09-21T09:03:36.879134+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "3b596d109cdd43dfbdcb059b84b8466a",
+      "operation": "_set_outcome",
+      "args": [
+        "144960",
+        "미주문",
+        "추격 구간(+1.34N) - 매수 대상 제외",
+        {
+          "__datetime__": "2026-09-21T09:03:36.879134+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "ac5d6cc12e5d498788f354ed899856db",
+      "operation": "_set_outcome",
+      "args": [
+        "204270",
+        "미주문",
+        "추격 구간(+1.27N) - 매수 대상 제외",
+        {
+          "__datetime__": "2026-09-21T09:03:36.879134+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "726a3b93c3754c4d86a1e7cac764c975",
+      "operation": "_set_outcome",
+      "args": [
+        "214430",
+        "미주문",
+        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        {
+          "__datetime__": "2026-09-21T09:03:49.147063+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "cad4660c4a914673879fb868311e6560",
+      "operation": "_set_outcome",
+      "args": [
+        "086390",
+        "미주문",
+        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        {
+          "__datetime__": "2026-09-21T09:03:49.148806+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "aa4f7deb81df4194a17c423be4020fc4",
+      "operation": "_set_outcome",
+      "args": [
+        "036540",
+        "미주문",
+        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        {
+          "__datetime__": "2026-09-21T09:03:49.150132+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "9e1cd7422dca46b187715fb9e0f2d552",
+      "operation": "_set_outcome",
+      "args": [
+        "067310",
+        "미주문",
+        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        {
+          "__datetime__": "2026-09-21T09:03:49.151455+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "790bd28e990644c5b76a923fa783435e",
+      "operation": "_set_outcome",
+      "args": [
+        "079550",
+        "미주문",
+        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        {
+          "__datetime__": "2026-09-21T09:03:49.152712+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "32d174c795d1412dabb27541a5127510",
+      "operation": "_set_outcome",
+      "args": [
+        "281820",
+        "미주문",
+        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        {
+          "__datetime__": "2026-09-21T09:03:49.153928+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "720f988a016d4176bfea483b9612101e",
+      "operation": "_set_outcome",
+      "args": [
+        "000390",
+        "미주문",
+        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        {
+          "__datetime__": "2026-09-21T09:03:49.155172+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "1af67d851e4a44638902b7292c4490de",
+      "operation": "_set_outcome",
+      "args": [
+        "094360",
+        "미주문",
+        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        {
+          "__datetime__": "2026-09-21T09:03:49.170101+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "1e971fc7031344098843696e2f8bc126",
+      "operation": "_set_outcome",
+      "args": [
+        "001820",
+        "미주문",
+        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        {
+          "__datetime__": "2026-09-21T09:03:49.171472+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    }
+  ],
+  "plans": [
+    {
+      "id": "63bb5e730df0461ebcfdc1734e6062f8",
+      "owner": "35546406507:1",
+      "events": [
+        "1c7ea2ccc74648eeb677dc19c661c9ed",
+        "726a3b93c3754c4d86a1e7cac764c975"
+      ],
+      "record": {
+        "event_id": "1c7ea2ccc74648eeb677dc19c661c9ed",
+        "ticker": "214430",
+        "name": "아이쓰리시스템",
+        "first_detected_at": {
+          "__datetime__": "2026-09-21T09:03:36.879134+09:00"
+        },
+        "first_threshold": 62900.0,
+        "first_price": 63100.0,
+        "first_atr": 3688.0,
+        "status": "추적중",
+        "outcome": "미주문",
+        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        "outcome_at": {
+          "__datetime__": "2026-09-21T09:03:49.147063+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "1c7ea2ccc74648eeb677dc19c661c9ed",
+        "ticker": "214430",
+        "name": "아이쓰리시스템",
+        "first_detected_at": {
+          "__datetime__": "2026-09-21T09:03:36.879134+09:00"
+        },
+        "first_threshold": 62900.0,
+        "first_price": 63100.0,
+        "first_atr": 3688.0,
+        "status": "추적중",
+        "outcome": "미주문",
+        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        "outcome_at": {
+          "__datetime__": "2026-09-21T09:03:49.147063+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "78e84df1122f45afa9d8879604b302e0",
+      "owner": "35546406507:1",
+      "events": [
+        "93afb4093da14ffb8c563c9cfae8cd37",
+        "cad4660c4a914673879fb868311e6560"
+      ],
+      "record": {
+        "event_id": "93afb4093da14ffb8c563c9cfae8cd37",
+        "ticker": "086390",
+        "name": "유니테스트",
+        "first_detected_at": {
+          "__datetime__": "2026-09-21T09:03:36.879134+09:00"
+        },
+        "first_threshold": 12240.0,
+        "first_price": 12250.0,
+        "first_atr": 806.0,
+        "status": "추적중",
+        "outcome": "미주문",
+        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        "outcome_at": {
+          "__datetime__": "2026-09-21T09:03:49.148806+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "93afb4093da14ffb8c563c9cfae8cd37",
+        "ticker": "086390",
+        "name": "유니테스트",
+        "first_detected_at": {
+          "__datetime__": "2026-09-21T09:03:36.879134+09:00"
+        },
+        "first_threshold": 12240.0,
+        "first_price": 12250.0,
+        "first_atr": 806.0,
+        "status": "추적중",
+        "outcome": "미주문",
+        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        "outcome_at": {
+          "__datetime__": "2026-09-21T09:03:49.148806+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "7d5de49ddea14286a76d64b7612a9008",
+      "owner": "35546406507:1",
+      "events": [
+        "b66cab78fe4f4548bae68d263d9c62b7",
+        "aa4f7deb81df4194a17c423be4020fc4"
+      ],
+      "record": {
+        "event_id": "b66cab78fe4f4548bae68d263d9c62b7",
+        "ticker": "036540",
+        "name": "SFA반도체",
+        "first_detected_at": {
+          "__datetime__": "2026-09-21T09:03:36.879134+09:00"
+        },
+        "first_threshold": 9110.0,
+        "first_price": 9300.0,
+        "first_atr": 571.0,
+        "status": "추적중",
+        "outcome": "미주문",
+        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        "outcome_at": {
+          "__datetime__": "2026-09-21T09:03:49.150132+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "b66cab78fe4f4548bae68d263d9c62b7",
+        "ticker": "036540",
+        "name": "SFA반도체",
+        "first_detected_at": {
+          "__datetime__": "2026-09-21T09:03:36.879134+09:00"
+        },
+        "first_threshold": 9110.0,
+        "first_price": 9300.0,
+        "first_atr": 571.0,
+        "status": "추적중",
+        "outcome": "미주문",
+        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        "outcome_at": {
+          "__datetime__": "2026-09-21T09:03:49.150132+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "af14869ba5fc4deeb3a2986bc798843f",
+      "owner": "35546406507:1",
+      "events": [
+        "96018ca7ede4461d88c52c447c2902b6",
+        "3b596d109cdd43dfbdcb059b84b8466a"
+      ],
+      "record": {
+        "event_id": "96018ca7ede4461d88c52c447c2902b6",
+        "ticker": "144960",
+        "name": "뉴파워프라즈마",
+        "first_detected_at": {
+          "__datetime__": "2026-09-21T09:03:36.879134+09:00"
+        },
+        "first_threshold": 10400.0,
+        "first_price": 11420.0,
+        "first_atr": 760.0,
+        "status": "추적중",
+        "outcome": "미주문",
+        "outcome_reason": "추격 구간(+1.34N) - 매수 대상 제외",
+        "outcome_at": {
+          "__datetime__": "2026-09-21T09:03:36.879134+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "96018ca7ede4461d88c52c447c2902b6",
+        "ticker": "144960",
+        "name": "뉴파워프라즈마",
+        "first_detected_at": {
+          "__datetime__": "2026-09-21T09:03:36.879134+09:00"
+        },
+        "first_threshold": 10400.0,
+        "first_price": 11420.0,
+        "first_atr": 760.0,
+        "status": "추적중",
+        "outcome": "미주문",
+        "outcome_reason": "추격 구간(+1.34N) - 매수 대상 제외",
+        "outcome_at": {
+          "__datetime__": "2026-09-21T09:03:36.879134+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "ef81ba469cdc4138bf1a4210208a0daa",
+      "owner": "35546406507:1",
+      "events": [
+        "ece9b198d26f48f8a208d9e2f9112b8d",
+        "9e1cd7422dca46b187715fb9e0f2d552"
+      ],
+      "record": {
+        "event_id": "ece9b198d26f48f8a208d9e2f9112b8d",
+        "ticker": "067310",
+        "name": "하나마이크론",
+        "first_detected_at": {
+          "__datetime__": "2026-09-21T09:03:36.879134+09:00"
+        },
+        "first_threshold": 39150.0,
+        "first_price": 40400.0,
+        "first_atr": 2856.0,
+        "status": "추적중",
+        "outcome": "미주문",
+        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        "outcome_at": {
+          "__datetime__": "2026-09-21T09:03:49.151455+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "ece9b198d26f48f8a208d9e2f9112b8d",
+        "ticker": "067310",
+        "name": "하나마이크론",
+        "first_detected_at": {
+          "__datetime__": "2026-09-21T09:03:36.879134+09:00"
+        },
+        "first_threshold": 39150.0,
+        "first_price": 40400.0,
+        "first_atr": 2856.0,
+        "status": "추적중",
+        "outcome": "미주문",
+        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        "outcome_at": {
+          "__datetime__": "2026-09-21T09:03:49.151455+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "18c14b3fdfd848328910f4eb369cbc0b",
+      "owner": "35546406507:1",
+      "events": [
+        "9a85cb60f8c2490a83b46e12a3eeb2cd",
+        "ac5d6cc12e5d498788f354ed899856db"
+      ],
+      "record": {
+        "event_id": "9a85cb60f8c2490a83b46e12a3eeb2cd",
+        "ticker": "204270",
+        "name": "제이앤티씨",
+        "first_detected_at": {
+          "__datetime__": "2026-09-21T09:03:36.879134+09:00"
+        },
+        "first_threshold": 23850.0,
+        "first_price": 25900.0,
+        "first_atr": 1615.0,
+        "status": "추적중",
+        "outcome": "미주문",
+        "outcome_reason": "추격 구간(+1.27N) - 매수 대상 제외",
+        "outcome_at": {
+          "__datetime__": "2026-09-21T09:03:36.879134+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "9a85cb60f8c2490a83b46e12a3eeb2cd",
+        "ticker": "204270",
+        "name": "제이앤티씨",
+        "first_detected_at": {
+          "__datetime__": "2026-09-21T09:03:36.879134+09:00"
+        },
+        "first_threshold": 23850.0,
+        "first_price": 25900.0,
+        "first_atr": 1615.0,
+        "status": "추적중",
+        "outcome": "미주문",
+        "outcome_reason": "추격 구간(+1.27N) - 매수 대상 제외",
+        "outcome_at": {
+          "__datetime__": "2026-09-21T09:03:36.879134+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "9c2b1444da9f414f8c6f9a07cd575765",
+      "owner": "35546406507:1",
+      "events": [
+        "3c2b809a2fab4bad83946752aeda29de",
+        "790bd28e990644c5b76a923fa783435e"
+      ],
+      "record": {
+        "event_id": "3c2b809a2fab4bad83946752aeda29de",
+        "ticker": "079550",
+        "name": "LIG디펜스앤에어로스페이스",
+        "first_detected_at": {
+          "__datetime__": "2026-09-21T09:03:36.879134+09:00"
+        },
+        "first_threshold": 754000.0,
+        "first_price": 755000.0,
+        "first_atr": 49310.0,
+        "status": "추적중",
+        "outcome": "미주문",
+        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        "outcome_at": {
+          "__datetime__": "2026-09-21T09:03:49.152712+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "3c2b809a2fab4bad83946752aeda29de",
+        "ticker": "079550",
+        "name": "LIG디펜스앤에어로스페이스",
+        "first_detected_at": {
+          "__datetime__": "2026-09-21T09:03:36.879134+09:00"
+        },
+        "first_threshold": 754000.0,
+        "first_price": 755000.0,
+        "first_atr": 49310.0,
+        "status": "추적중",
+        "outcome": "미주문",
+        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        "outcome_at": {
+          "__datetime__": "2026-09-21T09:03:49.152712+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "6c4154691c824c6db6c8dc41e8ef23b0",
+      "owner": "35546406507:1",
+      "events": [
+        "bf01f1bae56b4cadb2b957098ead3dbc",
+        "32d174c795d1412dabb27541a5127510"
+      ],
+      "record": {
+        "event_id": "bf01f1bae56b4cadb2b957098ead3dbc",
+        "ticker": "281820",
+        "name": "케이씨텍",
+        "first_detected_at": {
+          "__datetime__": "2026-09-21T09:03:36.879134+09:00"
+        },
+        "first_threshold": 74200.0,
+        "first_price": 74500.0,
+        "first_atr": 5920.0,
+        "status": "추적중",
+        "outcome": "미주문",
+        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        "outcome_at": {
+          "__datetime__": "2026-09-21T09:03:49.153928+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "bf01f1bae56b4cadb2b957098ead3dbc",
+        "ticker": "281820",
+        "name": "케이씨텍",
+        "first_detected_at": {
+          "__datetime__": "2026-09-21T09:03:36.879134+09:00"
+        },
+        "first_threshold": 74200.0,
+        "first_price": 74500.0,
+        "first_atr": 5920.0,
+        "status": "추적중",
+        "outcome": "미주문",
+        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        "outcome_at": {
+          "__datetime__": "2026-09-21T09:03:49.153928+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "31ae83eb030f4316971fa2a0e98fdcd4",
+      "owner": "35546406507:1",
+      "events": [
+        "c634f43511a042bc8af3ef7923393526",
+        "1af67d851e4a44638902b7292c4490de"
+      ],
+      "record": {
+        "event_id": "c634f43511a042bc8af3ef7923393526",
+        "ticker": "094360",
+        "name": "칩스앤미디어",
+        "first_detected_at": {
+          "__datetime__": "2026-09-21T09:03:36.879134+09:00"
+        },
+        "first_threshold": 11140.0,
+        "first_price": 11180.0,
+        "first_atr": 533.0,
+        "status": "추적중",
+        "outcome": "미주문",
+        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        "outcome_at": {
+          "__datetime__": "2026-09-21T09:03:49.170101+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "c634f43511a042bc8af3ef7923393526",
+        "ticker": "094360",
+        "name": "칩스앤미디어",
+        "first_detected_at": {
+          "__datetime__": "2026-09-21T09:03:36.879134+09:00"
+        },
+        "first_threshold": 11140.0,
+        "first_price": 11180.0,
+        "first_atr": 533.0,
+        "status": "추적중",
+        "outcome": "미주문",
+        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        "outcome_at": {
+          "__datetime__": "2026-09-21T09:03:49.170101+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "8226dba7dd674cee8f91b8d97ead0727",
+      "owner": "35546406507:1",
+      "events": [
+        "b31dbc295b9e49df9b7ace1263965e41",
+        "1e971fc7031344098843696e2f8bc126"
+      ],
+      "record": {
+        "event_id": "b31dbc295b9e49df9b7ace1263965e41",
+        "ticker": "001820",
+        "name": "삼화콘덴서",
+        "first_detected_at": {
+          "__datetime__": "2026-09-21T09:03:36.879134+09:00"
+        },
+        "first_threshold": 151000.0,
+        "first_price": 153800.0,
+        "first_atr": 11896.0,
+        "status": "추적중",
+        "outcome": "미주문",
+        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        "outcome_at": {
+          "__datetime__": "2026-09-21T09:03:49.171472+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "b31dbc295b9e49df9b7ace1263965e41",
+        "ticker": "001820",
+        "name": "삼화콘덴서",
+        "first_detected_at": {
+          "__datetime__": "2026-09-21T09:03:36.879134+09:00"
+        },
+        "first_threshold": 151000.0,
+        "first_price": 153800.0,
+        "first_atr": 11896.0,
+        "status": "추적중",
+        "outcome": "미주문",
+        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        "outcome_at": {
+          "__datetime__": "2026-09-21T09:03:49.171472+09:00"
+        }
+      },
+      "state": "queued"
+    }
+  ],
+  "prepare_cursor": "1e971fc7031344098843696e2f8bc126"
+}
