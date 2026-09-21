@@ -416,6 +416,18 @@
       "gap_atr": 0.034,
       "unit_shares": 1724,
       "status": "진입가능"
+    },
+    "000990": {
+      "time": "14:53",
+      "name": "DB하이텍",
+      "sector": "전기전자",
+      "market": "KOSPI",
+      "price": 131500.0,
+      "high20": 131400.0,
+      "atr20": 8368.0,
+      "gap_atr": 0.012,
+      "unit_shares": 59,
+      "status": "진입가능"
     }
   }
 }

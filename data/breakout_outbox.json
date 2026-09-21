@@ -614,40 +614,6 @@
       }
     },
     {
-      "id": "b513ef5a9bca46579d032573c48b6a9f",
-      "operation": "record_breakout",
-      "args": [
-        {
-          "ticker": "000990",
-          "name": "DB하이텍",
-          "high20": 131400.0,
-          "price": 131500.0,
-          "atr20": 8368.0
-        },
-        {
-          "__datetime__": "2026-09-21T14:53:35.572106+09:00"
-        }
-      ],
-      "kwargs": {}
-    },
-    {
-      "id": "3d3e1f7403ef4c619d827213db67c9c4",
-      "operation": "_set_outcome",
-      "args": [
-        "000990",
-        "상한제한",
-        "신규매수 일일 상한 0 (운영 보류)",
-        {
-          "__datetime__": "2026-09-21T14:54:34.586727+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
       "id": "afa8d7a7cc6b4de8b315b6b66192dd8f",
       "operation": "_set_outcome",
       "args": [
@@ -665,52 +631,7 @@
       }
     }
   ],
-  "plans": [
-    {
-      "id": "e76015dd0f2540ca86ab00aea75de204",
-      "owner": "35566222814:1",
-      "events": [
-        "b513ef5a9bca46579d032573c48b6a9f",
-        "3d3e1f7403ef4c619d827213db67c9c4"
-      ],
-      "record": {
-        "event_id": "b513ef5a9bca46579d032573c48b6a9f",
-        "ticker": "000990",
-        "name": "DB하이텍",
-        "first_detected_at": {
-          "__datetime__": "2026-09-21T14:53:35.572106+09:00"
-        },
-        "first_threshold": 131400.0,
-        "first_price": 131500.0,
-        "first_atr": 8368.0,
-        "status": "추적중",
-        "outcome": "상한제한",
-        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
-        "outcome_at": {
-          "__datetime__": "2026-09-21T14:54:34.586727+09:00"
-        }
-      },
-      "page_id": null,
-      "fields": {
-        "event_id": "b513ef5a9bca46579d032573c48b6a9f",
-        "ticker": "000990",
-        "name": "DB하이텍",
-        "first_detected_at": {
-          "__datetime__": "2026-09-21T14:53:35.572106+09:00"
-        },
-        "first_threshold": 131400.0,
-        "first_price": 131500.0,
-        "first_atr": 8368.0,
-        "status": "추적중",
-        "outcome": "상한제한",
-        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
-        "outcome_at": {
-          "__datetime__": "2026-09-21T14:54:34.586727+09:00"
-        }
-      },
-      "state": "creating"
-    }
-  ],
+  "plans": [],
   "prepare_cursor": "7fba37f2391f4479a5b342d338e9411c",
   "deliver_cursor": "e76015dd0f2540ca86ab00aea75de204"
 }
