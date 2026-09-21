@@ -2,23 +2,6 @@
   "version": 1,
   "events": [
     {
-      "id": "ece9b198d26f48f8a208d9e2f9112b8d",
-      "operation": "record_breakout",
-      "args": [
-        {
-          "ticker": "067310",
-          "name": "하나마이크론",
-          "high20": 39150.0,
-          "price": 40400.0,
-          "atr20": 2856.0
-        },
-        {
-          "__datetime__": "2026-09-21T09:03:36.879134+09:00"
-        }
-      ],
-      "kwargs": {}
-    },
-    {
       "id": "9a85cb60f8c2490a83b46e12a3eeb2cd",
       "operation": "record_breakout",
       "args": [
@@ -138,23 +121,6 @@
       }
     },
     {
-      "id": "9e1cd7422dca46b187715fb9e0f2d552",
-      "operation": "_set_outcome",
-      "args": [
-        "067310",
-        "미주문",
-        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        {
-          "__datetime__": "2026-09-21T09:03:49.151455+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
       "id": "790bd28e990644c5b76a923fa783435e",
       "operation": "_set_outcome",
       "args": [
@@ -242,50 +208,6 @@
   ],
   "plans": [
     {
-      "id": "ef81ba469cdc4138bf1a4210208a0daa",
-      "owner": "35546406507:1",
-      "events": [
-        "ece9b198d26f48f8a208d9e2f9112b8d",
-        "9e1cd7422dca46b187715fb9e0f2d552"
-      ],
-      "record": {
-        "event_id": "ece9b198d26f48f8a208d9e2f9112b8d",
-        "ticker": "067310",
-        "name": "하나마이크론",
-        "first_detected_at": {
-          "__datetime__": "2026-09-21T09:03:36.879134+09:00"
-        },
-        "first_threshold": 39150.0,
-        "first_price": 40400.0,
-        "first_atr": 2856.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        "outcome_at": {
-          "__datetime__": "2026-09-21T09:03:49.151455+09:00"
-        }
-      },
-      "page_id": null,
-      "fields": {
-        "event_id": "ece9b198d26f48f8a208d9e2f9112b8d",
-        "ticker": "067310",
-        "name": "하나마이크론",
-        "first_detected_at": {
-          "__datetime__": "2026-09-21T09:03:36.879134+09:00"
-        },
-        "first_threshold": 39150.0,
-        "first_price": 40400.0,
-        "first_atr": 2856.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        "outcome_at": {
-          "__datetime__": "2026-09-21T09:03:49.151455+09:00"
-        }
-      },
-      "state": "creating"
-    },
-    {
       "id": "18c14b3fdfd848328910f4eb369cbc0b",
       "owner": "35546406507:1",
       "events": [
@@ -327,7 +249,7 @@
           "__datetime__": "2026-09-21T09:03:36.879134+09:00"
         }
       },
-      "state": "queued"
+      "state": "creating"
     },
     {
       "id": "9c2b1444da9f414f8c6f9a07cd575765",
@@ -507,5 +429,5 @@
     }
   ],
   "prepare_cursor": "1e971fc7031344098843696e2f8bc126",
-  "deliver_cursor": "ef81ba469cdc4138bf1a4210208a0daa"
+  "deliver_cursor": "18c14b3fdfd848328910f4eb369cbc0b"
 }
