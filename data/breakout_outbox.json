@@ -34,9 +34,729 @@
         "order_day": null,
         "identity": null
       }
+    },
+    {
+      "id": "494a24a9de7c48e59f0eea53987ee410",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "029460",
+          "name": "케이씨",
+          "high20": 41900.0,
+          "price": 42450.0,
+          "atr20": 1970.0
+        },
+        {
+          "__datetime__": "2026-09-21T09:13:38.519917+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "7a2a3d9b28a44782935dacca67f43340",
+      "operation": "_set_outcome",
+      "args": [
+        "029460",
+        "상한제한",
+        "신규매수 일일 상한 0 (운영 보류)",
+        {
+          "__datetime__": "2026-09-21T09:14:10.321164+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "d8311e1f965e44bfacaa5b08fd6d3b63",
+      "operation": "_set_outcome",
+      "args": [
+        "214430",
+        "상한제한",
+        "신규매수 일일 상한 0 (운영 보류)",
+        {
+          "__datetime__": "2026-09-21T09:14:10.327276+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "d3e767dc77ce4c6e99297aa617100248",
+      "operation": "_set_outcome",
+      "args": [
+        "086390",
+        "상한제한",
+        "신규매수 일일 상한 0 (운영 보류)",
+        {
+          "__datetime__": "2026-09-21T09:14:10.328339+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "053dfc9989204fb887daa5b186a5989a",
+      "operation": "_set_outcome",
+      "args": [
+        "036540",
+        "상한제한",
+        "신규매수 일일 상한 0 (운영 보류)",
+        {
+          "__datetime__": "2026-09-21T09:14:10.329325+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "21622236979544b28b9d88d580f3ef71",
+      "operation": "_set_outcome",
+      "args": [
+        "067310",
+        "상한제한",
+        "신규매수 일일 상한 0 (운영 보류)",
+        {
+          "__datetime__": "2026-09-21T09:14:10.330317+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "8cf030c031af4deaa7eec853d990ee0d",
+      "operation": "_set_outcome",
+      "args": [
+        "079550",
+        "상한제한",
+        "신규매수 일일 상한 0 (운영 보류)",
+        {
+          "__datetime__": "2026-09-21T09:14:10.331300+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "ecd77637b3e448b096b1dbee514f7228",
+      "operation": "_set_outcome",
+      "args": [
+        "281820",
+        "상한제한",
+        "신규매수 일일 상한 0 (운영 보류)",
+        {
+          "__datetime__": "2026-09-21T09:14:10.332309+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "6f95f0500fdf45e3b7ef71cf7754da26",
+      "operation": "_set_outcome",
+      "args": [
+        "000390",
+        "상한제한",
+        "신규매수 일일 상한 0 (운영 보류)",
+        {
+          "__datetime__": "2026-09-21T09:14:10.333374+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "71e1aafbbcb4491ba300a9848923ce42",
+      "operation": "_set_outcome",
+      "args": [
+        "094360",
+        "상한제한",
+        "신규매수 일일 상한 0 (운영 보류)",
+        {
+          "__datetime__": "2026-09-21T09:14:10.334405+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "e4b98800499d4f739c4757a95c16461c",
+      "operation": "_set_outcome",
+      "args": [
+        "001820",
+        "상한제한",
+        "신규매수 일일 상한 0 (운영 보류)",
+        {
+          "__datetime__": "2026-09-21T09:14:10.335449+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
     }
   ],
-  "plans": [],
-  "prepare_cursor": "1e971fc7031344098843696e2f8bc126",
+  "plans": [
+    {
+      "id": "a8895259d6e64c5ba148704994c0fba4",
+      "owner": "35546973579:1",
+      "events": [
+        "494a24a9de7c48e59f0eea53987ee410",
+        "7a2a3d9b28a44782935dacca67f43340"
+      ],
+      "record": {
+        "event_id": "494a24a9de7c48e59f0eea53987ee410",
+        "ticker": "029460",
+        "name": "케이씨",
+        "first_detected_at": {
+          "__datetime__": "2026-09-21T09:13:38.519917+09:00"
+        },
+        "first_threshold": 41900.0,
+        "first_price": 42450.0,
+        "first_atr": 1970.0,
+        "status": "추적중",
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-21T09:14:10.321164+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "494a24a9de7c48e59f0eea53987ee410",
+        "ticker": "029460",
+        "name": "케이씨",
+        "first_detected_at": {
+          "__datetime__": "2026-09-21T09:13:38.519917+09:00"
+        },
+        "first_threshold": 41900.0,
+        "first_price": 42450.0,
+        "first_atr": 1970.0,
+        "status": "추적중",
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-21T09:14:10.321164+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "131d7d21646144fb8914fe289bde4b18",
+      "owner": "35546973579:1",
+      "events": [
+        "d8311e1f965e44bfacaa5b08fd6d3b63"
+      ],
+      "record": {
+        "account_type": "",
+        "account_key": "",
+        "order_side": "",
+        "order_qty": null,
+        "filled_qty": null,
+        "unverified_qty": null,
+        "execution_price": null,
+        "execution_state": "",
+        "execution_checked_at": null,
+        "event_id": "1c7ea2ccc74648eeb677dc19c661c9ed",
+        "order_no": "",
+        "order_day": null,
+        "key": "3e20fc3e-53fc-814c-8031-f02d96a2e20d",
+        "page_id": "3e20fc3e-53fc-814c-8031-f02d96a2e20d",
+        "name": "아이쓰리시스템",
+        "ticker": "214430",
+        "first_detected_at": {
+          "__datetime__": "2026-09-21T09:03:00+09:00"
+        },
+        "first_threshold": 62900.0,
+        "first_price": 63100.0,
+        "first_atr": 3688.0,
+        "status": "추적중",
+        "closed_reason": "",
+        "closed_at": null,
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-21T09:14:10.327276+09:00"
+        },
+        "latest_close": null,
+        "latest_date": null,
+        "latest_atr": null,
+        "latest_line": null,
+        "change_pct": null,
+        "atr_mult": null,
+        "dist_to_line": null,
+        "dist_to_line_atr": null,
+        "level_state": "",
+        "new_breakout": "",
+        "refresh_state": "",
+        "refresh_note": "",
+        "user_memo": ""
+      },
+      "page_id": "3e20fc3e-53fc-814c-8031-f02d96a2e20d",
+      "fields": {
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-21T09:14:10.327276+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "68e52ce67cea4f9ca663c840abdcc270",
+      "owner": "35546973579:1",
+      "events": [
+        "d3e767dc77ce4c6e99297aa617100248"
+      ],
+      "record": {
+        "account_type": "",
+        "account_key": "",
+        "order_side": "",
+        "order_qty": null,
+        "filled_qty": null,
+        "unverified_qty": null,
+        "execution_price": null,
+        "execution_state": "",
+        "execution_checked_at": null,
+        "event_id": "93afb4093da14ffb8c563c9cfae8cd37",
+        "order_no": "",
+        "order_day": null,
+        "key": "3e20fc3e-53fc-81ed-81e5-d486a2de0d99",
+        "page_id": "3e20fc3e-53fc-81ed-81e5-d486a2de0d99",
+        "name": "유니테스트",
+        "ticker": "086390",
+        "first_detected_at": {
+          "__datetime__": "2026-09-21T09:03:00+09:00"
+        },
+        "first_threshold": 12240.0,
+        "first_price": 12250.0,
+        "first_atr": 806.0,
+        "status": "추적중",
+        "closed_reason": "",
+        "closed_at": null,
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-21T09:14:10.328339+09:00"
+        },
+        "latest_close": null,
+        "latest_date": null,
+        "latest_atr": null,
+        "latest_line": null,
+        "change_pct": null,
+        "atr_mult": null,
+        "dist_to_line": null,
+        "dist_to_line_atr": null,
+        "level_state": "",
+        "new_breakout": "",
+        "refresh_state": "",
+        "refresh_note": "",
+        "user_memo": ""
+      },
+      "page_id": "3e20fc3e-53fc-81ed-81e5-d486a2de0d99",
+      "fields": {
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-21T09:14:10.328339+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "455a57f9a8a9408faab954a8275d3795",
+      "owner": "35546973579:1",
+      "events": [
+        "053dfc9989204fb887daa5b186a5989a"
+      ],
+      "record": {
+        "account_type": "",
+        "account_key": "",
+        "order_side": "",
+        "order_qty": null,
+        "filled_qty": null,
+        "unverified_qty": null,
+        "execution_price": null,
+        "execution_state": "",
+        "execution_checked_at": null,
+        "event_id": "b66cab78fe4f4548bae68d263d9c62b7",
+        "order_no": "",
+        "order_day": null,
+        "key": "3e20fc3e-53fc-8179-9cdc-dfce59ea9dd0",
+        "page_id": "3e20fc3e-53fc-8179-9cdc-dfce59ea9dd0",
+        "name": "SFA반도체",
+        "ticker": "036540",
+        "first_detected_at": {
+          "__datetime__": "2026-09-21T09:03:00+09:00"
+        },
+        "first_threshold": 9110.0,
+        "first_price": 9300.0,
+        "first_atr": 571.0,
+        "status": "추적중",
+        "closed_reason": "",
+        "closed_at": null,
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-21T09:14:10.329325+09:00"
+        },
+        "latest_close": null,
+        "latest_date": null,
+        "latest_atr": null,
+        "latest_line": null,
+        "change_pct": null,
+        "atr_mult": null,
+        "dist_to_line": null,
+        "dist_to_line_atr": null,
+        "level_state": "",
+        "new_breakout": "",
+        "refresh_state": "",
+        "refresh_note": "",
+        "user_memo": ""
+      },
+      "page_id": "3e20fc3e-53fc-8179-9cdc-dfce59ea9dd0",
+      "fields": {
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-21T09:14:10.329325+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "39fd2b809853476bbc30bd38a1d34cd0",
+      "owner": "35546973579:1",
+      "events": [
+        "21622236979544b28b9d88d580f3ef71"
+      ],
+      "record": {
+        "account_type": "",
+        "account_key": "",
+        "order_side": "",
+        "order_qty": null,
+        "filled_qty": null,
+        "unverified_qty": null,
+        "execution_price": null,
+        "execution_state": "",
+        "execution_checked_at": null,
+        "event_id": "ece9b198d26f48f8a208d9e2f9112b8d",
+        "order_no": "",
+        "order_day": null,
+        "key": "3e20fc3e-53fc-8151-acab-f39da6f5f0ef",
+        "page_id": "3e20fc3e-53fc-8151-acab-f39da6f5f0ef",
+        "name": "하나마이크론",
+        "ticker": "067310",
+        "first_detected_at": {
+          "__datetime__": "2026-09-21T09:03:00+09:00"
+        },
+        "first_threshold": 39150.0,
+        "first_price": 40400.0,
+        "first_atr": 2856.0,
+        "status": "추적중",
+        "closed_reason": "",
+        "closed_at": null,
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-21T09:14:10.330317+09:00"
+        },
+        "latest_close": null,
+        "latest_date": null,
+        "latest_atr": null,
+        "latest_line": null,
+        "change_pct": null,
+        "atr_mult": null,
+        "dist_to_line": null,
+        "dist_to_line_atr": null,
+        "level_state": "",
+        "new_breakout": "",
+        "refresh_state": "",
+        "refresh_note": "",
+        "user_memo": ""
+      },
+      "page_id": "3e20fc3e-53fc-8151-acab-f39da6f5f0ef",
+      "fields": {
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-21T09:14:10.330317+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "062c1785b0684eccb1f6423c61ef48c6",
+      "owner": "35546973579:1",
+      "events": [
+        "8cf030c031af4deaa7eec853d990ee0d"
+      ],
+      "record": {
+        "account_type": "",
+        "account_key": "",
+        "order_side": "",
+        "order_qty": null,
+        "filled_qty": null,
+        "unverified_qty": null,
+        "execution_price": null,
+        "execution_state": "",
+        "execution_checked_at": null,
+        "event_id": "3c2b809a2fab4bad83946752aeda29de",
+        "order_no": "",
+        "order_day": null,
+        "key": "3e20fc3e-53fc-81fa-bc46-e4b658398ac6",
+        "page_id": "3e20fc3e-53fc-81fa-bc46-e4b658398ac6",
+        "name": "LIG디펜스앤에어로스페이스",
+        "ticker": "079550",
+        "first_detected_at": {
+          "__datetime__": "2026-09-21T09:03:00+09:00"
+        },
+        "first_threshold": 754000.0,
+        "first_price": 755000.0,
+        "first_atr": 49310.0,
+        "status": "추적중",
+        "closed_reason": "",
+        "closed_at": null,
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-21T09:14:10.331300+09:00"
+        },
+        "latest_close": null,
+        "latest_date": null,
+        "latest_atr": null,
+        "latest_line": null,
+        "change_pct": null,
+        "atr_mult": null,
+        "dist_to_line": null,
+        "dist_to_line_atr": null,
+        "level_state": "",
+        "new_breakout": "",
+        "refresh_state": "",
+        "refresh_note": "",
+        "user_memo": ""
+      },
+      "page_id": "3e20fc3e-53fc-81fa-bc46-e4b658398ac6",
+      "fields": {
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-21T09:14:10.331300+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "17d766c0eedf442d9f68aadc8afa15f1",
+      "owner": "35546973579:1",
+      "events": [
+        "ecd77637b3e448b096b1dbee514f7228"
+      ],
+      "record": {
+        "account_type": "",
+        "account_key": "",
+        "order_side": "",
+        "order_qty": null,
+        "filled_qty": null,
+        "unverified_qty": null,
+        "execution_price": null,
+        "execution_state": "",
+        "execution_checked_at": null,
+        "event_id": "bf01f1bae56b4cadb2b957098ead3dbc",
+        "order_no": "",
+        "order_day": null,
+        "key": "3e20fc3e-53fc-810e-b7cb-c70fedc24ec4",
+        "page_id": "3e20fc3e-53fc-810e-b7cb-c70fedc24ec4",
+        "name": "케이씨텍",
+        "ticker": "281820",
+        "first_detected_at": {
+          "__datetime__": "2026-09-21T09:03:00+09:00"
+        },
+        "first_threshold": 74200.0,
+        "first_price": 74500.0,
+        "first_atr": 5920.0,
+        "status": "추적중",
+        "closed_reason": "",
+        "closed_at": null,
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-21T09:14:10.332309+09:00"
+        },
+        "latest_close": null,
+        "latest_date": null,
+        "latest_atr": null,
+        "latest_line": null,
+        "change_pct": null,
+        "atr_mult": null,
+        "dist_to_line": null,
+        "dist_to_line_atr": null,
+        "level_state": "",
+        "new_breakout": "",
+        "refresh_state": "",
+        "refresh_note": "",
+        "user_memo": ""
+      },
+      "page_id": "3e20fc3e-53fc-810e-b7cb-c70fedc24ec4",
+      "fields": {
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-21T09:14:10.332309+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "c3ce97af247447f9974b0fd1a4e396f5",
+      "owner": "35546973579:1",
+      "events": [
+        "71e1aafbbcb4491ba300a9848923ce42"
+      ],
+      "record": {
+        "account_type": "",
+        "account_key": "",
+        "order_side": "",
+        "order_qty": null,
+        "filled_qty": null,
+        "unverified_qty": null,
+        "execution_price": null,
+        "execution_state": "",
+        "execution_checked_at": null,
+        "event_id": "c634f43511a042bc8af3ef7923393526",
+        "order_no": "",
+        "order_day": null,
+        "key": "3e20fc3e-53fc-81d3-b0a0-e15dda2de25b",
+        "page_id": "3e20fc3e-53fc-81d3-b0a0-e15dda2de25b",
+        "name": "칩스앤미디어",
+        "ticker": "094360",
+        "first_detected_at": {
+          "__datetime__": "2026-09-21T09:03:00+09:00"
+        },
+        "first_threshold": 11140.0,
+        "first_price": 11180.0,
+        "first_atr": 533.0,
+        "status": "추적중",
+        "closed_reason": "",
+        "closed_at": null,
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-21T09:14:10.334405+09:00"
+        },
+        "latest_close": null,
+        "latest_date": null,
+        "latest_atr": null,
+        "latest_line": null,
+        "change_pct": null,
+        "atr_mult": null,
+        "dist_to_line": null,
+        "dist_to_line_atr": null,
+        "level_state": "",
+        "new_breakout": "",
+        "refresh_state": "",
+        "refresh_note": "",
+        "user_memo": ""
+      },
+      "page_id": "3e20fc3e-53fc-81d3-b0a0-e15dda2de25b",
+      "fields": {
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-21T09:14:10.334405+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "c48cebeb50e34dc88766392966daf1c8",
+      "owner": "35546973579:1",
+      "events": [
+        "e4b98800499d4f739c4757a95c16461c"
+      ],
+      "record": {
+        "account_type": "",
+        "account_key": "",
+        "order_side": "",
+        "order_qty": null,
+        "filled_qty": null,
+        "unverified_qty": null,
+        "execution_price": null,
+        "execution_state": "",
+        "execution_checked_at": null,
+        "event_id": "b31dbc295b9e49df9b7ace1263965e41",
+        "order_no": "",
+        "order_day": null,
+        "key": "3e20fc3e-53fc-8110-bb2f-dbe8bc7f73f6",
+        "page_id": "3e20fc3e-53fc-8110-bb2f-dbe8bc7f73f6",
+        "name": "삼화콘덴서",
+        "ticker": "001820",
+        "first_detected_at": {
+          "__datetime__": "2026-09-21T09:03:00+09:00"
+        },
+        "first_threshold": 151000.0,
+        "first_price": 153800.0,
+        "first_atr": 11896.0,
+        "status": "추적중",
+        "closed_reason": "",
+        "closed_at": null,
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-21T09:14:10.335449+09:00"
+        },
+        "latest_close": null,
+        "latest_date": null,
+        "latest_atr": null,
+        "latest_line": null,
+        "change_pct": null,
+        "atr_mult": null,
+        "dist_to_line": null,
+        "dist_to_line_atr": null,
+        "level_state": "",
+        "new_breakout": "",
+        "refresh_state": "",
+        "refresh_note": "",
+        "user_memo": ""
+      },
+      "page_id": "3e20fc3e-53fc-8110-bb2f-dbe8bc7f73f6",
+      "fields": {
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-21T09:14:10.335449+09:00"
+        }
+      },
+      "state": "queued"
+    }
+  ],
+  "prepare_cursor": "e4b98800499d4f739c4757a95c16461c",
   "deliver_cursor": "8226dba7dd674cee8f91b8d97ead0727"
 }
