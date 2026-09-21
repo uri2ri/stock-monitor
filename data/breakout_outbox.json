@@ -51,9 +51,261 @@
         "order_day": null,
         "identity": null
       }
+    },
+    {
+      "id": "35ede36fe0b34f37beda76c45fffcc6c",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "003030",
+          "name": "세아제강지주",
+          "high20": 109100.0,
+          "price": 110600.0,
+          "atr20": 5182.0
+        },
+        {
+          "__datetime__": "2026-09-21T09:23:34.412300+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "ebc3c1a5c4f04e0199060da7fcc72472",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "253590",
+          "name": "네오셈",
+          "high20": 12660.0,
+          "price": 12790.0,
+          "atr20": 798.0
+        },
+        {
+          "__datetime__": "2026-09-21T09:23:34.412300+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "a154881743e34b5a96d7e94cb9fc64ba",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "003160",
+          "name": "디아이",
+          "high20": 32500.0,
+          "price": 34250.0,
+          "atr20": 1900.0
+        },
+        {
+          "__datetime__": "2026-09-21T09:23:34.412300+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "909defbcfd064e4e865b9b1fbed41038",
+      "operation": "_set_outcome",
+      "args": [
+        "003160",
+        "미주문",
+        "추격 구간(+0.92N) - 매수 대상 제외",
+        {
+          "__datetime__": "2026-09-21T09:23:34.412300+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "51054db7aeec4b77b67a645cdef30218",
+      "operation": "_set_outcome",
+      "args": [
+        "003030",
+        "상한제한",
+        "신규매수 일일 상한 0 (운영 보류)",
+        {
+          "__datetime__": "2026-09-21T09:24:13.369918+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "b80e304da2164da8ba78522506a2babd",
+      "operation": "_set_outcome",
+      "args": [
+        "253590",
+        "상한제한",
+        "신규매수 일일 상한 0 (운영 보류)",
+        {
+          "__datetime__": "2026-09-21T09:24:13.374149+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "c1a9329518c04682b569366e5eed01c3",
+      "operation": "_set_outcome",
+      "args": [
+        "000390",
+        "상한제한",
+        "신규매수 일일 상한 0 (운영 보류)",
+        {
+          "__datetime__": "2026-09-21T09:24:13.549463+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
     }
   ],
-  "plans": [],
-  "prepare_cursor": "e4b98800499d4f739c4757a95c16461c",
+  "plans": [
+    {
+      "id": "9ace1f800e934cfc9b830ac3d7395181",
+      "owner": "35547524691:1",
+      "events": [
+        "35ede36fe0b34f37beda76c45fffcc6c",
+        "51054db7aeec4b77b67a645cdef30218"
+      ],
+      "record": {
+        "event_id": "35ede36fe0b34f37beda76c45fffcc6c",
+        "ticker": "003030",
+        "name": "세아제강지주",
+        "first_detected_at": {
+          "__datetime__": "2026-09-21T09:23:34.412300+09:00"
+        },
+        "first_threshold": 109100.0,
+        "first_price": 110600.0,
+        "first_atr": 5182.0,
+        "status": "추적중",
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-21T09:24:13.369918+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "35ede36fe0b34f37beda76c45fffcc6c",
+        "ticker": "003030",
+        "name": "세아제강지주",
+        "first_detected_at": {
+          "__datetime__": "2026-09-21T09:23:34.412300+09:00"
+        },
+        "first_threshold": 109100.0,
+        "first_price": 110600.0,
+        "first_atr": 5182.0,
+        "status": "추적중",
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-21T09:24:13.369918+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "86bde631d0e54955892a7e0250f80413",
+      "owner": "35547524691:1",
+      "events": [
+        "ebc3c1a5c4f04e0199060da7fcc72472",
+        "b80e304da2164da8ba78522506a2babd"
+      ],
+      "record": {
+        "event_id": "ebc3c1a5c4f04e0199060da7fcc72472",
+        "ticker": "253590",
+        "name": "네오셈",
+        "first_detected_at": {
+          "__datetime__": "2026-09-21T09:23:34.412300+09:00"
+        },
+        "first_threshold": 12660.0,
+        "first_price": 12790.0,
+        "first_atr": 798.0,
+        "status": "추적중",
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-21T09:24:13.374149+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "ebc3c1a5c4f04e0199060da7fcc72472",
+        "ticker": "253590",
+        "name": "네오셈",
+        "first_detected_at": {
+          "__datetime__": "2026-09-21T09:23:34.412300+09:00"
+        },
+        "first_threshold": 12660.0,
+        "first_price": 12790.0,
+        "first_atr": 798.0,
+        "status": "추적중",
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-21T09:24:13.374149+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "17d152b68fed4273aa7f78e959bd5e6b",
+      "owner": "35547524691:1",
+      "events": [
+        "a154881743e34b5a96d7e94cb9fc64ba",
+        "909defbcfd064e4e865b9b1fbed41038"
+      ],
+      "record": {
+        "event_id": "a154881743e34b5a96d7e94cb9fc64ba",
+        "ticker": "003160",
+        "name": "디아이",
+        "first_detected_at": {
+          "__datetime__": "2026-09-21T09:23:34.412300+09:00"
+        },
+        "first_threshold": 32500.0,
+        "first_price": 34250.0,
+        "first_atr": 1900.0,
+        "status": "추적중",
+        "outcome": "미주문",
+        "outcome_reason": "추격 구간(+0.92N) - 매수 대상 제외",
+        "outcome_at": {
+          "__datetime__": "2026-09-21T09:23:34.412300+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "a154881743e34b5a96d7e94cb9fc64ba",
+        "ticker": "003160",
+        "name": "디아이",
+        "first_detected_at": {
+          "__datetime__": "2026-09-21T09:23:34.412300+09:00"
+        },
+        "first_threshold": 32500.0,
+        "first_price": 34250.0,
+        "first_atr": 1900.0,
+        "status": "추적중",
+        "outcome": "미주문",
+        "outcome_reason": "추격 구간(+0.92N) - 매수 대상 제외",
+        "outcome_at": {
+          "__datetime__": "2026-09-21T09:23:34.412300+09:00"
+        }
+      },
+      "state": "queued"
+    }
+  ],
+  "prepare_cursor": "ded34fde07724eb2b7361d1bffb245e8",
   "deliver_cursor": "c48cebeb50e34dc88766392966daf1c8"
 }
