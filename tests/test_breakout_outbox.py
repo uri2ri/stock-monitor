@@ -188,7 +188,7 @@ def test_deliver_rotates_past_20_ambiguous_plans_after_restart():
     assert backend.calls == ['000020']
 
 
-def test_rotated_followup_cannot_overtake_first_observation():
+def test_rotated_followup_cannot_overtake_first_observation(monkeypatch):
     backend = Backend()
     first = observe('000001')
     followup = observe('000001', now=AT + timedelta(days=1), price=130)
@@ -196,7 +196,9 @@ def test_rotated_followup_cannot_overtake_first_observation():
     data['prepare_cursor'] = first
     j.save(data)
     # Starts at the followup, but must preserve the earliest price/date.
-    j.prepare(backend, {'000001'}, '1')
+    with monkeypatch.context() as m:
+        m.setattr(b, 'record_breakout', Mock(side_effect=TimeoutError('replay')))
+        j.prepare(backend, set(), '1')
     assert not j.load()['plans']
     assert [e['id'] for e in j.load()['events']] == [first, followup]
     restart_process()
@@ -364,3 +366,51 @@ def test_real_git_checkpoint_and_fresh_checkout(monkeypatch, tmp_path, reject_pu
         deliver(backend, 'third-owner')
         assert len(backend.calls) == 1
         assert j.load()['plans'][0]['state'] == 'ambiguous'
+
+
+def test_held_exclusion_preserves_evidence_and_survives_restart():
+    backend = Backend()
+    first = observe()
+    j.append('_set_outcome', ['000390', b.OUTCOME_CAP, 'cap zero', AT], {})
+    original = deepcopy(j.load()['events'])
+    j.prepare(backend, {'000390'}, '1')
+    assert not j.load()['events'] and not j.load()['plans']
+    assert [e['event'] for e in j.load()['excluded_events']] == original
+    restart_process()
+    j.append('_set_outcome', ['000390', b.OUTCOME_NOT_ORDERED, 'hours', AT], {})
+    observe('999999')
+    j.prepare(backend, {'000390'}, '2')
+    deliver(backend, '2')
+    assert backend.calls == ['999999']
+    assert len(j.load()['excluded_events']) == 3
+    assert j.load()['excluded_events'][0]['event']['id'] == first
+    assert not j.load()['events']
+    # A later breakout after leaving holdings starts a new episode.
+    observe(now=AT + timedelta(days=1), price=130)
+    j.prepare(backend, set(), '3')
+    deliver(backend, '3')
+    assert backend.calls == ['999999', '000390']
+    assert next(r for r in backend.rows.values() if r['ticker']=='000390')['first_price'] == 130
+
+
+@pytest.mark.parametrize('outcome', [b.OUTCOME_UNKNOWN, b.OUTCOME_ORDER_SENT, b.OUTCOME_PARTIAL])
+def test_held_uncertain_order_is_never_excluded(outcome):
+    backend = Backend()
+    observe()
+    j.append('_set_outcome', ['000390', outcome, 'uncertain', AT], {})
+    j.prepare(backend, {'000390'}, '1')
+    assert not j.load()['excluded_events']
+    assert j.load()['events']
+
+
+def test_held_orphan_and_full_archive_remain_pending(monkeypatch):
+    backend = Backend()
+    orphan = j.append('_set_outcome', ['000390', b.OUTCOME_CAP, 'cap', AT], {})
+    j.prepare(backend, {'000390'}, '1')
+    assert j.load()['events'][0]['id'] == orphan
+    observe('999999')
+    monkeypatch.setattr(j, 'MAX_EXCLUDED', 0)
+    before = deepcopy(j.load()['events'])
+    j.prepare(backend, {'000390', '999999'}, '2')
+    assert j.load()['events'] == before
+    assert not j.load()['excluded_events']

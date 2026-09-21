@@ -20,6 +20,7 @@ log = logging.getLogger(__name__)
 OPERATIONS = {'record_breakout', '_set_outcome', 'record_fill', 'close_track'}
 MAX_EVENTS = 10000
 MAX_BATCH = 100
+MAX_EXCLUDED = 10000
 
 
 def path():
@@ -115,7 +116,14 @@ def prepare(backend, holdings, owner):
         # Sent events refer to a new buy executed before holdings were read.
         b._sent_tickers = {e['args'][0] for e in events
                            if e['operation'] == '_set_outcome' and e['args'][1] == b.OUTCOME_ORDER_SENT}
+        uncertain_tickers = {_event_ticker(e) for e in events
+                             if e['operation'] in {'record_fill', 'close_track'}
+                             or (e['operation'] == '_set_outcome'
+                                 and e['args'][1] not in b.CONFIRMED_NO_ENTRY)}
         groups, acknowledged = {}, set()
+        excluded = data.setdefault('excluded_events', [])
+        excluded_tickers = {_event_ticker(e['event']) for e in excluded
+                            if e['event']['operation'] == 'record_breakout'}
         try:
             predecessors = _predecessors(events, _event_ticker)
             handled = set()
@@ -141,6 +149,21 @@ def prepare(backend, holdings, owner):
                     # Verified no-op; do not drop events attached to a pending write.
                     active = memory.find_active(ticker)
                     if not active:
+                        # Only a proven held exclusion can finish without a target.
+                        # Preserve the complete event in the same atomic checkpoint.
+                        held_exclusion = (
+                            ticker in b._held_tickers and ticker not in uncertain_tickers
+                            and (op == 'record_breakout' or (
+                                op == '_set_outcome' and ticker in excluded_tickers
+                                and args[1] in b.CONFIRMED_NO_ENTRY)))
+                        if held_exclusion and len(excluded) < MAX_EXCLUDED:
+                            excluded.append({'event': deepcopy(event),
+                                             'reason': 'held_without_active_track',
+                                             'resolved_by': owner})
+                            excluded_tickers.add(ticker)
+                            acknowledged.add(event['id'])
+                            handled.add(event['id'])
+                            continue
                         # No target is not a successful save. This can be a held
                         # ticker or an orphan outcome whose observation was lost.
                         # Retain the evidence instead of inventing a new episode.

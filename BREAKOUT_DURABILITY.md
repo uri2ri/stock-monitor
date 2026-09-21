@@ -37,3 +37,23 @@ prepare/deliver 커서는 저널에 저장되며 회차마다 다음 위치부�
 - prepare는 회차당 최대 100개 이벤트, deliver는 최대 20개 계획과 60초 시작 예산으로 제한한다. 진행 중 HTTP 요청 시간은 이 예산을 넘길 수 있고 단계 자체는 워크플로 3분 제한을 둔다. 무제한 재시도 없음.
 - 2026-09-21 승인된 별도 추적 DB 생성과 GitHub·로컬 연결 설정을 마쳤다. 배포 웹앱 설정은 미완료이며 PR 병합·배포·운영 실행은 하지 않았다.
 - 저널은 관측/주문 관련 데이터를 포함하므로 저장소 접근 권한을 검토해야 한다. 토큰·API키·실계좌번호는 저장하지 않는다.
+
+## Held observations without an active track
+
+`prepare` can resolve a held ticker's `record_breakout` as
+`held_without_active_track` when replay confirms no active track and no pending
+order-uncertain, fill, or close event exists for that ticker. The complete original
+event (including its ID, timestamp, price, threshold and ATR), reason and worker
+owner are atomically preserved in `excluded_events`; only the pending copy is
+removed. Subsequent confirmed non-entry outcomes can use that evidence while the
+ticker remains held. Orphan outcomes, unknown order states and pending plans are
+not discarded. Normal per-ticker ordering, 100-event batches, cursor persistence
+and pre-POST checkpoint rules remain unchanged. No Notion row is created for an
+excluded event. A new observation after the ticker leaves holdings can start a
+new tracking episode; archived observations are not replayed as new observations.
+
+The archive is capped at 10,000 events; when full, exclusions remain pending
+rather than deleting evidence. The archive travels with the existing journal's
+remote checkpoints and survives process restarts. This change does not migrate
+or edit the production journal directly. Existing held events are resolved only
+when a deployed worker processes them under the same checks.
