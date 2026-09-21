@@ -68,9 +68,261 @@
         "order_day": null,
         "identity": null
       }
+    },
+    {
+      "id": "96464d1edfcd4c22b7e6cfae276f2e7a",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "030530",
+          "name": "원익홀딩스",
+          "high20": 26750.0,
+          "price": 27150.0,
+          "atr20": 2102.0
+        },
+        {
+          "__datetime__": "2026-09-21T09:33:39.978846+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "065ab95cc9064a30b475bc4a7f5560ec",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "232680",
+          "name": "라온로보틱스",
+          "high20": 9910.0,
+          "price": 9930.0,
+          "atr20": 621.0
+        },
+        {
+          "__datetime__": "2026-09-21T09:33:39.978846+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "4118820d5936478ab89b0aa1564f8898",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "163730",
+          "name": "핑거",
+          "high20": 10500.0,
+          "price": 10600.0,
+          "atr20": 798.0
+        },
+        {
+          "__datetime__": "2026-09-21T09:33:39.978846+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "dc5c8944167d4da1925f55a9c985d519",
+      "operation": "_set_outcome",
+      "args": [
+        "030530",
+        "상한제한",
+        "신규매수 일일 상한 0 (운영 보류)",
+        {
+          "__datetime__": "2026-09-21T09:34:23.900111+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "5e48896ff57344a093a579dd8ee80290",
+      "operation": "_set_outcome",
+      "args": [
+        "232680",
+        "상한제한",
+        "신규매수 일일 상한 0 (운영 보류)",
+        {
+          "__datetime__": "2026-09-21T09:34:23.901765+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "89e9736f7c2644d3803e2b7e8ee4fe70",
+      "operation": "_set_outcome",
+      "args": [
+        "163730",
+        "상한제한",
+        "신규매수 일일 상한 0 (운영 보류)",
+        {
+          "__datetime__": "2026-09-21T09:34:23.903109+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "a23b7157888949fd88d4a433f0b4c7c3",
+      "operation": "_set_outcome",
+      "args": [
+        "000390",
+        "상한제한",
+        "신규매수 일일 상한 0 (운영 보류)",
+        {
+          "__datetime__": "2026-09-21T09:34:23.912561+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
     }
   ],
-  "plans": [],
-  "prepare_cursor": "ded34fde07724eb2b7361d1bffb245e8",
+  "plans": [
+    {
+      "id": "c1b67dab93984679b930250a2f0c51a1",
+      "owner": "35548051432:1",
+      "events": [
+        "96464d1edfcd4c22b7e6cfae276f2e7a",
+        "dc5c8944167d4da1925f55a9c985d519"
+      ],
+      "record": {
+        "event_id": "96464d1edfcd4c22b7e6cfae276f2e7a",
+        "ticker": "030530",
+        "name": "원익홀딩스",
+        "first_detected_at": {
+          "__datetime__": "2026-09-21T09:33:39.978846+09:00"
+        },
+        "first_threshold": 26750.0,
+        "first_price": 27150.0,
+        "first_atr": 2102.0,
+        "status": "추적중",
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-21T09:34:23.900111+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "96464d1edfcd4c22b7e6cfae276f2e7a",
+        "ticker": "030530",
+        "name": "원익홀딩스",
+        "first_detected_at": {
+          "__datetime__": "2026-09-21T09:33:39.978846+09:00"
+        },
+        "first_threshold": 26750.0,
+        "first_price": 27150.0,
+        "first_atr": 2102.0,
+        "status": "추적중",
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-21T09:34:23.900111+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "e820bec436964ac8adc6a00b4182ffee",
+      "owner": "35548051432:1",
+      "events": [
+        "065ab95cc9064a30b475bc4a7f5560ec",
+        "5e48896ff57344a093a579dd8ee80290"
+      ],
+      "record": {
+        "event_id": "065ab95cc9064a30b475bc4a7f5560ec",
+        "ticker": "232680",
+        "name": "라온로보틱스",
+        "first_detected_at": {
+          "__datetime__": "2026-09-21T09:33:39.978846+09:00"
+        },
+        "first_threshold": 9910.0,
+        "first_price": 9930.0,
+        "first_atr": 621.0,
+        "status": "추적중",
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-21T09:34:23.901765+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "065ab95cc9064a30b475bc4a7f5560ec",
+        "ticker": "232680",
+        "name": "라온로보틱스",
+        "first_detected_at": {
+          "__datetime__": "2026-09-21T09:33:39.978846+09:00"
+        },
+        "first_threshold": 9910.0,
+        "first_price": 9930.0,
+        "first_atr": 621.0,
+        "status": "추적중",
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-21T09:34:23.901765+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "9351bf59607c4b7c969ddaa5cd735867",
+      "owner": "35548051432:1",
+      "events": [
+        "4118820d5936478ab89b0aa1564f8898",
+        "89e9736f7c2644d3803e2b7e8ee4fe70"
+      ],
+      "record": {
+        "event_id": "4118820d5936478ab89b0aa1564f8898",
+        "ticker": "163730",
+        "name": "핑거",
+        "first_detected_at": {
+          "__datetime__": "2026-09-21T09:33:39.978846+09:00"
+        },
+        "first_threshold": 10500.0,
+        "first_price": 10600.0,
+        "first_atr": 798.0,
+        "status": "추적중",
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-21T09:34:23.903109+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "4118820d5936478ab89b0aa1564f8898",
+        "ticker": "163730",
+        "name": "핑거",
+        "first_detected_at": {
+          "__datetime__": "2026-09-21T09:33:39.978846+09:00"
+        },
+        "first_threshold": 10500.0,
+        "first_price": 10600.0,
+        "first_atr": 798.0,
+        "status": "추적중",
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-21T09:34:23.903109+09:00"
+        }
+      },
+      "state": "queued"
+    }
+  ],
+  "prepare_cursor": "181bf5b29a114054a543084e55f47996",
   "deliver_cursor": "17d152b68fed4273aa7f78e959bd5e6b"
 }
