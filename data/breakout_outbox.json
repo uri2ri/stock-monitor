@@ -102,9 +102,339 @@
         "order_day": null,
         "identity": null
       }
+    },
+    {
+      "id": "9d500bbcdd174d00b9e4cdf9caa16e00",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "074600",
+          "name": "원익QnC",
+          "high20": 28300.0,
+          "price": 28500.0,
+          "atr20": 1721.0
+        },
+        {
+          "__datetime__": "2026-09-21T09:53:31.716959+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "0f0d52c7077a46baa6fe2c1294efec8a",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "332570",
+          "name": "PS일렉트로닉스",
+          "high20": 9330.0,
+          "price": 9580.0,
+          "atr20": 766.0
+        },
+        {
+          "__datetime__": "2026-09-21T09:53:31.716959+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "c079a12b2be34437842cb9b39287f8ab",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "033640",
+          "name": "네패스",
+          "high20": 27250.0,
+          "price": 27600.0,
+          "atr20": 1810.0
+        },
+        {
+          "__datetime__": "2026-09-21T09:53:31.716959+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "3de58854d0b141a7994975cadd561249",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "330860",
+          "name": "네패스아크",
+          "high20": 27750.0,
+          "price": 27800.0,
+          "atr20": 2450.0
+        },
+        {
+          "__datetime__": "2026-09-21T09:53:31.716959+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "c19d645287094e918e4ee1111ddab5bb",
+      "operation": "_set_outcome",
+      "args": [
+        "074600",
+        "상한제한",
+        "신규매수 일일 상한 0 (운영 보류)",
+        {
+          "__datetime__": "2026-09-21T09:54:06.119863+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "91ea5ecc7d464d45950dc17a07138b8f",
+      "operation": "_set_outcome",
+      "args": [
+        "332570",
+        "상한제한",
+        "신규매수 일일 상한 0 (운영 보류)",
+        {
+          "__datetime__": "2026-09-21T09:54:06.121607+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "ad96878aceab4268b94b73487e92c4ab",
+      "operation": "_set_outcome",
+      "args": [
+        "033640",
+        "상한제한",
+        "신규매수 일일 상한 0 (운영 보류)",
+        {
+          "__datetime__": "2026-09-21T09:54:06.122931+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "d1046ea6e62a4ffebf173339070d6fda",
+      "operation": "_set_outcome",
+      "args": [
+        "330860",
+        "상한제한",
+        "신규매수 일일 상한 0 (운영 보류)",
+        {
+          "__datetime__": "2026-09-21T09:54:06.124201+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "af33f9bbf9284801a8e251e5133c0c78",
+      "operation": "_set_outcome",
+      "args": [
+        "000390",
+        "상한제한",
+        "신규매수 일일 상한 0 (운영 보류)",
+        {
+          "__datetime__": "2026-09-21T09:54:06.132904+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
     }
   ],
-  "plans": [],
-  "prepare_cursor": "b6933c6890b14ddfaebcbe0cbcbdac67",
+  "plans": [
+    {
+      "id": "2d2b06af63ae431285033c8fa0c460c2",
+      "owner": "35549086055:1",
+      "events": [
+        "9d500bbcdd174d00b9e4cdf9caa16e00",
+        "c19d645287094e918e4ee1111ddab5bb"
+      ],
+      "record": {
+        "event_id": "9d500bbcdd174d00b9e4cdf9caa16e00",
+        "ticker": "074600",
+        "name": "원익QnC",
+        "first_detected_at": {
+          "__datetime__": "2026-09-21T09:53:31.716959+09:00"
+        },
+        "first_threshold": 28300.0,
+        "first_price": 28500.0,
+        "first_atr": 1721.0,
+        "status": "추적중",
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-21T09:54:06.119863+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "9d500bbcdd174d00b9e4cdf9caa16e00",
+        "ticker": "074600",
+        "name": "원익QnC",
+        "first_detected_at": {
+          "__datetime__": "2026-09-21T09:53:31.716959+09:00"
+        },
+        "first_threshold": 28300.0,
+        "first_price": 28500.0,
+        "first_atr": 1721.0,
+        "status": "추적중",
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-21T09:54:06.119863+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "44656bc203df477b80f7af517f38e4aa",
+      "owner": "35549086055:1",
+      "events": [
+        "0f0d52c7077a46baa6fe2c1294efec8a",
+        "91ea5ecc7d464d45950dc17a07138b8f"
+      ],
+      "record": {
+        "event_id": "0f0d52c7077a46baa6fe2c1294efec8a",
+        "ticker": "332570",
+        "name": "PS일렉트로닉스",
+        "first_detected_at": {
+          "__datetime__": "2026-09-21T09:53:31.716959+09:00"
+        },
+        "first_threshold": 9330.0,
+        "first_price": 9580.0,
+        "first_atr": 766.0,
+        "status": "추적중",
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-21T09:54:06.121607+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "0f0d52c7077a46baa6fe2c1294efec8a",
+        "ticker": "332570",
+        "name": "PS일렉트로닉스",
+        "first_detected_at": {
+          "__datetime__": "2026-09-21T09:53:31.716959+09:00"
+        },
+        "first_threshold": 9330.0,
+        "first_price": 9580.0,
+        "first_atr": 766.0,
+        "status": "추적중",
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-21T09:54:06.121607+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "4f071ab0d10044d4af2123ba42853f0b",
+      "owner": "35549086055:1",
+      "events": [
+        "c079a12b2be34437842cb9b39287f8ab",
+        "ad96878aceab4268b94b73487e92c4ab"
+      ],
+      "record": {
+        "event_id": "c079a12b2be34437842cb9b39287f8ab",
+        "ticker": "033640",
+        "name": "네패스",
+        "first_detected_at": {
+          "__datetime__": "2026-09-21T09:53:31.716959+09:00"
+        },
+        "first_threshold": 27250.0,
+        "first_price": 27600.0,
+        "first_atr": 1810.0,
+        "status": "추적중",
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-21T09:54:06.122931+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "c079a12b2be34437842cb9b39287f8ab",
+        "ticker": "033640",
+        "name": "네패스",
+        "first_detected_at": {
+          "__datetime__": "2026-09-21T09:53:31.716959+09:00"
+        },
+        "first_threshold": 27250.0,
+        "first_price": 27600.0,
+        "first_atr": 1810.0,
+        "status": "추적중",
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-21T09:54:06.122931+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "bb773bd595414292abd953572e57ba9a",
+      "owner": "35549086055:1",
+      "events": [
+        "3de58854d0b141a7994975cadd561249",
+        "d1046ea6e62a4ffebf173339070d6fda"
+      ],
+      "record": {
+        "event_id": "3de58854d0b141a7994975cadd561249",
+        "ticker": "330860",
+        "name": "네패스아크",
+        "first_detected_at": {
+          "__datetime__": "2026-09-21T09:53:31.716959+09:00"
+        },
+        "first_threshold": 27750.0,
+        "first_price": 27800.0,
+        "first_atr": 2450.0,
+        "status": "추적중",
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-21T09:54:06.124201+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "3de58854d0b141a7994975cadd561249",
+        "ticker": "330860",
+        "name": "네패스아크",
+        "first_detected_at": {
+          "__datetime__": "2026-09-21T09:53:31.716959+09:00"
+        },
+        "first_threshold": 27750.0,
+        "first_price": 27800.0,
+        "first_atr": 2450.0,
+        "status": "추적중",
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-21T09:54:06.124201+09:00"
+        }
+      },
+      "state": "queued"
+    }
+  ],
+  "prepare_cursor": "16fe82f40ca04b6abd66d17f3358f531",
   "deliver_cursor": "9351bf59607c4b7c969ddaa5cd735867"
 }
