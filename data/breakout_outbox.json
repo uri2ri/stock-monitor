@@ -2,23 +2,6 @@
   "version": 1,
   "events": [
     {
-      "id": "b66cab78fe4f4548bae68d263d9c62b7",
-      "operation": "record_breakout",
-      "args": [
-        {
-          "ticker": "036540",
-          "name": "SFA반도체",
-          "high20": 9110.0,
-          "price": 9300.0,
-          "atr20": 571.0
-        },
-        {
-          "__datetime__": "2026-09-21T09:03:36.879134+09:00"
-        }
-      ],
-      "kwargs": {}
-    },
-    {
       "id": "96018ca7ede4461d88c52c447c2902b6",
       "operation": "record_breakout",
       "args": [
@@ -189,23 +172,6 @@
       }
     },
     {
-      "id": "aa4f7deb81df4194a17c423be4020fc4",
-      "operation": "_set_outcome",
-      "args": [
-        "036540",
-        "미주문",
-        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        {
-          "__datetime__": "2026-09-21T09:03:49.150132+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
       "id": "9e1cd7422dca46b187715fb9e0f2d552",
       "operation": "_set_outcome",
       "args": [
@@ -310,50 +276,6 @@
   ],
   "plans": [
     {
-      "id": "7d5de49ddea14286a76d64b7612a9008",
-      "owner": "35546406507:1",
-      "events": [
-        "b66cab78fe4f4548bae68d263d9c62b7",
-        "aa4f7deb81df4194a17c423be4020fc4"
-      ],
-      "record": {
-        "event_id": "b66cab78fe4f4548bae68d263d9c62b7",
-        "ticker": "036540",
-        "name": "SFA반도체",
-        "first_detected_at": {
-          "__datetime__": "2026-09-21T09:03:36.879134+09:00"
-        },
-        "first_threshold": 9110.0,
-        "first_price": 9300.0,
-        "first_atr": 571.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        "outcome_at": {
-          "__datetime__": "2026-09-21T09:03:49.150132+09:00"
-        }
-      },
-      "page_id": null,
-      "fields": {
-        "event_id": "b66cab78fe4f4548bae68d263d9c62b7",
-        "ticker": "036540",
-        "name": "SFA반도체",
-        "first_detected_at": {
-          "__datetime__": "2026-09-21T09:03:36.879134+09:00"
-        },
-        "first_threshold": 9110.0,
-        "first_price": 9300.0,
-        "first_atr": 571.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        "outcome_at": {
-          "__datetime__": "2026-09-21T09:03:49.150132+09:00"
-        }
-      },
-      "state": "creating"
-    },
-    {
       "id": "af14869ba5fc4deeb3a2986bc798843f",
       "owner": "35546406507:1",
       "events": [
@@ -395,7 +317,7 @@
           "__datetime__": "2026-09-21T09:03:36.879134+09:00"
         }
       },
-      "state": "queued"
+      "state": "creating"
     },
     {
       "id": "ef81ba469cdc4138bf1a4210208a0daa",
@@ -663,5 +585,5 @@
     }
   ],
   "prepare_cursor": "1e971fc7031344098843696e2f8bc126",
-  "deliver_cursor": "7d5de49ddea14286a76d64b7612a9008"
+  "deliver_cursor": "af14869ba5fc4deeb3a2986bc798843f"
 }
