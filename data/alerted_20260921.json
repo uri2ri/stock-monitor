@@ -144,6 +144,42 @@
       "gap_atr": 0.279,
       "unit_shares": 253,
       "status": "진입가능"
+    },
+    "003030": {
+      "time": "09:23",
+      "name": "세아제강지주",
+      "sector": "금융",
+      "market": "KOSPI",
+      "price": 110600.0,
+      "high20": 109100.0,
+      "atr20": 5182.0,
+      "gap_atr": 0.289,
+      "unit_shares": 96,
+      "status": "진입가능"
+    },
+    "253590": {
+      "time": "09:23",
+      "name": "네오셈",
+      "sector": "기계·장비",
+      "market": "KOSDAQ",
+      "price": 12790.0,
+      "high20": 12660.0,
+      "atr20": 798.0,
+      "gap_atr": 0.163,
+      "unit_shares": 626,
+      "status": "진입가능"
+    },
+    "003160": {
+      "time": "09:23",
+      "name": "디아이",
+      "sector": "의료·정밀기기",
+      "market": "KOSPI",
+      "price": 34250.0,
+      "high20": 32500.0,
+      "atr20": 1900.0,
+      "gap_atr": 0.921,
+      "unit_shares": 263,
+      "status": "추격금지"
     }
   }
 }

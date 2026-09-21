@@ -53,40 +53,6 @@
       }
     },
     {
-      "id": "a154881743e34b5a96d7e94cb9fc64ba",
-      "operation": "record_breakout",
-      "args": [
-        {
-          "ticker": "003160",
-          "name": "디아이",
-          "high20": 32500.0,
-          "price": 34250.0,
-          "atr20": 1900.0
-        },
-        {
-          "__datetime__": "2026-09-21T09:23:34.412300+09:00"
-        }
-      ],
-      "kwargs": {}
-    },
-    {
-      "id": "909defbcfd064e4e865b9b1fbed41038",
-      "operation": "_set_outcome",
-      "args": [
-        "003160",
-        "미주문",
-        "추격 구간(+0.92N) - 매수 대상 제외",
-        {
-          "__datetime__": "2026-09-21T09:23:34.412300+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
       "id": "c1a9329518c04682b569366e5eed01c3",
       "operation": "_set_outcome",
       "args": [
@@ -104,52 +70,7 @@
       }
     }
   ],
-  "plans": [
-    {
-      "id": "17d152b68fed4273aa7f78e959bd5e6b",
-      "owner": "35547524691:1",
-      "events": [
-        "a154881743e34b5a96d7e94cb9fc64ba",
-        "909defbcfd064e4e865b9b1fbed41038"
-      ],
-      "record": {
-        "event_id": "a154881743e34b5a96d7e94cb9fc64ba",
-        "ticker": "003160",
-        "name": "디아이",
-        "first_detected_at": {
-          "__datetime__": "2026-09-21T09:23:34.412300+09:00"
-        },
-        "first_threshold": 32500.0,
-        "first_price": 34250.0,
-        "first_atr": 1900.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "추격 구간(+0.92N) - 매수 대상 제외",
-        "outcome_at": {
-          "__datetime__": "2026-09-21T09:23:34.412300+09:00"
-        }
-      },
-      "page_id": null,
-      "fields": {
-        "event_id": "a154881743e34b5a96d7e94cb9fc64ba",
-        "ticker": "003160",
-        "name": "디아이",
-        "first_detected_at": {
-          "__datetime__": "2026-09-21T09:23:34.412300+09:00"
-        },
-        "first_threshold": 32500.0,
-        "first_price": 34250.0,
-        "first_atr": 1900.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "추격 구간(+0.92N) - 매수 대상 제외",
-        "outcome_at": {
-          "__datetime__": "2026-09-21T09:23:34.412300+09:00"
-        }
-      },
-      "state": "creating"
-    }
-  ],
+  "plans": [],
   "prepare_cursor": "ded34fde07724eb2b7361d1bffb245e8",
   "deliver_cursor": "17d152b68fed4273aa7f78e959bd5e6b"
 }
