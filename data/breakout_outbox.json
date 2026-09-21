@@ -478,40 +478,6 @@
       }
     },
     {
-      "id": "8674dfed623641cd893d3f8de10a154d",
-      "operation": "record_breakout",
-      "args": [
-        {
-          "ticker": "118990",
-          "name": "모트렉스",
-          "high20": 6850.0,
-          "price": 6860.0,
-          "atr20": 290.0
-        },
-        {
-          "__datetime__": "2026-09-21T13:33:37.972180+09:00"
-        }
-      ],
-      "kwargs": {}
-    },
-    {
-      "id": "1a309d8c092e458cbc2c64cde8ac900c",
-      "operation": "_set_outcome",
-      "args": [
-        "118990",
-        "상한제한",
-        "신규매수 일일 상한 0 (운영 보류)",
-        {
-          "__datetime__": "2026-09-21T13:35:01.022866+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
       "id": "1e900b416b8246a8a376857c48b9fc75",
       "operation": "_set_outcome",
       "args": [
@@ -529,52 +495,7 @@
       }
     }
   ],
-  "plans": [
-    {
-      "id": "06264a36fa7d4cfa8c83ddd4383d2a15",
-      "owner": "35561419836:1",
-      "events": [
-        "8674dfed623641cd893d3f8de10a154d",
-        "1a309d8c092e458cbc2c64cde8ac900c"
-      ],
-      "record": {
-        "event_id": "8674dfed623641cd893d3f8de10a154d",
-        "ticker": "118990",
-        "name": "모트렉스",
-        "first_detected_at": {
-          "__datetime__": "2026-09-21T13:33:37.972180+09:00"
-        },
-        "first_threshold": 6850.0,
-        "first_price": 6860.0,
-        "first_atr": 290.0,
-        "status": "추적중",
-        "outcome": "상한제한",
-        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
-        "outcome_at": {
-          "__datetime__": "2026-09-21T13:35:01.022866+09:00"
-        }
-      },
-      "page_id": null,
-      "fields": {
-        "event_id": "8674dfed623641cd893d3f8de10a154d",
-        "ticker": "118990",
-        "name": "모트렉스",
-        "first_detected_at": {
-          "__datetime__": "2026-09-21T13:33:37.972180+09:00"
-        },
-        "first_threshold": 6850.0,
-        "first_price": 6860.0,
-        "first_atr": 290.0,
-        "status": "추적중",
-        "outcome": "상한제한",
-        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
-        "outcome_at": {
-          "__datetime__": "2026-09-21T13:35:01.022866+09:00"
-        }
-      },
-      "state": "creating"
-    }
-  ],
+  "plans": [],
   "prepare_cursor": "37ca71ef9d68420f9d60d1cd04945b46",
   "deliver_cursor": "06264a36fa7d4cfa8c83ddd4383d2a15"
 }

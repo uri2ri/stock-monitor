@@ -404,6 +404,18 @@
       "gap_atr": 0.017,
       "unit_shares": 168,
       "status": "진입가능"
+    },
+    "118990": {
+      "time": "13:33",
+      "name": "모트렉스",
+      "sector": "운송장비·부품",
+      "market": "KOSDAQ",
+      "price": 6860.0,
+      "high20": 6850.0,
+      "atr20": 290.0,
+      "gap_atr": 0.034,
+      "unit_shares": 1724,
+      "status": "진입가능"
     }
   }
 }
