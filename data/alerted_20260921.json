@@ -216,6 +216,54 @@
       "gap_atr": 0.125,
       "unit_shares": 626,
       "status": "진입가능"
+    },
+    "074600": {
+      "time": "09:53",
+      "name": "원익QnC",
+      "sector": "비금속",
+      "market": "KOSDAQ",
+      "price": 28500.0,
+      "high20": 28300.0,
+      "atr20": 1721.0,
+      "gap_atr": 0.116,
+      "unit_shares": 290,
+      "status": "진입가능"
+    },
+    "332570": {
+      "time": "09:53",
+      "name": "PS일렉트로닉스",
+      "sector": "전기전자",
+      "market": "KOSDAQ",
+      "price": 9580.0,
+      "high20": 9330.0,
+      "atr20": 766.0,
+      "gap_atr": 0.326,
+      "unit_shares": 652,
+      "status": "진입가능"
+    },
+    "033640": {
+      "time": "09:53",
+      "name": "네패스",
+      "sector": "전기전자",
+      "market": "KOSDAQ",
+      "price": 27600.0,
+      "high20": 27250.0,
+      "atr20": 1810.0,
+      "gap_atr": 0.193,
+      "unit_shares": 276,
+      "status": "진입가능"
+    },
+    "330860": {
+      "time": "09:53",
+      "name": "네패스아크",
+      "sector": "일반서비스",
+      "market": "KOSDAQ",
+      "price": 27800.0,
+      "high20": 27750.0,
+      "atr20": 2450.0,
+      "gap_atr": 0.02,
+      "unit_shares": 204,
+      "status": "진입가능"
     }
   }
 }
