@@ -19,23 +19,6 @@
       "kwargs": {}
     },
     {
-      "id": "b31dbc295b9e49df9b7ace1263965e41",
-      "operation": "record_breakout",
-      "args": [
-        {
-          "ticker": "001820",
-          "name": "삼화콘덴서",
-          "high20": 151000.0,
-          "price": 153800.0,
-          "atr20": 11896.0
-        },
-        {
-          "__datetime__": "2026-09-21T09:03:36.879134+09:00"
-        }
-      ],
-      "kwargs": {}
-    },
-    {
       "id": "720f988a016d4176bfea483b9612101e",
       "operation": "_set_outcome",
       "args": [
@@ -51,71 +34,9 @@
         "order_day": null,
         "identity": null
       }
-    },
-    {
-      "id": "1e971fc7031344098843696e2f8bc126",
-      "operation": "_set_outcome",
-      "args": [
-        "001820",
-        "미주문",
-        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        {
-          "__datetime__": "2026-09-21T09:03:49.171472+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
     }
   ],
-  "plans": [
-    {
-      "id": "8226dba7dd674cee8f91b8d97ead0727",
-      "owner": "35546406507:1",
-      "events": [
-        "b31dbc295b9e49df9b7ace1263965e41",
-        "1e971fc7031344098843696e2f8bc126"
-      ],
-      "record": {
-        "event_id": "b31dbc295b9e49df9b7ace1263965e41",
-        "ticker": "001820",
-        "name": "삼화콘덴서",
-        "first_detected_at": {
-          "__datetime__": "2026-09-21T09:03:36.879134+09:00"
-        },
-        "first_threshold": 151000.0,
-        "first_price": 153800.0,
-        "first_atr": 11896.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        "outcome_at": {
-          "__datetime__": "2026-09-21T09:03:49.171472+09:00"
-        }
-      },
-      "page_id": null,
-      "fields": {
-        "event_id": "b31dbc295b9e49df9b7ace1263965e41",
-        "ticker": "001820",
-        "name": "삼화콘덴서",
-        "first_detected_at": {
-          "__datetime__": "2026-09-21T09:03:36.879134+09:00"
-        },
-        "first_threshold": 151000.0,
-        "first_price": 153800.0,
-        "first_atr": 11896.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        "outcome_at": {
-          "__datetime__": "2026-09-21T09:03:49.171472+09:00"
-        }
-      },
-      "state": "creating"
-    }
-  ],
+  "plans": [],
   "prepare_cursor": "1e971fc7031344098843696e2f8bc126",
   "deliver_cursor": "8226dba7dd674cee8f91b8d97ead0727"
 }
