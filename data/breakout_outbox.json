@@ -391,9 +391,105 @@
         "order_day": null,
         "identity": null
       }
+    },
+    {
+      "id": "b3e68bf864394acd97864dbe307d07f9",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "425040",
+          "name": "티이엠씨",
+          "high20": 10430.0,
+          "price": 11270.0,
+          "atr20": 649.0
+        },
+        {
+          "__datetime__": "2026-09-21T12:43:41.735881+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "8fb78038dcb149df9bcf2077ab509843",
+      "operation": "_set_outcome",
+      "args": [
+        "425040",
+        "미주문",
+        "추격 구간(+1.29N) - 매수 대상 제외",
+        {
+          "__datetime__": "2026-09-21T12:43:41.735881+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "0d964269facd4dda843c8759ba31176f",
+      "operation": "_set_outcome",
+      "args": [
+        "000390",
+        "상한제한",
+        "신규매수 일일 상한 0 (운영 보류)",
+        {
+          "__datetime__": "2026-09-21T12:44:31.815284+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
     }
   ],
-  "plans": [],
-  "prepare_cursor": "9ffdb500855f453b8742a8337cdb4c84",
+  "plans": [
+    {
+      "id": "554a4bbef5f447308407891628763c75",
+      "owner": "35558458772:1",
+      "events": [
+        "b3e68bf864394acd97864dbe307d07f9",
+        "8fb78038dcb149df9bcf2077ab509843"
+      ],
+      "record": {
+        "event_id": "b3e68bf864394acd97864dbe307d07f9",
+        "ticker": "425040",
+        "name": "티이엠씨",
+        "first_detected_at": {
+          "__datetime__": "2026-09-21T12:43:41.735881+09:00"
+        },
+        "first_threshold": 10430.0,
+        "first_price": 11270.0,
+        "first_atr": 649.0,
+        "status": "추적중",
+        "outcome": "미주문",
+        "outcome_reason": "추격 구간(+1.29N) - 매수 대상 제외",
+        "outcome_at": {
+          "__datetime__": "2026-09-21T12:43:41.735881+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "b3e68bf864394acd97864dbe307d07f9",
+        "ticker": "425040",
+        "name": "티이엠씨",
+        "first_detected_at": {
+          "__datetime__": "2026-09-21T12:43:41.735881+09:00"
+        },
+        "first_threshold": 10430.0,
+        "first_price": 11270.0,
+        "first_atr": 649.0,
+        "status": "추적중",
+        "outcome": "미주문",
+        "outcome_reason": "추격 구간(+1.29N) - 매수 대상 제외",
+        "outcome_at": {
+          "__datetime__": "2026-09-21T12:43:41.735881+09:00"
+        }
+      },
+      "state": "queued"
+    }
+  ],
+  "prepare_cursor": "ceeea6d8855045a197f56690e6e4ed22",
   "deliver_cursor": "828e1a24bf6f43889ab14deb46cfda0c"
 }
