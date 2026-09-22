@@ -336,6 +336,18 @@
       "gap_atr": 0.02,
       "unit_shares": 4,
       "status": "진입가능"
+    },
+    "482630": {
+      "time": "09:43",
+      "name": "삼양엔씨켐",
+      "sector": "화학",
+      "market": "KOSDAQ",
+      "price": 14010.0,
+      "high20": 13970.0,
+      "atr20": 913.0,
+      "gap_atr": 0.044,
+      "unit_shares": 547,
+      "status": "진입가능"
     }
   }
 }
