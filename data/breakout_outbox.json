@@ -2,23 +2,6 @@
   "version": 1,
   "events": [
     {
-      "id": "eba5139d298748dabee73f307a63f937",
-      "operation": "record_breakout",
-      "args": [
-        {
-          "ticker": "322310",
-          "name": "오로스테크놀로지",
-          "high20": 13990.0,
-          "price": 14020.0,
-          "atr20": 1129.0
-        },
-        {
-          "__datetime__": "2026-09-22T09:03:37.508768+09:00"
-        }
-      ],
-      "kwargs": {}
-    },
-    {
       "id": "f21bb9e1f45f4853a08f74806c9104ba",
       "operation": "record_breakout",
       "args": [
@@ -206,23 +189,6 @@
       }
     },
     {
-      "id": "fb86f09f3cd94e629a5f41a283ba6f21",
-      "operation": "_set_outcome",
-      "args": [
-        "322310",
-        "미주문",
-        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        {
-          "__datetime__": "2026-09-22T09:03:53.137845+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
       "id": "00eabf70e28545b8a2dab0627467dbcc",
       "operation": "_set_outcome",
       "args": [
@@ -344,50 +310,6 @@
   ],
   "plans": [
     {
-      "id": "5732abcc36144b4fa53fe39d9e8b6bca",
-      "owner": "35670276989:1",
-      "events": [
-        "eba5139d298748dabee73f307a63f937",
-        "fb86f09f3cd94e629a5f41a283ba6f21"
-      ],
-      "record": {
-        "event_id": "eba5139d298748dabee73f307a63f937",
-        "ticker": "322310",
-        "name": "오로스테크놀로지",
-        "first_detected_at": {
-          "__datetime__": "2026-09-22T09:03:37.508768+09:00"
-        },
-        "first_threshold": 13990.0,
-        "first_price": 14020.0,
-        "first_atr": 1129.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        "outcome_at": {
-          "__datetime__": "2026-09-22T09:03:53.137845+09:00"
-        }
-      },
-      "page_id": null,
-      "fields": {
-        "event_id": "eba5139d298748dabee73f307a63f937",
-        "ticker": "322310",
-        "name": "오로스테크놀로지",
-        "first_detected_at": {
-          "__datetime__": "2026-09-22T09:03:37.508768+09:00"
-        },
-        "first_threshold": 13990.0,
-        "first_price": 14020.0,
-        "first_atr": 1129.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        "outcome_at": {
-          "__datetime__": "2026-09-22T09:03:53.137845+09:00"
-        }
-      },
-      "state": "creating"
-    },
-    {
       "id": "203b744c47284c6eaa55e80a3b72105b",
       "owner": "35670276989:1",
       "events": [
@@ -429,7 +351,7 @@
           "__datetime__": "2026-09-22T09:03:53.140404+09:00"
         }
       },
-      "state": "queued"
+      "state": "creating"
     },
     {
       "id": "65d6619328c64818ac437c7d9c42e468",
@@ -785,7 +707,7 @@
     }
   ],
   "prepare_cursor": "149c21e52e274b678598e62c8e06f40a",
-  "deliver_cursor": "5732abcc36144b4fa53fe39d9e8b6bca",
+  "deliver_cursor": "203b744c47284c6eaa55e80a3b72105b",
   "excluded_events": [
     {
       "event": {
