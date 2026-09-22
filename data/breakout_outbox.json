@@ -2,7 +2,7 @@
   "version": 1,
   "events": [],
   "plans": [],
-  "prepare_cursor": "88cb6c6caa2742d98edd8d40e31e3d13",
+  "prepare_cursor": "93ed31f713d346f5bf4f7216f98d904d",
   "deliver_cursor": "c3ebb5897d5047c78deba056dbc82e35",
   "excluded_events": [
     {
@@ -1516,6 +1516,69 @@
       },
       "reason": "held_without_active_track",
       "resolved_by": "35675548641:1"
+    },
+    {
+      "event": {
+        "id": "7f0b437b6c524c129c58a7a0ccebe49a",
+        "operation": "_set_outcome",
+        "args": [
+          "000660",
+          "상한제한",
+          "신규매수 일일 상한 0 (운영 보류)",
+          {
+            "__datetime__": "2026-09-22T10:35:16.471866+09:00"
+          }
+        ],
+        "kwargs": {
+          "order_no": "",
+          "order_day": null,
+          "identity": null
+        }
+      },
+      "reason": "held_without_active_track",
+      "resolved_by": "35676170760:1"
+    },
+    {
+      "event": {
+        "id": "ae831fd588cf40eaa11ffe8b0b457bcd",
+        "operation": "_set_outcome",
+        "args": [
+          "009150",
+          "상한제한",
+          "신규매수 일일 상한 0 (운영 보류)",
+          {
+            "__datetime__": "2026-09-22T10:35:16.604494+09:00"
+          }
+        ],
+        "kwargs": {
+          "order_no": "",
+          "order_day": null,
+          "identity": null
+        }
+      },
+      "reason": "held_without_active_track",
+      "resolved_by": "35676170760:1"
+    },
+    {
+      "event": {
+        "id": "8837768386b34f39bbee6b02acc9b275",
+        "operation": "_set_outcome",
+        "args": [
+          "000390",
+          "상한제한",
+          "신규매수 일일 상한 0 (운영 보류)",
+          {
+            "__datetime__": "2026-09-22T10:35:16.651173+09:00"
+          }
+        ],
+        "kwargs": {
+          "order_no": "",
+          "order_day": null,
+          "identity": null
+        }
+      },
+      "reason": "held_without_active_track",
+      "resolved_by": "35676170760:1"
     }
   ]
 }
