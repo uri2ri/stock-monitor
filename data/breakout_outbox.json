@@ -2,23 +2,6 @@
   "version": 1,
   "events": [
     {
-      "id": "672ddb1f6c3c4b25b0ac455cead7f1e1",
-      "operation": "record_breakout",
-      "args": [
-        {
-          "ticker": "009470",
-          "name": "삼화전기",
-          "high20": 27450.0,
-          "price": 27500.0,
-          "atr20": 1485.0
-        },
-        {
-          "__datetime__": "2026-09-22T09:03:37.508768+09:00"
-        }
-      ],
-      "kwargs": {}
-    },
-    {
       "id": "88ade70cb57b47d19b792b6026490e45",
       "operation": "record_breakout",
       "args": [
@@ -138,23 +121,6 @@
       }
     },
     {
-      "id": "15f68f969eb34d55b813ffb2b42604bf",
-      "operation": "_set_outcome",
-      "args": [
-        "009470",
-        "미주문",
-        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        {
-          "__datetime__": "2026-09-22T09:03:53.143061+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
       "id": "ab575a82f4e140a8a8b992c5dac4a250",
       "operation": "_set_outcome",
       "args": [
@@ -242,50 +208,6 @@
   ],
   "plans": [
     {
-      "id": "6de5beedcfb24865bec4ddf1707ae8dc",
-      "owner": "35670276989:1",
-      "events": [
-        "672ddb1f6c3c4b25b0ac455cead7f1e1",
-        "15f68f969eb34d55b813ffb2b42604bf"
-      ],
-      "record": {
-        "event_id": "672ddb1f6c3c4b25b0ac455cead7f1e1",
-        "ticker": "009470",
-        "name": "삼화전기",
-        "first_detected_at": {
-          "__datetime__": "2026-09-22T09:03:37.508768+09:00"
-        },
-        "first_threshold": 27450.0,
-        "first_price": 27500.0,
-        "first_atr": 1485.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        "outcome_at": {
-          "__datetime__": "2026-09-22T09:03:53.143061+09:00"
-        }
-      },
-      "page_id": null,
-      "fields": {
-        "event_id": "672ddb1f6c3c4b25b0ac455cead7f1e1",
-        "ticker": "009470",
-        "name": "삼화전기",
-        "first_detected_at": {
-          "__datetime__": "2026-09-22T09:03:37.508768+09:00"
-        },
-        "first_threshold": 27450.0,
-        "first_price": 27500.0,
-        "first_atr": 1485.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        "outcome_at": {
-          "__datetime__": "2026-09-22T09:03:53.143061+09:00"
-        }
-      },
-      "state": "creating"
-    },
-    {
       "id": "5535d2ae8b28436a9fcbca3bf6e27d4f",
       "owner": "35670276989:1",
       "events": [
@@ -327,7 +249,7 @@
           "__datetime__": "2026-09-22T09:03:37.508768+09:00"
         }
       },
-      "state": "queued"
+      "state": "creating"
     },
     {
       "id": "bda547388fd74b7b8bf11e3dd401d687",
@@ -551,7 +473,7 @@
     }
   ],
   "prepare_cursor": "149c21e52e274b678598e62c8e06f40a",
-  "deliver_cursor": "6de5beedcfb24865bec4ddf1707ae8dc",
+  "deliver_cursor": "5535d2ae8b28436a9fcbca3bf6e27d4f",
   "excluded_events": [
     {
       "event": {
