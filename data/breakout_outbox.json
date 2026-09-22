@@ -2,23 +2,6 @@
   "version": 1,
   "events": [
     {
-      "id": "91af1dc32ab14c66a2a0809efcd1ca40",
-      "operation": "record_breakout",
-      "args": [
-        {
-          "ticker": "101160",
-          "name": "월덱스",
-          "high20": 31450.0,
-          "price": 31500.0,
-          "atr20": 1338.0
-        },
-        {
-          "__datetime__": "2026-09-22T09:03:37.508768+09:00"
-        }
-      ],
-      "kwargs": {}
-    },
-    {
       "id": "99a11a253a1b4c81a4f7eaff55e836d3",
       "operation": "record_breakout",
       "args": [
@@ -257,23 +240,6 @@
       }
     },
     {
-      "id": "89ad47ae9b3e404a80ab4e42f8c3266a",
-      "operation": "_set_outcome",
-      "args": [
-        "101160",
-        "미주문",
-        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        {
-          "__datetime__": "2026-09-22T09:03:53.127791+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
       "id": "cb02a0047b4d40a1a5461c9ae74c3041",
       "operation": "_set_outcome",
       "args": [
@@ -446,50 +412,6 @@
   ],
   "plans": [
     {
-      "id": "c81fe9bb4ca94ded9f93e443fcbdb6e9",
-      "owner": "35670276989:1",
-      "events": [
-        "91af1dc32ab14c66a2a0809efcd1ca40",
-        "89ad47ae9b3e404a80ab4e42f8c3266a"
-      ],
-      "record": {
-        "event_id": "91af1dc32ab14c66a2a0809efcd1ca40",
-        "ticker": "101160",
-        "name": "월덱스",
-        "first_detected_at": {
-          "__datetime__": "2026-09-22T09:03:37.508768+09:00"
-        },
-        "first_threshold": 31450.0,
-        "first_price": 31500.0,
-        "first_atr": 1338.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        "outcome_at": {
-          "__datetime__": "2026-09-22T09:03:53.127791+09:00"
-        }
-      },
-      "page_id": null,
-      "fields": {
-        "event_id": "91af1dc32ab14c66a2a0809efcd1ca40",
-        "ticker": "101160",
-        "name": "월덱스",
-        "first_detected_at": {
-          "__datetime__": "2026-09-22T09:03:37.508768+09:00"
-        },
-        "first_threshold": 31450.0,
-        "first_price": 31500.0,
-        "first_atr": 1338.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        "outcome_at": {
-          "__datetime__": "2026-09-22T09:03:53.127791+09:00"
-        }
-      },
-      "state": "creating"
-    },
-    {
       "id": "adf4078ca8c248d088a55ae45d4d1455",
       "owner": "35670276989:1",
       "events": [
@@ -531,7 +453,7 @@
           "__datetime__": "2026-09-22T09:03:53.132727+09:00"
         }
       },
-      "state": "queued"
+      "state": "creating"
     },
     {
       "id": "46b2861298d842cca3bd69d3f7e1e83f",
@@ -1019,7 +941,7 @@
     }
   ],
   "prepare_cursor": "149c21e52e274b678598e62c8e06f40a",
-  "deliver_cursor": "c81fe9bb4ca94ded9f93e443fcbdb6e9",
+  "deliver_cursor": "adf4078ca8c248d088a55ae45d4d1455",
   "excluded_events": [
     {
       "event": {
