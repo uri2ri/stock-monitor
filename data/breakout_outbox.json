@@ -1,8 +1,166 @@
 {
   "version": 1,
-  "events": [],
-  "plans": [],
-  "prepare_cursor": "d8fe19bce18c49a895120784461de539",
+  "events": [
+    {
+      "id": "c2027da44202408bae9c7a41f39d0a8c",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "189300",
+          "name": "인텔리안테크",
+          "high20": 70000.0,
+          "price": 70500.0,
+          "atr20": 4153.0
+        },
+        {
+          "__datetime__": "2026-09-22T10:23:26.185231+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "92157a3c5d6843e1b8bb291784bfdd07",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "077500",
+          "name": "유니퀘스트",
+          "high20": 8680.0,
+          "price": 8800.0,
+          "atr20": 520.0
+        },
+        {
+          "__datetime__": "2026-09-22T10:23:26.185231+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "b2eb5d45093b4634bc64c488bda08a13",
+      "operation": "_set_outcome",
+      "args": [
+        "189300",
+        "상한제한",
+        "신규매수 일일 상한 0 (운영 보류)",
+        {
+          "__datetime__": "2026-09-22T10:24:30.598632+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "b63eaf2c84a0435da35bbb919d5ba5e3",
+      "operation": "_set_outcome",
+      "args": [
+        "077500",
+        "상한제한",
+        "신규매수 일일 상한 0 (운영 보류)",
+        {
+          "__datetime__": "2026-09-22T10:24:30.601066+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    }
+  ],
+  "plans": [
+    {
+      "id": "ad188ae08474479292be3243f40c658e",
+      "owner": "35675548641:1",
+      "events": [
+        "c2027da44202408bae9c7a41f39d0a8c",
+        "b2eb5d45093b4634bc64c488bda08a13"
+      ],
+      "record": {
+        "event_id": "c2027da44202408bae9c7a41f39d0a8c",
+        "ticker": "189300",
+        "name": "인텔리안테크",
+        "first_detected_at": {
+          "__datetime__": "2026-09-22T10:23:26.185231+09:00"
+        },
+        "first_threshold": 70000.0,
+        "first_price": 70500.0,
+        "first_atr": 4153.0,
+        "status": "추적중",
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-22T10:24:30.598632+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "c2027da44202408bae9c7a41f39d0a8c",
+        "ticker": "189300",
+        "name": "인텔리안테크",
+        "first_detected_at": {
+          "__datetime__": "2026-09-22T10:23:26.185231+09:00"
+        },
+        "first_threshold": 70000.0,
+        "first_price": 70500.0,
+        "first_atr": 4153.0,
+        "status": "추적중",
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-22T10:24:30.598632+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "c3ebb5897d5047c78deba056dbc82e35",
+      "owner": "35675548641:1",
+      "events": [
+        "92157a3c5d6843e1b8bb291784bfdd07",
+        "b63eaf2c84a0435da35bbb919d5ba5e3"
+      ],
+      "record": {
+        "event_id": "92157a3c5d6843e1b8bb291784bfdd07",
+        "ticker": "077500",
+        "name": "유니퀘스트",
+        "first_detected_at": {
+          "__datetime__": "2026-09-22T10:23:26.185231+09:00"
+        },
+        "first_threshold": 8680.0,
+        "first_price": 8800.0,
+        "first_atr": 520.0,
+        "status": "추적중",
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-22T10:24:30.601066+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "92157a3c5d6843e1b8bb291784bfdd07",
+        "ticker": "077500",
+        "name": "유니퀘스트",
+        "first_detected_at": {
+          "__datetime__": "2026-09-22T10:23:26.185231+09:00"
+        },
+        "first_threshold": 8680.0,
+        "first_price": 8800.0,
+        "first_atr": 520.0,
+        "status": "추적중",
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-22T10:24:30.601066+09:00"
+        }
+      },
+      "state": "queued"
+    }
+  ],
+  "prepare_cursor": "88cb6c6caa2742d98edd8d40e31e3d13",
   "deliver_cursor": "f7b2c61adff3476f91aa3837326bdc45",
   "excluded_events": [
     {
@@ -1453,6 +1611,69 @@
       },
       "reason": "held_without_active_track",
       "resolved_by": "35674941507:1"
+    },
+    {
+      "event": {
+        "id": "1935a944c0f14625b22e05717ffe4ebb",
+        "operation": "_set_outcome",
+        "args": [
+          "000660",
+          "상한제한",
+          "신규매수 일일 상한 0 (운영 보류)",
+          {
+            "__datetime__": "2026-09-22T10:24:30.611888+09:00"
+          }
+        ],
+        "kwargs": {
+          "order_no": "",
+          "order_day": null,
+          "identity": null
+        }
+      },
+      "reason": "held_without_active_track",
+      "resolved_by": "35675548641:1"
+    },
+    {
+      "event": {
+        "id": "5dc0df9469684b608f39ee4c53e206f0",
+        "operation": "_set_outcome",
+        "args": [
+          "009150",
+          "상한제한",
+          "신규매수 일일 상한 0 (운영 보류)",
+          {
+            "__datetime__": "2026-09-22T10:24:30.634116+09:00"
+          }
+        ],
+        "kwargs": {
+          "order_no": "",
+          "order_day": null,
+          "identity": null
+        }
+      },
+      "reason": "held_without_active_track",
+      "resolved_by": "35675548641:1"
+    },
+    {
+      "event": {
+        "id": "83839849fbc240cf9d5beb65ed54363e",
+        "operation": "_set_outcome",
+        "args": [
+          "000390",
+          "상한제한",
+          "신규매수 일일 상한 0 (운영 보류)",
+          {
+            "__datetime__": "2026-09-22T10:24:30.638760+09:00"
+          }
+        ],
+        "kwargs": {
+          "order_no": "",
+          "order_day": null,
+          "identity": null
+        }
+      },
+      "reason": "held_without_active_track",
+      "resolved_by": "35675548641:1"
     }
   ]
 }
