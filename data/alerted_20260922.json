@@ -406,6 +406,30 @@
       "status": "진입가능",
       "price_10am": 14050.0,
       "time_10am": "10:03"
+    },
+    "189300": {
+      "time": "10:23",
+      "name": "인텔리안테크",
+      "sector": "전기전자",
+      "market": "KOSDAQ",
+      "price": 70500.0,
+      "high20": 70000.0,
+      "atr20": 4153.0,
+      "gap_atr": 0.12,
+      "unit_shares": 120,
+      "status": "진입가능"
+    },
+    "077500": {
+      "time": "10:23",
+      "name": "유니퀘스트",
+      "sector": "유통",
+      "market": "KOSPI",
+      "price": 8800.0,
+      "high20": 8680.0,
+      "atr20": 520.0,
+      "gap_atr": 0.231,
+      "unit_shares": 961,
+      "status": "진입가능"
     }
   }
 }
