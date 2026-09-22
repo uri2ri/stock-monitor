@@ -2,23 +2,6 @@
   "version": 1,
   "events": [
     {
-      "id": "544ac0866d13498ba40dde23d395b8a1",
-      "operation": "record_breakout",
-      "args": [
-        {
-          "ticker": "348340",
-          "name": "뉴로메카",
-          "high20": 19990.0,
-          "price": 20250.0,
-          "atr20": 1920.0
-        },
-        {
-          "__datetime__": "2026-09-22T09:03:37.508768+09:00"
-        }
-      ],
-      "kwargs": {}
-    },
-    {
       "id": "391d312dd904404d8b4237af93e1d73d",
       "operation": "record_breakout",
       "args": [
@@ -325,23 +308,6 @@
       }
     },
     {
-      "id": "3dda9bffeb2944bf9bc8a6b715b9a053",
-      "operation": "_set_outcome",
-      "args": [
-        "348340",
-        "미주문",
-        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        {
-          "__datetime__": "2026-09-22T09:03:53.122754+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
       "id": "f74dd4332f824fe1afcca1d8f3773058",
       "operation": "_set_outcome",
       "args": [
@@ -548,50 +514,6 @@
   ],
   "plans": [
     {
-      "id": "721681cdc852472580d3425624f15d71",
-      "owner": "35670276989:1",
-      "events": [
-        "544ac0866d13498ba40dde23d395b8a1",
-        "3dda9bffeb2944bf9bc8a6b715b9a053"
-      ],
-      "record": {
-        "event_id": "544ac0866d13498ba40dde23d395b8a1",
-        "ticker": "348340",
-        "name": "뉴로메카",
-        "first_detected_at": {
-          "__datetime__": "2026-09-22T09:03:37.508768+09:00"
-        },
-        "first_threshold": 19990.0,
-        "first_price": 20250.0,
-        "first_atr": 1920.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        "outcome_at": {
-          "__datetime__": "2026-09-22T09:03:53.122754+09:00"
-        }
-      },
-      "page_id": null,
-      "fields": {
-        "event_id": "544ac0866d13498ba40dde23d395b8a1",
-        "ticker": "348340",
-        "name": "뉴로메카",
-        "first_detected_at": {
-          "__datetime__": "2026-09-22T09:03:37.508768+09:00"
-        },
-        "first_threshold": 19990.0,
-        "first_price": 20250.0,
-        "first_atr": 1920.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        "outcome_at": {
-          "__datetime__": "2026-09-22T09:03:53.122754+09:00"
-        }
-      },
-      "state": "creating"
-    },
-    {
       "id": "474af99d19ff40df934381ca1c9d4d29",
       "owner": "35670276989:1",
       "events": [
@@ -633,7 +555,7 @@
           "__datetime__": "2026-09-22T09:03:37.508768+09:00"
         }
       },
-      "state": "queued"
+      "state": "creating"
     },
     {
       "id": "ffe3cf8c67654fb19380df70a4c9d0ab",
@@ -1253,7 +1175,7 @@
     }
   ],
   "prepare_cursor": "149c21e52e274b678598e62c8e06f40a",
-  "deliver_cursor": "721681cdc852472580d3425624f15d71",
+  "deliver_cursor": "474af99d19ff40df934381ca1c9d4d29",
   "excluded_events": [
     {
       "event": {
