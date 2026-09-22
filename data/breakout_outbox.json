@@ -2,23 +2,6 @@
   "version": 1,
   "events": [
     {
-      "id": "2d582cffefe947139951f03f23c18cc4",
-      "operation": "record_breakout",
-      "args": [
-        {
-          "ticker": "033160",
-          "name": "엠케이전자",
-          "high20": 15190.0,
-          "price": 15540.0,
-          "atr20": 1291.0
-        },
-        {
-          "__datetime__": "2026-09-22T09:03:37.508768+09:00"
-        }
-      ],
-      "kwargs": {}
-    },
-    {
       "id": "87b0eb2dd3744ee5844a32cb8dedef10",
       "operation": "record_breakout",
       "args": [
@@ -68,23 +51,6 @@
         }
       ],
       "kwargs": {}
-    },
-    {
-      "id": "4e1609f8d59b485caf0072bae7630674",
-      "operation": "_set_outcome",
-      "args": [
-        "033160",
-        "미주문",
-        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        {
-          "__datetime__": "2026-09-22T09:03:53.148489+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
     },
     {
       "id": "d39b416cc60a48f4b0323486967f191a",
@@ -140,50 +106,6 @@
   ],
   "plans": [
     {
-      "id": "ec27ca0b01814e1f9e018429797f7dcf",
-      "owner": "35670276989:1",
-      "events": [
-        "2d582cffefe947139951f03f23c18cc4",
-        "4e1609f8d59b485caf0072bae7630674"
-      ],
-      "record": {
-        "event_id": "2d582cffefe947139951f03f23c18cc4",
-        "ticker": "033160",
-        "name": "엠케이전자",
-        "first_detected_at": {
-          "__datetime__": "2026-09-22T09:03:37.508768+09:00"
-        },
-        "first_threshold": 15190.0,
-        "first_price": 15540.0,
-        "first_atr": 1291.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        "outcome_at": {
-          "__datetime__": "2026-09-22T09:03:53.148489+09:00"
-        }
-      },
-      "page_id": null,
-      "fields": {
-        "event_id": "2d582cffefe947139951f03f23c18cc4",
-        "ticker": "033160",
-        "name": "엠케이전자",
-        "first_detected_at": {
-          "__datetime__": "2026-09-22T09:03:37.508768+09:00"
-        },
-        "first_threshold": 15190.0,
-        "first_price": 15540.0,
-        "first_atr": 1291.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        "outcome_at": {
-          "__datetime__": "2026-09-22T09:03:53.148489+09:00"
-        }
-      },
-      "state": "creating"
-    },
-    {
       "id": "691b1d5b3e6c430a9ce6183747bb5084",
       "owner": "35670276989:1",
       "events": [
@@ -225,7 +147,7 @@
           "__datetime__": "2026-09-22T09:03:53.151140+09:00"
         }
       },
-      "state": "queued"
+      "state": "creating"
     },
     {
       "id": "7602260135054a449df7aaafb1561347",
@@ -317,7 +239,7 @@
     }
   ],
   "prepare_cursor": "149c21e52e274b678598e62c8e06f40a",
-  "deliver_cursor": "ec27ca0b01814e1f9e018429797f7dcf",
+  "deliver_cursor": "691b1d5b3e6c430a9ce6183747bb5084",
   "excluded_events": [
     {
       "event": {
