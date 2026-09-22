@@ -2,23 +2,6 @@
   "version": 1,
   "events": [
     {
-      "id": "5baef851ba8a4b838aa30e67700cb4bf",
-      "operation": "record_breakout",
-      "args": [
-        {
-          "ticker": "432720",
-          "name": "퀄리타스반도체",
-          "high20": 10910.0,
-          "price": 11040.0,
-          "atr20": 756.0
-        },
-        {
-          "__datetime__": "2026-09-22T09:03:37.508768+09:00"
-        }
-      ],
-      "kwargs": {}
-    },
-    {
       "id": "eba5139d298748dabee73f307a63f937",
       "operation": "record_breakout",
       "args": [
@@ -223,23 +206,6 @@
       }
     },
     {
-      "id": "9dcdf2eea4384e2cad8a4b9f01812000",
-      "operation": "_set_outcome",
-      "args": [
-        "432720",
-        "미주문",
-        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        {
-          "__datetime__": "2026-09-22T09:03:53.135260+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
       "id": "fb86f09f3cd94e629a5f41a283ba6f21",
       "operation": "_set_outcome",
       "args": [
@@ -378,50 +344,6 @@
   ],
   "plans": [
     {
-      "id": "46b2861298d842cca3bd69d3f7e1e83f",
-      "owner": "35670276989:1",
-      "events": [
-        "5baef851ba8a4b838aa30e67700cb4bf",
-        "9dcdf2eea4384e2cad8a4b9f01812000"
-      ],
-      "record": {
-        "event_id": "5baef851ba8a4b838aa30e67700cb4bf",
-        "ticker": "432720",
-        "name": "퀄리타스반도체",
-        "first_detected_at": {
-          "__datetime__": "2026-09-22T09:03:37.508768+09:00"
-        },
-        "first_threshold": 10910.0,
-        "first_price": 11040.0,
-        "first_atr": 756.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        "outcome_at": {
-          "__datetime__": "2026-09-22T09:03:53.135260+09:00"
-        }
-      },
-      "page_id": null,
-      "fields": {
-        "event_id": "5baef851ba8a4b838aa30e67700cb4bf",
-        "ticker": "432720",
-        "name": "퀄리타스반도체",
-        "first_detected_at": {
-          "__datetime__": "2026-09-22T09:03:37.508768+09:00"
-        },
-        "first_threshold": 10910.0,
-        "first_price": 11040.0,
-        "first_atr": 756.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        "outcome_at": {
-          "__datetime__": "2026-09-22T09:03:53.135260+09:00"
-        }
-      },
-      "state": "creating"
-    },
-    {
       "id": "5732abcc36144b4fa53fe39d9e8b6bca",
       "owner": "35670276989:1",
       "events": [
@@ -463,7 +385,7 @@
           "__datetime__": "2026-09-22T09:03:53.137845+09:00"
         }
       },
-      "state": "queued"
+      "state": "creating"
     },
     {
       "id": "203b744c47284c6eaa55e80a3b72105b",
@@ -863,7 +785,7 @@
     }
   ],
   "prepare_cursor": "149c21e52e274b678598e62c8e06f40a",
-  "deliver_cursor": "46b2861298d842cca3bd69d3f7e1e83f",
+  "deliver_cursor": "5732abcc36144b4fa53fe39d9e8b6bca",
   "excluded_events": [
     {
       "event": {
