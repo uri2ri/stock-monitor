@@ -1,8 +1,88 @@
 {
   "version": 1,
-  "events": [],
-  "plans": [],
-  "prepare_cursor": "660f7b5adfe544ff9343690f95bf782b",
+  "events": [
+    {
+      "id": "16db84c988ef44f8b416136507e226c1",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "004710",
+          "name": "한솔테크닉스",
+          "high20": 10080.0,
+          "price": 10150.0,
+          "atr20": 760.0
+        },
+        {
+          "__datetime__": "2026-09-22T10:53:41.986979+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "683e72b3796a4686b9a030770070e8fb",
+      "operation": "_set_outcome",
+      "args": [
+        "004710",
+        "상한제한",
+        "신규매수 일일 상한 0 (운영 보류)",
+        {
+          "__datetime__": "2026-09-22T10:54:29.035374+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    }
+  ],
+  "plans": [
+    {
+      "id": "00582e90eaae4c0aa3dea080bc18fb64",
+      "owner": "35677411402:1",
+      "events": [
+        "16db84c988ef44f8b416136507e226c1",
+        "683e72b3796a4686b9a030770070e8fb"
+      ],
+      "record": {
+        "event_id": "16db84c988ef44f8b416136507e226c1",
+        "ticker": "004710",
+        "name": "한솔테크닉스",
+        "first_detected_at": {
+          "__datetime__": "2026-09-22T10:53:41.986979+09:00"
+        },
+        "first_threshold": 10080.0,
+        "first_price": 10150.0,
+        "first_atr": 760.0,
+        "status": "추적중",
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-22T10:54:29.035374+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "16db84c988ef44f8b416136507e226c1",
+        "ticker": "004710",
+        "name": "한솔테크닉스",
+        "first_detected_at": {
+          "__datetime__": "2026-09-22T10:53:41.986979+09:00"
+        },
+        "first_threshold": 10080.0,
+        "first_price": 10150.0,
+        "first_atr": 760.0,
+        "status": "추적중",
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-22T10:54:29.035374+09:00"
+        }
+      },
+      "state": "queued"
+    }
+  ],
+  "prepare_cursor": "0de5deb2f5ba4fa4bbc4dad116ff6ea7",
   "deliver_cursor": "c3ebb5897d5047c78deba056dbc82e35",
   "excluded_events": [
     {
@@ -1642,6 +1722,69 @@
       },
       "reason": "held_without_active_track",
       "resolved_by": "35676796183:1"
+    },
+    {
+      "event": {
+        "id": "700b621b9db549509ce8246d3b7cf35a",
+        "operation": "_set_outcome",
+        "args": [
+          "000660",
+          "상한제한",
+          "신규매수 일일 상한 0 (운영 보류)",
+          {
+            "__datetime__": "2026-09-22T10:54:29.051746+09:00"
+          }
+        ],
+        "kwargs": {
+          "order_no": "",
+          "order_day": null,
+          "identity": null
+        }
+      },
+      "reason": "held_without_active_track",
+      "resolved_by": "35677411402:1"
+    },
+    {
+      "event": {
+        "id": "343d840934524723b9f54d99053e0f2d",
+        "operation": "_set_outcome",
+        "args": [
+          "009150",
+          "상한제한",
+          "신규매수 일일 상한 0 (운영 보류)",
+          {
+            "__datetime__": "2026-09-22T10:54:29.086990+09:00"
+          }
+        ],
+        "kwargs": {
+          "order_no": "",
+          "order_day": null,
+          "identity": null
+        }
+      },
+      "reason": "held_without_active_track",
+      "resolved_by": "35677411402:1"
+    },
+    {
+      "event": {
+        "id": "7755e7ada2cb4adbb344bc65ed3c331e",
+        "operation": "_set_outcome",
+        "args": [
+          "000390",
+          "상한제한",
+          "신규매수 일일 상한 0 (운영 보류)",
+          {
+            "__datetime__": "2026-09-22T10:54:29.093844+09:00"
+          }
+        ],
+        "kwargs": {
+          "order_no": "",
+          "order_day": null,
+          "identity": null
+        }
+      },
+      "reason": "held_without_active_track",
+      "resolved_by": "35677411402:1"
     }
   ]
 }
