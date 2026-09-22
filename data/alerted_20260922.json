@@ -442,6 +442,18 @@
       "gap_atr": 0.092,
       "unit_shares": 657,
       "status": "진입가능"
+    },
+    "293940": {
+      "time": "14:23",
+      "name": "신한알파리츠",
+      "sector": "부동산",
+      "market": "KOSPI",
+      "price": 5570.0,
+      "high20": 5550.0,
+      "atr20": 122.0,
+      "gap_atr": 0.164,
+      "unit_shares": 4098,
+      "status": "진입가능"
     }
   }
 }
