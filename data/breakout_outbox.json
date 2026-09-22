@@ -1,8 +1,88 @@
 {
   "version": 1,
-  "events": [],
-  "plans": [],
-  "prepare_cursor": "69e35c7f4cb548bb90c03b38b341b3f6",
+  "events": [
+    {
+      "id": "d20f6120f87d44478b910a50e40f43a7",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "053800",
+          "name": "안랩",
+          "high20": 69800.0,
+          "price": 70300.0,
+          "atr20": 2379.0
+        },
+        {
+          "__datetime__": "2026-09-22T09:23:35.262466+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "8db6f2038ca14b5f9e3c7a17d5c4e025",
+      "operation": "_set_outcome",
+      "args": [
+        "053800",
+        "상한제한",
+        "신규매수 일일 상한 0 (운영 보류)",
+        {
+          "__datetime__": "2026-09-22T09:25:06.811737+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    }
+  ],
+  "plans": [
+    {
+      "id": "cdb41a913c5f4a7eb419cb069e814e25",
+      "owner": "35671722168:1",
+      "events": [
+        "d20f6120f87d44478b910a50e40f43a7",
+        "8db6f2038ca14b5f9e3c7a17d5c4e025"
+      ],
+      "record": {
+        "event_id": "d20f6120f87d44478b910a50e40f43a7",
+        "ticker": "053800",
+        "name": "안랩",
+        "first_detected_at": {
+          "__datetime__": "2026-09-22T09:23:35.262466+09:00"
+        },
+        "first_threshold": 69800.0,
+        "first_price": 70300.0,
+        "first_atr": 2379.0,
+        "status": "추적중",
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-22T09:25:06.811737+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "d20f6120f87d44478b910a50e40f43a7",
+        "ticker": "053800",
+        "name": "안랩",
+        "first_detected_at": {
+          "__datetime__": "2026-09-22T09:23:35.262466+09:00"
+        },
+        "first_threshold": 69800.0,
+        "first_price": 70300.0,
+        "first_atr": 2379.0,
+        "status": "추적중",
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-22T09:25:06.811737+09:00"
+        }
+      },
+      "state": "queued"
+    }
+  ],
+  "prepare_cursor": "052a08acb0df45edb06ff2ace74115ec",
   "deliver_cursor": "a75197cc88bb49519b489075c91cef07",
   "excluded_events": [
     {
@@ -1075,6 +1155,69 @@
       },
       "reason": "held_without_active_track",
       "resolved_by": "35671015348:1"
+    },
+    {
+      "event": {
+        "id": "2505816cd9ff4132b289537f2fcf50eb",
+        "operation": "_set_outcome",
+        "args": [
+          "000660",
+          "상한제한",
+          "신규매수 일일 상한 0 (운영 보류)",
+          {
+            "__datetime__": "2026-09-22T09:25:06.822569+09:00"
+          }
+        ],
+        "kwargs": {
+          "order_no": "",
+          "order_day": null,
+          "identity": null
+        }
+      },
+      "reason": "held_without_active_track",
+      "resolved_by": "35671722168:1"
+    },
+    {
+      "event": {
+        "id": "2c3924449bdf4f459560fb39d0ac5b63",
+        "operation": "_set_outcome",
+        "args": [
+          "009150",
+          "상한제한",
+          "신규매수 일일 상한 0 (운영 보류)",
+          {
+            "__datetime__": "2026-09-22T09:25:06.843266+09:00"
+          }
+        ],
+        "kwargs": {
+          "order_no": "",
+          "order_day": null,
+          "identity": null
+        }
+      },
+      "reason": "held_without_active_track",
+      "resolved_by": "35671722168:1"
+    },
+    {
+      "event": {
+        "id": "e8ac4b4649954a62bb4d6da460c97485",
+        "operation": "_set_outcome",
+        "args": [
+          "000390",
+          "상한제한",
+          "신규매수 일일 상한 0 (운영 보류)",
+          {
+            "__datetime__": "2026-09-22T09:25:06.847756+09:00"
+          }
+        ],
+        "kwargs": {
+          "order_no": "",
+          "order_day": null,
+          "identity": null
+        }
+      },
+      "reason": "held_without_active_track",
+      "resolved_by": "35671722168:1"
     }
   ]
 }
