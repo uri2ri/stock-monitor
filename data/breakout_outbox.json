@@ -2,23 +2,6 @@
   "version": 1,
   "events": [
     {
-      "id": "8b7cbef12086419eade1111a5c4d7c73",
-      "operation": "record_breakout",
-      "args": [
-        {
-          "ticker": "200710",
-          "name": "에이디테크놀로지",
-          "high20": 27100.0,
-          "price": 27300.0,
-          "atr20": 1852.0
-        },
-        {
-          "__datetime__": "2026-09-22T09:33:37.696087+09:00"
-        }
-      ],
-      "kwargs": {}
-    },
-    {
       "id": "340607be35714ceeb3116e7f4e7f04a1",
       "operation": "record_breakout",
       "args": [
@@ -70,23 +53,6 @@
       }
     },
     {
-      "id": "722ca89efad647f4b3ae9b1c7f96ba80",
-      "operation": "_set_outcome",
-      "args": [
-        "200710",
-        "상한제한",
-        "신규매수 일일 상한 0 (운영 보류)",
-        {
-          "__datetime__": "2026-09-22T09:34:56.720711+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
       "id": "6f77766a8b7c4aafa5a00dfac7ab5c1a",
       "operation": "_set_outcome",
       "args": [
@@ -122,50 +88,6 @@
     }
   ],
   "plans": [
-    {
-      "id": "41f858dc86424850846c955bc0c84232",
-      "owner": "35672421320:1",
-      "events": [
-        "8b7cbef12086419eade1111a5c4d7c73",
-        "722ca89efad647f4b3ae9b1c7f96ba80"
-      ],
-      "record": {
-        "event_id": "8b7cbef12086419eade1111a5c4d7c73",
-        "ticker": "200710",
-        "name": "에이디테크놀로지",
-        "first_detected_at": {
-          "__datetime__": "2026-09-22T09:33:37.696087+09:00"
-        },
-        "first_threshold": 27100.0,
-        "first_price": 27300.0,
-        "first_atr": 1852.0,
-        "status": "추적중",
-        "outcome": "상한제한",
-        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
-        "outcome_at": {
-          "__datetime__": "2026-09-22T09:34:56.720711+09:00"
-        }
-      },
-      "page_id": null,
-      "fields": {
-        "event_id": "8b7cbef12086419eade1111a5c4d7c73",
-        "ticker": "200710",
-        "name": "에이디테크놀로지",
-        "first_detected_at": {
-          "__datetime__": "2026-09-22T09:33:37.696087+09:00"
-        },
-        "first_threshold": 27100.0,
-        "first_price": 27300.0,
-        "first_atr": 1852.0,
-        "status": "추적중",
-        "outcome": "상한제한",
-        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
-        "outcome_at": {
-          "__datetime__": "2026-09-22T09:34:56.720711+09:00"
-        }
-      },
-      "state": "creating"
-    },
     {
       "id": "544a39c063e64e9f9b0fbe7db8838b81",
       "owner": "35672421320:1",
@@ -208,7 +130,7 @@
           "__datetime__": "2026-09-22T09:34:56.723411+09:00"
         }
       },
-      "state": "queued"
+      "state": "creating"
     },
     {
       "id": "d339b9d2eed447ae86969d0b0a66f5cd",
@@ -319,7 +241,7 @@
     }
   ],
   "prepare_cursor": "97b6eed13ed04cbf98582634e7b7d91e",
-  "deliver_cursor": "41f858dc86424850846c955bc0c84232",
+  "deliver_cursor": "544a39c063e64e9f9b0fbe7db8838b81",
   "excluded_events": [
     {
       "event": {
