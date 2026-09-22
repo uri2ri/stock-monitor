@@ -2,23 +2,6 @@
   "version": 1,
   "events": [
     {
-      "id": "f21bb9e1f45f4853a08f74806c9104ba",
-      "operation": "record_breakout",
-      "args": [
-        {
-          "ticker": "126340",
-          "name": "비나텍",
-          "high20": 85500.0,
-          "price": 85800.0,
-          "atr20": 6893.0
-        },
-        {
-          "__datetime__": "2026-09-22T09:03:37.508768+09:00"
-        }
-      ],
-      "kwargs": {}
-    },
-    {
       "id": "af6c2234a5c14c8d9e3ac798dc370e42",
       "operation": "record_breakout",
       "args": [
@@ -189,23 +172,6 @@
       }
     },
     {
-      "id": "00eabf70e28545b8a2dab0627467dbcc",
-      "operation": "_set_outcome",
-      "args": [
-        "126340",
-        "미주문",
-        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        {
-          "__datetime__": "2026-09-22T09:03:53.140404+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
       "id": "15f68f969eb34d55b813ffb2b42604bf",
       "operation": "_set_outcome",
       "args": [
@@ -310,50 +276,6 @@
   ],
   "plans": [
     {
-      "id": "203b744c47284c6eaa55e80a3b72105b",
-      "owner": "35670276989:1",
-      "events": [
-        "f21bb9e1f45f4853a08f74806c9104ba",
-        "00eabf70e28545b8a2dab0627467dbcc"
-      ],
-      "record": {
-        "event_id": "f21bb9e1f45f4853a08f74806c9104ba",
-        "ticker": "126340",
-        "name": "비나텍",
-        "first_detected_at": {
-          "__datetime__": "2026-09-22T09:03:37.508768+09:00"
-        },
-        "first_threshold": 85500.0,
-        "first_price": 85800.0,
-        "first_atr": 6893.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        "outcome_at": {
-          "__datetime__": "2026-09-22T09:03:53.140404+09:00"
-        }
-      },
-      "page_id": null,
-      "fields": {
-        "event_id": "f21bb9e1f45f4853a08f74806c9104ba",
-        "ticker": "126340",
-        "name": "비나텍",
-        "first_detected_at": {
-          "__datetime__": "2026-09-22T09:03:37.508768+09:00"
-        },
-        "first_threshold": 85500.0,
-        "first_price": 85800.0,
-        "first_atr": 6893.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        "outcome_at": {
-          "__datetime__": "2026-09-22T09:03:53.140404+09:00"
-        }
-      },
-      "state": "creating"
-    },
-    {
       "id": "65d6619328c64818ac437c7d9c42e468",
       "owner": "35670276989:1",
       "events": [
@@ -395,7 +317,7 @@
           "__datetime__": "2026-09-22T09:03:37.508768+09:00"
         }
       },
-      "state": "queued"
+      "state": "creating"
     },
     {
       "id": "6de5beedcfb24865bec4ddf1707ae8dc",
@@ -707,7 +629,7 @@
     }
   ],
   "prepare_cursor": "149c21e52e274b678598e62c8e06f40a",
-  "deliver_cursor": "203b744c47284c6eaa55e80a3b72105b",
+  "deliver_cursor": "65d6619328c64818ac437c7d9c42e468",
   "excluded_events": [
     {
       "event": {
