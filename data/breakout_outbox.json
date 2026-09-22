@@ -2,23 +2,6 @@
   "version": 1,
   "events": [
     {
-      "id": "340607be35714ceeb3116e7f4e7f04a1",
-      "operation": "record_breakout",
-      "args": [
-        {
-          "ticker": "232140",
-          "name": "와이씨",
-          "high20": 14760.0,
-          "price": 14820.0,
-          "atr20": 972.0
-        },
-        {
-          "__datetime__": "2026-09-22T09:33:37.696087+09:00"
-        }
-      ],
-      "kwargs": {}
-    },
-    {
       "id": "50cf57f810f7415499c052a968b0d9fb",
       "operation": "record_breakout",
       "args": [
@@ -53,23 +36,6 @@
       }
     },
     {
-      "id": "6f77766a8b7c4aafa5a00dfac7ab5c1a",
-      "operation": "_set_outcome",
-      "args": [
-        "232140",
-        "상한제한",
-        "신규매수 일일 상한 0 (운영 보류)",
-        {
-          "__datetime__": "2026-09-22T09:34:56.723411+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
       "id": "7ba3bc457fd64b74b7afb4051f92c819",
       "operation": "_set_outcome",
       "args": [
@@ -88,50 +54,6 @@
     }
   ],
   "plans": [
-    {
-      "id": "544a39c063e64e9f9b0fbe7db8838b81",
-      "owner": "35672421320:1",
-      "events": [
-        "340607be35714ceeb3116e7f4e7f04a1",
-        "6f77766a8b7c4aafa5a00dfac7ab5c1a"
-      ],
-      "record": {
-        "event_id": "340607be35714ceeb3116e7f4e7f04a1",
-        "ticker": "232140",
-        "name": "와이씨",
-        "first_detected_at": {
-          "__datetime__": "2026-09-22T09:33:37.696087+09:00"
-        },
-        "first_threshold": 14760.0,
-        "first_price": 14820.0,
-        "first_atr": 972.0,
-        "status": "추적중",
-        "outcome": "상한제한",
-        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
-        "outcome_at": {
-          "__datetime__": "2026-09-22T09:34:56.723411+09:00"
-        }
-      },
-      "page_id": null,
-      "fields": {
-        "event_id": "340607be35714ceeb3116e7f4e7f04a1",
-        "ticker": "232140",
-        "name": "와이씨",
-        "first_detected_at": {
-          "__datetime__": "2026-09-22T09:33:37.696087+09:00"
-        },
-        "first_threshold": 14760.0,
-        "first_price": 14820.0,
-        "first_atr": 972.0,
-        "status": "추적중",
-        "outcome": "상한제한",
-        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
-        "outcome_at": {
-          "__datetime__": "2026-09-22T09:34:56.723411+09:00"
-        }
-      },
-      "state": "creating"
-    },
     {
       "id": "d339b9d2eed447ae86969d0b0a66f5cd",
       "owner": "35672421320:1",
@@ -174,7 +96,7 @@
           "__datetime__": "2026-09-22T09:34:56.726178+09:00"
         }
       },
-      "state": "queued"
+      "state": "creating"
     },
     {
       "id": "5099c9bf027d40bd9f5ae966af205c65",
@@ -241,7 +163,7 @@
     }
   ],
   "prepare_cursor": "97b6eed13ed04cbf98582634e7b7d91e",
-  "deliver_cursor": "544a39c063e64e9f9b0fbe7db8838b81",
+  "deliver_cursor": "d339b9d2eed447ae86969d0b0a66f5cd",
   "excluded_events": [
     {
       "event": {
