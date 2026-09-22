@@ -2,23 +2,6 @@
   "version": 1,
   "events": [
     {
-      "id": "c2027da44202408bae9c7a41f39d0a8c",
-      "operation": "record_breakout",
-      "args": [
-        {
-          "ticker": "189300",
-          "name": "인텔리안테크",
-          "high20": 70000.0,
-          "price": 70500.0,
-          "atr20": 4153.0
-        },
-        {
-          "__datetime__": "2026-09-22T10:23:26.185231+09:00"
-        }
-      ],
-      "kwargs": {}
-    },
-    {
       "id": "92157a3c5d6843e1b8bb291784bfdd07",
       "operation": "record_breakout",
       "args": [
@@ -34,23 +17,6 @@
         }
       ],
       "kwargs": {}
-    },
-    {
-      "id": "b2eb5d45093b4634bc64c488bda08a13",
-      "operation": "_set_outcome",
-      "args": [
-        "189300",
-        "상한제한",
-        "신규매수 일일 상한 0 (운영 보류)",
-        {
-          "__datetime__": "2026-09-22T10:24:30.598632+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
     },
     {
       "id": "b63eaf2c84a0435da35bbb919d5ba5e3",
@@ -71,50 +37,6 @@
     }
   ],
   "plans": [
-    {
-      "id": "ad188ae08474479292be3243f40c658e",
-      "owner": "35675548641:1",
-      "events": [
-        "c2027da44202408bae9c7a41f39d0a8c",
-        "b2eb5d45093b4634bc64c488bda08a13"
-      ],
-      "record": {
-        "event_id": "c2027da44202408bae9c7a41f39d0a8c",
-        "ticker": "189300",
-        "name": "인텔리안테크",
-        "first_detected_at": {
-          "__datetime__": "2026-09-22T10:23:26.185231+09:00"
-        },
-        "first_threshold": 70000.0,
-        "first_price": 70500.0,
-        "first_atr": 4153.0,
-        "status": "추적중",
-        "outcome": "상한제한",
-        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
-        "outcome_at": {
-          "__datetime__": "2026-09-22T10:24:30.598632+09:00"
-        }
-      },
-      "page_id": null,
-      "fields": {
-        "event_id": "c2027da44202408bae9c7a41f39d0a8c",
-        "ticker": "189300",
-        "name": "인텔리안테크",
-        "first_detected_at": {
-          "__datetime__": "2026-09-22T10:23:26.185231+09:00"
-        },
-        "first_threshold": 70000.0,
-        "first_price": 70500.0,
-        "first_atr": 4153.0,
-        "status": "추적중",
-        "outcome": "상한제한",
-        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
-        "outcome_at": {
-          "__datetime__": "2026-09-22T10:24:30.598632+09:00"
-        }
-      },
-      "state": "creating"
-    },
     {
       "id": "c3ebb5897d5047c78deba056dbc82e35",
       "owner": "35675548641:1",
@@ -157,11 +79,11 @@
           "__datetime__": "2026-09-22T10:24:30.601066+09:00"
         }
       },
-      "state": "queued"
+      "state": "creating"
     }
   ],
   "prepare_cursor": "88cb6c6caa2742d98edd8d40e31e3d13",
-  "deliver_cursor": "ad188ae08474479292be3243f40c658e",
+  "deliver_cursor": "c3ebb5897d5047c78deba056dbc82e35",
   "excluded_events": [
     {
       "event": {
