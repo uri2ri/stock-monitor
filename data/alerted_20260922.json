@@ -264,6 +264,18 @@
       "gap_atr": 0.577,
       "unit_shares": 120,
       "status": "추격금지"
+    },
+    "053800": {
+      "time": "09:23",
+      "name": "안랩",
+      "sector": "IT 서비스",
+      "market": "KOSDAQ",
+      "price": 70300.0,
+      "high20": 69800.0,
+      "atr20": 2379.0,
+      "gap_atr": 0.21,
+      "unit_shares": 210,
+      "status": "진입가능"
     }
   }
 }
