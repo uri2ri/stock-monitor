@@ -430,6 +430,18 @@
       "gap_atr": 0.231,
       "unit_shares": 961,
       "status": "진입가능"
+    },
+    "004710": {
+      "time": "10:53",
+      "name": "한솔테크닉스",
+      "sector": "전기전자",
+      "market": "KOSPI",
+      "price": 10150.0,
+      "high20": 10080.0,
+      "atr20": 760.0,
+      "gap_atr": 0.092,
+      "unit_shares": 657,
+      "status": "진입가능"
     }
   }
 }
