@@ -351,7 +351,7 @@
           "__datetime__": "2026-09-22T09:14:19.375148+09:00"
         }
       },
-      "state": "queued"
+      "state": "creating"
     },
     {
       "id": "b282856864644778a815633868547e17",
@@ -1253,7 +1253,7 @@
     }
   ],
   "prepare_cursor": "69e35c7f4cb548bb90c03b38b341b3f6",
-  "deliver_cursor": "0dc7ef08a4db4cdca7d6d953b83f643b",
+  "deliver_cursor": "2d78a3c2fb5947379a9b3c1881158656",
   "excluded_events": [
     {
       "event": {
