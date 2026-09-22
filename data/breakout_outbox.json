@@ -2,23 +2,6 @@
   "version": 1,
   "events": [
     {
-      "id": "aef4c2f6121f4dd680740600a3dfafb1",
-      "operation": "record_breakout",
-      "args": [
-        {
-          "ticker": "114810",
-          "name": "한솔아이원스",
-          "high20": 14000.0,
-          "price": 14010.0,
-          "atr20": 903.0
-        },
-        {
-          "__datetime__": "2026-09-22T09:03:37.508768+09:00"
-        }
-      ],
-      "kwargs": {}
-    },
-    {
       "id": "91af1dc32ab14c66a2a0809efcd1ca40",
       "operation": "record_breakout",
       "args": [
@@ -274,23 +257,6 @@
       }
     },
     {
-      "id": "f74dd4332f824fe1afcca1d8f3773058",
-      "operation": "_set_outcome",
-      "args": [
-        "114810",
-        "미주문",
-        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        {
-          "__datetime__": "2026-09-22T09:03:53.125278+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
       "id": "89ad47ae9b3e404a80ab4e42f8c3266a",
       "operation": "_set_outcome",
       "args": [
@@ -480,50 +446,6 @@
   ],
   "plans": [
     {
-      "id": "ffe3cf8c67654fb19380df70a4c9d0ab",
-      "owner": "35670276989:1",
-      "events": [
-        "aef4c2f6121f4dd680740600a3dfafb1",
-        "f74dd4332f824fe1afcca1d8f3773058"
-      ],
-      "record": {
-        "event_id": "aef4c2f6121f4dd680740600a3dfafb1",
-        "ticker": "114810",
-        "name": "한솔아이원스",
-        "first_detected_at": {
-          "__datetime__": "2026-09-22T09:03:37.508768+09:00"
-        },
-        "first_threshold": 14000.0,
-        "first_price": 14010.0,
-        "first_atr": 903.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        "outcome_at": {
-          "__datetime__": "2026-09-22T09:03:53.125278+09:00"
-        }
-      },
-      "page_id": null,
-      "fields": {
-        "event_id": "aef4c2f6121f4dd680740600a3dfafb1",
-        "ticker": "114810",
-        "name": "한솔아이원스",
-        "first_detected_at": {
-          "__datetime__": "2026-09-22T09:03:37.508768+09:00"
-        },
-        "first_threshold": 14000.0,
-        "first_price": 14010.0,
-        "first_atr": 903.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        "outcome_at": {
-          "__datetime__": "2026-09-22T09:03:53.125278+09:00"
-        }
-      },
-      "state": "creating"
-    },
-    {
       "id": "c81fe9bb4ca94ded9f93e443fcbdb6e9",
       "owner": "35670276989:1",
       "events": [
@@ -565,7 +487,7 @@
           "__datetime__": "2026-09-22T09:03:53.127791+09:00"
         }
       },
-      "state": "queued"
+      "state": "creating"
     },
     {
       "id": "adf4078ca8c248d088a55ae45d4d1455",
@@ -1097,7 +1019,7 @@
     }
   ],
   "prepare_cursor": "149c21e52e274b678598e62c8e06f40a",
-  "deliver_cursor": "ffe3cf8c67654fb19380df70a4c9d0ab",
+  "deliver_cursor": "c81fe9bb4ca94ded9f93e443fcbdb6e9",
   "excluded_events": [
     {
       "event": {
