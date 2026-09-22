@@ -2,23 +2,6 @@
   "version": 1,
   "events": [
     {
-      "id": "af6c2234a5c14c8d9e3ac798dc370e42",
-      "operation": "record_breakout",
-      "args": [
-        {
-          "ticker": "064290",
-          "name": "인텍플러스",
-          "high20": 52100.0,
-          "price": 54700.0,
-          "atr20": 4430.0
-        },
-        {
-          "__datetime__": "2026-09-22T09:03:37.508768+09:00"
-        }
-      ],
-      "kwargs": {}
-    },
-    {
       "id": "672ddb1f6c3c4b25b0ac455cead7f1e1",
       "operation": "record_breakout",
       "args": [
@@ -136,23 +119,6 @@
         }
       ],
       "kwargs": {}
-    },
-    {
-      "id": "efeba1526ada479f9a8d1fceb6b5ef39",
-      "operation": "_set_outcome",
-      "args": [
-        "064290",
-        "미주문",
-        "추격 구간(+0.59N) - 매수 대상 제외",
-        {
-          "__datetime__": "2026-09-22T09:03:37.508768+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
     },
     {
       "id": "7fd9a2d90d06485f9819b181d3c19638",
@@ -276,50 +242,6 @@
   ],
   "plans": [
     {
-      "id": "65d6619328c64818ac437c7d9c42e468",
-      "owner": "35670276989:1",
-      "events": [
-        "af6c2234a5c14c8d9e3ac798dc370e42",
-        "efeba1526ada479f9a8d1fceb6b5ef39"
-      ],
-      "record": {
-        "event_id": "af6c2234a5c14c8d9e3ac798dc370e42",
-        "ticker": "064290",
-        "name": "인텍플러스",
-        "first_detected_at": {
-          "__datetime__": "2026-09-22T09:03:37.508768+09:00"
-        },
-        "first_threshold": 52100.0,
-        "first_price": 54700.0,
-        "first_atr": 4430.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "추격 구간(+0.59N) - 매수 대상 제외",
-        "outcome_at": {
-          "__datetime__": "2026-09-22T09:03:37.508768+09:00"
-        }
-      },
-      "page_id": null,
-      "fields": {
-        "event_id": "af6c2234a5c14c8d9e3ac798dc370e42",
-        "ticker": "064290",
-        "name": "인텍플러스",
-        "first_detected_at": {
-          "__datetime__": "2026-09-22T09:03:37.508768+09:00"
-        },
-        "first_threshold": 52100.0,
-        "first_price": 54700.0,
-        "first_atr": 4430.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "추격 구간(+0.59N) - 매수 대상 제외",
-        "outcome_at": {
-          "__datetime__": "2026-09-22T09:03:37.508768+09:00"
-        }
-      },
-      "state": "creating"
-    },
-    {
       "id": "6de5beedcfb24865bec4ddf1707ae8dc",
       "owner": "35670276989:1",
       "events": [
@@ -361,7 +283,7 @@
           "__datetime__": "2026-09-22T09:03:53.143061+09:00"
         }
       },
-      "state": "queued"
+      "state": "creating"
     },
     {
       "id": "5535d2ae8b28436a9fcbca3bf6e27d4f",
@@ -629,7 +551,7 @@
     }
   ],
   "prepare_cursor": "149c21e52e274b678598e62c8e06f40a",
-  "deliver_cursor": "65d6619328c64818ac437c7d9c42e468",
+  "deliver_cursor": "6de5beedcfb24865bec4ddf1707ae8dc",
   "excluded_events": [
     {
       "event": {
