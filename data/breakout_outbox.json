@@ -2,23 +2,6 @@
   "version": 1,
   "events": [
     {
-      "id": "101c0e6b129a49c48b918bfa788109b6",
-      "operation": "record_breakout",
-      "args": [
-        {
-          "ticker": "052900",
-          "name": "KX하이텍",
-          "high20": 1090.0,
-          "price": 1096.0,
-          "atr20": 67.0
-        },
-        {
-          "__datetime__": "2026-09-22T09:13:35.954206+09:00"
-        }
-      ],
-      "kwargs": {}
-    },
-    {
       "id": "a05075a1c44949149df80b6c91d8ada9",
       "operation": "record_breakout",
       "args": [
@@ -44,23 +27,6 @@
         "추격 구간(+0.58N) - 매수 대상 제외",
         {
           "__datetime__": "2026-09-22T09:13:35.954206+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
-      "id": "050bb660daff41ad83b01da0c61b6884",
-      "operation": "_set_outcome",
-      "args": [
-        "052900",
-        "상한제한",
-        "신규매수 일일 상한 0 (운영 보류)",
-        {
-          "__datetime__": "2026-09-22T09:14:19.375148+09:00"
         }
       ],
       "kwargs": {
@@ -310,50 +276,6 @@
   ],
   "plans": [
     {
-      "id": "2d78a3c2fb5947379a9b3c1881158656",
-      "owner": "35671015348:1",
-      "events": [
-        "101c0e6b129a49c48b918bfa788109b6",
-        "050bb660daff41ad83b01da0c61b6884"
-      ],
-      "record": {
-        "event_id": "101c0e6b129a49c48b918bfa788109b6",
-        "ticker": "052900",
-        "name": "KX하이텍",
-        "first_detected_at": {
-          "__datetime__": "2026-09-22T09:13:35.954206+09:00"
-        },
-        "first_threshold": 1090.0,
-        "first_price": 1096.0,
-        "first_atr": 67.0,
-        "status": "추적중",
-        "outcome": "상한제한",
-        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
-        "outcome_at": {
-          "__datetime__": "2026-09-22T09:14:19.375148+09:00"
-        }
-      },
-      "page_id": null,
-      "fields": {
-        "event_id": "101c0e6b129a49c48b918bfa788109b6",
-        "ticker": "052900",
-        "name": "KX하이텍",
-        "first_detected_at": {
-          "__datetime__": "2026-09-22T09:13:35.954206+09:00"
-        },
-        "first_threshold": 1090.0,
-        "first_price": 1096.0,
-        "first_atr": 67.0,
-        "status": "추적중",
-        "outcome": "상한제한",
-        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
-        "outcome_at": {
-          "__datetime__": "2026-09-22T09:14:19.375148+09:00"
-        }
-      },
-      "state": "creating"
-    },
-    {
       "id": "b282856864644778a815633868547e17",
       "owner": "35671015348:1",
       "events": [
@@ -395,7 +317,7 @@
           "__datetime__": "2026-09-22T09:13:35.954206+09:00"
         }
       },
-      "state": "queued"
+      "state": "creating"
     },
     {
       "id": "ec828ee190b7403b8142d4a8c1114123",
@@ -1253,7 +1175,7 @@
     }
   ],
   "prepare_cursor": "69e35c7f4cb548bb90c03b38b341b3f6",
-  "deliver_cursor": "2d78a3c2fb5947379a9b3c1881158656",
+  "deliver_cursor": "b282856864644778a815633868547e17",
   "excluded_events": [
     {
       "event": {
