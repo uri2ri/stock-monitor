@@ -2,23 +2,6 @@
   "version": 1,
   "events": [
     {
-      "id": "e522f13289494cbf91e29109693a65f9",
-      "operation": "record_breakout",
-      "args": [
-        {
-          "ticker": "468530",
-          "name": "프로티나",
-          "high20": 41800.0,
-          "price": 42000.0,
-          "atr20": 3393.0
-        },
-        {
-          "__datetime__": "2026-09-23T09:03:40.269675+09:00"
-        }
-      ],
-      "kwargs": {}
-    },
-    {
       "id": "28a9dedac3a042709e3df5021e938bc5",
       "operation": "record_breakout",
       "args": [
@@ -102,70 +85,9 @@
         "order_day": null,
         "identity": null
       }
-    },
-    {
-      "id": "307ef6dacd1443e3a9702abf9ab21032",
-      "operation": "_set_outcome",
-      "args": [
-        "468530",
-        "미주문",
-        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        {
-          "__datetime__": "2026-09-23T09:03:50.390887+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
     }
   ],
   "plans": [
-    {
-      "id": "be4835e90dcb4c74984ec9dd5a12bb2e",
-      "owner": "35800276697:1",
-      "events": [
-        "e522f13289494cbf91e29109693a65f9",
-        "307ef6dacd1443e3a9702abf9ab21032"
-      ],
-      "record": {
-        "event_id": "e522f13289494cbf91e29109693a65f9",
-        "ticker": "468530",
-        "name": "프로티나",
-        "first_detected_at": {
-          "__datetime__": "2026-09-23T09:03:40.269675+09:00"
-        },
-        "first_threshold": 41800.0,
-        "first_price": 42000.0,
-        "first_atr": 3393.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        "outcome_at": {
-          "__datetime__": "2026-09-23T09:03:50.390887+09:00"
-        }
-      },
-      "page_id": null,
-      "fields": {
-        "event_id": "e522f13289494cbf91e29109693a65f9",
-        "ticker": "468530",
-        "name": "프로티나",
-        "first_detected_at": {
-          "__datetime__": "2026-09-23T09:03:40.269675+09:00"
-        },
-        "first_threshold": 41800.0,
-        "first_price": 42000.0,
-        "first_atr": 3393.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        "outcome_at": {
-          "__datetime__": "2026-09-23T09:03:50.390887+09:00"
-        }
-      },
-      "state": "creating"
-    },
     {
       "id": "7c9dafc5ab7d4e979f2a1b82fcfe7597",
       "owner": "35800276697:1",
@@ -208,7 +130,7 @@
           "__datetime__": "2026-09-23T09:03:40.269675+09:00"
         }
       },
-      "state": "queued"
+      "state": "creating"
     },
     {
       "id": "8d9e9d4b8a7c45a292b938c26edef583",
@@ -318,7 +240,7 @@
     }
   ],
   "prepare_cursor": "307ef6dacd1443e3a9702abf9ab21032",
-  "deliver_cursor": "be4835e90dcb4c74984ec9dd5a12bb2e",
+  "deliver_cursor": "7c9dafc5ab7d4e979f2a1b82fcfe7597",
   "excluded_events": [
     {
       "event": {
