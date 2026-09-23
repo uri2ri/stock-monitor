@@ -434,6 +434,18 @@
       "gap_atr": 0.097,
       "unit_shares": 43,
       "status": "진입가능"
+    },
+    "215200": {
+      "time": "10:43",
+      "name": "메가스터디교육",
+      "sector": "일반서비스",
+      "market": "KOSDAQ",
+      "price": 36800.0,
+      "high20": 36750.0,
+      "atr20": 1109.0,
+      "gap_atr": 0.045,
+      "unit_shares": 450,
+      "status": "진입가능"
     }
   }
 }
