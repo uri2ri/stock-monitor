@@ -2,23 +2,6 @@
   "version": 1,
   "events": [
     {
-      "id": "a20913f36e234adea3dc0b8a08d4fe5d",
-      "operation": "record_breakout",
-      "args": [
-        {
-          "ticker": "086670",
-          "name": "비엠티",
-          "high20": 19200.0,
-          "price": 19230.0,
-          "atr20": 751.0
-        },
-        {
-          "__datetime__": "2026-09-23T10:23:56.277724+09:00"
-        }
-      ],
-      "kwargs": {}
-    },
-    {
       "id": "1866692036f340368a8c3c11cc219a71",
       "operation": "record_breakout",
       "args": [
@@ -34,23 +17,6 @@
         }
       ],
       "kwargs": {}
-    },
-    {
-      "id": "cecc64f8dc0c45cb8e413ea7e09a2034",
-      "operation": "_set_outcome",
-      "args": [
-        "086670",
-        "상한제한",
-        "신규매수 일일 상한 0 (운영 보류)",
-        {
-          "__datetime__": "2026-09-23T10:24:42.122792+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
     },
     {
       "id": "4bc4f8c31cea4741a33d370e5706aefd",
@@ -71,50 +37,6 @@
     }
   ],
   "plans": [
-    {
-      "id": "97f78ff031a9466fb505f56f7268d72e",
-      "owner": "35806058563:1",
-      "events": [
-        "a20913f36e234adea3dc0b8a08d4fe5d",
-        "cecc64f8dc0c45cb8e413ea7e09a2034"
-      ],
-      "record": {
-        "event_id": "a20913f36e234adea3dc0b8a08d4fe5d",
-        "ticker": "086670",
-        "name": "비엠티",
-        "first_detected_at": {
-          "__datetime__": "2026-09-23T10:23:56.277724+09:00"
-        },
-        "first_threshold": 19200.0,
-        "first_price": 19230.0,
-        "first_atr": 751.0,
-        "status": "추적중",
-        "outcome": "상한제한",
-        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
-        "outcome_at": {
-          "__datetime__": "2026-09-23T10:24:42.122792+09:00"
-        }
-      },
-      "page_id": null,
-      "fields": {
-        "event_id": "a20913f36e234adea3dc0b8a08d4fe5d",
-        "ticker": "086670",
-        "name": "비엠티",
-        "first_detected_at": {
-          "__datetime__": "2026-09-23T10:23:56.277724+09:00"
-        },
-        "first_threshold": 19200.0,
-        "first_price": 19230.0,
-        "first_atr": 751.0,
-        "status": "추적중",
-        "outcome": "상한제한",
-        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
-        "outcome_at": {
-          "__datetime__": "2026-09-23T10:24:42.122792+09:00"
-        }
-      },
-      "state": "creating"
-    },
     {
       "id": "b5cda2eabbd64420b908e3e33e4fc04a",
       "owner": "35806058563:1",
@@ -157,11 +79,11 @@
           "__datetime__": "2026-09-23T10:24:42.128475+09:00"
         }
       },
-      "state": "queued"
+      "state": "creating"
     }
   ],
   "prepare_cursor": "b6604abf775c4cf0a1b5b6985df30915",
-  "deliver_cursor": "97f78ff031a9466fb505f56f7268d72e",
+  "deliver_cursor": "b5cda2eabbd64420b908e3e33e4fc04a",
   "excluded_events": [
     {
       "event": {
