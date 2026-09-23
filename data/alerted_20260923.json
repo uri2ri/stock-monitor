@@ -494,6 +494,18 @@
       "gap_atr": 0.083,
       "unit_shares": 208,
       "status": "진입가능"
+    },
+    "330590": {
+      "time": "15:13",
+      "name": "롯데리츠",
+      "sector": "부동산",
+      "market": "KOSPI",
+      "price": 4100.0,
+      "high20": 4090.0,
+      "atr20": 126.0,
+      "gap_atr": 0.079,
+      "unit_shares": 3968,
+      "status": "진입가능"
     }
   }
 }
