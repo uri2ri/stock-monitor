@@ -1,91 +1,9 @@
 {
   "version": 1,
-  "events": [
-    {
-      "id": "dfb8df46338744b8bfbae395d65ab6a1",
-      "operation": "_set_outcome",
-      "args": [
-        "322310",
-        "상한제한",
-        "신규매수 일일 상한 0 (운영 보류)",
-        {
-          "__datetime__": "2026-09-23T13:24:46.741680+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    }
-  ],
-  "plans": [
-    {
-      "id": "56fbeb1910094cd297ef5f7371a849db",
-      "owner": "35818109014:1",
-      "events": [
-        "dfb8df46338744b8bfbae395d65ab6a1"
-      ],
-      "record": {
-        "account_type": "",
-        "account_key": "",
-        "order_side": "",
-        "order_qty": null,
-        "filled_qty": null,
-        "unverified_qty": null,
-        "execution_price": null,
-        "execution_state": "",
-        "execution_checked_at": null,
-        "event_id": "eba5139d298748dabee73f307a63f937",
-        "order_no": "",
-        "order_day": null,
-        "key": "3e30fc3e-53fc-81ee-9396-f82980156e30",
-        "page_id": "3e30fc3e-53fc-81ee-9396-f82980156e30",
-        "name": "오로스테크놀로지",
-        "ticker": "322310",
-        "first_detected_at": {
-          "__datetime__": "2026-09-22T09:03:00+09:00"
-        },
-        "first_threshold": 13990.0,
-        "first_price": 14020.0,
-        "first_atr": 1129.0,
-        "status": "추적중",
-        "closed_reason": "",
-        "closed_at": null,
-        "outcome": "상한제한",
-        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
-        "outcome_at": {
-          "__datetime__": "2026-09-23T13:24:46.741680+09:00"
-        },
-        "latest_close": 13840.0,
-        "latest_date": {
-          "__date__": "2026-09-22"
-        },
-        "latest_atr": 1112.0,
-        "latest_line": 14460.0,
-        "change_pct": -1.07,
-        "atr_mult": -0.13,
-        "dist_to_line": 620.0,
-        "dist_to_line_atr": 0.56,
-        "level_state": "최초선아래",
-        "new_breakout": "미해당",
-        "refresh_state": "갱신됨",
-        "refresh_note": "",
-        "user_memo": ""
-      },
-      "page_id": "3e30fc3e-53fc-81ee-9396-f82980156e30",
-      "fields": {
-        "outcome": "상한제한",
-        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
-        "outcome_at": {
-          "__datetime__": "2026-09-23T13:24:46.741680+09:00"
-        }
-      },
-      "state": "queued"
-    }
-  ],
+  "events": [],
+  "plans": [],
   "prepare_cursor": "1f7c5924e8614c7585fcb032ebe25a93",
-  "deliver_cursor": "1ae90ff3bdad41b78a880cc5d551f2eb",
+  "deliver_cursor": "56fbeb1910094cd297ef5f7371a849db",
   "excluded_events": [
     {
       "event": {
