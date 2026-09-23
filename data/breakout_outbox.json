@@ -1,8 +1,88 @@
 {
   "version": 1,
-  "events": [],
-  "plans": [],
-  "prepare_cursor": "f6de0353fddd42c4b80ab66384cb33b5",
+  "events": [
+    {
+      "id": "13de86db96314eda8c8d656ea1250524",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "330590",
+          "name": "롯데리츠",
+          "high20": 4090.0,
+          "price": 4100.0,
+          "atr20": 126.0
+        },
+        {
+          "__datetime__": "2026-09-23T15:13:37.910514+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "780c06f5deea49d68383776643b9fcf0",
+      "operation": "_set_outcome",
+      "args": [
+        "330590",
+        "상한제한",
+        "신규매수 일일 상한 0 (운영 보류)",
+        {
+          "__datetime__": "2026-09-23T15:14:47.647090+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    }
+  ],
+  "plans": [
+    {
+      "id": "0a1ff03ab42847a2b2a94e938c7a81cd",
+      "owner": "35825736577:1",
+      "events": [
+        "13de86db96314eda8c8d656ea1250524",
+        "780c06f5deea49d68383776643b9fcf0"
+      ],
+      "record": {
+        "event_id": "13de86db96314eda8c8d656ea1250524",
+        "ticker": "330590",
+        "name": "롯데리츠",
+        "first_detected_at": {
+          "__datetime__": "2026-09-23T15:13:37.910514+09:00"
+        },
+        "first_threshold": 4090.0,
+        "first_price": 4100.0,
+        "first_atr": 126.0,
+        "status": "추적중",
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-23T15:14:47.647090+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "13de86db96314eda8c8d656ea1250524",
+        "ticker": "330590",
+        "name": "롯데리츠",
+        "first_detected_at": {
+          "__datetime__": "2026-09-23T15:13:37.910514+09:00"
+        },
+        "first_threshold": 4090.0,
+        "first_price": 4100.0,
+        "first_atr": 126.0,
+        "status": "추적중",
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-23T15:14:47.647090+09:00"
+        }
+      },
+      "state": "queued"
+    }
+  ],
+  "prepare_cursor": "948832203e4048c283e86667580441d1",
   "deliver_cursor": "d05498f2c66442cc8071d67dd9275919",
   "excluded_events": [
     {
