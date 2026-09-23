@@ -2,23 +2,6 @@
   "version": 1,
   "events": [
     {
-      "id": "b36d7e3633da4cbb9ad6bc6f65f58404",
-      "operation": "record_breakout",
-      "args": [
-        {
-          "ticker": "098120",
-          "name": "마이크로컨텍솔",
-          "high20": 59200.0,
-          "price": 60200.0,
-          "atr20": 3680.0
-        },
-        {
-          "__datetime__": "2026-09-23T09:13:41.467298+09:00"
-        }
-      ],
-      "kwargs": {}
-    },
-    {
       "id": "3aa240aef3db4f04b9a787b276f7c7e8",
       "operation": "record_breakout",
       "args": [
@@ -34,23 +17,6 @@
         }
       ],
       "kwargs": {}
-    },
-    {
-      "id": "76ea83e81328404d8a1a60a4f197ee7e",
-      "operation": "_set_outcome",
-      "args": [
-        "098120",
-        "상한제한",
-        "신규매수 일일 상한 0 (운영 보류)",
-        {
-          "__datetime__": "2026-09-23T09:14:23.662976+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
     },
     {
       "id": "9fd59b065c014b1c9858b01852f43d15",
@@ -157,50 +123,6 @@
   ],
   "plans": [
     {
-      "id": "ee47cca2522c422fab2dce4ff3c8145f",
-      "owner": "35801065477:1",
-      "events": [
-        "b36d7e3633da4cbb9ad6bc6f65f58404",
-        "76ea83e81328404d8a1a60a4f197ee7e"
-      ],
-      "record": {
-        "event_id": "b36d7e3633da4cbb9ad6bc6f65f58404",
-        "ticker": "098120",
-        "name": "마이크로컨텍솔",
-        "first_detected_at": {
-          "__datetime__": "2026-09-23T09:13:41.467298+09:00"
-        },
-        "first_threshold": 59200.0,
-        "first_price": 60200.0,
-        "first_atr": 3680.0,
-        "status": "추적중",
-        "outcome": "상한제한",
-        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
-        "outcome_at": {
-          "__datetime__": "2026-09-23T09:14:23.662976+09:00"
-        }
-      },
-      "page_id": null,
-      "fields": {
-        "event_id": "b36d7e3633da4cbb9ad6bc6f65f58404",
-        "ticker": "098120",
-        "name": "마이크로컨텍솔",
-        "first_detected_at": {
-          "__datetime__": "2026-09-23T09:13:41.467298+09:00"
-        },
-        "first_threshold": 59200.0,
-        "first_price": 60200.0,
-        "first_atr": 3680.0,
-        "status": "추적중",
-        "outcome": "상한제한",
-        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
-        "outcome_at": {
-          "__datetime__": "2026-09-23T09:14:23.662976+09:00"
-        }
-      },
-      "state": "creating"
-    },
-    {
       "id": "d5f3481386ff4a1a87f069d48de969f8",
       "owner": "35801065477:1",
       "events": [
@@ -242,7 +164,7 @@
           "__datetime__": "2026-09-23T09:14:23.668470+09:00"
         }
       },
-      "state": "queued"
+      "state": "creating"
     },
     {
       "id": "6d313118f3144710bdd84c2fc1f28c39",
@@ -555,7 +477,7 @@
     }
   ],
   "prepare_cursor": "f8010aafce824ddb9b255d584f2a1fdd",
-  "deliver_cursor": "ee47cca2522c422fab2dce4ff3c8145f",
+  "deliver_cursor": "d5f3481386ff4a1a87f069d48de969f8",
   "excluded_events": [
     {
       "event": {
