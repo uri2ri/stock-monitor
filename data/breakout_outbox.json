@@ -2,23 +2,6 @@
   "version": 1,
   "events": [
     {
-      "id": "9bff51f4d126443a8882287df5fbe9e2",
-      "operation": "record_breakout",
-      "args": [
-        {
-          "ticker": "091440",
-          "name": "한울소재과학",
-          "high20": 2975.0,
-          "price": 3070.0,
-          "atr20": 197.0
-        },
-        {
-          "__datetime__": "2026-09-23T09:13:41.467298+09:00"
-        }
-      ],
-      "kwargs": {}
-    },
-    {
       "id": "3e86f29adbfc4aee86cddff31f8a7a2e",
       "operation": "record_breakout",
       "args": [
@@ -68,23 +51,6 @@
         }
       ],
       "kwargs": {}
-    },
-    {
-      "id": "c0de3e56e9e3441fbf10b9cbac0845d1",
-      "operation": "_set_outcome",
-      "args": [
-        "091440",
-        "상한제한",
-        "신규매수 일일 상한 0 (운영 보류)",
-        {
-          "__datetime__": "2026-09-23T09:14:23.651680+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
     },
     {
       "id": "a6ebef0c7d5240da8887444871d874c5",
@@ -225,50 +191,6 @@
   ],
   "plans": [
     {
-      "id": "2d9e222aeecc49b8b898e22f114efd3c",
-      "owner": "35801065477:1",
-      "events": [
-        "9bff51f4d126443a8882287df5fbe9e2",
-        "c0de3e56e9e3441fbf10b9cbac0845d1"
-      ],
-      "record": {
-        "event_id": "9bff51f4d126443a8882287df5fbe9e2",
-        "ticker": "091440",
-        "name": "한울소재과학",
-        "first_detected_at": {
-          "__datetime__": "2026-09-23T09:13:41.467298+09:00"
-        },
-        "first_threshold": 2975.0,
-        "first_price": 3070.0,
-        "first_atr": 197.0,
-        "status": "추적중",
-        "outcome": "상한제한",
-        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
-        "outcome_at": {
-          "__datetime__": "2026-09-23T09:14:23.651680+09:00"
-        }
-      },
-      "page_id": null,
-      "fields": {
-        "event_id": "9bff51f4d126443a8882287df5fbe9e2",
-        "ticker": "091440",
-        "name": "한울소재과학",
-        "first_detected_at": {
-          "__datetime__": "2026-09-23T09:13:41.467298+09:00"
-        },
-        "first_threshold": 2975.0,
-        "first_price": 3070.0,
-        "first_atr": 197.0,
-        "status": "추적중",
-        "outcome": "상한제한",
-        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
-        "outcome_at": {
-          "__datetime__": "2026-09-23T09:14:23.651680+09:00"
-        }
-      },
-      "state": "creating"
-    },
-    {
       "id": "8907ee8c327d4dda87d32f762e413093",
       "owner": "35801065477:1",
       "events": [
@@ -310,7 +232,7 @@
           "__datetime__": "2026-09-23T09:14:23.657556+09:00"
         }
       },
-      "state": "queued"
+      "state": "creating"
     },
     {
       "id": "ee47cca2522c422fab2dce4ff3c8145f",
@@ -711,7 +633,7 @@
     }
   ],
   "prepare_cursor": "f8010aafce824ddb9b255d584f2a1fdd",
-  "deliver_cursor": "2d9e222aeecc49b8b898e22f114efd3c",
+  "deliver_cursor": "8907ee8c327d4dda87d32f762e413093",
   "excluded_events": [
     {
       "event": {
