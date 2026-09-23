@@ -362,6 +362,42 @@
       "gap_atr": 0.201,
       "unit_shares": 111,
       "status": "진입가능"
+    },
+    "015860": {
+      "time": "10:13",
+      "name": "일진홀딩스",
+      "sector": "금융",
+      "market": "KOSPI",
+      "price": 7080.0,
+      "high20": 7060.0,
+      "atr20": 284.0,
+      "gap_atr": 0.07,
+      "unit_shares": 1760,
+      "status": "진입가능"
+    },
+    "012030": {
+      "time": "10:13",
+      "name": "DB",
+      "sector": "IT 서비스",
+      "market": "KOSPI",
+      "price": 1723.0,
+      "high20": 1720.0,
+      "atr20": 82.0,
+      "gap_atr": 0.037,
+      "unit_shares": 6097,
+      "status": "진입가능"
+    },
+    "077500": {
+      "time": "10:13",
+      "name": "유니퀘스트",
+      "sector": "유통",
+      "market": "KOSPI",
+      "price": 8910.0,
+      "high20": 8880.0,
+      "atr20": 523.0,
+      "gap_atr": 0.057,
+      "unit_shares": 956,
+      "status": "진입가능"
     }
   }
 }
