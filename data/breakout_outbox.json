@@ -2,23 +2,6 @@
   "version": 1,
   "events": [
     {
-      "id": "17a5234bee9947a2b3ffa2ae9f8d72a2",
-      "operation": "record_breakout",
-      "args": [
-        {
-          "ticker": "166090",
-          "name": "하나머티리얼즈",
-          "high20": 58300.0,
-          "price": 58400.0,
-          "atr20": 3821.0
-        },
-        {
-          "__datetime__": "2026-09-23T09:23:37.377674+09:00"
-        }
-      ],
-      "kwargs": {}
-    },
-    {
       "id": "785abf4515a54dd2a89e6c2c45eaf949",
       "operation": "record_breakout",
       "args": [
@@ -68,23 +51,6 @@
         }
       ],
       "kwargs": {}
-    },
-    {
-      "id": "c63069af1b66419684cedd6f0ea16d1b",
-      "operation": "_set_outcome",
-      "args": [
-        "166090",
-        "상한제한",
-        "신규매수 일일 상한 0 (운영 보류)",
-        {
-          "__datetime__": "2026-09-23T09:24:25.091398+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
     },
     {
       "id": "efcf702548764ec6b521017ea254c0ce",
@@ -140,50 +106,6 @@
   ],
   "plans": [
     {
-      "id": "feb724e71dd648a9886563401caa83ee",
-      "owner": "35801813828:1",
-      "events": [
-        "17a5234bee9947a2b3ffa2ae9f8d72a2",
-        "c63069af1b66419684cedd6f0ea16d1b"
-      ],
-      "record": {
-        "event_id": "17a5234bee9947a2b3ffa2ae9f8d72a2",
-        "ticker": "166090",
-        "name": "하나머티리얼즈",
-        "first_detected_at": {
-          "__datetime__": "2026-09-23T09:23:37.377674+09:00"
-        },
-        "first_threshold": 58300.0,
-        "first_price": 58400.0,
-        "first_atr": 3821.0,
-        "status": "추적중",
-        "outcome": "상한제한",
-        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
-        "outcome_at": {
-          "__datetime__": "2026-09-23T09:24:25.091398+09:00"
-        }
-      },
-      "page_id": null,
-      "fields": {
-        "event_id": "17a5234bee9947a2b3ffa2ae9f8d72a2",
-        "ticker": "166090",
-        "name": "하나머티리얼즈",
-        "first_detected_at": {
-          "__datetime__": "2026-09-23T09:23:37.377674+09:00"
-        },
-        "first_threshold": 58300.0,
-        "first_price": 58400.0,
-        "first_atr": 3821.0,
-        "status": "추적중",
-        "outcome": "상한제한",
-        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
-        "outcome_at": {
-          "__datetime__": "2026-09-23T09:24:25.091398+09:00"
-        }
-      },
-      "state": "creating"
-    },
-    {
       "id": "192d65ffb8934385997af562bf67718c",
       "owner": "35801813828:1",
       "events": [
@@ -225,7 +147,7 @@
           "__datetime__": "2026-09-23T09:24:25.097148+09:00"
         }
       },
-      "state": "queued"
+      "state": "creating"
     },
     {
       "id": "705ed11d57304f36ab570f2b04ce6e02",
@@ -317,7 +239,7 @@
     }
   ],
   "prepare_cursor": "e0f2a672a1f249d8a65bb8e999615f23",
-  "deliver_cursor": "feb724e71dd648a9886563401caa83ee",
+  "deliver_cursor": "192d65ffb8934385997af562bf67718c",
   "excluded_events": [
     {
       "event": {
