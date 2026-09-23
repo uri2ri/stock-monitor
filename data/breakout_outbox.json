@@ -1,8 +1,90 @@
 {
   "version": 1,
-  "events": [],
-  "plans": [],
-  "prepare_cursor": "e0f2a672a1f249d8a65bb8e999615f23",
+  "events": [
+    {
+      "id": "1461381c5f494cba81327a56c2cb3f75",
+      "operation": "_set_outcome",
+      "args": [
+        "074600",
+        "상한제한",
+        "신규매수 일일 상한 0 (운영 보류)",
+        {
+          "__datetime__": "2026-09-23T09:34:26.426247+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    }
+  ],
+  "plans": [
+    {
+      "id": "1b8284f30ad047029da5e707ca981c6c",
+      "owner": "35802551008:1",
+      "events": [
+        "1461381c5f494cba81327a56c2cb3f75"
+      ],
+      "record": {
+        "account_type": "",
+        "account_key": "",
+        "order_side": "",
+        "order_qty": null,
+        "filled_qty": null,
+        "unverified_qty": null,
+        "execution_price": null,
+        "execution_state": "",
+        "execution_checked_at": null,
+        "event_id": "9d500bbcdd174d00b9e4cdf9caa16e00",
+        "order_no": "",
+        "order_day": null,
+        "key": "3e20fc3e-53fc-812c-94f6-f1b53fa4edef",
+        "page_id": "3e20fc3e-53fc-812c-94f6-f1b53fa4edef",
+        "name": "원익QnC",
+        "ticker": "074600",
+        "first_detected_at": {
+          "__datetime__": "2026-09-21T09:53:00+09:00"
+        },
+        "first_threshold": 28300.0,
+        "first_price": 28500.0,
+        "first_atr": 1721.0,
+        "status": "추적중",
+        "closed_reason": "",
+        "closed_at": null,
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-23T09:34:26.426247+09:00"
+        },
+        "latest_close": 28650.0,
+        "latest_date": {
+          "__date__": "2026-09-22"
+        },
+        "latest_atr": 1661.0,
+        "latest_line": 29300.0,
+        "change_pct": 1.24,
+        "atr_mult": 0.2,
+        "dist_to_line": 650.0,
+        "dist_to_line_atr": 0.39,
+        "level_state": "최초선위",
+        "new_breakout": "미해당",
+        "refresh_state": "갱신됨",
+        "refresh_note": "",
+        "user_memo": ""
+      },
+      "page_id": "3e20fc3e-53fc-812c-94f6-f1b53fa4edef",
+      "fields": {
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-23T09:34:26.426247+09:00"
+        }
+      },
+      "state": "queued"
+    }
+  ],
+  "prepare_cursor": "ace3b1a246764f7a88278f7c3aebc577",
   "deliver_cursor": "effce04d714f4cd5b0b61a1d8fd90e22",
   "excluded_events": [
     {
