@@ -96,6 +96,66 @@
       "gap_atr": 0.695,
       "unit_shares": 1199,
       "status": "추격금지"
+    },
+    "091440": {
+      "time": "09:13",
+      "name": "한울소재과학",
+      "sector": "전기전자",
+      "market": "KOSDAQ",
+      "price": 3070.0,
+      "high20": 2975.0,
+      "atr20": 197.0,
+      "gap_atr": 0.482,
+      "unit_shares": 2538,
+      "status": "진입가능"
+    },
+    "004100": {
+      "time": "09:13",
+      "name": "태양금속",
+      "sector": "운송장비·부품",
+      "market": "KOSPI",
+      "price": 3080.0,
+      "high20": 3075.0,
+      "atr20": 129.0,
+      "gap_atr": 0.039,
+      "unit_shares": 3875,
+      "status": "진입가능"
+    },
+    "098120": {
+      "time": "09:13",
+      "name": "마이크로컨텍솔",
+      "sector": "전기전자",
+      "market": "KOSDAQ",
+      "price": 60200.0,
+      "high20": 59200.0,
+      "atr20": 3680.0,
+      "gap_atr": 0.272,
+      "unit_shares": 135,
+      "status": "진입가능"
+    },
+    "484120": {
+      "time": "09:13",
+      "name": "도우인시스",
+      "sector": "전기전자",
+      "market": "KOSDAQ",
+      "price": 24100.0,
+      "high20": 23750.0,
+      "atr20": 1485.0,
+      "gap_atr": 0.236,
+      "unit_shares": 336,
+      "status": "진입가능"
+    },
+    "003160": {
+      "time": "09:13",
+      "name": "디아이",
+      "sector": "의료·정밀기기",
+      "market": "KOSPI",
+      "price": 36800.0,
+      "high20": 36300.0,
+      "atr20": 2031.0,
+      "gap_atr": 0.246,
+      "unit_shares": 246,
+      "status": "진입가능"
     }
   }
 }
