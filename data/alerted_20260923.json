@@ -1,0 +1,101 @@
+{
+  "date": "20260923",
+  "alerted": {
+    "314130": {
+      "time": "09:03",
+      "name": "지놈앤컴퍼니",
+      "sector": "제약",
+      "market": "KOSDAQ",
+      "price": 4295.0,
+      "high20": 4260.0,
+      "atr20": 336.0,
+      "gap_atr": 0.104,
+      "unit_shares": 1488,
+      "status": "진입가능"
+    },
+    "005290": {
+      "time": "09:03",
+      "name": "동진쎄미켐",
+      "sector": "화학",
+      "market": "KOSDAQ",
+      "price": 43700.0,
+      "high20": 43650.0,
+      "atr20": 2244.0,
+      "gap_atr": 0.022,
+      "unit_shares": 222,
+      "status": "진입가능"
+    },
+    "092870": {
+      "time": "09:03",
+      "name": "엑시콘",
+      "sector": "기계·장비",
+      "market": "KOSDAQ",
+      "price": 40800.0,
+      "high20": 39000.0,
+      "atr20": 2668.0,
+      "gap_atr": 0.675,
+      "unit_shares": 187,
+      "status": "추격금지"
+    },
+    "005930": {
+      "time": "09:03",
+      "name": "삼성전자",
+      "sector": "전기전자",
+      "market": "KOSPI",
+      "price": 284500.0,
+      "high20": 283500.0,
+      "atr20": 14114.0,
+      "gap_atr": 0.071,
+      "unit_shares": 35,
+      "status": "진입가능"
+    },
+    "468530": {
+      "time": "09:03",
+      "name": "프로티나",
+      "sector": "일반서비스",
+      "market": "KOSDAQ",
+      "price": 42000.0,
+      "high20": 41800.0,
+      "atr20": 3393.0,
+      "gap_atr": 0.059,
+      "unit_shares": 147,
+      "status": "진입가능"
+    },
+    "446540": {
+      "time": "09:03",
+      "name": "메가터치",
+      "sector": "전기전자",
+      "market": "KOSDAQ",
+      "price": 10400.0,
+      "high20": 9930.0,
+      "atr20": 798.0,
+      "gap_atr": 0.589,
+      "unit_shares": 626,
+      "status": "추격금지"
+    },
+    "030530": {
+      "time": "09:03",
+      "name": "원익홀딩스",
+      "sector": "화학",
+      "market": "KOSDAQ",
+      "price": 29450.0,
+      "high20": 27850.0,
+      "atr20": 2055.0,
+      "gap_atr": 0.779,
+      "unit_shares": 243,
+      "status": "추격금지"
+    },
+    "090710": {
+      "time": "09:03",
+      "name": "휴림로봇",
+      "sector": "기계·장비",
+      "market": "KOSDAQ",
+      "price": 6990.0,
+      "high20": 6700.0,
+      "atr20": 417.0,
+      "gap_atr": 0.695,
+      "unit_shares": 1199,
+      "status": "추격금지"
+    }
+  }
+}
