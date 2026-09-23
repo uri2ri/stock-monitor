@@ -2,23 +2,6 @@
   "version": 1,
   "events": [
     {
-      "id": "88875a7c62864af7b90d1cca295a6fc8",
-      "operation": "record_breakout",
-      "args": [
-        {
-          "ticker": "005290",
-          "name": "동진쎄미켐",
-          "high20": 43650.0,
-          "price": 43700.0,
-          "atr20": 2244.0
-        },
-        {
-          "__datetime__": "2026-09-23T09:03:40.269675+09:00"
-        }
-      ],
-      "kwargs": {}
-    },
-    {
       "id": "3e12796c5ae542419d96a63d94a6fd7e",
       "operation": "record_breakout",
       "args": [
@@ -155,23 +138,6 @@
       }
     },
     {
-      "id": "15d1c04d044f4d8dbe1dd9e33e32e887",
-      "operation": "_set_outcome",
-      "args": [
-        "005290",
-        "미주문",
-        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        {
-          "__datetime__": "2026-09-23T09:03:50.379703+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
       "id": "307ef6dacd1443e3a9702abf9ab21032",
       "operation": "_set_outcome",
       "args": [
@@ -190,50 +156,6 @@
     }
   ],
   "plans": [
-    {
-      "id": "3a7b6fc286f94471a877c2ca106ee57d",
-      "owner": "35800276697:1",
-      "events": [
-        "88875a7c62864af7b90d1cca295a6fc8",
-        "15d1c04d044f4d8dbe1dd9e33e32e887"
-      ],
-      "record": {
-        "event_id": "88875a7c62864af7b90d1cca295a6fc8",
-        "ticker": "005290",
-        "name": "동진쎄미켐",
-        "first_detected_at": {
-          "__datetime__": "2026-09-23T09:03:40.269675+09:00"
-        },
-        "first_threshold": 43650.0,
-        "first_price": 43700.0,
-        "first_atr": 2244.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        "outcome_at": {
-          "__datetime__": "2026-09-23T09:03:50.379703+09:00"
-        }
-      },
-      "page_id": null,
-      "fields": {
-        "event_id": "88875a7c62864af7b90d1cca295a6fc8",
-        "ticker": "005290",
-        "name": "동진쎄미켐",
-        "first_detected_at": {
-          "__datetime__": "2026-09-23T09:03:40.269675+09:00"
-        },
-        "first_threshold": 43650.0,
-        "first_price": 43700.0,
-        "first_atr": 2244.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        "outcome_at": {
-          "__datetime__": "2026-09-23T09:03:50.379703+09:00"
-        }
-      },
-      "state": "creating"
-    },
     {
       "id": "4d513ddf229143aa8b79ab81ce0a4298",
       "owner": "35800276697:1",
@@ -276,7 +198,7 @@
           "__datetime__": "2026-09-23T09:03:40.269675+09:00"
         }
       },
-      "state": "queued"
+      "state": "creating"
     },
     {
       "id": "be4835e90dcb4c74984ec9dd5a12bb2e",
@@ -474,7 +396,7 @@
     }
   ],
   "prepare_cursor": "307ef6dacd1443e3a9702abf9ab21032",
-  "deliver_cursor": "3a7b6fc286f94471a877c2ca106ee57d",
+  "deliver_cursor": "4d513ddf229143aa8b79ab81ce0a4298",
   "excluded_events": [
     {
       "event": {
