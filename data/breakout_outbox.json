@@ -2,23 +2,6 @@
   "version": 1,
   "events": [
     {
-      "id": "684fa1411c30435fa5dff4c9d976bf6d",
-      "operation": "record_breakout",
-      "args": [
-        {
-          "ticker": "219130",
-          "name": "타이거일렉",
-          "high20": 78900.0,
-          "price": 79000.0,
-          "atr20": 6195.0
-        },
-        {
-          "__datetime__": "2026-09-23T09:53:30.940885+09:00"
-        }
-      ],
-      "kwargs": {}
-    },
-    {
       "id": "ae95f8bfec5c4c89a4eef326e31f465e",
       "operation": "record_breakout",
       "args": [
@@ -51,23 +34,6 @@
         }
       ],
       "kwargs": {}
-    },
-    {
-      "id": "83d1f5eb8e9a477fb6e6dbc0763a2d37",
-      "operation": "_set_outcome",
-      "args": [
-        "219130",
-        "상한제한",
-        "신규매수 일일 상한 0 (운영 보류)",
-        {
-          "__datetime__": "2026-09-23T09:54:08.534104+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
     },
     {
       "id": "f9c4d7aa1562485db87b87343d3abb07",
@@ -105,50 +71,6 @@
     }
   ],
   "plans": [
-    {
-      "id": "ccb2e1c04b4b4a8189010db067922a7d",
-      "owner": "35803962128:1",
-      "events": [
-        "684fa1411c30435fa5dff4c9d976bf6d",
-        "83d1f5eb8e9a477fb6e6dbc0763a2d37"
-      ],
-      "record": {
-        "event_id": "684fa1411c30435fa5dff4c9d976bf6d",
-        "ticker": "219130",
-        "name": "타이거일렉",
-        "first_detected_at": {
-          "__datetime__": "2026-09-23T09:53:30.940885+09:00"
-        },
-        "first_threshold": 78900.0,
-        "first_price": 79000.0,
-        "first_atr": 6195.0,
-        "status": "추적중",
-        "outcome": "상한제한",
-        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
-        "outcome_at": {
-          "__datetime__": "2026-09-23T09:54:08.534104+09:00"
-        }
-      },
-      "page_id": null,
-      "fields": {
-        "event_id": "684fa1411c30435fa5dff4c9d976bf6d",
-        "ticker": "219130",
-        "name": "타이거일렉",
-        "first_detected_at": {
-          "__datetime__": "2026-09-23T09:53:30.940885+09:00"
-        },
-        "first_threshold": 78900.0,
-        "first_price": 79000.0,
-        "first_atr": 6195.0,
-        "status": "추적중",
-        "outcome": "상한제한",
-        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
-        "outcome_at": {
-          "__datetime__": "2026-09-23T09:54:08.534104+09:00"
-        }
-      },
-      "state": "creating"
-    },
     {
       "id": "4a0310d3328e4950913e4c501d1b33fa",
       "owner": "35803962128:1",
@@ -191,7 +113,7 @@
           "__datetime__": "2026-09-23T09:54:08.538300+09:00"
         }
       },
-      "state": "queued"
+      "state": "creating"
     },
     {
       "id": "7b237ed4970e47548160f6c5905fdf40",
@@ -239,7 +161,7 @@
     }
   ],
   "prepare_cursor": "f3b35586e4b84d34839017f03b1bf4af",
-  "deliver_cursor": "ccb2e1c04b4b4a8189010db067922a7d",
+  "deliver_cursor": "4a0310d3328e4950913e4c501d1b33fa",
   "excluded_events": [
     {
       "event": {
