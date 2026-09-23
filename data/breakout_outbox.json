@@ -2,23 +2,6 @@
   "version": 1,
   "events": [
     {
-      "id": "458d26e29e98424c8234b595e3e2a664",
-      "operation": "record_breakout",
-      "args": [
-        {
-          "ticker": "314130",
-          "name": "지놈앤컴퍼니",
-          "high20": 4260.0,
-          "price": 4295.0,
-          "atr20": 336.0
-        },
-        {
-          "__datetime__": "2026-09-23T09:03:40.269675+09:00"
-        }
-      ],
-      "kwargs": {}
-    },
-    {
       "id": "88875a7c62864af7b90d1cca295a6fc8",
       "operation": "record_breakout",
       "args": [
@@ -172,23 +155,6 @@
       }
     },
     {
-      "id": "276a84427c2b42969130aa0588ac7174",
-      "operation": "_set_outcome",
-      "args": [
-        "314130",
-        "미주문",
-        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        {
-          "__datetime__": "2026-09-23T09:03:50.373205+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
       "id": "15d1c04d044f4d8dbe1dd9e33e32e887",
       "operation": "_set_outcome",
       "args": [
@@ -224,50 +190,6 @@
     }
   ],
   "plans": [
-    {
-      "id": "952f96b1c1ce4974bd17550339df83c1",
-      "owner": "35800276697:1",
-      "events": [
-        "458d26e29e98424c8234b595e3e2a664",
-        "276a84427c2b42969130aa0588ac7174"
-      ],
-      "record": {
-        "event_id": "458d26e29e98424c8234b595e3e2a664",
-        "ticker": "314130",
-        "name": "지놈앤컴퍼니",
-        "first_detected_at": {
-          "__datetime__": "2026-09-23T09:03:40.269675+09:00"
-        },
-        "first_threshold": 4260.0,
-        "first_price": 4295.0,
-        "first_atr": 336.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        "outcome_at": {
-          "__datetime__": "2026-09-23T09:03:50.373205+09:00"
-        }
-      },
-      "page_id": null,
-      "fields": {
-        "event_id": "458d26e29e98424c8234b595e3e2a664",
-        "ticker": "314130",
-        "name": "지놈앤컴퍼니",
-        "first_detected_at": {
-          "__datetime__": "2026-09-23T09:03:40.269675+09:00"
-        },
-        "first_threshold": 4260.0,
-        "first_price": 4295.0,
-        "first_atr": 336.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        "outcome_at": {
-          "__datetime__": "2026-09-23T09:03:50.373205+09:00"
-        }
-      },
-      "state": "creating"
-    },
     {
       "id": "3a7b6fc286f94471a877c2ca106ee57d",
       "owner": "35800276697:1",
@@ -310,7 +232,7 @@
           "__datetime__": "2026-09-23T09:03:50.379703+09:00"
         }
       },
-      "state": "queued"
+      "state": "creating"
     },
     {
       "id": "4d513ddf229143aa8b79ab81ce0a4298",
@@ -552,7 +474,7 @@
     }
   ],
   "prepare_cursor": "307ef6dacd1443e3a9702abf9ab21032",
-  "deliver_cursor": "952f96b1c1ce4974bd17550339df83c1",
+  "deliver_cursor": "3a7b6fc286f94471a877c2ca106ee57d",
   "excluded_events": [
     {
       "event": {
