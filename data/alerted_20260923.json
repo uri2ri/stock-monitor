@@ -228,6 +228,18 @@
       "gap_atr": 0.234,
       "unit_shares": 292,
       "status": "진입가능"
+    },
+    "074600": {
+      "time": "09:33",
+      "name": "원익QnC",
+      "sector": "비금속",
+      "market": "KOSDAQ",
+      "price": 29500.0,
+      "high20": 29300.0,
+      "atr20": 1661.0,
+      "gap_atr": 0.12,
+      "unit_shares": 301,
+      "status": "진입가능"
     }
   }
 }
