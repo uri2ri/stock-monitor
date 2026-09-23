@@ -2,40 +2,6 @@
   "version": 1,
   "events": [
     {
-      "id": "6e4f335c8a864604af431aaa66724f71",
-      "operation": "record_breakout",
-      "args": [
-        {
-          "ticker": "083500",
-          "name": "에프엔에스테크",
-          "high20": 12180.0,
-          "price": 12200.0,
-          "atr20": 718.0
-        },
-        {
-          "__datetime__": "2026-09-23T15:33:35.934088+09:00"
-        }
-      ],
-      "kwargs": {}
-    },
-    {
-      "id": "0f01c2bdf16a4b40865d19633a711bd5",
-      "operation": "_set_outcome",
-      "args": [
-        "083500",
-        "미주문",
-        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        {
-          "__datetime__": "2026-09-23T15:33:58.129391+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
       "id": "1c5a6ca1b77147659a65ae7d193e7877",
       "operation": "_set_outcome",
       "args": [
@@ -274,52 +240,7 @@
       }
     }
   ],
-  "plans": [
-    {
-      "id": "156970a6527b408e84cc829dbe9a2cdf",
-      "owner": "35827274148:1",
-      "events": [
-        "6e4f335c8a864604af431aaa66724f71",
-        "0f01c2bdf16a4b40865d19633a711bd5"
-      ],
-      "record": {
-        "event_id": "6e4f335c8a864604af431aaa66724f71",
-        "ticker": "083500",
-        "name": "에프엔에스테크",
-        "first_detected_at": {
-          "__datetime__": "2026-09-23T15:33:35.934088+09:00"
-        },
-        "first_threshold": 12180.0,
-        "first_price": 12200.0,
-        "first_atr": 718.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        "outcome_at": {
-          "__datetime__": "2026-09-23T15:33:58.129391+09:00"
-        }
-      },
-      "page_id": null,
-      "fields": {
-        "event_id": "6e4f335c8a864604af431aaa66724f71",
-        "ticker": "083500",
-        "name": "에프엔에스테크",
-        "first_detected_at": {
-          "__datetime__": "2026-09-23T15:33:35.934088+09:00"
-        },
-        "first_threshold": 12180.0,
-        "first_price": 12200.0,
-        "first_atr": 718.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        "outcome_at": {
-          "__datetime__": "2026-09-23T15:33:58.129391+09:00"
-        }
-      },
-      "state": "creating"
-    }
-  ],
+  "plans": [],
   "prepare_cursor": "0bc9b37a1e244e6a81b8164234fd7aa1",
   "deliver_cursor": "156970a6527b408e84cc829dbe9a2cdf",
   "excluded_events": [
