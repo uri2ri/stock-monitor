@@ -398,6 +398,42 @@
       "gap_atr": 0.057,
       "unit_shares": 956,
       "status": "진입가능"
+    },
+    "187870": {
+      "time": "10:23",
+      "name": "디바이스",
+      "sector": "기계·장비",
+      "market": "KOSDAQ",
+      "price": 11510.0,
+      "high20": 11450.0,
+      "atr20": 806.0,
+      "gap_atr": 0.074,
+      "unit_shares": 620,
+      "status": "진입가능"
+    },
+    "086670": {
+      "time": "10:23",
+      "name": "비엠티",
+      "sector": "기계·장비",
+      "market": "KOSDAQ",
+      "price": 19230.0,
+      "high20": 19200.0,
+      "atr20": 751.0,
+      "gap_atr": 0.04,
+      "unit_shares": 665,
+      "status": "진입가능"
+    },
+    "084370": {
+      "time": "10:23",
+      "name": "유진테크",
+      "sector": "기계·장비",
+      "market": "KOSDAQ",
+      "price": 157400.0,
+      "high20": 156300.0,
+      "atr20": 11370.0,
+      "gap_atr": 0.097,
+      "unit_shares": 43,
+      "status": "진입가능"
     }
   }
 }
