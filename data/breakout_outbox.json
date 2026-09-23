@@ -1,8 +1,478 @@
 {
   "version": 1,
-  "events": [],
-  "plans": [],
-  "prepare_cursor": "f8010aafce824ddb9b255d584f2a1fdd",
+  "events": [
+    {
+      "id": "db4b8f2c710744108772e301ef649647",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "036810",
+          "name": "에프에스티",
+          "high20": 30500.0,
+          "price": 30700.0,
+          "atr20": 1895.0
+        },
+        {
+          "__datetime__": "2026-09-23T09:23:37.377674+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "2ca04265f16f48d18ba9451c605c29bb",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "071320",
+          "name": "지역난방공사",
+          "high20": 78700.0,
+          "price": 78900.0,
+          "atr20": 2204.0
+        },
+        {
+          "__datetime__": "2026-09-23T09:23:37.377674+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "17a5234bee9947a2b3ffa2ae9f8d72a2",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "166090",
+          "name": "하나머티리얼즈",
+          "high20": 58300.0,
+          "price": 58400.0,
+          "atr20": 3821.0
+        },
+        {
+          "__datetime__": "2026-09-23T09:23:37.377674+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "785abf4515a54dd2a89e6c2c45eaf949",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "006120",
+          "name": "SK디스커버리",
+          "high20": 58700.0,
+          "price": 58800.0,
+          "atr20": 2545.0
+        },
+        {
+          "__datetime__": "2026-09-23T09:23:37.377674+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "7b4c03df372742c3b93eaaa1908e4149",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "103590",
+          "name": "일진전기",
+          "high20": 79200.0,
+          "price": 79400.0,
+          "atr20": 4558.0
+        },
+        {
+          "__datetime__": "2026-09-23T09:23:37.377674+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "bb8ed18881524d55a35709ae30b936d2",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "080580",
+          "name": "오킨스전자",
+          "high20": 24100.0,
+          "price": 24500.0,
+          "atr20": 1709.0
+        },
+        {
+          "__datetime__": "2026-09-23T09:23:37.377674+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "9f7f18aaf1e94cafbfdc7497c597cc1e",
+      "operation": "_set_outcome",
+      "args": [
+        "036810",
+        "상한제한",
+        "신규매수 일일 상한 0 (운영 보류)",
+        {
+          "__datetime__": "2026-09-23T09:24:25.079450+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "7428b71cef0c436d878fce04a579c234",
+      "operation": "_set_outcome",
+      "args": [
+        "071320",
+        "상한제한",
+        "신규매수 일일 상한 0 (운영 보류)",
+        {
+          "__datetime__": "2026-09-23T09:24:25.085721+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "c63069af1b66419684cedd6f0ea16d1b",
+      "operation": "_set_outcome",
+      "args": [
+        "166090",
+        "상한제한",
+        "신규매수 일일 상한 0 (운영 보류)",
+        {
+          "__datetime__": "2026-09-23T09:24:25.091398+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "efcf702548764ec6b521017ea254c0ce",
+      "operation": "_set_outcome",
+      "args": [
+        "006120",
+        "상한제한",
+        "신규매수 일일 상한 0 (운영 보류)",
+        {
+          "__datetime__": "2026-09-23T09:24:25.097148+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "705f939959184558b786a6128ca3ba01",
+      "operation": "_set_outcome",
+      "args": [
+        "103590",
+        "상한제한",
+        "신규매수 일일 상한 0 (운영 보류)",
+        {
+          "__datetime__": "2026-09-23T09:24:25.102786+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "c1d289770dcf44309f80f8ae3a39e8c7",
+      "operation": "_set_outcome",
+      "args": [
+        "080580",
+        "상한제한",
+        "신규매수 일일 상한 0 (운영 보류)",
+        {
+          "__datetime__": "2026-09-23T09:24:25.108613+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    }
+  ],
+  "plans": [
+    {
+      "id": "9ce7d5e3fe7c404e89911d50aed4dc02",
+      "owner": "35801813828:1",
+      "events": [
+        "db4b8f2c710744108772e301ef649647",
+        "9f7f18aaf1e94cafbfdc7497c597cc1e"
+      ],
+      "record": {
+        "event_id": "db4b8f2c710744108772e301ef649647",
+        "ticker": "036810",
+        "name": "에프에스티",
+        "first_detected_at": {
+          "__datetime__": "2026-09-23T09:23:37.377674+09:00"
+        },
+        "first_threshold": 30500.0,
+        "first_price": 30700.0,
+        "first_atr": 1895.0,
+        "status": "추적중",
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-23T09:24:25.079450+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "db4b8f2c710744108772e301ef649647",
+        "ticker": "036810",
+        "name": "에프에스티",
+        "first_detected_at": {
+          "__datetime__": "2026-09-23T09:23:37.377674+09:00"
+        },
+        "first_threshold": 30500.0,
+        "first_price": 30700.0,
+        "first_atr": 1895.0,
+        "status": "추적중",
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-23T09:24:25.079450+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "62043daf546d4399b8234eda295d7f78",
+      "owner": "35801813828:1",
+      "events": [
+        "2ca04265f16f48d18ba9451c605c29bb",
+        "7428b71cef0c436d878fce04a579c234"
+      ],
+      "record": {
+        "event_id": "2ca04265f16f48d18ba9451c605c29bb",
+        "ticker": "071320",
+        "name": "지역난방공사",
+        "first_detected_at": {
+          "__datetime__": "2026-09-23T09:23:37.377674+09:00"
+        },
+        "first_threshold": 78700.0,
+        "first_price": 78900.0,
+        "first_atr": 2204.0,
+        "status": "추적중",
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-23T09:24:25.085721+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "2ca04265f16f48d18ba9451c605c29bb",
+        "ticker": "071320",
+        "name": "지역난방공사",
+        "first_detected_at": {
+          "__datetime__": "2026-09-23T09:23:37.377674+09:00"
+        },
+        "first_threshold": 78700.0,
+        "first_price": 78900.0,
+        "first_atr": 2204.0,
+        "status": "추적중",
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-23T09:24:25.085721+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "feb724e71dd648a9886563401caa83ee",
+      "owner": "35801813828:1",
+      "events": [
+        "17a5234bee9947a2b3ffa2ae9f8d72a2",
+        "c63069af1b66419684cedd6f0ea16d1b"
+      ],
+      "record": {
+        "event_id": "17a5234bee9947a2b3ffa2ae9f8d72a2",
+        "ticker": "166090",
+        "name": "하나머티리얼즈",
+        "first_detected_at": {
+          "__datetime__": "2026-09-23T09:23:37.377674+09:00"
+        },
+        "first_threshold": 58300.0,
+        "first_price": 58400.0,
+        "first_atr": 3821.0,
+        "status": "추적중",
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-23T09:24:25.091398+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "17a5234bee9947a2b3ffa2ae9f8d72a2",
+        "ticker": "166090",
+        "name": "하나머티리얼즈",
+        "first_detected_at": {
+          "__datetime__": "2026-09-23T09:23:37.377674+09:00"
+        },
+        "first_threshold": 58300.0,
+        "first_price": 58400.0,
+        "first_atr": 3821.0,
+        "status": "추적중",
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-23T09:24:25.091398+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "192d65ffb8934385997af562bf67718c",
+      "owner": "35801813828:1",
+      "events": [
+        "785abf4515a54dd2a89e6c2c45eaf949",
+        "efcf702548764ec6b521017ea254c0ce"
+      ],
+      "record": {
+        "event_id": "785abf4515a54dd2a89e6c2c45eaf949",
+        "ticker": "006120",
+        "name": "SK디스커버리",
+        "first_detected_at": {
+          "__datetime__": "2026-09-23T09:23:37.377674+09:00"
+        },
+        "first_threshold": 58700.0,
+        "first_price": 58800.0,
+        "first_atr": 2545.0,
+        "status": "추적중",
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-23T09:24:25.097148+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "785abf4515a54dd2a89e6c2c45eaf949",
+        "ticker": "006120",
+        "name": "SK디스커버리",
+        "first_detected_at": {
+          "__datetime__": "2026-09-23T09:23:37.377674+09:00"
+        },
+        "first_threshold": 58700.0,
+        "first_price": 58800.0,
+        "first_atr": 2545.0,
+        "status": "추적중",
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-23T09:24:25.097148+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "705ed11d57304f36ab570f2b04ce6e02",
+      "owner": "35801813828:1",
+      "events": [
+        "7b4c03df372742c3b93eaaa1908e4149",
+        "705f939959184558b786a6128ca3ba01"
+      ],
+      "record": {
+        "event_id": "7b4c03df372742c3b93eaaa1908e4149",
+        "ticker": "103590",
+        "name": "일진전기",
+        "first_detected_at": {
+          "__datetime__": "2026-09-23T09:23:37.377674+09:00"
+        },
+        "first_threshold": 79200.0,
+        "first_price": 79400.0,
+        "first_atr": 4558.0,
+        "status": "추적중",
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-23T09:24:25.102786+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "7b4c03df372742c3b93eaaa1908e4149",
+        "ticker": "103590",
+        "name": "일진전기",
+        "first_detected_at": {
+          "__datetime__": "2026-09-23T09:23:37.377674+09:00"
+        },
+        "first_threshold": 79200.0,
+        "first_price": 79400.0,
+        "first_atr": 4558.0,
+        "status": "추적중",
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-23T09:24:25.102786+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "effce04d714f4cd5b0b61a1d8fd90e22",
+      "owner": "35801813828:1",
+      "events": [
+        "bb8ed18881524d55a35709ae30b936d2",
+        "c1d289770dcf44309f80f8ae3a39e8c7"
+      ],
+      "record": {
+        "event_id": "bb8ed18881524d55a35709ae30b936d2",
+        "ticker": "080580",
+        "name": "오킨스전자",
+        "first_detected_at": {
+          "__datetime__": "2026-09-23T09:23:37.377674+09:00"
+        },
+        "first_threshold": 24100.0,
+        "first_price": 24500.0,
+        "first_atr": 1709.0,
+        "status": "추적중",
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-23T09:24:25.108613+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "bb8ed18881524d55a35709ae30b936d2",
+        "ticker": "080580",
+        "name": "오킨스전자",
+        "first_detected_at": {
+          "__datetime__": "2026-09-23T09:23:37.377674+09:00"
+        },
+        "first_threshold": 24100.0,
+        "first_price": 24500.0,
+        "first_atr": 1709.0,
+        "status": "추적중",
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-23T09:24:25.108613+09:00"
+        }
+      },
+      "state": "queued"
+    }
+  ],
+  "prepare_cursor": "e0f2a672a1f249d8a65bb8e999615f23",
   "deliver_cursor": "5edab681f5194f8fa1d37f09b3f929df",
   "excluded_events": [
     {
