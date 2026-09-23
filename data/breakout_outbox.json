@@ -1,8 +1,557 @@
 {
   "version": 1,
-  "events": [],
-  "plans": [],
-  "prepare_cursor": "ed384e61d420470fa4ceaec187e388b9",
+  "events": [
+    {
+      "id": "458d26e29e98424c8234b595e3e2a664",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "314130",
+          "name": "지놈앤컴퍼니",
+          "high20": 4260.0,
+          "price": 4295.0,
+          "atr20": 336.0
+        },
+        {
+          "__datetime__": "2026-09-23T09:03:40.269675+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "88875a7c62864af7b90d1cca295a6fc8",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "005290",
+          "name": "동진쎄미켐",
+          "high20": 43650.0,
+          "price": 43700.0,
+          "atr20": 2244.0
+        },
+        {
+          "__datetime__": "2026-09-23T09:03:40.269675+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "3e12796c5ae542419d96a63d94a6fd7e",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "092870",
+          "name": "엑시콘",
+          "high20": 39000.0,
+          "price": 40800.0,
+          "atr20": 2668.0
+        },
+        {
+          "__datetime__": "2026-09-23T09:03:40.269675+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "e522f13289494cbf91e29109693a65f9",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "468530",
+          "name": "프로티나",
+          "high20": 41800.0,
+          "price": 42000.0,
+          "atr20": 3393.0
+        },
+        {
+          "__datetime__": "2026-09-23T09:03:40.269675+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "28a9dedac3a042709e3df5021e938bc5",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "446540",
+          "name": "메가터치",
+          "high20": 9930.0,
+          "price": 10400.0,
+          "atr20": 798.0
+        },
+        {
+          "__datetime__": "2026-09-23T09:03:40.269675+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "62383ff0d37b4c54b51173f2e559a0c4",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "090710",
+          "name": "휴림로봇",
+          "high20": 6700.0,
+          "price": 6990.0,
+          "atr20": 417.0
+        },
+        {
+          "__datetime__": "2026-09-23T09:03:40.269675+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "de72989ae01f4f1694ce077dc3a2598c",
+      "operation": "_set_outcome",
+      "args": [
+        "092870",
+        "미주문",
+        "추격 구간(+0.67N) - 매수 대상 제외",
+        {
+          "__datetime__": "2026-09-23T09:03:40.269675+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "f104409c49bc4d7bb7629d156cba87a9",
+      "operation": "_set_outcome",
+      "args": [
+        "446540",
+        "미주문",
+        "추격 구간(+0.59N) - 매수 대상 제외",
+        {
+          "__datetime__": "2026-09-23T09:03:40.269675+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "945e9b69a9f3497abd8a16d9249e781a",
+      "operation": "_set_outcome",
+      "args": [
+        "030530",
+        "미주문",
+        "추격 구간(+0.78N) - 매수 대상 제외",
+        {
+          "__datetime__": "2026-09-23T09:03:40.269675+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "0c23446de52e44d08b84a6c79076949f",
+      "operation": "_set_outcome",
+      "args": [
+        "090710",
+        "미주문",
+        "추격 구간(+0.70N) - 매수 대상 제외",
+        {
+          "__datetime__": "2026-09-23T09:03:40.269675+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "276a84427c2b42969130aa0588ac7174",
+      "operation": "_set_outcome",
+      "args": [
+        "314130",
+        "미주문",
+        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        {
+          "__datetime__": "2026-09-23T09:03:50.373205+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "15d1c04d044f4d8dbe1dd9e33e32e887",
+      "operation": "_set_outcome",
+      "args": [
+        "005290",
+        "미주문",
+        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        {
+          "__datetime__": "2026-09-23T09:03:50.379703+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "307ef6dacd1443e3a9702abf9ab21032",
+      "operation": "_set_outcome",
+      "args": [
+        "468530",
+        "미주문",
+        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        {
+          "__datetime__": "2026-09-23T09:03:50.390887+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    }
+  ],
+  "plans": [
+    {
+      "id": "952f96b1c1ce4974bd17550339df83c1",
+      "owner": "35800276697:1",
+      "events": [
+        "458d26e29e98424c8234b595e3e2a664",
+        "276a84427c2b42969130aa0588ac7174"
+      ],
+      "record": {
+        "event_id": "458d26e29e98424c8234b595e3e2a664",
+        "ticker": "314130",
+        "name": "지놈앤컴퍼니",
+        "first_detected_at": {
+          "__datetime__": "2026-09-23T09:03:40.269675+09:00"
+        },
+        "first_threshold": 4260.0,
+        "first_price": 4295.0,
+        "first_atr": 336.0,
+        "status": "추적중",
+        "outcome": "미주문",
+        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        "outcome_at": {
+          "__datetime__": "2026-09-23T09:03:50.373205+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "458d26e29e98424c8234b595e3e2a664",
+        "ticker": "314130",
+        "name": "지놈앤컴퍼니",
+        "first_detected_at": {
+          "__datetime__": "2026-09-23T09:03:40.269675+09:00"
+        },
+        "first_threshold": 4260.0,
+        "first_price": 4295.0,
+        "first_atr": 336.0,
+        "status": "추적중",
+        "outcome": "미주문",
+        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        "outcome_at": {
+          "__datetime__": "2026-09-23T09:03:50.373205+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "3a7b6fc286f94471a877c2ca106ee57d",
+      "owner": "35800276697:1",
+      "events": [
+        "88875a7c62864af7b90d1cca295a6fc8",
+        "15d1c04d044f4d8dbe1dd9e33e32e887"
+      ],
+      "record": {
+        "event_id": "88875a7c62864af7b90d1cca295a6fc8",
+        "ticker": "005290",
+        "name": "동진쎄미켐",
+        "first_detected_at": {
+          "__datetime__": "2026-09-23T09:03:40.269675+09:00"
+        },
+        "first_threshold": 43650.0,
+        "first_price": 43700.0,
+        "first_atr": 2244.0,
+        "status": "추적중",
+        "outcome": "미주문",
+        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        "outcome_at": {
+          "__datetime__": "2026-09-23T09:03:50.379703+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "88875a7c62864af7b90d1cca295a6fc8",
+        "ticker": "005290",
+        "name": "동진쎄미켐",
+        "first_detected_at": {
+          "__datetime__": "2026-09-23T09:03:40.269675+09:00"
+        },
+        "first_threshold": 43650.0,
+        "first_price": 43700.0,
+        "first_atr": 2244.0,
+        "status": "추적중",
+        "outcome": "미주문",
+        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        "outcome_at": {
+          "__datetime__": "2026-09-23T09:03:50.379703+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "4d513ddf229143aa8b79ab81ce0a4298",
+      "owner": "35800276697:1",
+      "events": [
+        "3e12796c5ae542419d96a63d94a6fd7e",
+        "de72989ae01f4f1694ce077dc3a2598c"
+      ],
+      "record": {
+        "event_id": "3e12796c5ae542419d96a63d94a6fd7e",
+        "ticker": "092870",
+        "name": "엑시콘",
+        "first_detected_at": {
+          "__datetime__": "2026-09-23T09:03:40.269675+09:00"
+        },
+        "first_threshold": 39000.0,
+        "first_price": 40800.0,
+        "first_atr": 2668.0,
+        "status": "추적중",
+        "outcome": "미주문",
+        "outcome_reason": "추격 구간(+0.67N) - 매수 대상 제외",
+        "outcome_at": {
+          "__datetime__": "2026-09-23T09:03:40.269675+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "3e12796c5ae542419d96a63d94a6fd7e",
+        "ticker": "092870",
+        "name": "엑시콘",
+        "first_detected_at": {
+          "__datetime__": "2026-09-23T09:03:40.269675+09:00"
+        },
+        "first_threshold": 39000.0,
+        "first_price": 40800.0,
+        "first_atr": 2668.0,
+        "status": "추적중",
+        "outcome": "미주문",
+        "outcome_reason": "추격 구간(+0.67N) - 매수 대상 제외",
+        "outcome_at": {
+          "__datetime__": "2026-09-23T09:03:40.269675+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "be4835e90dcb4c74984ec9dd5a12bb2e",
+      "owner": "35800276697:1",
+      "events": [
+        "e522f13289494cbf91e29109693a65f9",
+        "307ef6dacd1443e3a9702abf9ab21032"
+      ],
+      "record": {
+        "event_id": "e522f13289494cbf91e29109693a65f9",
+        "ticker": "468530",
+        "name": "프로티나",
+        "first_detected_at": {
+          "__datetime__": "2026-09-23T09:03:40.269675+09:00"
+        },
+        "first_threshold": 41800.0,
+        "first_price": 42000.0,
+        "first_atr": 3393.0,
+        "status": "추적중",
+        "outcome": "미주문",
+        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        "outcome_at": {
+          "__datetime__": "2026-09-23T09:03:50.390887+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "e522f13289494cbf91e29109693a65f9",
+        "ticker": "468530",
+        "name": "프로티나",
+        "first_detected_at": {
+          "__datetime__": "2026-09-23T09:03:40.269675+09:00"
+        },
+        "first_threshold": 41800.0,
+        "first_price": 42000.0,
+        "first_atr": 3393.0,
+        "status": "추적중",
+        "outcome": "미주문",
+        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        "outcome_at": {
+          "__datetime__": "2026-09-23T09:03:50.390887+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "7c9dafc5ab7d4e979f2a1b82fcfe7597",
+      "owner": "35800276697:1",
+      "events": [
+        "28a9dedac3a042709e3df5021e938bc5",
+        "f104409c49bc4d7bb7629d156cba87a9"
+      ],
+      "record": {
+        "event_id": "28a9dedac3a042709e3df5021e938bc5",
+        "ticker": "446540",
+        "name": "메가터치",
+        "first_detected_at": {
+          "__datetime__": "2026-09-23T09:03:40.269675+09:00"
+        },
+        "first_threshold": 9930.0,
+        "first_price": 10400.0,
+        "first_atr": 798.0,
+        "status": "추적중",
+        "outcome": "미주문",
+        "outcome_reason": "추격 구간(+0.59N) - 매수 대상 제외",
+        "outcome_at": {
+          "__datetime__": "2026-09-23T09:03:40.269675+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "28a9dedac3a042709e3df5021e938bc5",
+        "ticker": "446540",
+        "name": "메가터치",
+        "first_detected_at": {
+          "__datetime__": "2026-09-23T09:03:40.269675+09:00"
+        },
+        "first_threshold": 9930.0,
+        "first_price": 10400.0,
+        "first_atr": 798.0,
+        "status": "추적중",
+        "outcome": "미주문",
+        "outcome_reason": "추격 구간(+0.59N) - 매수 대상 제외",
+        "outcome_at": {
+          "__datetime__": "2026-09-23T09:03:40.269675+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "8d9e9d4b8a7c45a292b938c26edef583",
+      "owner": "35800276697:1",
+      "events": [
+        "62383ff0d37b4c54b51173f2e559a0c4",
+        "0c23446de52e44d08b84a6c79076949f"
+      ],
+      "record": {
+        "event_id": "62383ff0d37b4c54b51173f2e559a0c4",
+        "ticker": "090710",
+        "name": "휴림로봇",
+        "first_detected_at": {
+          "__datetime__": "2026-09-23T09:03:40.269675+09:00"
+        },
+        "first_threshold": 6700.0,
+        "first_price": 6990.0,
+        "first_atr": 417.0,
+        "status": "추적중",
+        "outcome": "미주문",
+        "outcome_reason": "추격 구간(+0.70N) - 매수 대상 제외",
+        "outcome_at": {
+          "__datetime__": "2026-09-23T09:03:40.269675+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "62383ff0d37b4c54b51173f2e559a0c4",
+        "ticker": "090710",
+        "name": "휴림로봇",
+        "first_detected_at": {
+          "__datetime__": "2026-09-23T09:03:40.269675+09:00"
+        },
+        "first_threshold": 6700.0,
+        "first_price": 6990.0,
+        "first_atr": 417.0,
+        "status": "추적중",
+        "outcome": "미주문",
+        "outcome_reason": "추격 구간(+0.70N) - 매수 대상 제외",
+        "outcome_at": {
+          "__datetime__": "2026-09-23T09:03:40.269675+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "cf6e348517e9442f8beee6128b0fe240",
+      "owner": "35800276697:1",
+      "events": [
+        "945e9b69a9f3497abd8a16d9249e781a"
+      ],
+      "record": {
+        "account_type": "",
+        "account_key": "",
+        "order_side": "",
+        "order_qty": null,
+        "filled_qty": null,
+        "unverified_qty": null,
+        "execution_price": null,
+        "execution_state": "",
+        "execution_checked_at": null,
+        "event_id": "96464d1edfcd4c22b7e6cfae276f2e7a",
+        "order_no": "",
+        "order_day": null,
+        "key": "3e20fc3e-53fc-814e-80cd-c4988a48d783",
+        "page_id": "3e20fc3e-53fc-814e-80cd-c4988a48d783",
+        "name": "원익홀딩스",
+        "ticker": "030530",
+        "first_detected_at": {
+          "__datetime__": "2026-09-21T09:33:00+09:00"
+        },
+        "first_threshold": 26750.0,
+        "first_price": 27150.0,
+        "first_atr": 2102.0,
+        "status": "추적중",
+        "closed_reason": "",
+        "closed_at": null,
+        "outcome": "미주문",
+        "outcome_reason": "추격 구간(+0.78N) - 매수 대상 제외",
+        "outcome_at": {
+          "__datetime__": "2026-09-23T09:03:40.269675+09:00"
+        },
+        "latest_close": 26500.0,
+        "latest_date": {
+          "__date__": "2026-09-22"
+        },
+        "latest_atr": 2055.0,
+        "latest_line": 27850.0,
+        "change_pct": -0.93,
+        "atr_mult": -0.12,
+        "dist_to_line": 1350.0,
+        "dist_to_line_atr": 0.66,
+        "level_state": "최초선아래",
+        "new_breakout": "미해당",
+        "refresh_state": "갱신됨",
+        "refresh_note": "",
+        "user_memo": ""
+      },
+      "page_id": "3e20fc3e-53fc-814e-80cd-c4988a48d783",
+      "fields": {
+        "outcome_reason": "추격 구간(+0.78N) - 매수 대상 제외",
+        "outcome_at": {
+          "__datetime__": "2026-09-23T09:03:40.269675+09:00"
+        }
+      },
+      "state": "queued"
+    }
+  ],
+  "prepare_cursor": "307ef6dacd1443e3a9702abf9ab21032",
   "deliver_cursor": "88fdb7f6b31a4d7f9af24e86f45740ee",
   "excluded_events": [
     {
