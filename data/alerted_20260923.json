@@ -458,6 +458,18 @@
       "gap_atr": 0.18,
       "unit_shares": 428,
       "status": "진입가능"
+    },
+    "089790": {
+      "time": "13:13",
+      "name": "제이티",
+      "sector": "기계·장비",
+      "market": "KOSDAQ",
+      "price": 6090.0,
+      "high20": 6080.0,
+      "atr20": 373.0,
+      "gap_atr": 0.027,
+      "unit_shares": 1340,
+      "status": "진입가능"
     }
   }
 }
