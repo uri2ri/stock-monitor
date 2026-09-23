@@ -1,8 +1,88 @@
 {
   "version": 1,
-  "events": [],
-  "plans": [],
-  "prepare_cursor": "82a01ff99ba2423fb56f0018799bfd2f",
+  "events": [
+    {
+      "id": "3b7c3669df034b4bb946a446c91d30be",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "160980",
+          "name": "싸이맥스",
+          "high20": 26600.0,
+          "price": 26800.0,
+          "atr20": 2397.0
+        },
+        {
+          "__datetime__": "2026-09-23T14:43:39.024681+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "8235db5b71ef415993bc32e6ba97b714",
+      "operation": "_set_outcome",
+      "args": [
+        "160980",
+        "상한제한",
+        "신규매수 일일 상한 0 (운영 보류)",
+        {
+          "__datetime__": "2026-09-23T14:45:07.834163+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    }
+  ],
+  "plans": [
+    {
+      "id": "d05498f2c66442cc8071d67dd9275919",
+      "owner": "35823563591:1",
+      "events": [
+        "3b7c3669df034b4bb946a446c91d30be",
+        "8235db5b71ef415993bc32e6ba97b714"
+      ],
+      "record": {
+        "event_id": "3b7c3669df034b4bb946a446c91d30be",
+        "ticker": "160980",
+        "name": "싸이맥스",
+        "first_detected_at": {
+          "__datetime__": "2026-09-23T14:43:39.024681+09:00"
+        },
+        "first_threshold": 26600.0,
+        "first_price": 26800.0,
+        "first_atr": 2397.0,
+        "status": "추적중",
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-23T14:45:07.834163+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "3b7c3669df034b4bb946a446c91d30be",
+        "ticker": "160980",
+        "name": "싸이맥스",
+        "first_detected_at": {
+          "__datetime__": "2026-09-23T14:43:39.024681+09:00"
+        },
+        "first_threshold": 26600.0,
+        "first_price": 26800.0,
+        "first_atr": 2397.0,
+        "status": "추적중",
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-23T14:45:07.834163+09:00"
+        }
+      },
+      "state": "queued"
+    }
+  ],
+  "prepare_cursor": "8c8ed9653b3146ba9f28712c67942d53",
   "deliver_cursor": "56fbeb1910094cd297ef5f7371a849db",
   "excluded_events": [
     {
