@@ -1,6 +1,6 @@
 {
   "scan_date": "2026-09-23",
-  "generated_at": "2026-09-24T12:52:11",
+  "generated_at": "2026-09-25T12:56:35",
   "capital": 100000000.0,
   "source": "캐시 (추가 조회 없음)",
   "meta_source": "전종목시세",
@@ -10,7 +10,7 @@
   "shown": 30,
   "trading_days_used": 120,
   "truncated": false,
-  "elapsed_sec": 2.2,
+  "elapsed_sec": 2.9,
   "filters": {
     "min_trading_value": 1000000000,
     "trading_value_days": 20,
