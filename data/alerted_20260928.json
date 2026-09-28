@@ -446,6 +446,18 @@
       "gap_atr": 0.056,
       "unit_shares": 562,
       "status": "진입가능"
+    },
+    "025560": {
+      "time": "13:23",
+      "name": "미래산업",
+      "sector": "의료·정밀기기",
+      "market": "KOSPI",
+      "price": 7210.0,
+      "high20": 7190.0,
+      "atr20": 1400.0,
+      "gap_atr": 0.014,
+      "unit_shares": 357,
+      "status": "진입가능"
     }
   }
 }
