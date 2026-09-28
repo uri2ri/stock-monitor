@@ -422,6 +422,18 @@
       "gap_atr": 0.027,
       "unit_shares": 1326,
       "status": "진입가능"
+    },
+    "033160": {
+      "time": "12:23",
+      "name": "엠케이전자",
+      "sector": "전기전자",
+      "market": "KOSDAQ",
+      "price": 16720.0,
+      "high20": 16690.0,
+      "atr20": 1304.0,
+      "gap_atr": 0.023,
+      "unit_shares": 383,
+      "status": "진입가능"
     }
   }
 }
