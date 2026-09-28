@@ -2,23 +2,6 @@
   "version": 1,
   "events": [
     {
-      "id": "bc806dd262cb494899a8572a6fe48f58",
-      "operation": "record_breakout",
-      "args": [
-        {
-          "ticker": "0088M0",
-          "name": "메쥬",
-          "high20": 14180.0,
-          "price": 14290.0,
-          "atr20": 1057.0
-        },
-        {
-          "__datetime__": "2026-09-28T09:13:38.012483+09:00"
-        }
-      ],
-      "kwargs": {}
-    },
-    {
       "id": "4fcb3f544b0e42168e882c6f91a1ec55",
       "operation": "record_breakout",
       "args": [
@@ -104,23 +87,6 @@
       }
     },
     {
-      "id": "90699edb925043098ef0d455fa7ad923",
-      "operation": "_set_outcome",
-      "args": [
-        "0088M0",
-        "상한제한",
-        "신규매수 일일 상한 0 (운영 보류)",
-        {
-          "__datetime__": "2026-09-28T09:14:59.371031+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
       "id": "208080933aee4fbb9216a912bdec6d06",
       "operation": "_set_outcome",
       "args": [
@@ -191,50 +157,6 @@
   ],
   "plans": [
     {
-      "id": "6a0616b0bd2c4a07870a2677575935d4",
-      "owner": "36361374212:1",
-      "events": [
-        "bc806dd262cb494899a8572a6fe48f58",
-        "90699edb925043098ef0d455fa7ad923"
-      ],
-      "record": {
-        "event_id": "bc806dd262cb494899a8572a6fe48f58",
-        "ticker": "0088M0",
-        "name": "메쥬",
-        "first_detected_at": {
-          "__datetime__": "2026-09-28T09:13:38.012483+09:00"
-        },
-        "first_threshold": 14180.0,
-        "first_price": 14290.0,
-        "first_atr": 1057.0,
-        "status": "추적중",
-        "outcome": "상한제한",
-        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
-        "outcome_at": {
-          "__datetime__": "2026-09-28T09:14:59.371031+09:00"
-        }
-      },
-      "page_id": null,
-      "fields": {
-        "event_id": "bc806dd262cb494899a8572a6fe48f58",
-        "ticker": "0088M0",
-        "name": "메쥬",
-        "first_detected_at": {
-          "__datetime__": "2026-09-28T09:13:38.012483+09:00"
-        },
-        "first_threshold": 14180.0,
-        "first_price": 14290.0,
-        "first_atr": 1057.0,
-        "status": "추적중",
-        "outcome": "상한제한",
-        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
-        "outcome_at": {
-          "__datetime__": "2026-09-28T09:14:59.371031+09:00"
-        }
-      },
-      "state": "creating"
-    },
-    {
       "id": "48302c9c1a804977b1bd54d5a11be14b",
       "owner": "36361374212:1",
       "events": [
@@ -276,7 +198,7 @@
           "__datetime__": "2026-09-28T09:14:59.375528+09:00"
         }
       },
-      "state": "queued"
+      "state": "creating"
     },
     {
       "id": "dc9f2318423a46f5bbc3faa9ff6dd547",
@@ -475,7 +397,7 @@
     }
   ],
   "prepare_cursor": "70faeca27fd54bab84494d21c612fd74",
-  "deliver_cursor": "6a0616b0bd2c4a07870a2677575935d4",
+  "deliver_cursor": "48302c9c1a804977b1bd54d5a11be14b",
   "excluded_events": [
     {
       "event": {
