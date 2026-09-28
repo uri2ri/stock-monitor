@@ -1,8 +1,88 @@
 {
   "version": 1,
-  "events": [],
-  "plans": [],
-  "prepare_cursor": "abc19350eb0e4af2baddf383664901fa",
+  "events": [
+    {
+      "id": "b2e45aeced154f1ebc6d22dc88a026bc",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "036710",
+          "name": "심텍홀딩스",
+          "high20": 4570.0,
+          "price": 4595.0,
+          "atr20": 318.0
+        },
+        {
+          "__datetime__": "2026-09-28T11:03:35.790306+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "a57df092ac3e4655aec48c975947b1c9",
+      "operation": "_set_outcome",
+      "args": [
+        "036710",
+        "상한제한",
+        "신규매수 일일 상한 0 (운영 보류)",
+        {
+          "__datetime__": "2026-09-28T11:05:05.887418+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    }
+  ],
+  "plans": [
+    {
+      "id": "1d3c937597f341619f986eff4f7935ca",
+      "owner": "36368304888:1",
+      "events": [
+        "b2e45aeced154f1ebc6d22dc88a026bc",
+        "a57df092ac3e4655aec48c975947b1c9"
+      ],
+      "record": {
+        "event_id": "b2e45aeced154f1ebc6d22dc88a026bc",
+        "ticker": "036710",
+        "name": "심텍홀딩스",
+        "first_detected_at": {
+          "__datetime__": "2026-09-28T11:03:35.790306+09:00"
+        },
+        "first_threshold": 4570.0,
+        "first_price": 4595.0,
+        "first_atr": 318.0,
+        "status": "추적중",
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-28T11:05:05.887418+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "b2e45aeced154f1ebc6d22dc88a026bc",
+        "ticker": "036710",
+        "name": "심텍홀딩스",
+        "first_detected_at": {
+          "__datetime__": "2026-09-28T11:03:35.790306+09:00"
+        },
+        "first_threshold": 4570.0,
+        "first_price": 4595.0,
+        "first_atr": 318.0,
+        "status": "추적중",
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-28T11:05:05.887418+09:00"
+        }
+      },
+      "state": "queued"
+    }
+  ],
+  "prepare_cursor": "003a4698f01747c7aa2e46fa31ef29d8",
   "deliver_cursor": "4e05ad260ea5464dafd9ffc9705e6997",
   "excluded_events": [
     {
@@ -3868,6 +3948,27 @@
       },
       "reason": "held_without_active_track",
       "resolved_by": "36367670525:1"
+    },
+    {
+      "event": {
+        "id": "b3c0dcc2ae3f461c9af7eedfb6a3ff57",
+        "operation": "_set_outcome",
+        "args": [
+          "009150",
+          "상한제한",
+          "신규매수 일일 상한 0 (운영 보류)",
+          {
+            "__datetime__": "2026-09-28T11:05:05.893918+09:00"
+          }
+        ],
+        "kwargs": {
+          "order_no": "",
+          "order_day": null,
+          "identity": null
+        }
+      },
+      "reason": "held_without_active_track",
+      "resolved_by": "36368304888:1"
     }
   ]
 }
