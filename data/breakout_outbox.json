@@ -1,8 +1,88 @@
 {
   "version": 1,
-  "events": [],
-  "plans": [],
-  "prepare_cursor": "9b0f1f0349954b40ac769180d4257ace",
+  "events": [
+    {
+      "id": "c2e8ce8919464c10b589bcc8e930ac3e",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "355390",
+          "name": "크라우드웍스",
+          "high20": 1623.0,
+          "price": 1630.0,
+          "atr20": 185.0
+        },
+        {
+          "__datetime__": "2026-09-28T10:53:34.932483+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "3eef4a1fb09645eba9569ddb0462d72a",
+      "operation": "_set_outcome",
+      "args": [
+        "355390",
+        "상한제한",
+        "신규매수 일일 상한 0 (운영 보류)",
+        {
+          "__datetime__": "2026-09-28T10:54:59.457536+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    }
+  ],
+  "plans": [
+    {
+      "id": "4e05ad260ea5464dafd9ffc9705e6997",
+      "owner": "36367670525:1",
+      "events": [
+        "c2e8ce8919464c10b589bcc8e930ac3e",
+        "3eef4a1fb09645eba9569ddb0462d72a"
+      ],
+      "record": {
+        "event_id": "c2e8ce8919464c10b589bcc8e930ac3e",
+        "ticker": "355390",
+        "name": "크라우드웍스",
+        "first_detected_at": {
+          "__datetime__": "2026-09-28T10:53:34.932483+09:00"
+        },
+        "first_threshold": 1623.0,
+        "first_price": 1630.0,
+        "first_atr": 185.0,
+        "status": "추적중",
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-28T10:54:59.457536+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "c2e8ce8919464c10b589bcc8e930ac3e",
+        "ticker": "355390",
+        "name": "크라우드웍스",
+        "first_detected_at": {
+          "__datetime__": "2026-09-28T10:53:34.932483+09:00"
+        },
+        "first_threshold": 1623.0,
+        "first_price": 1630.0,
+        "first_atr": 185.0,
+        "status": "추적중",
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-28T10:54:59.457536+09:00"
+        }
+      },
+      "state": "queued"
+    }
+  ],
+  "prepare_cursor": "abc19350eb0e4af2baddf383664901fa",
   "deliver_cursor": "940699abe038420aba5f16c3f320264b",
   "excluded_events": [
     {
@@ -3847,6 +3927,27 @@
       },
       "reason": "held_without_active_track",
       "resolved_by": "36367043382:1"
+    },
+    {
+      "event": {
+        "id": "676a0822e1c940fbad17983658246b18",
+        "operation": "_set_outcome",
+        "args": [
+          "009150",
+          "상한제한",
+          "신규매수 일일 상한 0 (운영 보류)",
+          {
+            "__datetime__": "2026-09-28T10:54:59.463759+09:00"
+          }
+        ],
+        "kwargs": {
+          "order_no": "",
+          "order_day": null,
+          "identity": null
+        }
+      },
+      "reason": "held_without_active_track",
+      "resolved_by": "36367670525:1"
     }
   ]
 }
