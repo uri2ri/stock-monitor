@@ -350,6 +350,18 @@
       "status": "진입가능",
       "price_10am": 18460.0,
       "time_10am": "10:03"
+    },
+    "009240": {
+      "time": "10:13",
+      "name": "한샘",
+      "sector": "유통",
+      "market": "KOSPI",
+      "price": 40100.0,
+      "high20": 40000.0,
+      "atr20": 1238.0,
+      "gap_atr": 0.081,
+      "unit_shares": 403,
+      "status": "진입가능"
     }
   }
 }
