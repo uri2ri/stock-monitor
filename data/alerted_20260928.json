@@ -228,6 +228,54 @@
       "gap_atr": 0.136,
       "unit_shares": 6172,
       "status": "진입가능"
+    },
+    "396300": {
+      "time": "09:33",
+      "name": "HT로보틱스",
+      "sector": "금속",
+      "market": "KOSDAQ",
+      "price": 6170.0,
+      "high20": 6040.0,
+      "atr20": 434.0,
+      "gap_atr": 0.3,
+      "unit_shares": 1152,
+      "status": "진입가능"
+    },
+    "493280": {
+      "time": "09:33",
+      "name": "아이엠바이오로직스",
+      "sector": "일반서비스",
+      "market": "KOSDAQ",
+      "price": 17930.0,
+      "high20": 17910.0,
+      "atr20": 1563.0,
+      "gap_atr": 0.013,
+      "unit_shares": 319,
+      "status": "진입가능"
+    },
+    "031330": {
+      "time": "09:33",
+      "name": "에스에이엠티",
+      "sector": "유통",
+      "market": "KOSDAQ",
+      "price": 8580.0,
+      "high20": 8530.0,
+      "atr20": 533.0,
+      "gap_atr": 0.094,
+      "unit_shares": 938,
+      "status": "진입가능"
+    },
+    "121600": {
+      "time": "09:33",
+      "name": "나노신소재",
+      "sector": "화학",
+      "market": "KOSDAQ",
+      "price": 55000.0,
+      "high20": 53500.0,
+      "atr20": 2699.0,
+      "gap_atr": 0.556,
+      "unit_shares": 185,
+      "status": "추격금지"
     }
   }
 }
