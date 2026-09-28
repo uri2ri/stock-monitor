@@ -1,8 +1,88 @@
 {
   "version": 1,
-  "events": [],
-  "plans": [],
-  "prepare_cursor": "13208def3b034d6788af9721c6e73815",
+  "events": [
+    {
+      "id": "f22a59f5263d49cca56142c4e6cd7e67",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "025560",
+          "name": "미래산업",
+          "high20": 7190.0,
+          "price": 7210.0,
+          "atr20": 1400.0
+        },
+        {
+          "__datetime__": "2026-09-28T13:23:41.040578+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "fa987deccfff4b07b31c8d2325653298",
+      "operation": "_set_outcome",
+      "args": [
+        "025560",
+        "상한제한",
+        "신규매수 일일 상한 0 (운영 보류)",
+        {
+          "__datetime__": "2026-09-28T13:26:23.489557+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    }
+  ],
+  "plans": [
+    {
+      "id": "75f915fc0f424624a3b7a985a4dcf86c",
+      "owner": "36377469720:1",
+      "events": [
+        "f22a59f5263d49cca56142c4e6cd7e67",
+        "fa987deccfff4b07b31c8d2325653298"
+      ],
+      "record": {
+        "event_id": "f22a59f5263d49cca56142c4e6cd7e67",
+        "ticker": "025560",
+        "name": "미래산업",
+        "first_detected_at": {
+          "__datetime__": "2026-09-28T13:23:41.040578+09:00"
+        },
+        "first_threshold": 7190.0,
+        "first_price": 7210.0,
+        "first_atr": 1400.0,
+        "status": "추적중",
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-28T13:26:23.489557+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "f22a59f5263d49cca56142c4e6cd7e67",
+        "ticker": "025560",
+        "name": "미래산업",
+        "first_detected_at": {
+          "__datetime__": "2026-09-28T13:23:41.040578+09:00"
+        },
+        "first_threshold": 7190.0,
+        "first_price": 7210.0,
+        "first_atr": 1400.0,
+        "status": "추적중",
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-28T13:26:23.489557+09:00"
+        }
+      },
+      "state": "queued"
+    }
+  ],
+  "prepare_cursor": "68e56499b4014362b5f9869b941fb71b",
   "deliver_cursor": "498d2b1d56d34cf186d974c1a4f135f6",
   "excluded_events": [
     {
@@ -4162,6 +4242,27 @@
       },
       "reason": "held_without_active_track",
       "resolved_by": "36376759394:1"
+    },
+    {
+      "event": {
+        "id": "ba710565fffe473c9069e3891c8ad751",
+        "operation": "_set_outcome",
+        "args": [
+          "009150",
+          "상한제한",
+          "신규매수 일일 상한 0 (운영 보류)",
+          {
+            "__datetime__": "2026-09-28T13:26:23.496755+09:00"
+          }
+        ],
+        "kwargs": {
+          "order_no": "",
+          "order_day": null,
+          "identity": null
+        }
+      },
+      "reason": "held_without_active_track",
+      "resolved_by": "36377469720:1"
     }
   ]
 }
