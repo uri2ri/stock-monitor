@@ -1,8 +1,636 @@
 {
   "version": 1,
-  "events": [],
-  "plans": [],
-  "prepare_cursor": "580b1ea224ae470398c02bbf69a2c8c0",
+  "events": [
+    {
+      "id": "ef56ee305cd0426fb8769931aab1ff16",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "056360",
+          "name": "코위버",
+          "high20": 6400.0,
+          "price": 6870.0,
+          "atr20": 430.0
+        },
+        {
+          "__datetime__": "2026-09-28T09:13:38.012483+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "11c0e08088654e008c5e87a05203e5af",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "138080",
+          "name": "오이솔루션",
+          "high20": 29250.0,
+          "price": 30950.0,
+          "atr20": 2293.0
+        },
+        {
+          "__datetime__": "2026-09-28T09:13:38.012483+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "bc806dd262cb494899a8572a6fe48f58",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "0088M0",
+          "name": "메쥬",
+          "high20": 14180.0,
+          "price": 14290.0,
+          "atr20": 1057.0
+        },
+        {
+          "__datetime__": "2026-09-28T09:13:38.012483+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "4fcb3f544b0e42168e882c6f91a1ec55",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "013030",
+          "name": "하이록코리아",
+          "high20": 38250.0,
+          "price": 38700.0,
+          "atr20": 1309.0
+        },
+        {
+          "__datetime__": "2026-09-28T09:13:38.012483+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "a23b44b214be434eae9bba3b6454eb3b",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "112290",
+          "name": "와이씨켐",
+          "high20": 10800.0,
+          "price": 10830.0,
+          "atr20": 611.0
+        },
+        {
+          "__datetime__": "2026-09-28T09:13:38.012483+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "fefeb7fa4abb4ccf90e7fda59ece1de2",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "007810",
+          "name": "코리아써키트",
+          "high20": 67900.0,
+          "price": 68200.0,
+          "atr20": 5214.0
+        },
+        {
+          "__datetime__": "2026-09-28T09:13:38.012483+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "ab84f91a3c2d421182d57e926d720990",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "412350",
+          "name": "레이저쎌",
+          "high20": 5690.0,
+          "price": 5870.0,
+          "atr20": 468.0
+        },
+        {
+          "__datetime__": "2026-09-28T09:13:38.012483+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "1950dad0e69341e7a1b0a574b2f49ff6",
+      "operation": "_set_outcome",
+      "args": [
+        "056360",
+        "미주문",
+        "추격 구간(+1.09N) - 매수 대상 제외",
+        {
+          "__datetime__": "2026-09-28T09:13:38.012483+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "fd6a1d2bc6a7426cbd1917b045d7507c",
+      "operation": "_set_outcome",
+      "args": [
+        "138080",
+        "미주문",
+        "추격 구간(+0.74N) - 매수 대상 제외",
+        {
+          "__datetime__": "2026-09-28T09:13:38.012483+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "6dfbb19ecf0d4ec4a786ca7e88fb7fe9",
+      "operation": "_set_outcome",
+      "args": [
+        "000150",
+        "상한제한",
+        "신규매수 일일 상한 0 (운영 보류)",
+        {
+          "__datetime__": "2026-09-28T09:14:59.365677+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "90699edb925043098ef0d455fa7ad923",
+      "operation": "_set_outcome",
+      "args": [
+        "0088M0",
+        "상한제한",
+        "신규매수 일일 상한 0 (운영 보류)",
+        {
+          "__datetime__": "2026-09-28T09:14:59.371031+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "208080933aee4fbb9216a912bdec6d06",
+      "operation": "_set_outcome",
+      "args": [
+        "013030",
+        "상한제한",
+        "신규매수 일일 상한 0 (운영 보류)",
+        {
+          "__datetime__": "2026-09-28T09:14:59.375528+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "b24d0525f9c642e0980491d23b1b288a",
+      "operation": "_set_outcome",
+      "args": [
+        "112290",
+        "상한제한",
+        "신규매수 일일 상한 0 (운영 보류)",
+        {
+          "__datetime__": "2026-09-28T09:14:59.380052+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "8283ef2100744b84beae9433fea8ab12",
+      "operation": "_set_outcome",
+      "args": [
+        "007810",
+        "상한제한",
+        "신규매수 일일 상한 0 (운영 보류)",
+        {
+          "__datetime__": "2026-09-28T09:14:59.384489+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "97625d6f62e543b69258e53b3a625eab",
+      "operation": "_set_outcome",
+      "args": [
+        "412350",
+        "상한제한",
+        "신규매수 일일 상한 0 (운영 보류)",
+        {
+          "__datetime__": "2026-09-28T09:14:59.388909+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    }
+  ],
+  "plans": [
+    {
+      "id": "7cbc746b97e94142995fcdc11c2d5bec",
+      "owner": "36361374212:1",
+      "events": [
+        "ef56ee305cd0426fb8769931aab1ff16",
+        "1950dad0e69341e7a1b0a574b2f49ff6"
+      ],
+      "record": {
+        "event_id": "ef56ee305cd0426fb8769931aab1ff16",
+        "ticker": "056360",
+        "name": "코위버",
+        "first_detected_at": {
+          "__datetime__": "2026-09-28T09:13:38.012483+09:00"
+        },
+        "first_threshold": 6400.0,
+        "first_price": 6870.0,
+        "first_atr": 430.0,
+        "status": "추적중",
+        "outcome": "미주문",
+        "outcome_reason": "추격 구간(+1.09N) - 매수 대상 제외",
+        "outcome_at": {
+          "__datetime__": "2026-09-28T09:13:38.012483+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "ef56ee305cd0426fb8769931aab1ff16",
+        "ticker": "056360",
+        "name": "코위버",
+        "first_detected_at": {
+          "__datetime__": "2026-09-28T09:13:38.012483+09:00"
+        },
+        "first_threshold": 6400.0,
+        "first_price": 6870.0,
+        "first_atr": 430.0,
+        "status": "추적중",
+        "outcome": "미주문",
+        "outcome_reason": "추격 구간(+1.09N) - 매수 대상 제외",
+        "outcome_at": {
+          "__datetime__": "2026-09-28T09:13:38.012483+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "0b23bbddd9ec475bb2889a7cdacbb0b1",
+      "owner": "36361374212:1",
+      "events": [
+        "11c0e08088654e008c5e87a05203e5af",
+        "fd6a1d2bc6a7426cbd1917b045d7507c"
+      ],
+      "record": {
+        "event_id": "11c0e08088654e008c5e87a05203e5af",
+        "ticker": "138080",
+        "name": "오이솔루션",
+        "first_detected_at": {
+          "__datetime__": "2026-09-28T09:13:38.012483+09:00"
+        },
+        "first_threshold": 29250.0,
+        "first_price": 30950.0,
+        "first_atr": 2293.0,
+        "status": "추적중",
+        "outcome": "미주문",
+        "outcome_reason": "추격 구간(+0.74N) - 매수 대상 제외",
+        "outcome_at": {
+          "__datetime__": "2026-09-28T09:13:38.012483+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "11c0e08088654e008c5e87a05203e5af",
+        "ticker": "138080",
+        "name": "오이솔루션",
+        "first_detected_at": {
+          "__datetime__": "2026-09-28T09:13:38.012483+09:00"
+        },
+        "first_threshold": 29250.0,
+        "first_price": 30950.0,
+        "first_atr": 2293.0,
+        "status": "추적중",
+        "outcome": "미주문",
+        "outcome_reason": "추격 구간(+0.74N) - 매수 대상 제외",
+        "outcome_at": {
+          "__datetime__": "2026-09-28T09:13:38.012483+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "6a0616b0bd2c4a07870a2677575935d4",
+      "owner": "36361374212:1",
+      "events": [
+        "bc806dd262cb494899a8572a6fe48f58",
+        "90699edb925043098ef0d455fa7ad923"
+      ],
+      "record": {
+        "event_id": "bc806dd262cb494899a8572a6fe48f58",
+        "ticker": "0088M0",
+        "name": "메쥬",
+        "first_detected_at": {
+          "__datetime__": "2026-09-28T09:13:38.012483+09:00"
+        },
+        "first_threshold": 14180.0,
+        "first_price": 14290.0,
+        "first_atr": 1057.0,
+        "status": "추적중",
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-28T09:14:59.371031+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "bc806dd262cb494899a8572a6fe48f58",
+        "ticker": "0088M0",
+        "name": "메쥬",
+        "first_detected_at": {
+          "__datetime__": "2026-09-28T09:13:38.012483+09:00"
+        },
+        "first_threshold": 14180.0,
+        "first_price": 14290.0,
+        "first_atr": 1057.0,
+        "status": "추적중",
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-28T09:14:59.371031+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "48302c9c1a804977b1bd54d5a11be14b",
+      "owner": "36361374212:1",
+      "events": [
+        "4fcb3f544b0e42168e882c6f91a1ec55",
+        "208080933aee4fbb9216a912bdec6d06"
+      ],
+      "record": {
+        "event_id": "4fcb3f544b0e42168e882c6f91a1ec55",
+        "ticker": "013030",
+        "name": "하이록코리아",
+        "first_detected_at": {
+          "__datetime__": "2026-09-28T09:13:38.012483+09:00"
+        },
+        "first_threshold": 38250.0,
+        "first_price": 38700.0,
+        "first_atr": 1309.0,
+        "status": "추적중",
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-28T09:14:59.375528+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "4fcb3f544b0e42168e882c6f91a1ec55",
+        "ticker": "013030",
+        "name": "하이록코리아",
+        "first_detected_at": {
+          "__datetime__": "2026-09-28T09:13:38.012483+09:00"
+        },
+        "first_threshold": 38250.0,
+        "first_price": 38700.0,
+        "first_atr": 1309.0,
+        "status": "추적중",
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-28T09:14:59.375528+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "dc9f2318423a46f5bbc3faa9ff6dd547",
+      "owner": "36361374212:1",
+      "events": [
+        "a23b44b214be434eae9bba3b6454eb3b",
+        "b24d0525f9c642e0980491d23b1b288a"
+      ],
+      "record": {
+        "event_id": "a23b44b214be434eae9bba3b6454eb3b",
+        "ticker": "112290",
+        "name": "와이씨켐",
+        "first_detected_at": {
+          "__datetime__": "2026-09-28T09:13:38.012483+09:00"
+        },
+        "first_threshold": 10800.0,
+        "first_price": 10830.0,
+        "first_atr": 611.0,
+        "status": "추적중",
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-28T09:14:59.380052+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "a23b44b214be434eae9bba3b6454eb3b",
+        "ticker": "112290",
+        "name": "와이씨켐",
+        "first_detected_at": {
+          "__datetime__": "2026-09-28T09:13:38.012483+09:00"
+        },
+        "first_threshold": 10800.0,
+        "first_price": 10830.0,
+        "first_atr": 611.0,
+        "status": "추적중",
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-28T09:14:59.380052+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "ca148b786da447e3908d330026252b0c",
+      "owner": "36361374212:1",
+      "events": [
+        "fefeb7fa4abb4ccf90e7fda59ece1de2",
+        "8283ef2100744b84beae9433fea8ab12"
+      ],
+      "record": {
+        "event_id": "fefeb7fa4abb4ccf90e7fda59ece1de2",
+        "ticker": "007810",
+        "name": "코리아써키트",
+        "first_detected_at": {
+          "__datetime__": "2026-09-28T09:13:38.012483+09:00"
+        },
+        "first_threshold": 67900.0,
+        "first_price": 68200.0,
+        "first_atr": 5214.0,
+        "status": "추적중",
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-28T09:14:59.384489+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "fefeb7fa4abb4ccf90e7fda59ece1de2",
+        "ticker": "007810",
+        "name": "코리아써키트",
+        "first_detected_at": {
+          "__datetime__": "2026-09-28T09:13:38.012483+09:00"
+        },
+        "first_threshold": 67900.0,
+        "first_price": 68200.0,
+        "first_atr": 5214.0,
+        "status": "추적중",
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-28T09:14:59.384489+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "b3ea3656c8254afba0b3b26c36f1cd17",
+      "owner": "36361374212:1",
+      "events": [
+        "ab84f91a3c2d421182d57e926d720990",
+        "97625d6f62e543b69258e53b3a625eab"
+      ],
+      "record": {
+        "event_id": "ab84f91a3c2d421182d57e926d720990",
+        "ticker": "412350",
+        "name": "레이저쎌",
+        "first_detected_at": {
+          "__datetime__": "2026-09-28T09:13:38.012483+09:00"
+        },
+        "first_threshold": 5690.0,
+        "first_price": 5870.0,
+        "first_atr": 468.0,
+        "status": "추적중",
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-28T09:14:59.388909+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "ab84f91a3c2d421182d57e926d720990",
+        "ticker": "412350",
+        "name": "레이저쎌",
+        "first_detected_at": {
+          "__datetime__": "2026-09-28T09:13:38.012483+09:00"
+        },
+        "first_threshold": 5690.0,
+        "first_price": 5870.0,
+        "first_atr": 468.0,
+        "status": "추적중",
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-28T09:14:59.388909+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "b7d42d6b37284991a14cfd749d91af52",
+      "owner": "36361374212:1",
+      "events": [
+        "6dfbb19ecf0d4ec4a786ca7e88fb7fe9"
+      ],
+      "record": {
+        "account_type": "",
+        "account_key": "",
+        "order_side": "",
+        "order_qty": null,
+        "filled_qty": null,
+        "unverified_qty": null,
+        "execution_price": null,
+        "execution_state": "",
+        "execution_checked_at": null,
+        "event_id": "50cf57f810f7415499c052a968b0d9fb",
+        "order_no": "",
+        "order_day": null,
+        "key": "3e30fc3e-53fc-811d-a051-e8d390a10f75",
+        "page_id": "3e30fc3e-53fc-811d-a051-e8d390a10f75",
+        "name": "두산",
+        "ticker": "000150",
+        "first_detected_at": {
+          "__datetime__": "2026-09-22T09:33:00+09:00"
+        },
+        "first_threshold": 1503000.0,
+        "first_price": 1505000.0,
+        "first_atr": 100495.0,
+        "status": "추적중",
+        "closed_reason": "",
+        "closed_at": null,
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-28T09:14:59.365677+09:00"
+        },
+        "latest_close": 1512000.0,
+        "latest_date": {
+          "__date__": "2026-09-23"
+        },
+        "latest_atr": 97886.0,
+        "latest_line": 1519000.0,
+        "change_pct": 0.6,
+        "atr_mult": 0.09,
+        "dist_to_line": 7000.0,
+        "dist_to_line_atr": 0.07,
+        "level_state": "최초선위",
+        "new_breakout": "미해당",
+        "refresh_state": "갱신됨",
+        "refresh_note": "",
+        "user_memo": ""
+      },
+      "page_id": "3e30fc3e-53fc-811d-a051-e8d390a10f75",
+      "fields": {
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-28T09:14:59.365677+09:00"
+        }
+      },
+      "state": "queued"
+    }
+  ],
+  "prepare_cursor": "70faeca27fd54bab84494d21c612fd74",
   "deliver_cursor": "618c41b96c0c4cca979a70ba1149b990",
   "excluded_events": [
     {
@@ -3637,6 +4265,27 @@
       },
       "reason": "held_without_active_track",
       "resolved_by": "36360727163:1"
+    },
+    {
+      "event": {
+        "id": "70faeca27fd54bab84494d21c612fd74",
+        "operation": "_set_outcome",
+        "args": [
+          "009150",
+          "상한제한",
+          "신규매수 일일 상한 0 (운영 보류)",
+          {
+            "__datetime__": "2026-09-28T09:14:59.393345+09:00"
+          }
+        ],
+        "kwargs": {
+          "order_no": "",
+          "order_day": null,
+          "identity": null
+        }
+      },
+      "reason": "held_without_active_track",
+      "resolved_by": "36361374212:1"
     }
   ]
 }
