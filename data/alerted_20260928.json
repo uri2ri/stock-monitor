@@ -398,6 +398,18 @@
       "gap_atr": 0.038,
       "unit_shares": 2702,
       "status": "진입가능"
+    },
+    "036710": {
+      "time": "11:03",
+      "name": "심텍홀딩스",
+      "sector": "일반서비스",
+      "market": "KOSDAQ",
+      "price": 4595.0,
+      "high20": 4570.0,
+      "atr20": 318.0,
+      "gap_atr": 0.079,
+      "unit_shares": 1572,
+      "status": "진입가능"
     }
   }
 }
