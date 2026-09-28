@@ -2,7 +2,7 @@
   "version": 1,
   "events": [],
   "plans": [],
-  "prepare_cursor": "152e32f9c1e14356bec67c288ca5afb4",
+  "prepare_cursor": "cfb069faf099433ca11d9bb4d285725c",
   "deliver_cursor": "498d2b1d56d34cf186d974c1a4f135f6",
   "excluded_events": [
     {
@@ -4120,6 +4120,27 @@
       },
       "reason": "held_without_active_track",
       "resolved_by": "36375443586:1"
+    },
+    {
+      "event": {
+        "id": "06187e769bd6420bb7338f4269965b02",
+        "operation": "_set_outcome",
+        "args": [
+          "009150",
+          "상한제한",
+          "신규매수 일일 상한 0 (운영 보류)",
+          {
+            "__datetime__": "2026-09-28T13:05:02.189198+09:00"
+          }
+        ],
+        "kwargs": {
+          "order_no": "",
+          "order_day": null,
+          "identity": null
+        }
+      },
+      "reason": "held_without_active_track",
+      "resolved_by": "36376080438:1"
     }
   ]
 }
