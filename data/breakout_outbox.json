@@ -1,8 +1,88 @@
 {
   "version": 1,
-  "events": [],
-  "plans": [],
-  "prepare_cursor": "06de2695f8a7481f879f057deaa92f94",
+  "events": [
+    {
+      "id": "c0d8183002e14968956fc158b4748a66",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "009240",
+          "name": "한샘",
+          "high20": 40000.0,
+          "price": 40100.0,
+          "atr20": 1238.0
+        },
+        {
+          "__datetime__": "2026-09-28T10:13:35.831818+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "6fbf4021d09d42f98c3716834632ce19",
+      "operation": "_set_outcome",
+      "args": [
+        "009240",
+        "상한제한",
+        "신규매수 일일 상한 0 (운영 보류)",
+        {
+          "__datetime__": "2026-09-28T10:15:59.614125+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    }
+  ],
+  "plans": [
+    {
+      "id": "fe7112f3a7c54512b925806c99fcc6b2",
+      "owner": "36365135536:1",
+      "events": [
+        "c0d8183002e14968956fc158b4748a66",
+        "6fbf4021d09d42f98c3716834632ce19"
+      ],
+      "record": {
+        "event_id": "c0d8183002e14968956fc158b4748a66",
+        "ticker": "009240",
+        "name": "한샘",
+        "first_detected_at": {
+          "__datetime__": "2026-09-28T10:13:35.831818+09:00"
+        },
+        "first_threshold": 40000.0,
+        "first_price": 40100.0,
+        "first_atr": 1238.0,
+        "status": "추적중",
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-28T10:15:59.614125+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "c0d8183002e14968956fc158b4748a66",
+        "ticker": "009240",
+        "name": "한샘",
+        "first_detected_at": {
+          "__datetime__": "2026-09-28T10:13:35.831818+09:00"
+        },
+        "first_threshold": 40000.0,
+        "first_price": 40100.0,
+        "first_atr": 1238.0,
+        "status": "추적중",
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-28T10:15:59.614125+09:00"
+        }
+      },
+      "state": "queued"
+    }
+  ],
+  "prepare_cursor": "ba94da653372455b8fb2a7ab620b4b3e",
   "deliver_cursor": "f9ed04ba4f34480985622c512dd55a01",
   "excluded_events": [
     {
@@ -3763,6 +3843,27 @@
       },
       "reason": "held_without_active_track",
       "resolved_by": "36364469312:1"
+    },
+    {
+      "event": {
+        "id": "3310348ec44b425d9055f5cb280d4542",
+        "operation": "_set_outcome",
+        "args": [
+          "009150",
+          "상한제한",
+          "신규매수 일일 상한 0 (운영 보류)",
+          {
+            "__datetime__": "2026-09-28T10:15:59.621325+09:00"
+          }
+        ],
+        "kwargs": {
+          "order_no": "",
+          "order_day": null,
+          "identity": null
+        }
+      },
+      "reason": "held_without_active_track",
+      "resolved_by": "36365135536:1"
     }
   ]
 }
