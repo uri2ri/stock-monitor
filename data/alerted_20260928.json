@@ -458,6 +458,18 @@
       "gap_atr": 0.014,
       "unit_shares": 357,
       "status": "진입가능"
+    },
+    "032580": {
+      "time": "14:03",
+      "name": "피델릭스",
+      "sector": "전기전자",
+      "market": "KOSDAQ",
+      "price": 7170.0,
+      "high20": 7140.0,
+      "atr20": 537.0,
+      "gap_atr": 0.056,
+      "unit_shares": 931,
+      "status": "진입가능"
     }
   }
 }
