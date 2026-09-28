@@ -1,8 +1,167 @@
 {
   "version": 1,
-  "events": [],
-  "plans": [],
-  "prepare_cursor": "9a0afbae1e2e4d2e8223e82f855598a6",
+  "events": [
+    {
+      "id": "dbe854dfecb94faa9f02db1c7cd7bf02",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "353200",
+          "name": "대덕전자",
+          "high20": 120700.0,
+          "price": 128100.0,
+          "atr20": 9132.0
+        },
+        {
+          "__datetime__": "2026-09-28T09:03:36.386070+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "b6028bd5212f43b3a86e96c2e841456a",
+      "operation": "_set_outcome",
+      "args": [
+        "353200",
+        "미주문",
+        "추격 구간(+0.81N) - 매수 대상 제외",
+        {
+          "__datetime__": "2026-09-28T09:03:36.386070+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "195e820853fe4d3b9401e2140ddb2a78",
+      "operation": "_set_outcome",
+      "args": [
+        "004710",
+        "미주문",
+        "추격 구간(+1.35N) - 매수 대상 제외",
+        {
+          "__datetime__": "2026-09-28T09:03:36.386070+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    }
+  ],
+  "plans": [
+    {
+      "id": "fc16819c257c4d7aa3ae04b6aef57cb5",
+      "owner": "36360727163:1",
+      "events": [
+        "dbe854dfecb94faa9f02db1c7cd7bf02",
+        "b6028bd5212f43b3a86e96c2e841456a"
+      ],
+      "record": {
+        "event_id": "dbe854dfecb94faa9f02db1c7cd7bf02",
+        "ticker": "353200",
+        "name": "대덕전자",
+        "first_detected_at": {
+          "__datetime__": "2026-09-28T09:03:36.386070+09:00"
+        },
+        "first_threshold": 120700.0,
+        "first_price": 128100.0,
+        "first_atr": 9132.0,
+        "status": "추적중",
+        "outcome": "미주문",
+        "outcome_reason": "추격 구간(+0.81N) - 매수 대상 제외",
+        "outcome_at": {
+          "__datetime__": "2026-09-28T09:03:36.386070+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "dbe854dfecb94faa9f02db1c7cd7bf02",
+        "ticker": "353200",
+        "name": "대덕전자",
+        "first_detected_at": {
+          "__datetime__": "2026-09-28T09:03:36.386070+09:00"
+        },
+        "first_threshold": 120700.0,
+        "first_price": 128100.0,
+        "first_atr": 9132.0,
+        "status": "추적중",
+        "outcome": "미주문",
+        "outcome_reason": "추격 구간(+0.81N) - 매수 대상 제외",
+        "outcome_at": {
+          "__datetime__": "2026-09-28T09:03:36.386070+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "618c41b96c0c4cca979a70ba1149b990",
+      "owner": "36360727163:1",
+      "events": [
+        "195e820853fe4d3b9401e2140ddb2a78"
+      ],
+      "record": {
+        "account_type": "",
+        "account_key": "",
+        "order_side": "",
+        "order_qty": null,
+        "filled_qty": null,
+        "unverified_qty": null,
+        "execution_price": null,
+        "execution_state": "",
+        "execution_checked_at": null,
+        "event_id": "16db84c988ef44f8b416136507e226c1",
+        "order_no": "",
+        "order_day": null,
+        "key": "3e30fc3e-53fc-81db-81ae-cb7be7b7cfe3",
+        "page_id": "3e30fc3e-53fc-81db-81ae-cb7be7b7cfe3",
+        "name": "한솔테크닉스",
+        "ticker": "004710",
+        "first_detected_at": {
+          "__datetime__": "2026-09-22T10:53:00+09:00"
+        },
+        "first_threshold": 10080.0,
+        "first_price": 10150.0,
+        "first_atr": 760.0,
+        "status": "추적중",
+        "closed_reason": "",
+        "closed_at": null,
+        "outcome": "미주문",
+        "outcome_reason": "추격 구간(+1.35N) - 매수 대상 제외",
+        "outcome_at": {
+          "__datetime__": "2026-09-28T09:03:36.386070+09:00"
+        },
+        "latest_close": 9900.0,
+        "latest_date": {
+          "__date__": "2026-09-23"
+        },
+        "latest_atr": 742.0,
+        "latest_line": 10380.0,
+        "change_pct": -1.79,
+        "atr_mult": -0.24,
+        "dist_to_line": 480.0,
+        "dist_to_line_atr": 0.65,
+        "level_state": "최초선아래",
+        "new_breakout": "미해당",
+        "refresh_state": "갱신됨",
+        "refresh_note": "",
+        "user_memo": ""
+      },
+      "page_id": "3e30fc3e-53fc-81db-81ae-cb7be7b7cfe3",
+      "fields": {
+        "outcome_reason": "추격 구간(+1.35N) - 매수 대상 제외",
+        "outcome_at": {
+          "__datetime__": "2026-09-28T09:03:36.386070+09:00"
+        }
+      },
+      "state": "queued"
+    }
+  ],
+  "prepare_cursor": "580b1ea224ae470398c02bbf69a2c8c0",
   "deliver_cursor": "156970a6527b408e84cc829dbe9a2cdf",
   "excluded_events": [
     {
@@ -3595,6 +3754,48 @@
       },
       "reason": "held_without_active_track",
       "resolved_by": "35696866401:1"
+    },
+    {
+      "event": {
+        "id": "ac91dd689d1a4216ade6e65d7c7703eb",
+        "operation": "record_breakout",
+        "args": [
+          {
+            "ticker": "009150",
+            "name": "삼성전기",
+            "high20": 1548000.0,
+            "price": 1563000.0,
+            "atr20": 101376.0
+          },
+          {
+            "__datetime__": "2026-09-28T09:03:36.386070+09:00"
+          }
+        ],
+        "kwargs": {}
+      },
+      "reason": "held_without_active_track",
+      "resolved_by": "36360727163:1"
+    },
+    {
+      "event": {
+        "id": "580b1ea224ae470398c02bbf69a2c8c0",
+        "operation": "_set_outcome",
+        "args": [
+          "009150",
+          "미주문",
+          "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+          {
+            "__datetime__": "2026-09-28T09:03:46.571027+09:00"
+          }
+        ],
+        "kwargs": {
+          "order_no": "",
+          "order_day": null,
+          "identity": null
+        }
+      },
+      "reason": "held_without_active_track",
+      "resolved_by": "36360727163:1"
     }
   ]
 }
