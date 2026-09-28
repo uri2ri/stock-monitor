@@ -362,6 +362,30 @@
       "gap_atr": 0.081,
       "unit_shares": 403,
       "status": "진입가능"
+    },
+    "387690": {
+      "time": "10:23",
+      "name": "레메디",
+      "sector": "의료·정밀기기",
+      "market": "KOSDAQ",
+      "price": 20500.0,
+      "high20": 19630.0,
+      "atr20": 1979.0,
+      "gap_atr": 0.44,
+      "unit_shares": 252,
+      "status": "진입가능"
+    },
+    "215200": {
+      "time": "10:23",
+      "name": "메가스터디교육",
+      "sector": "일반서비스",
+      "market": "KOSDAQ",
+      "price": 37000.0,
+      "high20": 36950.0,
+      "atr20": 1101.0,
+      "gap_atr": 0.045,
+      "unit_shares": 454,
+      "status": "진입가능"
     }
   }
 }
