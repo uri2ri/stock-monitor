@@ -410,6 +410,18 @@
       "gap_atr": 0.079,
       "unit_shares": 1572,
       "status": "진입가능"
+    },
+    "037070": {
+      "time": "11:33",
+      "name": "파세코",
+      "sector": "전기전자",
+      "market": "KOSDAQ",
+      "price": 6520.0,
+      "high20": 6510.0,
+      "atr20": 377.0,
+      "gap_atr": 0.027,
+      "unit_shares": 1326,
+      "status": "진입가능"
     }
   }
 }
