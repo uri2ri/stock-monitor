@@ -1,0 +1,41 @@
+{
+  "date": "20260928",
+  "alerted": {
+    "353200": {
+      "time": "09:03",
+      "name": "대덕전자",
+      "sector": "전기전자",
+      "market": "KOSPI",
+      "price": 128100.0,
+      "high20": 120700.0,
+      "atr20": 9132.0,
+      "gap_atr": 0.81,
+      "unit_shares": 54,
+      "status": "추격금지"
+    },
+    "009150": {
+      "time": "09:03",
+      "name": "삼성전기",
+      "sector": "전기전자",
+      "market": "KOSPI",
+      "price": 1563000.0,
+      "high20": 1548000.0,
+      "atr20": 101376.0,
+      "gap_atr": 0.148,
+      "unit_shares": 4,
+      "status": "진입가능"
+    },
+    "004710": {
+      "time": "09:03",
+      "name": "한솔테크닉스",
+      "sector": "전기전자",
+      "market": "KOSPI",
+      "price": 11380.0,
+      "high20": 10380.0,
+      "atr20": 742.0,
+      "gap_atr": 1.348,
+      "unit_shares": 673,
+      "status": "추격금지"
+    }
+  }
+}
