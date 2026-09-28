@@ -36,6 +36,102 @@
       "gap_atr": 1.348,
       "unit_shares": 673,
       "status": "추격금지"
+    },
+    "056360": {
+      "time": "09:13",
+      "name": "코위버",
+      "sector": "전기전자",
+      "market": "KOSDAQ",
+      "price": 6870.0,
+      "high20": 6400.0,
+      "atr20": 430.0,
+      "gap_atr": 1.093,
+      "unit_shares": 1162,
+      "status": "추격금지"
+    },
+    "000150": {
+      "time": "09:13",
+      "name": "두산",
+      "sector": "전기전자",
+      "market": "KOSPI",
+      "price": 1525000.0,
+      "high20": 1519000.0,
+      "atr20": 97886.0,
+      "gap_atr": 0.061,
+      "unit_shares": 5,
+      "status": "진입가능"
+    },
+    "138080": {
+      "time": "09:13",
+      "name": "오이솔루션",
+      "sector": "전기전자",
+      "market": "KOSDAQ",
+      "price": 30950.0,
+      "high20": 29250.0,
+      "atr20": 2293.0,
+      "gap_atr": 0.741,
+      "unit_shares": 218,
+      "status": "추격금지"
+    },
+    "0088M0": {
+      "time": "09:13",
+      "name": "메쥬",
+      "sector": "의료·정밀기기",
+      "market": "KOSDAQ",
+      "price": 14290.0,
+      "high20": 14180.0,
+      "atr20": 1057.0,
+      "gap_atr": 0.104,
+      "unit_shares": 473,
+      "status": "진입가능"
+    },
+    "013030": {
+      "time": "09:13",
+      "name": "하이록코리아",
+      "sector": "금속",
+      "market": "KOSDAQ",
+      "price": 38700.0,
+      "high20": 38250.0,
+      "atr20": 1309.0,
+      "gap_atr": 0.344,
+      "unit_shares": 381,
+      "status": "진입가능"
+    },
+    "112290": {
+      "time": "09:13",
+      "name": "와이씨켐",
+      "sector": "화학",
+      "market": "KOSDAQ",
+      "price": 10830.0,
+      "high20": 10800.0,
+      "atr20": 611.0,
+      "gap_atr": 0.049,
+      "unit_shares": 818,
+      "status": "진입가능"
+    },
+    "007810": {
+      "time": "09:13",
+      "name": "코리아써키트",
+      "sector": "전기전자",
+      "market": "KOSPI",
+      "price": 68200.0,
+      "high20": 67900.0,
+      "atr20": 5214.0,
+      "gap_atr": 0.058,
+      "unit_shares": 95,
+      "status": "진입가능"
+    },
+    "412350": {
+      "time": "09:13",
+      "name": "레이저쎌",
+      "sector": "기계·장비",
+      "market": "KOSDAQ",
+      "price": 5870.0,
+      "high20": 5690.0,
+      "atr20": 468.0,
+      "gap_atr": 0.385,
+      "unit_shares": 1068,
+      "status": "진입가능"
     }
   }
 }
