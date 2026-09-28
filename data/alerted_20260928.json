@@ -386,6 +386,18 @@
       "gap_atr": 0.045,
       "unit_shares": 454,
       "status": "진입가능"
+    },
+    "355390": {
+      "time": "10:53",
+      "name": "크라우드웍스",
+      "sector": "IT 서비스",
+      "market": "KOSDAQ",
+      "price": 1630.0,
+      "high20": 1623.0,
+      "atr20": 185.0,
+      "gap_atr": 0.038,
+      "unit_shares": 2702,
+      "status": "진입가능"
     }
   }
 }
