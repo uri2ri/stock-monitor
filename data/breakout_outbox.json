@@ -1,8 +1,166 @@
 {
   "version": 1,
-  "events": [],
-  "plans": [],
-  "prepare_cursor": "30bbc4e7269542e0bbda1097478c8f7c",
+  "events": [
+    {
+      "id": "83e4ef5594e14277af06354aefe9aa15",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "089890",
+          "name": "코세스",
+          "high20": 29950.0,
+          "price": 30000.0,
+          "atr20": 2403.0
+        },
+        {
+          "__datetime__": "2026-09-28T09:54:11.661241+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "c68ba82708674519abfc5419f83ccac0",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "252990",
+          "name": "샘씨엔에스",
+          "high20": 18460.0,
+          "price": 18660.0,
+          "atr20": 1265.0
+        },
+        {
+          "__datetime__": "2026-09-28T09:54:11.661241+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "83e6369815c840e88877f23191f0c9c4",
+      "operation": "_set_outcome",
+      "args": [
+        "089890",
+        "상한제한",
+        "신규매수 일일 상한 0 (운영 보류)",
+        {
+          "__datetime__": "2026-09-28T09:55:32.427422+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "ae6406072a6f4af7a9fb72427f085bbd",
+      "operation": "_set_outcome",
+      "args": [
+        "252990",
+        "상한제한",
+        "신규매수 일일 상한 0 (운영 보류)",
+        {
+          "__datetime__": "2026-09-28T09:55:32.433576+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    }
+  ],
+  "plans": [
+    {
+      "id": "6d592d8105904df18e02c7d99859db87",
+      "owner": "36363844783:1",
+      "events": [
+        "83e4ef5594e14277af06354aefe9aa15",
+        "83e6369815c840e88877f23191f0c9c4"
+      ],
+      "record": {
+        "event_id": "83e4ef5594e14277af06354aefe9aa15",
+        "ticker": "089890",
+        "name": "코세스",
+        "first_detected_at": {
+          "__datetime__": "2026-09-28T09:54:11.661241+09:00"
+        },
+        "first_threshold": 29950.0,
+        "first_price": 30000.0,
+        "first_atr": 2403.0,
+        "status": "추적중",
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-28T09:55:32.427422+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "83e4ef5594e14277af06354aefe9aa15",
+        "ticker": "089890",
+        "name": "코세스",
+        "first_detected_at": {
+          "__datetime__": "2026-09-28T09:54:11.661241+09:00"
+        },
+        "first_threshold": 29950.0,
+        "first_price": 30000.0,
+        "first_atr": 2403.0,
+        "status": "추적중",
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-28T09:55:32.427422+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "f9ed04ba4f34480985622c512dd55a01",
+      "owner": "36363844783:1",
+      "events": [
+        "c68ba82708674519abfc5419f83ccac0",
+        "ae6406072a6f4af7a9fb72427f085bbd"
+      ],
+      "record": {
+        "event_id": "c68ba82708674519abfc5419f83ccac0",
+        "ticker": "252990",
+        "name": "샘씨엔에스",
+        "first_detected_at": {
+          "__datetime__": "2026-09-28T09:54:11.661241+09:00"
+        },
+        "first_threshold": 18460.0,
+        "first_price": 18660.0,
+        "first_atr": 1265.0,
+        "status": "추적중",
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-28T09:55:32.433576+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "c68ba82708674519abfc5419f83ccac0",
+        "ticker": "252990",
+        "name": "샘씨엔에스",
+        "first_detected_at": {
+          "__datetime__": "2026-09-28T09:54:11.661241+09:00"
+        },
+        "first_threshold": 18460.0,
+        "first_price": 18660.0,
+        "first_atr": 1265.0,
+        "status": "추적중",
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-28T09:55:32.433576+09:00"
+        }
+      },
+      "state": "queued"
+    }
+  ],
+  "prepare_cursor": "0570c22095b1492c983f625723b83de9",
   "deliver_cursor": "e24c4e2999e74206ac3d764d8d98bac5",
   "excluded_events": [
     {
@@ -3721,6 +3879,27 @@
       },
       "reason": "held_without_active_track",
       "resolved_by": "36363228433:1"
+    },
+    {
+      "event": {
+        "id": "d5cf7d329d1242b993cd3f5e4b8e7483",
+        "operation": "_set_outcome",
+        "args": [
+          "009150",
+          "상한제한",
+          "신규매수 일일 상한 0 (운영 보류)",
+          {
+            "__datetime__": "2026-09-28T09:55:32.440392+09:00"
+          }
+        ],
+        "kwargs": {
+          "order_no": "",
+          "order_day": null,
+          "identity": null
+        }
+      },
+      "reason": "held_without_active_track",
+      "resolved_by": "36363844783:1"
     }
   ]
 }
