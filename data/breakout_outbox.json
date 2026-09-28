@@ -1,8 +1,88 @@
 {
   "version": 1,
-  "events": [],
-  "plans": [],
-  "prepare_cursor": "2c70c1c11ddf4b369481e09a015992df",
+  "events": [
+    {
+      "id": "0e19bf05cbb74b8499bd308ab2ee44ac",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "032580",
+          "name": "피델릭스",
+          "high20": 7140.0,
+          "price": 7170.0,
+          "atr20": 537.0
+        },
+        {
+          "__datetime__": "2026-09-28T14:03:43.857764+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "d54713c23ff24f3fbdae2e6bf1dd6dac",
+      "operation": "_set_outcome",
+      "args": [
+        "032580",
+        "상한제한",
+        "신규매수 일일 상한 0 (운영 보류)",
+        {
+          "__datetime__": "2026-09-28T14:05:40.487773+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    }
+  ],
+  "plans": [
+    {
+      "id": "7ff23b95e8fe4ff8aaad8409f2bd351a",
+      "owner": "36380224380:1",
+      "events": [
+        "0e19bf05cbb74b8499bd308ab2ee44ac",
+        "d54713c23ff24f3fbdae2e6bf1dd6dac"
+      ],
+      "record": {
+        "event_id": "0e19bf05cbb74b8499bd308ab2ee44ac",
+        "ticker": "032580",
+        "name": "피델릭스",
+        "first_detected_at": {
+          "__datetime__": "2026-09-28T14:03:43.857764+09:00"
+        },
+        "first_threshold": 7140.0,
+        "first_price": 7170.0,
+        "first_atr": 537.0,
+        "status": "추적중",
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-28T14:05:40.487773+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "0e19bf05cbb74b8499bd308ab2ee44ac",
+        "ticker": "032580",
+        "name": "피델릭스",
+        "first_detected_at": {
+          "__datetime__": "2026-09-28T14:03:43.857764+09:00"
+        },
+        "first_threshold": 7140.0,
+        "first_price": 7170.0,
+        "first_atr": 537.0,
+        "status": "추적중",
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-28T14:05:40.487773+09:00"
+        }
+      },
+      "state": "queued"
+    }
+  ],
+  "prepare_cursor": "dfe29b97a5d744119fc917b2da42787e",
   "deliver_cursor": "75f915fc0f424624a3b7a985a4dcf86c",
   "excluded_events": [
     {
@@ -4246,6 +4326,27 @@
       },
       "reason": "held_without_active_track",
       "resolved_by": "36379550227:1"
+    },
+    {
+      "event": {
+        "id": "0e776bd2752648faabb2ae8500db97eb",
+        "operation": "_set_outcome",
+        "args": [
+          "009150",
+          "상한제한",
+          "신규매수 일일 상한 0 (운영 보류)",
+          {
+            "__datetime__": "2026-09-28T14:05:40.493394+09:00"
+          }
+        ],
+        "kwargs": {
+          "order_no": "",
+          "order_day": null,
+          "identity": null
+        }
+      },
+      "reason": "held_without_active_track",
+      "resolved_by": "36380224380:1"
     }
   ]
 }
