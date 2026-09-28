@@ -1,8 +1,90 @@
 {
   "version": 1,
-  "events": [],
-  "plans": [],
-  "prepare_cursor": "fd920a9b2ed54f6ab3045af2e26ff464",
+  "events": [
+    {
+      "id": "06f41cd21442485995991e411209c3eb",
+      "operation": "_set_outcome",
+      "args": [
+        "033160",
+        "상한제한",
+        "신규매수 일일 상한 0 (운영 보류)",
+        {
+          "__datetime__": "2026-09-28T12:25:11.286935+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    }
+  ],
+  "plans": [
+    {
+      "id": "6edd9fbf450c4437a62c74c7197ff807",
+      "owner": "36373504272:1",
+      "events": [
+        "06f41cd21442485995991e411209c3eb"
+      ],
+      "record": {
+        "account_type": "",
+        "account_key": "",
+        "order_side": "",
+        "order_qty": null,
+        "filled_qty": null,
+        "unverified_qty": null,
+        "execution_price": null,
+        "execution_state": "",
+        "execution_checked_at": null,
+        "event_id": "2d582cffefe947139951f03f23c18cc4",
+        "order_no": "",
+        "order_day": null,
+        "key": "3e30fc3e-53fc-813f-9c23-e063ee01dbed",
+        "page_id": "3e30fc3e-53fc-813f-9c23-e063ee01dbed",
+        "name": "엠케이전자",
+        "ticker": "033160",
+        "first_detected_at": {
+          "__datetime__": "2026-09-22T09:03:00+09:00"
+        },
+        "first_threshold": 15190.0,
+        "first_price": 15540.0,
+        "first_atr": 1291.0,
+        "status": "추적중",
+        "closed_reason": "",
+        "closed_at": null,
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-28T12:25:11.286935+09:00"
+        },
+        "latest_close": 16540.0,
+        "latest_date": {
+          "__date__": "2026-09-23"
+        },
+        "latest_atr": 1304.0,
+        "latest_line": 16690.0,
+        "change_pct": 8.89,
+        "atr_mult": 1.05,
+        "dist_to_line": 150.0,
+        "dist_to_line_atr": 0.12,
+        "level_state": "최초선위",
+        "new_breakout": "미해당",
+        "refresh_state": "갱신됨",
+        "refresh_note": "",
+        "user_memo": ""
+      },
+      "page_id": "3e30fc3e-53fc-813f-9c23-e063ee01dbed",
+      "fields": {
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-28T12:25:11.286935+09:00"
+        }
+      },
+      "state": "queued"
+    }
+  ],
+  "prepare_cursor": "b2c3dadb68c541c7bbfdadb587ba04bf",
   "deliver_cursor": "c77b4b11e1f44dce882c4ed39245a2f9",
   "excluded_events": [
     {
@@ -4036,6 +4118,27 @@
       },
       "reason": "held_without_active_track",
       "resolved_by": "36372845743:1"
+    },
+    {
+      "event": {
+        "id": "8834cce1cf2e482da72e841833772871",
+        "operation": "_set_outcome",
+        "args": [
+          "009150",
+          "상한제한",
+          "신규매수 일일 상한 0 (운영 보류)",
+          {
+            "__datetime__": "2026-09-28T12:25:11.291426+09:00"
+          }
+        ],
+        "kwargs": {
+          "order_no": "",
+          "order_day": null,
+          "identity": null
+        }
+      },
+      "reason": "held_without_active_track",
+      "resolved_by": "36373504272:1"
     }
   ]
 }
