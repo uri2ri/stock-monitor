@@ -2,23 +2,6 @@
   "version": 1,
   "events": [
     {
-      "id": "fefeb7fa4abb4ccf90e7fda59ece1de2",
-      "operation": "record_breakout",
-      "args": [
-        {
-          "ticker": "007810",
-          "name": "코리아써키트",
-          "high20": 67900.0,
-          "price": 68200.0,
-          "atr20": 5214.0
-        },
-        {
-          "__datetime__": "2026-09-28T09:13:38.012483+09:00"
-        }
-      ],
-      "kwargs": {}
-    },
-    {
       "id": "ab84f91a3c2d421182d57e926d720990",
       "operation": "record_breakout",
       "args": [
@@ -53,23 +36,6 @@
       }
     },
     {
-      "id": "8283ef2100744b84beae9433fea8ab12",
-      "operation": "_set_outcome",
-      "args": [
-        "007810",
-        "상한제한",
-        "신규매수 일일 상한 0 (운영 보류)",
-        {
-          "__datetime__": "2026-09-28T09:14:59.384489+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
       "id": "97625d6f62e543b69258e53b3a625eab",
       "operation": "_set_outcome",
       "args": [
@@ -88,50 +54,6 @@
     }
   ],
   "plans": [
-    {
-      "id": "ca148b786da447e3908d330026252b0c",
-      "owner": "36361374212:1",
-      "events": [
-        "fefeb7fa4abb4ccf90e7fda59ece1de2",
-        "8283ef2100744b84beae9433fea8ab12"
-      ],
-      "record": {
-        "event_id": "fefeb7fa4abb4ccf90e7fda59ece1de2",
-        "ticker": "007810",
-        "name": "코리아써키트",
-        "first_detected_at": {
-          "__datetime__": "2026-09-28T09:13:38.012483+09:00"
-        },
-        "first_threshold": 67900.0,
-        "first_price": 68200.0,
-        "first_atr": 5214.0,
-        "status": "추적중",
-        "outcome": "상한제한",
-        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
-        "outcome_at": {
-          "__datetime__": "2026-09-28T09:14:59.384489+09:00"
-        }
-      },
-      "page_id": null,
-      "fields": {
-        "event_id": "fefeb7fa4abb4ccf90e7fda59ece1de2",
-        "ticker": "007810",
-        "name": "코리아써키트",
-        "first_detected_at": {
-          "__datetime__": "2026-09-28T09:13:38.012483+09:00"
-        },
-        "first_threshold": 67900.0,
-        "first_price": 68200.0,
-        "first_atr": 5214.0,
-        "status": "추적중",
-        "outcome": "상한제한",
-        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
-        "outcome_at": {
-          "__datetime__": "2026-09-28T09:14:59.384489+09:00"
-        }
-      },
-      "state": "creating"
-    },
     {
       "id": "b3ea3656c8254afba0b3b26c36f1cd17",
       "owner": "36361374212:1",
@@ -174,7 +96,7 @@
           "__datetime__": "2026-09-28T09:14:59.388909+09:00"
         }
       },
-      "state": "queued"
+      "state": "creating"
     },
     {
       "id": "b7d42d6b37284991a14cfd749d91af52",
@@ -241,7 +163,7 @@
     }
   ],
   "prepare_cursor": "70faeca27fd54bab84494d21c612fd74",
-  "deliver_cursor": "ca148b786da447e3908d330026252b0c",
+  "deliver_cursor": "b3ea3656c8254afba0b3b26c36f1cd17",
   "excluded_events": [
     {
       "event": {
