@@ -140,6 +140,18 @@
       "status": "진입가능",
       "price_10am": 174000.0,
       "time_10am": "10:03"
+    },
+    "036810": {
+      "time": "10:43",
+      "name": "에프에스티",
+      "sector": "전기전자",
+      "market": "KOSDAQ",
+      "price": 31850.0,
+      "high20": 31600.0,
+      "atr20": 1849.0,
+      "gap_atr": 0.135,
+      "unit_shares": 270,
+      "status": "진입가능"
     }
   }
 }

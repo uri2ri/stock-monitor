@@ -1,91 +1,9 @@
 {
   "version": 1,
-  "events": [
-    {
-      "id": "50364afa4842416e8cf9d5ecdc493228",
-      "operation": "_set_outcome",
-      "args": [
-        "036810",
-        "상한제한",
-        "신규매수 일일 상한 0 (운영 보류)",
-        {
-          "__datetime__": "2026-09-29T10:44:40.745150+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    }
-  ],
-  "plans": [
-    {
-      "id": "04d3ade9efe84b6c95f1a02e133da49a",
-      "owner": "36509206104:1",
-      "events": [
-        "50364afa4842416e8cf9d5ecdc493228"
-      ],
-      "record": {
-        "account_type": "",
-        "account_key": "",
-        "order_side": "",
-        "order_qty": null,
-        "filled_qty": null,
-        "unverified_qty": null,
-        "execution_price": null,
-        "execution_state": "",
-        "execution_checked_at": null,
-        "event_id": "db4b8f2c710744108772e301ef649647",
-        "order_no": "",
-        "order_day": null,
-        "key": "3e40fc3e-53fc-81c8-8004-e0b98f9aec6b",
-        "page_id": "3e40fc3e-53fc-81c8-8004-e0b98f9aec6b",
-        "name": "에프에스티",
-        "ticker": "036810",
-        "first_detected_at": {
-          "__datetime__": "2026-09-23T09:23:00+09:00"
-        },
-        "first_threshold": 30500.0,
-        "first_price": 30700.0,
-        "first_atr": 1895.0,
-        "status": "추적중",
-        "closed_reason": "",
-        "closed_at": null,
-        "outcome": "상한제한",
-        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
-        "outcome_at": {
-          "__datetime__": "2026-09-29T10:44:40.745150+09:00"
-        },
-        "latest_close": 30350.0,
-        "latest_date": {
-          "__date__": "2026-09-28"
-        },
-        "latest_atr": 1849.0,
-        "latest_line": 31600.0,
-        "change_pct": -0.49,
-        "atr_mult": -0.08,
-        "dist_to_line": 1250.0,
-        "dist_to_line_atr": 0.68,
-        "level_state": "최초선아래",
-        "new_breakout": "미해당",
-        "refresh_state": "갱신됨",
-        "refresh_note": "",
-        "user_memo": ""
-      },
-      "page_id": "3e40fc3e-53fc-81c8-8004-e0b98f9aec6b",
-      "fields": {
-        "outcome": "상한제한",
-        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
-        "outcome_at": {
-          "__datetime__": "2026-09-29T10:44:40.745150+09:00"
-        }
-      },
-      "state": "queued"
-    }
-  ],
+  "events": [],
+  "plans": [],
   "prepare_cursor": "c122c8f3556b4a3e99f780e9cbc66a73",
-  "deliver_cursor": "ad7a6d6a7d014ecdb4ffe8e17f10a9aa",
+  "deliver_cursor": "04d3ade9efe84b6c95f1a02e133da49a",
   "excluded_events": [
     {
       "event": {
