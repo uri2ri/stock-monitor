@@ -200,6 +200,30 @@
       "gap_atr": 0.036,
       "unit_shares": 182,
       "status": "진입가능"
+    },
+    "029460": {
+      "time": "12:43",
+      "name": "케이씨",
+      "sector": "의료·정밀기기",
+      "market": "KOSPI",
+      "price": 45350.0,
+      "high20": 45000.0,
+      "atr20": 1976.0,
+      "gap_atr": 0.177,
+      "unit_shares": 253,
+      "status": "진입가능"
+    },
+    "098460": {
+      "time": "12:43",
+      "name": "고영",
+      "sector": "기계·장비",
+      "market": "KOSDAQ",
+      "price": 30350.0,
+      "high20": 30250.0,
+      "atr20": 1795.0,
+      "gap_atr": 0.056,
+      "unit_shares": 278,
+      "status": "진입가능"
     }
   }
 }
