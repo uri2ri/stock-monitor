@@ -176,6 +176,18 @@
       "gap_atr": 0.148,
       "unit_shares": 927,
       "status": "진입가능"
+    },
+    "123010": {
+      "time": "11:43",
+      "name": "MSDI",
+      "sector": "전기전자",
+      "market": "KOSDAQ",
+      "price": 3585.0,
+      "high20": 3560.0,
+      "atr20": 272.0,
+      "gap_atr": 0.092,
+      "unit_shares": 1838,
+      "status": "진입가능"
     }
   }
 }
