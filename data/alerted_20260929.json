@@ -236,6 +236,30 @@
       "gap_atr": 0.017,
       "unit_shares": 838,
       "status": "진입가능"
+    },
+    "452260": {
+      "time": "13:43",
+      "name": "한화갤러리아",
+      "sector": "유통",
+      "market": "KOSPI",
+      "price": 2820.0,
+      "high20": 2815.0,
+      "atr20": 153.0,
+      "gap_atr": 0.033,
+      "unit_shares": 3267,
+      "status": "진입가능"
+    },
+    "330860": {
+      "time": "13:43",
+      "name": "네패스아크",
+      "sector": "일반서비스",
+      "market": "KOSDAQ",
+      "price": 29650.0,
+      "high20": 29400.0,
+      "atr20": 2366.0,
+      "gap_atr": 0.106,
+      "unit_shares": 211,
+      "status": "진입가능"
     }
   }
 }
