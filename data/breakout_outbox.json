@@ -1,8 +1,170 @@
 {
   "version": 1,
-  "events": [],
-  "plans": [],
-  "prepare_cursor": "b9bd8bea4d87428a8dc05adf6f8705b6",
+  "events": [
+    {
+      "id": "1fc3f4266681489fa5f5b0a5ff309cbc",
+      "operation": "_set_outcome",
+      "args": [
+        "452260",
+        "상한제한",
+        "신규매수 일일 상한 0 (운영 보류)",
+        {
+          "__datetime__": "2026-09-29T13:45:52.508469+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "07390f4d1faa43429741ad84032b2a02",
+      "operation": "_set_outcome",
+      "args": [
+        "330860",
+        "상한제한",
+        "신규매수 일일 상한 0 (운영 보류)",
+        {
+          "__datetime__": "2026-09-29T13:45:52.516079+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    }
+  ],
+  "plans": [
+    {
+      "id": "23bbfd674a874018bf6aed39fb1c0292",
+      "owner": "36522858491:1",
+      "events": [
+        "1fc3f4266681489fa5f5b0a5ff309cbc"
+      ],
+      "record": {
+        "account_type": "",
+        "account_key": "",
+        "order_side": "",
+        "order_qty": null,
+        "filled_qty": null,
+        "unverified_qty": null,
+        "execution_price": null,
+        "execution_state": "",
+        "execution_checked_at": null,
+        "event_id": "1c996797e4e24485ba4e10a58ff7db78",
+        "order_no": "",
+        "order_day": null,
+        "key": "3e40fc3e-53fc-817b-9ea0-c079c1cc9dc7",
+        "page_id": "3e40fc3e-53fc-817b-9ea0-c079c1cc9dc7",
+        "name": "한화갤러리아",
+        "ticker": "452260",
+        "first_detected_at": {
+          "__datetime__": "2026-09-23T09:43:00+09:00"
+        },
+        "first_threshold": 2765.0,
+        "first_price": 2800.0,
+        "first_atr": 158.0,
+        "status": "추적중",
+        "closed_reason": "",
+        "closed_at": null,
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-29T13:45:52.508469+09:00"
+        },
+        "latest_close": 2750.0,
+        "latest_date": {
+          "__date__": "2026-09-28"
+        },
+        "latest_atr": 153.0,
+        "latest_line": 2815.0,
+        "change_pct": -0.54,
+        "atr_mult": -0.09,
+        "dist_to_line": 65.0,
+        "dist_to_line_atr": 0.42,
+        "level_state": "최초선아래",
+        "new_breakout": "미해당",
+        "refresh_state": "갱신됨",
+        "refresh_note": "",
+        "user_memo": ""
+      },
+      "page_id": "3e40fc3e-53fc-817b-9ea0-c079c1cc9dc7",
+      "fields": {
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-29T13:45:52.508469+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "3a6aede57ba44013bb1ab9e0a8cd4612",
+      "owner": "36522858491:1",
+      "events": [
+        "07390f4d1faa43429741ad84032b2a02"
+      ],
+      "record": {
+        "account_type": "",
+        "account_key": "",
+        "order_side": "",
+        "order_qty": null,
+        "filled_qty": null,
+        "unverified_qty": null,
+        "execution_price": null,
+        "execution_state": "",
+        "execution_checked_at": null,
+        "event_id": "3de58854d0b141a7994975cadd561249",
+        "order_no": "",
+        "order_day": null,
+        "key": "3e20fc3e-53fc-812f-b160-c4d67590eb4f",
+        "page_id": "3e20fc3e-53fc-812f-b160-c4d67590eb4f",
+        "name": "네패스아크",
+        "ticker": "330860",
+        "first_detected_at": {
+          "__datetime__": "2026-09-21T09:53:00+09:00"
+        },
+        "first_threshold": 27750.0,
+        "first_price": 27800.0,
+        "first_atr": 2450.0,
+        "status": "추적중",
+        "closed_reason": "",
+        "closed_at": null,
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-29T13:45:52.516079+09:00"
+        },
+        "latest_close": 28250.0,
+        "latest_date": {
+          "__date__": "2026-09-28"
+        },
+        "latest_atr": 2366.0,
+        "latest_line": 29400.0,
+        "change_pct": 1.8,
+        "atr_mult": 0.2,
+        "dist_to_line": 1150.0,
+        "dist_to_line_atr": 0.49,
+        "level_state": "최초선위",
+        "new_breakout": "미해당",
+        "refresh_state": "갱신됨",
+        "refresh_note": "",
+        "user_memo": ""
+      },
+      "page_id": "3e20fc3e-53fc-812f-b160-c4d67590eb4f",
+      "fields": {
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-29T13:45:52.516079+09:00"
+        }
+      },
+      "state": "queued"
+    }
+  ],
+  "prepare_cursor": "22ff476fad9340d988640395c7f0931c",
   "deliver_cursor": "14842c4d810d430f947b4255c72e5b5d",
   "excluded_events": [
     {
