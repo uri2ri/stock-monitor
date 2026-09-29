@@ -1,91 +1,9 @@
 {
   "version": 1,
-  "events": [
-    {
-      "id": "fc64319c678c430ca1deaee00c37385c",
-      "operation": "_set_outcome",
-      "args": [
-        "200710",
-        "상한제한",
-        "신규매수 일일 상한 0 (운영 보류)",
-        {
-          "__datetime__": "2026-09-29T14:05:11.073537+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    }
-  ],
-  "plans": [
-    {
-      "id": "0a7eb144e7b3490786711771d2f74b5c",
-      "owner": "36524354595:1",
-      "events": [
-        "fc64319c678c430ca1deaee00c37385c"
-      ],
-      "record": {
-        "account_type": "",
-        "account_key": "",
-        "order_side": "",
-        "order_qty": null,
-        "filled_qty": null,
-        "unverified_qty": null,
-        "execution_price": null,
-        "execution_state": "",
-        "execution_checked_at": null,
-        "event_id": "8b7cbef12086419eade1111a5c4d7c73",
-        "order_no": "",
-        "order_day": null,
-        "key": "3e30fc3e-53fc-810a-b76c-e07b46f96989",
-        "page_id": "3e30fc3e-53fc-810a-b76c-e07b46f96989",
-        "name": "에이디테크놀로지",
-        "ticker": "200710",
-        "first_detected_at": {
-          "__datetime__": "2026-09-22T09:33:00+09:00"
-        },
-        "first_threshold": 27100.0,
-        "first_price": 27300.0,
-        "first_atr": 1852.0,
-        "status": "추적중",
-        "closed_reason": "",
-        "closed_at": null,
-        "outcome": "상한제한",
-        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
-        "outcome_at": {
-          "__datetime__": "2026-09-29T14:05:11.073537+09:00"
-        },
-        "latest_close": 26900.0,
-        "latest_date": {
-          "__date__": "2026-09-28"
-        },
-        "latest_atr": 1738.0,
-        "latest_line": 27450.0,
-        "change_pct": -0.74,
-        "atr_mult": -0.11,
-        "dist_to_line": 550.0,
-        "dist_to_line_atr": 0.32,
-        "level_state": "최초선아래",
-        "new_breakout": "미해당",
-        "refresh_state": "갱신됨",
-        "refresh_note": "",
-        "user_memo": ""
-      },
-      "page_id": "3e30fc3e-53fc-810a-b76c-e07b46f96989",
-      "fields": {
-        "outcome": "상한제한",
-        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
-        "outcome_at": {
-          "__datetime__": "2026-09-29T14:05:11.073537+09:00"
-        }
-      },
-      "state": "queued"
-    }
-  ],
+  "events": [],
+  "plans": [],
   "prepare_cursor": "4638f763740941938842c2a5aae09f53",
-  "deliver_cursor": "3a6aede57ba44013bb1ab9e0a8cd4612",
+  "deliver_cursor": "0a7eb144e7b3490786711771d2f74b5c",
   "excluded_events": [
     {
       "event": {
