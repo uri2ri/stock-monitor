@@ -1,8 +1,88 @@
 {
   "version": 1,
-  "events": [],
-  "plans": [],
-  "prepare_cursor": "9144ce537b4b401bb0c5d5071e311d76",
+  "events": [
+    {
+      "id": "72f2d8586ddd41ae8108016bf7ef25e3",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "464080",
+          "name": "에스오에스랩",
+          "high20": 10350.0,
+          "price": 10360.0,
+          "atr20": 596.0
+        },
+        {
+          "__datetime__": "2026-09-29T13:23:34.232795+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "f4b55f968803428897c205f44afe94e2",
+      "operation": "_set_outcome",
+      "args": [
+        "464080",
+        "상한제한",
+        "신규매수 일일 상한 0 (운영 보류)",
+        {
+          "__datetime__": "2026-09-29T13:25:00.114358+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    }
+  ],
+  "plans": [
+    {
+      "id": "14842c4d810d430f947b4255c72e5b5d",
+      "owner": "36521378811:1",
+      "events": [
+        "72f2d8586ddd41ae8108016bf7ef25e3",
+        "f4b55f968803428897c205f44afe94e2"
+      ],
+      "record": {
+        "event_id": "72f2d8586ddd41ae8108016bf7ef25e3",
+        "ticker": "464080",
+        "name": "에스오에스랩",
+        "first_detected_at": {
+          "__datetime__": "2026-09-29T13:23:34.232795+09:00"
+        },
+        "first_threshold": 10350.0,
+        "first_price": 10360.0,
+        "first_atr": 596.0,
+        "status": "추적중",
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-29T13:25:00.114358+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "72f2d8586ddd41ae8108016bf7ef25e3",
+        "ticker": "464080",
+        "name": "에스오에스랩",
+        "first_detected_at": {
+          "__datetime__": "2026-09-29T13:23:34.232795+09:00"
+        },
+        "first_threshold": 10350.0,
+        "first_price": 10360.0,
+        "first_atr": 596.0,
+        "status": "추적중",
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-29T13:25:00.114358+09:00"
+        }
+      },
+      "state": "queued"
+    }
+  ],
+  "prepare_cursor": "5709965e12164c1ca9b7d814816bc659",
   "deliver_cursor": "fca966a51f564801b5b1d56a6c108bf8",
   "excluded_events": [
     {
