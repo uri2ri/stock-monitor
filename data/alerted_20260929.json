@@ -60,6 +60,42 @@
       "gap_atr": 1.983,
       "unit_shares": 4310,
       "status": "추격금지"
+    },
+    "950260": {
+      "time": "09:23",
+      "name": "인제니아테라퓨틱스(Reg.S)",
+      "sector": "미분류",
+      "market": "KOSDAQ",
+      "price": 25050.0,
+      "high20": 24750.0,
+      "atr20": 2579.0,
+      "gap_atr": 0.116,
+      "unit_shares": 193,
+      "status": "진입가능"
+    },
+    "081180": {
+      "time": "09:23",
+      "name": "쎄크",
+      "sector": "기계·장비",
+      "market": "KOSDAQ",
+      "price": 6870.0,
+      "high20": 6580.0,
+      "atr20": 492.0,
+      "gap_atr": 0.589,
+      "unit_shares": 1016,
+      "status": "추격금지"
+    },
+    "014680": {
+      "time": "09:23",
+      "name": "한솔케미칼",
+      "sector": "화학",
+      "market": "KOSPI",
+      "price": 243000.0,
+      "high20": 241000.0,
+      "atr20": 11761.0,
+      "gap_atr": 0.17,
+      "unit_shares": 42,
+      "status": "진입가능"
     }
   }
 }
