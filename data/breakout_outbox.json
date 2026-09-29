@@ -2,23 +2,6 @@
   "version": 1,
   "events": [
     {
-      "id": "efe8c711242e4870a3ada2a574d35a55",
-      "operation": "record_breakout",
-      "args": [
-        {
-          "ticker": "142210",
-          "name": "유니트론텍",
-          "high20": 6300.0,
-          "price": 6310.0,
-          "atr20": 274.0
-        },
-        {
-          "__datetime__": "2026-09-29T09:13:36.559283+09:00"
-        }
-      ],
-      "kwargs": {}
-    },
-    {
       "id": "5bd4b14c986742da818cd3ea0bb4c8c2",
       "operation": "record_breakout",
       "args": [
@@ -87,23 +70,6 @@
       }
     },
     {
-      "id": "829aac0cf5b24240b4886ccee2197c58",
-      "operation": "_set_outcome",
-      "args": [
-        "142210",
-        "상한제한",
-        "신규매수 일일 상한 0 (운영 보류)",
-        {
-          "__datetime__": "2026-09-29T09:14:18.100117+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
       "id": "05cf46e22fcc4be7aa55b152a644cd4f",
       "operation": "_set_outcome",
       "args": [
@@ -139,50 +105,6 @@
     }
   ],
   "plans": [
-    {
-      "id": "3ef262a58ffc4718b47bd12c09649e2b",
-      "owner": "36501982970:1",
-      "events": [
-        "efe8c711242e4870a3ada2a574d35a55",
-        "829aac0cf5b24240b4886ccee2197c58"
-      ],
-      "record": {
-        "event_id": "efe8c711242e4870a3ada2a574d35a55",
-        "ticker": "142210",
-        "name": "유니트론텍",
-        "first_detected_at": {
-          "__datetime__": "2026-09-29T09:13:36.559283+09:00"
-        },
-        "first_threshold": 6300.0,
-        "first_price": 6310.0,
-        "first_atr": 274.0,
-        "status": "추적중",
-        "outcome": "상한제한",
-        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
-        "outcome_at": {
-          "__datetime__": "2026-09-29T09:14:18.100117+09:00"
-        }
-      },
-      "page_id": null,
-      "fields": {
-        "event_id": "efe8c711242e4870a3ada2a574d35a55",
-        "ticker": "142210",
-        "name": "유니트론텍",
-        "first_detected_at": {
-          "__datetime__": "2026-09-29T09:13:36.559283+09:00"
-        },
-        "first_threshold": 6300.0,
-        "first_price": 6310.0,
-        "first_atr": 274.0,
-        "status": "추적중",
-        "outcome": "상한제한",
-        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
-        "outcome_at": {
-          "__datetime__": "2026-09-29T09:14:18.100117+09:00"
-        }
-      },
-      "state": "creating"
-    },
     {
       "id": "b31ff47aa1684816a90d61e7c6492bc7",
       "owner": "36501982970:1",
@@ -225,7 +147,7 @@
           "__datetime__": "2026-09-29T09:13:36.559283+09:00"
         }
       },
-      "state": "queued"
+      "state": "creating"
     },
     {
       "id": "2f68fd8340a54452ab10e9ec5e9876d6",
@@ -397,7 +319,7 @@
     }
   ],
   "prepare_cursor": "27087f2744b64179a294185eb6d621bd",
-  "deliver_cursor": "3ef262a58ffc4718b47bd12c09649e2b",
+  "deliver_cursor": "b31ff47aa1684816a90d61e7c6492bc7",
   "excluded_events": [
     {
       "event": {
