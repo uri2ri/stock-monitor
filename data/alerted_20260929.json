@@ -344,6 +344,54 @@
       "gap_atr": 0.031,
       "unit_shares": 314,
       "status": "진입가능"
+    },
+    "001040": {
+      "time": "15:13",
+      "name": "CJ",
+      "sector": "금융",
+      "market": "KOSPI",
+      "price": 136900.0,
+      "high20": 136800.0,
+      "atr20": 5845.0,
+      "gap_atr": 0.017,
+      "unit_shares": 85,
+      "status": "진입가능"
+    },
+    "417840": {
+      "time": "15:13",
+      "name": "저스템",
+      "sector": "기계·장비",
+      "market": "KOSDAQ",
+      "price": 17480.0,
+      "high20": 17430.0,
+      "atr20": 1168.0,
+      "gap_atr": 0.043,
+      "unit_shares": 428,
+      "status": "진입가능"
+    },
+    "089030": {
+      "time": "15:13",
+      "name": "테크윙",
+      "sector": "기계·장비",
+      "market": "KOSDAQ",
+      "price": 50800.0,
+      "high20": 50700.0,
+      "atr20": 3282.0,
+      "gap_atr": 0.03,
+      "unit_shares": 152,
+      "status": "진입가능"
+    },
+    "281820": {
+      "time": "15:13",
+      "name": "케이씨텍",
+      "sector": "의료·정밀기기",
+      "market": "KOSPI",
+      "price": 88300.0,
+      "high20": 88000.0,
+      "atr20": 5799.0,
+      "gap_atr": 0.052,
+      "unit_shares": 86,
+      "status": "진입가능"
     }
   }
 }
