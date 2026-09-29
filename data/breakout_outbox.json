@@ -2,23 +2,6 @@
   "version": 1,
   "events": [
     {
-      "id": "5bd4b14c986742da818cd3ea0bb4c8c2",
-      "operation": "record_breakout",
-      "args": [
-        {
-          "ticker": "452190",
-          "name": "한빛레이저",
-          "high20": 5500.0,
-          "price": 5720.0,
-          "atr20": 387.0
-        },
-        {
-          "__datetime__": "2026-09-29T09:13:36.559283+09:00"
-        }
-      ],
-      "kwargs": {}
-    },
-    {
       "id": "8afd9dbc2aef4d7c8d65acd5b6eb230e",
       "operation": "record_breakout",
       "args": [
@@ -34,23 +17,6 @@
         }
       ],
       "kwargs": {}
-    },
-    {
-      "id": "3a3b9e15ffeb4e59873cc463f23b4d98",
-      "operation": "_set_outcome",
-      "args": [
-        "452190",
-        "미주문",
-        "추격 구간(+0.57N) - 매수 대상 제외",
-        {
-          "__datetime__": "2026-09-29T09:13:36.559283+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
     },
     {
       "id": "9c0e38abc8324d76a5a3904ba18a2a03",
@@ -106,50 +72,6 @@
   ],
   "plans": [
     {
-      "id": "b31ff47aa1684816a90d61e7c6492bc7",
-      "owner": "36501982970:1",
-      "events": [
-        "5bd4b14c986742da818cd3ea0bb4c8c2",
-        "3a3b9e15ffeb4e59873cc463f23b4d98"
-      ],
-      "record": {
-        "event_id": "5bd4b14c986742da818cd3ea0bb4c8c2",
-        "ticker": "452190",
-        "name": "한빛레이저",
-        "first_detected_at": {
-          "__datetime__": "2026-09-29T09:13:36.559283+09:00"
-        },
-        "first_threshold": 5500.0,
-        "first_price": 5720.0,
-        "first_atr": 387.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "추격 구간(+0.57N) - 매수 대상 제외",
-        "outcome_at": {
-          "__datetime__": "2026-09-29T09:13:36.559283+09:00"
-        }
-      },
-      "page_id": null,
-      "fields": {
-        "event_id": "5bd4b14c986742da818cd3ea0bb4c8c2",
-        "ticker": "452190",
-        "name": "한빛레이저",
-        "first_detected_at": {
-          "__datetime__": "2026-09-29T09:13:36.559283+09:00"
-        },
-        "first_threshold": 5500.0,
-        "first_price": 5720.0,
-        "first_atr": 387.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "추격 구간(+0.57N) - 매수 대상 제외",
-        "outcome_at": {
-          "__datetime__": "2026-09-29T09:13:36.559283+09:00"
-        }
-      },
-      "state": "creating"
-    },
-    {
       "id": "2f68fd8340a54452ab10e9ec5e9876d6",
       "owner": "36501982970:1",
       "events": [
@@ -191,7 +113,7 @@
           "__datetime__": "2026-09-29T09:13:36.559283+09:00"
         }
       },
-      "state": "queued"
+      "state": "creating"
     },
     {
       "id": "a9bd8fc7193c414b8247ff8d6a1a30f2",
@@ -319,7 +241,7 @@
     }
   ],
   "prepare_cursor": "27087f2744b64179a294185eb6d621bd",
-  "deliver_cursor": "b31ff47aa1684816a90d61e7c6492bc7",
+  "deliver_cursor": "2f68fd8340a54452ab10e9ec5e9876d6",
   "excluded_events": [
     {
       "event": {
