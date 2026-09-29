@@ -1,91 +1,9 @@
 {
   "version": 1,
-  "events": [
-    {
-      "id": "cd5255c42a2442c391ff1e50d796b1f7",
-      "operation": "_set_outcome",
-      "args": [
-        "195870",
-        "상한제한",
-        "신규매수 일일 상한 0 (운영 보류)",
-        {
-          "__datetime__": "2026-09-29T14:54:40.585509+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    }
-  ],
-  "plans": [
-    {
-      "id": "46de1c99d1714571aaa90c08a58d66ba",
-      "owner": "36528282147:1",
-      "events": [
-        "cd5255c42a2442c391ff1e50d796b1f7"
-      ],
-      "record": {
-        "account_type": "",
-        "account_key": "",
-        "order_side": "",
-        "order_qty": null,
-        "filled_qty": null,
-        "unverified_qty": null,
-        "execution_price": null,
-        "execution_state": "",
-        "execution_checked_at": null,
-        "event_id": "a05075a1c44949149df80b6c91d8ada9",
-        "order_no": "",
-        "order_day": null,
-        "key": "3e30fc3e-53fc-815b-ab8b-df5fc8c1c0b1",
-        "page_id": "3e30fc3e-53fc-815b-ab8b-df5fc8c1c0b1",
-        "name": "해성디에스",
-        "ticker": "195870",
-        "first_detected_at": {
-          "__datetime__": "2026-09-22T09:13:00+09:00"
-        },
-        "first_threshold": 58800.0,
-        "first_price": 61200.0,
-        "first_atr": 4156.0,
-        "status": "추적중",
-        "closed_reason": "",
-        "closed_at": null,
-        "outcome": "상한제한",
-        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
-        "outcome_at": {
-          "__datetime__": "2026-09-29T14:54:40.585509+09:00"
-        },
-        "latest_close": 60000.0,
-        "latest_date": {
-          "__date__": "2026-09-28"
-        },
-        "latest_atr": 4056.0,
-        "latest_line": 62300.0,
-        "change_pct": 2.04,
-        "atr_mult": 0.29,
-        "dist_to_line": 2300.0,
-        "dist_to_line_atr": 0.57,
-        "level_state": "최초선위",
-        "new_breakout": "미해당",
-        "refresh_state": "갱신됨",
-        "refresh_note": "",
-        "user_memo": ""
-      },
-      "page_id": "3e30fc3e-53fc-815b-ab8b-df5fc8c1c0b1",
-      "fields": {
-        "outcome": "상한제한",
-        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
-        "outcome_at": {
-          "__datetime__": "2026-09-29T14:54:40.585509+09:00"
-        }
-      },
-      "state": "queued"
-    }
-  ],
+  "events": [],
+  "plans": [],
   "prepare_cursor": "81c46391e94048e5a350fcbc15a73339",
-  "deliver_cursor": "77c3b9f4cc5f4c3a9ef18954fd212946",
+  "deliver_cursor": "46de1c99d1714571aaa90c08a58d66ba",
   "excluded_events": [
     {
       "event": {
