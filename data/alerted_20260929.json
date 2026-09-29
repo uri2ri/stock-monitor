@@ -392,6 +392,30 @@
       "gap_atr": 0.052,
       "unit_shares": 86,
       "status": "진입가능"
+    },
+    "322310": {
+      "time": "15:23",
+      "name": "오로스테크놀로지",
+      "sector": "기계·장비",
+      "market": "KOSDAQ",
+      "price": 14800.0,
+      "high20": 14700.0,
+      "atr20": 1076.0,
+      "gap_atr": 0.093,
+      "unit_shares": 464,
+      "status": "진입가능"
+    },
+    "003030": {
+      "time": "15:23",
+      "name": "세아제강지주",
+      "sector": "금융",
+      "market": "KOSPI",
+      "price": 111200.0,
+      "high20": 111000.0,
+      "atr20": 5327.0,
+      "gap_atr": 0.038,
+      "unit_shares": 93,
+      "status": "진입가능"
     }
   }
 }
