@@ -224,6 +224,18 @@
       "gap_atr": 0.056,
       "unit_shares": 278,
       "status": "진입가능"
+    },
+    "464080": {
+      "time": "13:23",
+      "name": "에스오에스랩",
+      "sector": "의료·정밀기기",
+      "market": "KOSDAQ",
+      "price": 10360.0,
+      "high20": 10350.0,
+      "atr20": 596.0,
+      "gap_atr": 0.017,
+      "unit_shares": 838,
+      "status": "진입가능"
     }
   }
 }
