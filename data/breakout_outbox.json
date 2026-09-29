@@ -2,23 +2,6 @@
   "version": 1,
   "events": [
     {
-      "id": "6d7ef2d732794516a8e687c0d6546354",
-      "operation": "record_breakout",
-      "args": [
-        {
-          "ticker": "950260",
-          "name": "인제니아테라퓨틱스(Reg.S)",
-          "high20": 24750.0,
-          "price": 25050.0,
-          "atr20": 2579.0
-        },
-        {
-          "__datetime__": "2026-09-29T09:23:35.435988+09:00"
-        }
-      ],
-      "kwargs": {}
-    },
-    {
       "id": "67a0436f081f4b788a3df9b51e583998",
       "operation": "record_breakout",
       "args": [
@@ -53,23 +36,6 @@
       }
     },
     {
-      "id": "65034da53d3641d6be99735c2af4a9cd",
-      "operation": "_set_outcome",
-      "args": [
-        "950260",
-        "상한제한",
-        "신규매수 일일 상한 0 (운영 보류)",
-        {
-          "__datetime__": "2026-09-29T09:24:16.832212+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
       "id": "e5410574b29e4310ba8ef43858720be1",
       "operation": "_set_outcome",
       "args": [
@@ -88,50 +54,6 @@
     }
   ],
   "plans": [
-    {
-      "id": "af31fddb0eae4727ac4c21c2499f28c0",
-      "owner": "36502822585:1",
-      "events": [
-        "6d7ef2d732794516a8e687c0d6546354",
-        "65034da53d3641d6be99735c2af4a9cd"
-      ],
-      "record": {
-        "event_id": "6d7ef2d732794516a8e687c0d6546354",
-        "ticker": "950260",
-        "name": "인제니아테라퓨틱스(Reg.S)",
-        "first_detected_at": {
-          "__datetime__": "2026-09-29T09:23:35.435988+09:00"
-        },
-        "first_threshold": 24750.0,
-        "first_price": 25050.0,
-        "first_atr": 2579.0,
-        "status": "추적중",
-        "outcome": "상한제한",
-        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
-        "outcome_at": {
-          "__datetime__": "2026-09-29T09:24:16.832212+09:00"
-        }
-      },
-      "page_id": null,
-      "fields": {
-        "event_id": "6d7ef2d732794516a8e687c0d6546354",
-        "ticker": "950260",
-        "name": "인제니아테라퓨틱스(Reg.S)",
-        "first_detected_at": {
-          "__datetime__": "2026-09-29T09:23:35.435988+09:00"
-        },
-        "first_threshold": 24750.0,
-        "first_price": 25050.0,
-        "first_atr": 2579.0,
-        "status": "추적중",
-        "outcome": "상한제한",
-        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
-        "outcome_at": {
-          "__datetime__": "2026-09-29T09:24:16.832212+09:00"
-        }
-      },
-      "state": "creating"
-    },
     {
       "id": "7bdce52848994659a7c5f438768023bc",
       "owner": "36502822585:1",
@@ -174,7 +96,7 @@
           "__datetime__": "2026-09-29T09:23:35.435988+09:00"
         }
       },
-      "state": "queued"
+      "state": "creating"
     },
     {
       "id": "93eb4b9619c54031a8e84e64857dc0d3",
@@ -241,7 +163,7 @@
     }
   ],
   "prepare_cursor": "0f58a487876c49d7900f8cf04fc0f9ff",
-  "deliver_cursor": "af31fddb0eae4727ac4c21c2499f28c0",
+  "deliver_cursor": "7bdce52848994659a7c5f438768023bc",
   "excluded_events": [
     {
       "event": {
