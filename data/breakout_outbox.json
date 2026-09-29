@@ -1,91 +1,9 @@
 {
   "version": 1,
-  "events": [
-    {
-      "id": "fd6828de1fc74249ba02e02df599b8d3",
-      "operation": "_set_outcome",
-      "args": [
-        "003160",
-        "상한제한",
-        "신규매수 일일 상한 0 (운영 보류)",
-        {
-          "__datetime__": "2026-09-29T11:24:28.062672+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    }
-  ],
-  "plans": [
-    {
-      "id": "d24bf4cde7484b9abf1295773b51b18a",
-      "owner": "36512331201:1",
-      "events": [
-        "fd6828de1fc74249ba02e02df599b8d3"
-      ],
-      "record": {
-        "account_type": "",
-        "account_key": "",
-        "order_side": "",
-        "order_qty": null,
-        "filled_qty": null,
-        "unverified_qty": null,
-        "execution_price": null,
-        "execution_state": "",
-        "execution_checked_at": null,
-        "event_id": "a154881743e34b5a96d7e94cb9fc64ba",
-        "order_no": "",
-        "order_day": null,
-        "key": "3e20fc3e-53fc-81d7-9ab5-e8dd574570ca",
-        "page_id": "3e20fc3e-53fc-81d7-9ab5-e8dd574570ca",
-        "name": "디아이",
-        "ticker": "003160",
-        "first_detected_at": {
-          "__datetime__": "2026-09-21T09:23:00+09:00"
-        },
-        "first_threshold": 32500.0,
-        "first_price": 34250.0,
-        "first_atr": 1900.0,
-        "status": "추적중",
-        "closed_reason": "",
-        "closed_at": null,
-        "outcome": "상한제한",
-        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
-        "outcome_at": {
-          "__datetime__": "2026-09-29T11:24:28.062672+09:00"
-        },
-        "latest_close": 36150.0,
-        "latest_date": {
-          "__date__": "2026-09-28"
-        },
-        "latest_atr": 2001.0,
-        "latest_line": 36900.0,
-        "change_pct": 11.23,
-        "atr_mult": 1.92,
-        "dist_to_line": 750.0,
-        "dist_to_line_atr": 0.37,
-        "level_state": "최초선위",
-        "new_breakout": "미해당",
-        "refresh_state": "갱신됨",
-        "refresh_note": "",
-        "user_memo": ""
-      },
-      "page_id": "3e20fc3e-53fc-81d7-9ab5-e8dd574570ca",
-      "fields": {
-        "outcome": "상한제한",
-        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
-        "outcome_at": {
-          "__datetime__": "2026-09-29T11:24:28.062672+09:00"
-        }
-      },
-      "state": "queued"
-    }
-  ],
+  "events": [],
+  "plans": [],
   "prepare_cursor": "fca26442ea754984a70655effc2e26b5",
-  "deliver_cursor": "04d3ade9efe84b6c95f1a02e133da49a",
+  "deliver_cursor": "d24bf4cde7484b9abf1295773b51b18a",
   "excluded_events": [
     {
       "event": {

@@ -152,6 +152,18 @@
       "gap_atr": 0.135,
       "unit_shares": 270,
       "status": "진입가능"
+    },
+    "003160": {
+      "time": "11:23",
+      "name": "디아이",
+      "sector": "의료·정밀기기",
+      "market": "KOSPI",
+      "price": 36950.0,
+      "high20": 36900.0,
+      "atr20": 2001.0,
+      "gap_atr": 0.025,
+      "unit_shares": 249,
+      "status": "진입가능"
     }
   }
 }
