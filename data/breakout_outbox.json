@@ -1,8 +1,88 @@
 {
   "version": 1,
-  "events": [],
-  "plans": [],
-  "prepare_cursor": "fca26442ea754984a70655effc2e26b5",
+  "events": [
+    {
+      "id": "c15f7f2161e8447aa7c95f2b9a971229",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "129920",
+          "name": "대성하이텍",
+          "high20": 6520.0,
+          "price": 6600.0,
+          "atr20": 539.0
+        },
+        {
+          "__datetime__": "2026-09-29T11:33:39.510907+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "5e54ef5c953e4a22a83117ecda13928e",
+      "operation": "_set_outcome",
+      "args": [
+        "129920",
+        "상한제한",
+        "신규매수 일일 상한 0 (운영 보류)",
+        {
+          "__datetime__": "2026-09-29T11:34:40.101358+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    }
+  ],
+  "plans": [
+    {
+      "id": "accb38bf7519418e88e0bee59b1354e4",
+      "owner": "36513125359:1",
+      "events": [
+        "c15f7f2161e8447aa7c95f2b9a971229",
+        "5e54ef5c953e4a22a83117ecda13928e"
+      ],
+      "record": {
+        "event_id": "c15f7f2161e8447aa7c95f2b9a971229",
+        "ticker": "129920",
+        "name": "대성하이텍",
+        "first_detected_at": {
+          "__datetime__": "2026-09-29T11:33:39.510907+09:00"
+        },
+        "first_threshold": 6520.0,
+        "first_price": 6600.0,
+        "first_atr": 539.0,
+        "status": "추적중",
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-29T11:34:40.101358+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "c15f7f2161e8447aa7c95f2b9a971229",
+        "ticker": "129920",
+        "name": "대성하이텍",
+        "first_detected_at": {
+          "__datetime__": "2026-09-29T11:33:39.510907+09:00"
+        },
+        "first_threshold": 6520.0,
+        "first_price": 6600.0,
+        "first_atr": 539.0,
+        "status": "추적중",
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-29T11:34:40.101358+09:00"
+        }
+      },
+      "state": "queued"
+    }
+  ],
+  "prepare_cursor": "13487b709be3458a98237240bc10cf29",
   "deliver_cursor": "d24bf4cde7484b9abf1295773b51b18a",
   "excluded_events": [
     {
