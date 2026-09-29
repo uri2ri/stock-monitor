@@ -164,6 +164,18 @@
       "gap_atr": 0.025,
       "unit_shares": 249,
       "status": "진입가능"
+    },
+    "129920": {
+      "time": "11:33",
+      "name": "대성하이텍",
+      "sector": "기계·장비",
+      "market": "KOSDAQ",
+      "price": 6600.0,
+      "high20": 6520.0,
+      "atr20": 539.0,
+      "gap_atr": 0.148,
+      "unit_shares": 927,
+      "status": "진입가능"
     }
   }
 }
