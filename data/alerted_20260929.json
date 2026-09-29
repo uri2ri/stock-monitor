@@ -1,0 +1,17 @@
+{
+  "date": "20260929",
+  "alerted": {
+    "020000": {
+      "time": "09:03",
+      "name": "한섬",
+      "sector": "섬유·의류",
+      "market": "KOSPI",
+      "price": 20450.0,
+      "high20": 20400.0,
+      "atr20": 806.0,
+      "gap_atr": 0.062,
+      "unit_shares": 620,
+      "status": "진입가능"
+    }
+  }
+}
