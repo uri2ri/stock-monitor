@@ -96,6 +96,30 @@
       "gap_atr": 0.17,
       "unit_shares": 42,
       "status": "진입가능"
+    },
+    "319660": {
+      "time": "09:33",
+      "name": "피에스케이",
+      "sector": "기계·장비",
+      "market": "KOSDAQ",
+      "price": 147600.0,
+      "high20": 146500.0,
+      "atr20": 11214.0,
+      "gap_atr": 0.098,
+      "unit_shares": 44,
+      "status": "진입가능"
+    },
+    "031980": {
+      "time": "09:33",
+      "name": "피에스케이홀딩스",
+      "sector": "기계·장비",
+      "market": "KOSDAQ",
+      "price": 179000.0,
+      "high20": 174000.0,
+      "atr20": 13608.0,
+      "gap_atr": 0.367,
+      "unit_shares": 36,
+      "status": "진입가능"
     }
   }
 }
