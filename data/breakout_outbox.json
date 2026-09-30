@@ -1,8 +1,88 @@
 {
   "version": 1,
-  "events": [],
-  "plans": [],
-  "prepare_cursor": "518fb48093e24c21ab0b35f3d886681b",
+  "events": [
+    {
+      "id": "df429d4747ae443c9f68630c5defa7b6",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "494120",
+          "name": "큐리오시스",
+          "high20": 9210.0,
+          "price": 9270.0,
+          "atr20": 919.0
+        },
+        {
+          "__datetime__": "2026-09-30T09:53:32.571655+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "2eb4910d89d649e2877e51daa4f184ea",
+      "operation": "_set_outcome",
+      "args": [
+        "494120",
+        "상한제한",
+        "신규매수 일일 상한 0 (운영 보류)",
+        {
+          "__datetime__": "2026-09-30T09:54:26.373221+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    }
+  ],
+  "plans": [
+    {
+      "id": "bdc7848a9acf488aa78c4806807f84af",
+      "owner": "36652440675:1",
+      "events": [
+        "df429d4747ae443c9f68630c5defa7b6",
+        "2eb4910d89d649e2877e51daa4f184ea"
+      ],
+      "record": {
+        "event_id": "df429d4747ae443c9f68630c5defa7b6",
+        "ticker": "494120",
+        "name": "큐리오시스",
+        "first_detected_at": {
+          "__datetime__": "2026-09-30T09:53:32.571655+09:00"
+        },
+        "first_threshold": 9210.0,
+        "first_price": 9270.0,
+        "first_atr": 919.0,
+        "status": "추적중",
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-30T09:54:26.373221+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "df429d4747ae443c9f68630c5defa7b6",
+        "ticker": "494120",
+        "name": "큐리오시스",
+        "first_detected_at": {
+          "__datetime__": "2026-09-30T09:53:32.571655+09:00"
+        },
+        "first_threshold": 9210.0,
+        "first_price": 9270.0,
+        "first_atr": 919.0,
+        "status": "추적중",
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-30T09:54:26.373221+09:00"
+        }
+      },
+      "state": "queued"
+    }
+  ],
+  "prepare_cursor": "74b0f9301317479c962df27e5ed82a0e",
   "deliver_cursor": "2ca1bced50c743a686d34b641917ee73",
   "excluded_events": [
     {
@@ -4750,6 +4830,48 @@
       },
       "reason": "held_without_active_track",
       "resolved_by": "36651669514:1"
+    },
+    {
+      "event": {
+        "id": "2098cc33119b4c17a8658a16052248da",
+        "operation": "_set_outcome",
+        "args": [
+          "200470",
+          "상한제한",
+          "신규매수 일일 상한 0 (운영 보류)",
+          {
+            "__datetime__": "2026-09-30T09:54:26.419683+09:00"
+          }
+        ],
+        "kwargs": {
+          "order_no": "",
+          "order_day": null,
+          "identity": null
+        }
+      },
+      "reason": "held_without_active_track",
+      "resolved_by": "36652440675:1"
+    },
+    {
+      "event": {
+        "id": "7a1f6acba9804b5aa081b243d3014452",
+        "operation": "_set_outcome",
+        "args": [
+          "122640",
+          "상한제한",
+          "신규매수 일일 상한 0 (운영 보류)",
+          {
+            "__datetime__": "2026-09-30T09:54:26.480190+09:00"
+          }
+        ],
+        "kwargs": {
+          "order_no": "",
+          "order_day": null,
+          "identity": null
+        }
+      },
+      "reason": "held_without_active_track",
+      "resolved_by": "36652440675:1"
     }
   ]
 }
