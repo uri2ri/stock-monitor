@@ -1,8 +1,248 @@
 {
   "version": 1,
-  "events": [],
-  "plans": [],
-  "prepare_cursor": "9a5a26716707451ba912500529da287c",
+  "events": [
+    {
+      "id": "935dbad12a6048c8b9441629334875d3",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "002360",
+          "name": "SH에너지화학",
+          "high20": 3385.0,
+          "price": 3440.0,
+          "atr20": 241.0
+        },
+        {
+          "__datetime__": "2026-09-30T11:13:36.925531+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "17577ce3c9594b3fbdbce6efae13a5e2",
+      "operation": "_set_outcome",
+      "args": [
+        "001040",
+        "상한제한",
+        "신규매수 일일 상한 0 (운영 보류)",
+        {
+          "__datetime__": "2026-09-30T11:14:35.217985+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "e35acf0551874e2696ead6f45d31b580",
+      "operation": "_set_outcome",
+      "args": [
+        "002360",
+        "상한제한",
+        "신규매수 일일 상한 0 (운영 보류)",
+        {
+          "__datetime__": "2026-09-30T11:14:35.225767+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "573518290f6a49e187c9bd6e1dccb3b3",
+      "operation": "_set_outcome",
+      "args": [
+        "071320",
+        "상한제한",
+        "신규매수 일일 상한 0 (운영 보류)",
+        {
+          "__datetime__": "2026-09-30T11:14:35.232704+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    }
+  ],
+  "plans": [
+    {
+      "id": "fcdb1bc927d04d9ebdaf8d3a57265e18",
+      "owner": "36658804974:1",
+      "events": [
+        "935dbad12a6048c8b9441629334875d3",
+        "e35acf0551874e2696ead6f45d31b580"
+      ],
+      "record": {
+        "event_id": "935dbad12a6048c8b9441629334875d3",
+        "ticker": "002360",
+        "name": "SH에너지화학",
+        "first_detected_at": {
+          "__datetime__": "2026-09-30T11:13:36.925531+09:00"
+        },
+        "first_threshold": 3385.0,
+        "first_price": 3440.0,
+        "first_atr": 241.0,
+        "status": "추적중",
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-30T11:14:35.225767+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "935dbad12a6048c8b9441629334875d3",
+        "ticker": "002360",
+        "name": "SH에너지화학",
+        "first_detected_at": {
+          "__datetime__": "2026-09-30T11:13:36.925531+09:00"
+        },
+        "first_threshold": 3385.0,
+        "first_price": 3440.0,
+        "first_atr": 241.0,
+        "status": "추적중",
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-30T11:14:35.225767+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "69a36ea2ba6942fd90eeca0efb21c19e",
+      "owner": "36658804974:1",
+      "events": [
+        "17577ce3c9594b3fbdbce6efae13a5e2"
+      ],
+      "record": {
+        "account_type": "",
+        "account_key": "",
+        "order_side": "",
+        "order_qty": null,
+        "filled_qty": null,
+        "unverified_qty": null,
+        "execution_price": null,
+        "execution_state": "",
+        "execution_checked_at": null,
+        "event_id": "3008b43e44fb47828bdfe057b3d5f38f",
+        "order_no": "",
+        "order_day": null,
+        "key": "3ea0fc3e-53fc-81bc-9223-e12f1dd12d33",
+        "page_id": "3ea0fc3e-53fc-81bc-9223-e12f1dd12d33",
+        "name": "CJ",
+        "ticker": "001040",
+        "first_detected_at": {
+          "__datetime__": "2026-09-29T15:13:00+09:00"
+        },
+        "first_threshold": 136800.0,
+        "first_price": 136900.0,
+        "first_atr": 5845.0,
+        "status": "추적중",
+        "closed_reason": "",
+        "closed_at": null,
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-30T11:14:35.217985+09:00"
+        },
+        "latest_close": 136800.0,
+        "latest_date": {
+          "__date__": "2026-09-29"
+        },
+        "latest_atr": 5798.0,
+        "latest_line": 137100.0,
+        "change_pct": 0.0,
+        "atr_mult": 0.0,
+        "dist_to_line": 300.0,
+        "dist_to_line_atr": 0.05,
+        "level_state": "최초선아래",
+        "new_breakout": "미해당",
+        "refresh_state": "갱신됨",
+        "refresh_note": "",
+        "user_memo": ""
+      },
+      "page_id": "3ea0fc3e-53fc-81bc-9223-e12f1dd12d33",
+      "fields": {
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-30T11:14:35.217985+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "0bd0b01137f14d679f905f48bd0e9656",
+      "owner": "36658804974:1",
+      "events": [
+        "573518290f6a49e187c9bd6e1dccb3b3"
+      ],
+      "record": {
+        "account_type": "",
+        "account_key": "",
+        "order_side": "",
+        "order_qty": null,
+        "filled_qty": null,
+        "unverified_qty": null,
+        "execution_price": null,
+        "execution_state": "",
+        "execution_checked_at": null,
+        "event_id": "2ca04265f16f48d18ba9451c605c29bb",
+        "order_no": "",
+        "order_day": null,
+        "key": "3e40fc3e-53fc-8195-b9c4-cdb0bb5c18fc",
+        "page_id": "3e40fc3e-53fc-8195-b9c4-cdb0bb5c18fc",
+        "name": "지역난방공사",
+        "ticker": "071320",
+        "first_detected_at": {
+          "__datetime__": "2026-09-23T09:23:00+09:00"
+        },
+        "first_threshold": 78700.0,
+        "first_price": 78900.0,
+        "first_atr": 2204.0,
+        "status": "추적중",
+        "closed_reason": "",
+        "closed_at": null,
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-30T11:14:35.232704+09:00"
+        },
+        "latest_close": 79300.0,
+        "latest_date": {
+          "__date__": "2026-09-29"
+        },
+        "latest_atr": 2127.0,
+        "latest_line": 80200.0,
+        "change_pct": 0.76,
+        "atr_mult": 0.27,
+        "dist_to_line": 900.0,
+        "dist_to_line_atr": 0.42,
+        "level_state": "최초선위",
+        "new_breakout": "미해당",
+        "refresh_state": "갱신됨",
+        "refresh_note": "",
+        "user_memo": ""
+      },
+      "page_id": "3e40fc3e-53fc-8195-b9c4-cdb0bb5c18fc",
+      "fields": {
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-30T11:14:35.232704+09:00"
+        }
+      },
+      "state": "queued"
+    }
+  ],
+  "prepare_cursor": "ef273248b81841e9a03c800977a7805d",
   "deliver_cursor": "f32cf940cf7c41269ea013ef8f8d9199",
   "excluded_events": [
     {
@@ -5086,6 +5326,48 @@
       },
       "reason": "held_without_active_track",
       "resolved_by": "36658002894:1"
+    },
+    {
+      "event": {
+        "id": "6a32f95304454a4d8945011c0638adc6",
+        "operation": "_set_outcome",
+        "args": [
+          "200470",
+          "상한제한",
+          "신규매수 일일 상한 0 (운영 보류)",
+          {
+            "__datetime__": "2026-09-30T11:14:35.290529+09:00"
+          }
+        ],
+        "kwargs": {
+          "order_no": "",
+          "order_day": null,
+          "identity": null
+        }
+      },
+      "reason": "held_without_active_track",
+      "resolved_by": "36658804974:1"
+    },
+    {
+      "event": {
+        "id": "8f1e2fa4c5464055a82d57a53b48b194",
+        "operation": "_set_outcome",
+        "args": [
+          "122640",
+          "상한제한",
+          "신규매수 일일 상한 0 (운영 보류)",
+          {
+            "__datetime__": "2026-09-30T11:14:35.370646+09:00"
+          }
+        ],
+        "kwargs": {
+          "order_no": "",
+          "order_day": null,
+          "identity": null
+        }
+      },
+      "reason": "held_without_active_track",
+      "resolved_by": "36658804974:1"
     }
   ]
 }
