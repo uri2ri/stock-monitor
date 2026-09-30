@@ -654,6 +654,42 @@
       "gap_atr": 0.043,
       "unit_shares": 1082,
       "status": "진입가능"
+    },
+    "001040": {
+      "time": "11:13",
+      "name": "CJ",
+      "sector": "금융",
+      "market": "KOSPI",
+      "price": 137400.0,
+      "high20": 137100.0,
+      "atr20": 5798.0,
+      "gap_atr": 0.052,
+      "unit_shares": 86,
+      "status": "진입가능"
+    },
+    "002360": {
+      "time": "11:13",
+      "name": "SH에너지화학",
+      "sector": "화학",
+      "market": "KOSPI",
+      "price": 3440.0,
+      "high20": 3385.0,
+      "atr20": 241.0,
+      "gap_atr": 0.228,
+      "unit_shares": 2074,
+      "status": "진입가능"
+    },
+    "071320": {
+      "time": "11:13",
+      "name": "지역난방공사",
+      "sector": "전기·가스",
+      "market": "KOSPI",
+      "price": 80400.0,
+      "high20": 80200.0,
+      "atr20": 2127.0,
+      "gap_atr": 0.094,
+      "unit_shares": 235,
+      "status": "진입가능"
     }
   }
 }
