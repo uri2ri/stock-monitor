@@ -2,23 +2,6 @@
   "version": 1,
   "events": [
     {
-      "id": "49f6d4fbabe94ae9b285b4116895ba19",
-      "operation": "record_breakout",
-      "args": [
-        {
-          "ticker": "327260",
-          "name": "RF머트리얼즈",
-          "high20": 51300.0,
-          "price": 51900.0,
-          "atr20": 4859.0
-        },
-        {
-          "__datetime__": "2026-09-30T09:23:34.011932+09:00"
-        }
-      ],
-      "kwargs": {}
-    },
-    {
       "id": "f99e161eac924db992ee8715975bfa69",
       "operation": "record_breakout",
       "args": [
@@ -44,23 +27,6 @@
         "신규매수 일일 상한 0 (운영 보류)",
         {
           "__datetime__": "2026-09-30T09:24:32.177041+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
-      "id": "301c1024be0b4b35bc65fe3b7a477d03",
-      "operation": "_set_outcome",
-      "args": [
-        "327260",
-        "상한제한",
-        "신규매수 일일 상한 0 (운영 보류)",
-        {
-          "__datetime__": "2026-09-30T09:24:32.204643+09:00"
         }
       ],
       "kwargs": {
@@ -259,50 +225,6 @@
   ],
   "plans": [
     {
-      "id": "6b8e0ec4aa81444ca278b9649efee7d9",
-      "owner": "36650056221:1",
-      "events": [
-        "49f6d4fbabe94ae9b285b4116895ba19",
-        "301c1024be0b4b35bc65fe3b7a477d03"
-      ],
-      "record": {
-        "event_id": "49f6d4fbabe94ae9b285b4116895ba19",
-        "ticker": "327260",
-        "name": "RF머트리얼즈",
-        "first_detected_at": {
-          "__datetime__": "2026-09-30T09:23:34.011932+09:00"
-        },
-        "first_threshold": 51300.0,
-        "first_price": 51900.0,
-        "first_atr": 4859.0,
-        "status": "추적중",
-        "outcome": "상한제한",
-        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
-        "outcome_at": {
-          "__datetime__": "2026-09-30T09:24:32.204643+09:00"
-        }
-      },
-      "page_id": null,
-      "fields": {
-        "event_id": "49f6d4fbabe94ae9b285b4116895ba19",
-        "ticker": "327260",
-        "name": "RF머트리얼즈",
-        "first_detected_at": {
-          "__datetime__": "2026-09-30T09:23:34.011932+09:00"
-        },
-        "first_threshold": 51300.0,
-        "first_price": 51900.0,
-        "first_atr": 4859.0,
-        "status": "추적중",
-        "outcome": "상한제한",
-        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
-        "outcome_at": {
-          "__datetime__": "2026-09-30T09:24:32.204643+09:00"
-        }
-      },
-      "state": "creating"
-    },
-    {
       "id": "4b1814ebb0f54e9ca567c90d79036d0f",
       "owner": "36650056221:1",
       "events": [
@@ -344,7 +266,7 @@
           "__datetime__": "2026-09-30T09:24:32.216721+09:00"
         }
       },
-      "state": "queued"
+      "state": "creating"
     },
     {
       "id": "78b84350abd943f9b8d6a2276d68f27f",
@@ -537,7 +459,7 @@
     }
   ],
   "prepare_cursor": "8a05fa05b8f041c4b2fea397c061c1ec",
-  "deliver_cursor": "6b8e0ec4aa81444ca278b9649efee7d9",
+  "deliver_cursor": "4b1814ebb0f54e9ca567c90d79036d0f",
   "excluded_events": [
     {
       "event": {
