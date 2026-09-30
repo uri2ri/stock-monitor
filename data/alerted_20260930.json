@@ -642,6 +642,18 @@
       "gap_atr": 0.234,
       "unit_shares": 4672,
       "status": "진입가능"
+    },
+    "255440": {
+      "time": "10:53",
+      "name": "야스",
+      "sector": "기계·장비",
+      "market": "KOSDAQ",
+      "price": 8220.0,
+      "high20": 8200.0,
+      "atr20": 462.0,
+      "gap_atr": 0.043,
+      "unit_shares": 1082,
+      "status": "진입가능"
     }
   }
 }
