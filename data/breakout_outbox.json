@@ -2,23 +2,6 @@
   "version": 1,
   "events": [
     {
-      "id": "c9b276b3cbb348bdbffbd0d3db30133e",
-      "operation": "record_breakout",
-      "args": [
-        {
-          "ticker": "036010",
-          "name": "아비코전자",
-          "high20": 7750.0,
-          "price": 7790.0,
-          "atr20": 450.0
-        },
-        {
-          "__datetime__": "2026-09-30T09:03:43.498203+09:00"
-        }
-      ],
-      "kwargs": {}
-    },
-    {
       "id": "befd4a8b5eca4b089016a440fd5cc5b2",
       "operation": "record_breakout",
       "args": [
@@ -206,23 +189,6 @@
       }
     },
     {
-      "id": "c44ad81c915b4322a1ff070abd575937",
-      "operation": "_set_outcome",
-      "args": [
-        "036010",
-        "미주문",
-        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        {
-          "__datetime__": "2026-09-30T09:03:55.475471+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
       "id": "cb067a4333f849a6a980b9b401f7d8fd",
       "operation": "_set_outcome",
       "args": [
@@ -310,50 +276,6 @@
   ],
   "plans": [
     {
-      "id": "4b52e49936ad4808a5a5d63bb7b0b11d",
-      "owner": "36648347872:1",
-      "events": [
-        "c9b276b3cbb348bdbffbd0d3db30133e",
-        "c44ad81c915b4322a1ff070abd575937"
-      ],
-      "record": {
-        "event_id": "c9b276b3cbb348bdbffbd0d3db30133e",
-        "ticker": "036010",
-        "name": "아비코전자",
-        "first_detected_at": {
-          "__datetime__": "2026-09-30T09:03:43.498203+09:00"
-        },
-        "first_threshold": 7750.0,
-        "first_price": 7790.0,
-        "first_atr": 450.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        "outcome_at": {
-          "__datetime__": "2026-09-30T09:03:55.475471+09:00"
-        }
-      },
-      "page_id": null,
-      "fields": {
-        "event_id": "c9b276b3cbb348bdbffbd0d3db30133e",
-        "ticker": "036010",
-        "name": "아비코전자",
-        "first_detected_at": {
-          "__datetime__": "2026-09-30T09:03:43.498203+09:00"
-        },
-        "first_threshold": 7750.0,
-        "first_price": 7790.0,
-        "first_atr": 450.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        "outcome_at": {
-          "__datetime__": "2026-09-30T09:03:55.475471+09:00"
-        }
-      },
-      "state": "creating"
-    },
-    {
       "id": "a50d2c9c080845e8bc51f170db0a09df",
       "owner": "36648347872:1",
       "events": [
@@ -395,7 +317,7 @@
           "__datetime__": "2026-09-30T09:03:55.483145+09:00"
         }
       },
-      "state": "queued"
+      "state": "creating"
     },
     {
       "id": "7825fdf32ffc441f986662b05a115a0e",
@@ -787,7 +709,7 @@
     }
   ],
   "prepare_cursor": "12db0992e09d43c78a77b57db9f5999f",
-  "deliver_cursor": "4b52e49936ad4808a5a5d63bb7b0b11d",
+  "deliver_cursor": "a50d2c9c080845e8bc51f170db0a09df",
   "excluded_events": [
     {
       "event": {
