@@ -2,23 +2,6 @@
   "version": 1,
   "events": [
     {
-      "id": "818e1d2e270240c8a7156859322098b7",
-      "operation": "record_breakout",
-      "args": [
-        {
-          "ticker": "251370",
-          "name": "와이엠티",
-          "high20": 8450.0,
-          "price": 8580.0,
-          "atr20": 512.0
-        },
-        {
-          "__datetime__": "2026-09-30T09:03:43.498203+09:00"
-        }
-      ],
-      "kwargs": {}
-    },
-    {
       "id": "096b4cc94b4e4fb8b774bafa885fbe83",
       "operation": "record_breakout",
       "args": [
@@ -257,23 +240,6 @@
       }
     },
     {
-      "id": "adc1d00f3ea745ecbbae1dba161596a6",
-      "operation": "_set_outcome",
-      "args": [
-        "251370",
-        "미주문",
-        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        {
-          "__datetime__": "2026-09-30T09:03:55.401261+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
       "id": "6f80a705dd2d49138840b7cbc07395de",
       "operation": "_set_outcome",
       "args": [
@@ -412,50 +378,6 @@
   ],
   "plans": [
     {
-      "id": "a574a18b50ba41e7b5fdf66967d1ef3c",
-      "owner": "36648347872:1",
-      "events": [
-        "818e1d2e270240c8a7156859322098b7",
-        "adc1d00f3ea745ecbbae1dba161596a6"
-      ],
-      "record": {
-        "event_id": "818e1d2e270240c8a7156859322098b7",
-        "ticker": "251370",
-        "name": "와이엠티",
-        "first_detected_at": {
-          "__datetime__": "2026-09-30T09:03:43.498203+09:00"
-        },
-        "first_threshold": 8450.0,
-        "first_price": 8580.0,
-        "first_atr": 512.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        "outcome_at": {
-          "__datetime__": "2026-09-30T09:03:55.401261+09:00"
-        }
-      },
-      "page_id": null,
-      "fields": {
-        "event_id": "818e1d2e270240c8a7156859322098b7",
-        "ticker": "251370",
-        "name": "와이엠티",
-        "first_detected_at": {
-          "__datetime__": "2026-09-30T09:03:43.498203+09:00"
-        },
-        "first_threshold": 8450.0,
-        "first_price": 8580.0,
-        "first_atr": 512.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        "outcome_at": {
-          "__datetime__": "2026-09-30T09:03:55.401261+09:00"
-        }
-      },
-      "state": "creating"
-    },
-    {
       "id": "6bb7eb33e81e427ab42cbb92c5da4f54",
       "owner": "36648347872:1",
       "events": [
@@ -497,7 +419,7 @@
           "__datetime__": "2026-09-30T09:03:55.431136+09:00"
         }
       },
-      "state": "queued"
+      "state": "creating"
     },
     {
       "id": "c57155ab9a1e4205bf4c8619541edd5b",
@@ -1021,7 +943,7 @@
     }
   ],
   "prepare_cursor": "12db0992e09d43c78a77b57db9f5999f",
-  "deliver_cursor": "a574a18b50ba41e7b5fdf66967d1ef3c",
+  "deliver_cursor": "6bb7eb33e81e427ab42cbb92c5da4f54",
   "excluded_events": [
     {
       "event": {
