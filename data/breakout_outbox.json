@@ -2,23 +2,6 @@
   "version": 1,
   "events": [
     {
-      "id": "e219bce3fd8e44078507235e20731f74",
-      "operation": "record_breakout",
-      "args": [
-        {
-          "ticker": "061970",
-          "name": "LB세미콘",
-          "high20": 4585.0,
-          "price": 4655.0,
-          "atr20": 314.0
-        },
-        {
-          "__datetime__": "2026-09-30T09:13:42.842845+09:00"
-        }
-      ],
-      "kwargs": {}
-    },
-    {
       "id": "08b25f09f4424d88a73164c7b7003852",
       "operation": "record_breakout",
       "args": [
@@ -34,23 +17,6 @@
         }
       ],
       "kwargs": {}
-    },
-    {
-      "id": "11b5ffce3162403ebba59b2662c4a2c9",
-      "operation": "_set_outcome",
-      "args": [
-        "061970",
-        "상한제한",
-        "신규매수 일일 상한 0 (운영 보류)",
-        {
-          "__datetime__": "2026-09-30T09:14:25.006589+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
     },
     {
       "id": "86653adeba654f3385f3fd4c845d7e9b",
@@ -514,50 +480,6 @@
   ],
   "plans": [
     {
-      "id": "6d49df5ce37544748aa7072b7e393d89",
-      "owner": "36649223825:1",
-      "events": [
-        "e219bce3fd8e44078507235e20731f74",
-        "11b5ffce3162403ebba59b2662c4a2c9"
-      ],
-      "record": {
-        "event_id": "e219bce3fd8e44078507235e20731f74",
-        "ticker": "061970",
-        "name": "LB세미콘",
-        "first_detected_at": {
-          "__datetime__": "2026-09-30T09:13:42.842845+09:00"
-        },
-        "first_threshold": 4585.0,
-        "first_price": 4655.0,
-        "first_atr": 314.0,
-        "status": "추적중",
-        "outcome": "상한제한",
-        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
-        "outcome_at": {
-          "__datetime__": "2026-09-30T09:14:25.006589+09:00"
-        }
-      },
-      "page_id": null,
-      "fields": {
-        "event_id": "e219bce3fd8e44078507235e20731f74",
-        "ticker": "061970",
-        "name": "LB세미콘",
-        "first_detected_at": {
-          "__datetime__": "2026-09-30T09:13:42.842845+09:00"
-        },
-        "first_threshold": 4585.0,
-        "first_price": 4655.0,
-        "first_atr": 314.0,
-        "status": "추적중",
-        "outcome": "상한제한",
-        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
-        "outcome_at": {
-          "__datetime__": "2026-09-30T09:14:25.006589+09:00"
-        }
-      },
-      "state": "creating"
-    },
-    {
       "id": "1660c822363643b59e844a175f8db460",
       "owner": "36649223825:1",
       "events": [
@@ -599,7 +521,7 @@
           "__datetime__": "2026-09-30T09:14:25.029062+09:00"
         }
       },
-      "state": "queued"
+      "state": "creating"
     },
     {
       "id": "5eaff96adce143aa97d19e4dee9991d5",
@@ -2219,7 +2141,7 @@
     }
   ],
   "prepare_cursor": "8fef1677949d4b4abae4939a136cc019",
-  "deliver_cursor": "6d49df5ce37544748aa7072b7e393d89",
+  "deliver_cursor": "1660c822363643b59e844a175f8db460",
   "excluded_events": [
     {
       "event": {
