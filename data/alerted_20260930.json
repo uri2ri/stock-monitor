@@ -516,6 +516,18 @@
       "gap_atr": 0.111,
       "unit_shares": 184,
       "status": "진입가능"
+    },
+    "397030": {
+      "time": "09:43",
+      "name": "에이프릴바이오",
+      "sector": "일반서비스",
+      "market": "KOSDAQ",
+      "price": 19590.0,
+      "high20": 19540.0,
+      "atr20": 1520.0,
+      "gap_atr": 0.033,
+      "unit_shares": 328,
+      "status": "진입가능"
     }
   }
 }
