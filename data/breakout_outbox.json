@@ -2,23 +2,6 @@
   "version": 1,
   "events": [
     {
-      "id": "b942c858d6e8460e90ea8155d5017f45",
-      "operation": "record_breakout",
-      "args": [
-        {
-          "ticker": "078350",
-          "name": "한양디지텍",
-          "high20": 29600.0,
-          "price": 29750.0,
-          "atr20": 2036.0
-        },
-        {
-          "__datetime__": "2026-09-30T09:03:43.498203+09:00"
-        }
-      ],
-      "kwargs": {}
-    },
-    {
       "id": "309e3475430b4406ae7e7ea9a468e8f2",
       "operation": "record_breakout",
       "args": [
@@ -70,23 +53,6 @@
       }
     },
     {
-      "id": "350e695044fd40ceab8df409e5cab06f",
-      "operation": "_set_outcome",
-      "args": [
-        "078350",
-        "미주문",
-        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        {
-          "__datetime__": "2026-09-30T09:03:55.536033+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
       "id": "12db0992e09d43c78a77b57db9f5999f",
       "operation": "_set_outcome",
       "args": [
@@ -105,50 +71,6 @@
     }
   ],
   "plans": [
-    {
-      "id": "926a326273af482ab1af350b68adc1f1",
-      "owner": "36648347872:1",
-      "events": [
-        "b942c858d6e8460e90ea8155d5017f45",
-        "350e695044fd40ceab8df409e5cab06f"
-      ],
-      "record": {
-        "event_id": "b942c858d6e8460e90ea8155d5017f45",
-        "ticker": "078350",
-        "name": "한양디지텍",
-        "first_detected_at": {
-          "__datetime__": "2026-09-30T09:03:43.498203+09:00"
-        },
-        "first_threshold": 29600.0,
-        "first_price": 29750.0,
-        "first_atr": 2036.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        "outcome_at": {
-          "__datetime__": "2026-09-30T09:03:55.536033+09:00"
-        }
-      },
-      "page_id": null,
-      "fields": {
-        "event_id": "b942c858d6e8460e90ea8155d5017f45",
-        "ticker": "078350",
-        "name": "한양디지텍",
-        "first_detected_at": {
-          "__datetime__": "2026-09-30T09:03:43.498203+09:00"
-        },
-        "first_threshold": 29600.0,
-        "first_price": 29750.0,
-        "first_atr": 2036.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        "outcome_at": {
-          "__datetime__": "2026-09-30T09:03:55.536033+09:00"
-        }
-      },
-      "state": "creating"
-    },
     {
       "id": "2c4657d410064b30bd05f0e2a3107df3",
       "owner": "36648347872:1",
@@ -191,7 +113,7 @@
           "__datetime__": "2026-09-30T09:03:55.543715+09:00"
         }
       },
-      "state": "queued"
+      "state": "creating"
     },
     {
       "id": "0a36c1dc256b4b1b99fb0511ce303216",
@@ -319,7 +241,7 @@
     }
   ],
   "prepare_cursor": "12db0992e09d43c78a77b57db9f5999f",
-  "deliver_cursor": "926a326273af482ab1af350b68adc1f1",
+  "deliver_cursor": "2c4657d410064b30bd05f0e2a3107df3",
   "excluded_events": [
     {
       "event": {
