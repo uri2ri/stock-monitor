@@ -1,8 +1,88 @@
 {
   "version": 1,
-  "events": [],
-  "plans": [],
-  "prepare_cursor": "72e3b950f89a4170a9c9fded1823e571",
+  "events": [
+    {
+      "id": "c7ab55ba2a81448389c1e189ecf689ff",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "161580",
+          "name": "필옵틱스",
+          "high20": 39400.0,
+          "price": 39450.0,
+          "atr20": 2336.0
+        },
+        {
+          "__datetime__": "2026-09-30T15:13:52.122552+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "0e8794560f644fd988996917925057cf",
+      "operation": "_set_outcome",
+      "args": [
+        "161580",
+        "상한제한",
+        "신규매수 일일 상한 0 (운영 보류)",
+        {
+          "__datetime__": "2026-09-30T15:15:20.139179+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    }
+  ],
+  "plans": [
+    {
+      "id": "495071ec9d4a4470882c766dd680f353",
+      "owner": "36677103299:1",
+      "events": [
+        "c7ab55ba2a81448389c1e189ecf689ff",
+        "0e8794560f644fd988996917925057cf"
+      ],
+      "record": {
+        "event_id": "c7ab55ba2a81448389c1e189ecf689ff",
+        "ticker": "161580",
+        "name": "필옵틱스",
+        "first_detected_at": {
+          "__datetime__": "2026-09-30T15:13:52.122552+09:00"
+        },
+        "first_threshold": 39400.0,
+        "first_price": 39450.0,
+        "first_atr": 2336.0,
+        "status": "추적중",
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-30T15:15:20.139179+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "c7ab55ba2a81448389c1e189ecf689ff",
+        "ticker": "161580",
+        "name": "필옵틱스",
+        "first_detected_at": {
+          "__datetime__": "2026-09-30T15:13:52.122552+09:00"
+        },
+        "first_threshold": 39400.0,
+        "first_price": 39450.0,
+        "first_atr": 2336.0,
+        "status": "추적중",
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-30T15:15:20.139179+09:00"
+        }
+      },
+      "state": "queued"
+    }
+  ],
+  "prepare_cursor": "eca52122c7524ae7aa87867be6f013be",
   "deliver_cursor": "0bd0b01137f14d679f905f48bd0e9656",
   "excluded_events": [
     {
@@ -6094,6 +6174,48 @@
       },
       "reason": "held_without_active_track",
       "resolved_by": "36676276318:1"
+    },
+    {
+      "event": {
+        "id": "edbf7e37043a4ce5a43fe78ea01f4841",
+        "operation": "_set_outcome",
+        "args": [
+          "200470",
+          "상한제한",
+          "신규매수 일일 상한 0 (운영 보류)",
+          {
+            "__datetime__": "2026-09-30T15:15:20.208368+09:00"
+          }
+        ],
+        "kwargs": {
+          "order_no": "",
+          "order_day": null,
+          "identity": null
+        }
+      },
+      "reason": "held_without_active_track",
+      "resolved_by": "36677103299:1"
+    },
+    {
+      "event": {
+        "id": "f3a65078779f4d44abe2085a7b31808f",
+        "operation": "_set_outcome",
+        "args": [
+          "122640",
+          "상한제한",
+          "신규매수 일일 상한 0 (운영 보류)",
+          {
+            "__datetime__": "2026-09-30T15:15:20.310690+09:00"
+          }
+        ],
+        "kwargs": {
+          "order_no": "",
+          "order_day": null,
+          "identity": null
+        }
+      },
+      "reason": "held_without_active_track",
+      "resolved_by": "36677103299:1"
     }
   ]
 }
