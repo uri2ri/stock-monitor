@@ -360,6 +360,54 @@
       "gap_atr": 0.039,
       "unit_shares": 386,
       "status": "진입가능"
+    },
+    "061970": {
+      "time": "09:13",
+      "name": "LB세미콘",
+      "sector": "전기전자",
+      "market": "KOSDAQ",
+      "price": 4655.0,
+      "high20": 4585.0,
+      "atr20": 314.0,
+      "gap_atr": 0.223,
+      "unit_shares": 1592,
+      "status": "진입가능"
+    },
+    "089790": {
+      "time": "09:13",
+      "name": "제이티",
+      "sector": "기계·장비",
+      "market": "KOSDAQ",
+      "price": 6190.0,
+      "high20": 6140.0,
+      "atr20": 356.0,
+      "gap_atr": 0.14,
+      "unit_shares": 1404,
+      "status": "진입가능"
+    },
+    "187870": {
+      "time": "09:13",
+      "name": "디바이스",
+      "sector": "기계·장비",
+      "market": "KOSDAQ",
+      "price": 12220.0,
+      "high20": 12160.0,
+      "atr20": 812.0,
+      "gap_atr": 0.074,
+      "unit_shares": 615,
+      "status": "진입가능"
+    },
+    "119850": {
+      "time": "09:13",
+      "name": "지엔씨에너지",
+      "sector": "전기전자",
+      "market": "KOSDAQ",
+      "price": 58100.0,
+      "high20": 58000.0,
+      "atr20": 4477.0,
+      "gap_atr": 0.022,
+      "unit_shares": 111,
+      "status": "진입가능"
     }
   }
 }
