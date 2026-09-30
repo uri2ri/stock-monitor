@@ -528,6 +528,18 @@
       "gap_atr": 0.033,
       "unit_shares": 328,
       "status": "진입가능"
+    },
+    "494120": {
+      "time": "09:53",
+      "name": "큐리오시스",
+      "sector": "의료·정밀기기",
+      "market": "KOSDAQ",
+      "price": 9270.0,
+      "high20": 9210.0,
+      "atr20": 919.0,
+      "gap_atr": 0.065,
+      "unit_shares": 544,
+      "status": "진입가능"
     }
   }
 }
