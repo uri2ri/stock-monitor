@@ -2,23 +2,6 @@
   "version": 1,
   "events": [
     {
-      "id": "befd4a8b5eca4b089016a440fd5cc5b2",
-      "operation": "record_breakout",
-      "args": [
-        {
-          "ticker": "265520",
-          "name": "AP시스템",
-          "high20": 19370.0,
-          "price": 19420.0,
-          "atr20": 731.0
-        },
-        {
-          "__datetime__": "2026-09-30T09:03:43.498203+09:00"
-        }
-      ],
-      "kwargs": {}
-    },
-    {
       "id": "48b5e6b941474d67818494b56cc12f2e",
       "operation": "record_breakout",
       "args": [
@@ -189,23 +172,6 @@
       }
     },
     {
-      "id": "cb067a4333f849a6a980b9b401f7d8fd",
-      "operation": "_set_outcome",
-      "args": [
-        "265520",
-        "미주문",
-        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        {
-          "__datetime__": "2026-09-30T09:03:55.483145+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
       "id": "021c39ab8c314b8fbfe72b317156d1a6",
       "operation": "_set_outcome",
       "args": [
@@ -276,50 +242,6 @@
   ],
   "plans": [
     {
-      "id": "a50d2c9c080845e8bc51f170db0a09df",
-      "owner": "36648347872:1",
-      "events": [
-        "befd4a8b5eca4b089016a440fd5cc5b2",
-        "cb067a4333f849a6a980b9b401f7d8fd"
-      ],
-      "record": {
-        "event_id": "befd4a8b5eca4b089016a440fd5cc5b2",
-        "ticker": "265520",
-        "name": "AP시스템",
-        "first_detected_at": {
-          "__datetime__": "2026-09-30T09:03:43.498203+09:00"
-        },
-        "first_threshold": 19370.0,
-        "first_price": 19420.0,
-        "first_atr": 731.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        "outcome_at": {
-          "__datetime__": "2026-09-30T09:03:55.483145+09:00"
-        }
-      },
-      "page_id": null,
-      "fields": {
-        "event_id": "befd4a8b5eca4b089016a440fd5cc5b2",
-        "ticker": "265520",
-        "name": "AP시스템",
-        "first_detected_at": {
-          "__datetime__": "2026-09-30T09:03:43.498203+09:00"
-        },
-        "first_threshold": 19370.0,
-        "first_price": 19420.0,
-        "first_atr": 731.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        "outcome_at": {
-          "__datetime__": "2026-09-30T09:03:55.483145+09:00"
-        }
-      },
-      "state": "creating"
-    },
-    {
       "id": "7825fdf32ffc441f986662b05a115a0e",
       "owner": "36648347872:1",
       "events": [
@@ -361,7 +283,7 @@
           "__datetime__": "2026-09-30T09:03:55.505895+09:00"
         }
       },
-      "state": "queued"
+      "state": "creating"
     },
     {
       "id": "4f97e436af614eb885fd36067cd91583",
@@ -709,7 +631,7 @@
     }
   ],
   "prepare_cursor": "12db0992e09d43c78a77b57db9f5999f",
-  "deliver_cursor": "a50d2c9c080845e8bc51f170db0a09df",
+  "deliver_cursor": "7825fdf32ffc441f986662b05a115a0e",
   "excluded_events": [
     {
       "event": {
