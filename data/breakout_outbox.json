@@ -1,145 +1,8 @@
 {
   "version": 1,
-  "events": [
-    {
-      "id": "87a4ede011eb4035b367af23ca06687e",
-      "operation": "_set_outcome",
-      "args": [
-        "265520",
-        "상한제한",
-        "신규매수 일일 상한 0 (운영 보류)",
-        {
-          "__datetime__": "2026-09-30T09:24:32.336917+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
-      "id": "8d3170aa5a514011a791b20e5b8b0755",
-      "operation": "_set_outcome",
-      "args": [
-        "482630",
-        "상한제한",
-        "신규매수 일일 상한 0 (운영 보류)",
-        {
-          "__datetime__": "2026-09-30T09:24:32.349559+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
-      "id": "ab6c26f13cda4ab587a37e7769972b45",
-      "operation": "_set_outcome",
-      "args": [
-        "011790",
-        "상한제한",
-        "신규매수 일일 상한 0 (운영 보류)",
-        {
-          "__datetime__": "2026-09-30T09:24:32.355819+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
-      "id": "0608df81697c41f593de02818148520e",
-      "operation": "_set_outcome",
-      "args": [
-        "086390",
-        "상한제한",
-        "신규매수 일일 상한 0 (운영 보류)",
-        {
-          "__datetime__": "2026-09-30T09:24:32.362324+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
-      "id": "592dedce645640fd9f975c6454af8249",
-      "operation": "_set_outcome",
-      "args": [
-        "052900",
-        "상한제한",
-        "신규매수 일일 상한 0 (운영 보류)",
-        {
-          "__datetime__": "2026-09-30T09:24:32.369017+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
-      "id": "e53927ffcb804849a60d199180286423",
-      "operation": "_set_outcome",
-      "args": [
-        "089970",
-        "상한제한",
-        "신규매수 일일 상한 0 (운영 보류)",
-        {
-          "__datetime__": "2026-09-30T09:24:32.376145+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
-      "id": "dc0e61a7e38e428abdfeb9e17f8d3040",
-      "operation": "_set_outcome",
-      "args": [
-        "078350",
-        "상한제한",
-        "신규매수 일일 상한 0 (운영 보류)",
-        {
-          "__datetime__": "2026-09-30T09:24:32.382948+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
-      "id": "34b4e90496af4e388f7216e0255b23ae",
-      "operation": "_set_outcome",
-      "args": [
-        "089010",
-        "상한제한",
-        "신규매수 일일 상한 0 (운영 보류)",
-        {
-          "__datetime__": "2026-09-30T09:24:32.389392+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    }
-  ],
+  "events": [],
   "plans": [],
-  "prepare_cursor": "8a05fa05b8f041c4b2fea397c061c1ec",
+  "prepare_cursor": "925d6bf7fa864ccba064faa5aa688912",
   "deliver_cursor": "d00af14262e14324b6fabf3c1be6a942",
   "excluded_events": [
     {
@@ -4803,6 +4666,48 @@
       },
       "reason": "held_without_active_track",
       "resolved_by": "36650056221:1"
+    },
+    {
+      "event": {
+        "id": "bf5a733b7781490798763688b8dd41ce",
+        "operation": "_set_outcome",
+        "args": [
+          "200470",
+          "상한제한",
+          "신규매수 일일 상한 0 (운영 보류)",
+          {
+            "__datetime__": "2026-09-30T09:35:03.738040+09:00"
+          }
+        ],
+        "kwargs": {
+          "order_no": "",
+          "order_day": null,
+          "identity": null
+        }
+      },
+      "reason": "held_without_active_track",
+      "resolved_by": "36650877128:1"
+    },
+    {
+      "event": {
+        "id": "48d03e2919534aa3a51381b8fe7ceb6d",
+        "operation": "_set_outcome",
+        "args": [
+          "122640",
+          "상한제한",
+          "신규매수 일일 상한 0 (운영 보류)",
+          {
+            "__datetime__": "2026-09-30T09:35:03.813199+09:00"
+          }
+        ],
+        "kwargs": {
+          "order_no": "",
+          "order_day": null,
+          "identity": null
+        }
+      },
+      "reason": "held_without_active_track",
+      "resolved_by": "36650877128:1"
     }
   ]
 }
