@@ -630,6 +630,18 @@
       "status": "진입가능",
       "price_10am": 9200.0,
       "time_10am": "10:03"
+    },
+    "001250": {
+      "time": "10:23",
+      "name": "GS글로벌",
+      "sector": "유통",
+      "market": "KOSPI",
+      "price": 2750.0,
+      "high20": 2725.0,
+      "atr20": 107.0,
+      "gap_atr": 0.234,
+      "unit_shares": 4672,
+      "status": "진입가능"
     }
   }
 }
