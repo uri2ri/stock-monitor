@@ -2,23 +2,6 @@
   "version": 1,
   "events": [
     {
-      "id": "fb396adc4e7143248c955cdede69d664",
-      "operation": "record_breakout",
-      "args": [
-        {
-          "ticker": "089970",
-          "name": "브이엠",
-          "high20": 63500.0,
-          "price": 64800.0,
-          "atr20": 5157.0
-        },
-        {
-          "__datetime__": "2026-09-30T09:03:43.498203+09:00"
-        }
-      ],
-      "kwargs": {}
-    },
-    {
       "id": "f01b4d95c0f145a9ab87ef47c1fda362",
       "operation": "record_breakout",
       "args": [
@@ -121,23 +104,6 @@
       }
     },
     {
-      "id": "a655ed8243294649bed65b69e6950190",
-      "operation": "_set_outcome",
-      "args": [
-        "089970",
-        "미주문",
-        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        {
-          "__datetime__": "2026-09-30T09:03:55.528530+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
       "id": "350e695044fd40ceab8df409e5cab06f",
       "operation": "_set_outcome",
       "args": [
@@ -173,50 +139,6 @@
     }
   ],
   "plans": [
-    {
-      "id": "9b73101e3c4d409bb828234a40934c12",
-      "owner": "36648347872:1",
-      "events": [
-        "fb396adc4e7143248c955cdede69d664",
-        "a655ed8243294649bed65b69e6950190"
-      ],
-      "record": {
-        "event_id": "fb396adc4e7143248c955cdede69d664",
-        "ticker": "089970",
-        "name": "브이엠",
-        "first_detected_at": {
-          "__datetime__": "2026-09-30T09:03:43.498203+09:00"
-        },
-        "first_threshold": 63500.0,
-        "first_price": 64800.0,
-        "first_atr": 5157.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        "outcome_at": {
-          "__datetime__": "2026-09-30T09:03:55.528530+09:00"
-        }
-      },
-      "page_id": null,
-      "fields": {
-        "event_id": "fb396adc4e7143248c955cdede69d664",
-        "ticker": "089970",
-        "name": "브이엠",
-        "first_detected_at": {
-          "__datetime__": "2026-09-30T09:03:43.498203+09:00"
-        },
-        "first_threshold": 63500.0,
-        "first_price": 64800.0,
-        "first_atr": 5157.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        "outcome_at": {
-          "__datetime__": "2026-09-30T09:03:55.528530+09:00"
-        }
-      },
-      "state": "creating"
-    },
     {
       "id": "70e633bca5414e34b14774ca18afaf14",
       "owner": "36648347872:1",
@@ -259,7 +181,7 @@
           "__datetime__": "2026-09-30T09:03:43.498203+09:00"
         }
       },
-      "state": "queued"
+      "state": "creating"
     },
     {
       "id": "926a326273af482ab1af350b68adc1f1",
@@ -475,7 +397,7 @@
     }
   ],
   "prepare_cursor": "12db0992e09d43c78a77b57db9f5999f",
-  "deliver_cursor": "9b73101e3c4d409bb828234a40934c12",
+  "deliver_cursor": "70e633bca5414e34b14774ca18afaf14",
   "excluded_events": [
     {
       "event": {
