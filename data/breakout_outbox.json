@@ -2,23 +2,6 @@
   "version": 1,
   "events": [
     {
-      "id": "096b4cc94b4e4fb8b774bafa885fbe83",
-      "operation": "record_breakout",
-      "args": [
-        {
-          "ticker": "254490",
-          "name": "미래반도체",
-          "high20": 17400.0,
-          "price": 17450.0,
-          "atr20": 1044.0
-        },
-        {
-          "__datetime__": "2026-09-30T09:03:43.498203+09:00"
-        }
-      ],
-      "kwargs": {}
-    },
-    {
       "id": "cb89f8060c064d2f816ced8d459ebac1",
       "operation": "record_breakout",
       "args": [
@@ -240,23 +223,6 @@
       }
     },
     {
-      "id": "6f80a705dd2d49138840b7cbc07395de",
-      "operation": "_set_outcome",
-      "args": [
-        "254490",
-        "미주문",
-        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        {
-          "__datetime__": "2026-09-30T09:03:55.431136+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
       "id": "e0966a7a66bd4676b1636f8e4849287d",
       "operation": "_set_outcome",
       "args": [
@@ -378,50 +344,6 @@
   ],
   "plans": [
     {
-      "id": "6bb7eb33e81e427ab42cbb92c5da4f54",
-      "owner": "36648347872:1",
-      "events": [
-        "096b4cc94b4e4fb8b774bafa885fbe83",
-        "6f80a705dd2d49138840b7cbc07395de"
-      ],
-      "record": {
-        "event_id": "096b4cc94b4e4fb8b774bafa885fbe83",
-        "ticker": "254490",
-        "name": "미래반도체",
-        "first_detected_at": {
-          "__datetime__": "2026-09-30T09:03:43.498203+09:00"
-        },
-        "first_threshold": 17400.0,
-        "first_price": 17450.0,
-        "first_atr": 1044.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        "outcome_at": {
-          "__datetime__": "2026-09-30T09:03:55.431136+09:00"
-        }
-      },
-      "page_id": null,
-      "fields": {
-        "event_id": "096b4cc94b4e4fb8b774bafa885fbe83",
-        "ticker": "254490",
-        "name": "미래반도체",
-        "first_detected_at": {
-          "__datetime__": "2026-09-30T09:03:43.498203+09:00"
-        },
-        "first_threshold": 17400.0,
-        "first_price": 17450.0,
-        "first_atr": 1044.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        "outcome_at": {
-          "__datetime__": "2026-09-30T09:03:55.431136+09:00"
-        }
-      },
-      "state": "creating"
-    },
-    {
       "id": "c57155ab9a1e4205bf4c8619541edd5b",
       "owner": "36648347872:1",
       "events": [
@@ -463,7 +385,7 @@
           "__datetime__": "2026-09-30T09:03:55.438363+09:00"
         }
       },
-      "state": "queued"
+      "state": "creating"
     },
     {
       "id": "4b52e49936ad4808a5a5d63bb7b0b11d",
@@ -943,7 +865,7 @@
     }
   ],
   "prepare_cursor": "12db0992e09d43c78a77b57db9f5999f",
-  "deliver_cursor": "6bb7eb33e81e427ab42cbb92c5da4f54",
+  "deliver_cursor": "c57155ab9a1e4205bf4c8619541edd5b",
   "excluded_events": [
     {
       "event": {
