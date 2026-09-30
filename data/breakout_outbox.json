@@ -2,23 +2,6 @@
   "version": 1,
   "events": [
     {
-      "id": "a72bec165fd44a488ea98c9f9c97d3f9",
-      "operation": "record_breakout",
-      "args": [
-        {
-          "ticker": "000250",
-          "name": "삼천당제약",
-          "high20": 170800.0,
-          "price": 173000.0,
-          "atr20": 10376.0
-        },
-        {
-          "__datetime__": "2026-09-30T09:23:34.011932+09:00"
-        }
-      ],
-      "kwargs": {}
-    },
-    {
       "id": "49f6d4fbabe94ae9b285b4116895ba19",
       "operation": "record_breakout",
       "args": [
@@ -61,23 +44,6 @@
         "신규매수 일일 상한 0 (운영 보류)",
         {
           "__datetime__": "2026-09-30T09:24:32.177041+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
-      "id": "e9c798f7df5c4aeebf938c8272895532",
-      "operation": "_set_outcome",
-      "args": [
-        "000250",
-        "상한제한",
-        "신규매수 일일 상한 0 (운영 보류)",
-        {
-          "__datetime__": "2026-09-30T09:24:32.197972+09:00"
         }
       ],
       "kwargs": {
@@ -293,50 +259,6 @@
   ],
   "plans": [
     {
-      "id": "633e62b0182146fc9dec1375c48f16a7",
-      "owner": "36650056221:1",
-      "events": [
-        "a72bec165fd44a488ea98c9f9c97d3f9",
-        "e9c798f7df5c4aeebf938c8272895532"
-      ],
-      "record": {
-        "event_id": "a72bec165fd44a488ea98c9f9c97d3f9",
-        "ticker": "000250",
-        "name": "삼천당제약",
-        "first_detected_at": {
-          "__datetime__": "2026-09-30T09:23:34.011932+09:00"
-        },
-        "first_threshold": 170800.0,
-        "first_price": 173000.0,
-        "first_atr": 10376.0,
-        "status": "추적중",
-        "outcome": "상한제한",
-        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
-        "outcome_at": {
-          "__datetime__": "2026-09-30T09:24:32.197972+09:00"
-        }
-      },
-      "page_id": null,
-      "fields": {
-        "event_id": "a72bec165fd44a488ea98c9f9c97d3f9",
-        "ticker": "000250",
-        "name": "삼천당제약",
-        "first_detected_at": {
-          "__datetime__": "2026-09-30T09:23:34.011932+09:00"
-        },
-        "first_threshold": 170800.0,
-        "first_price": 173000.0,
-        "first_atr": 10376.0,
-        "status": "추적중",
-        "outcome": "상한제한",
-        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
-        "outcome_at": {
-          "__datetime__": "2026-09-30T09:24:32.197972+09:00"
-        }
-      },
-      "state": "creating"
-    },
-    {
       "id": "6b8e0ec4aa81444ca278b9649efee7d9",
       "owner": "36650056221:1",
       "events": [
@@ -378,7 +300,7 @@
           "__datetime__": "2026-09-30T09:24:32.204643+09:00"
         }
       },
-      "state": "queued"
+      "state": "creating"
     },
     {
       "id": "4b1814ebb0f54e9ca567c90d79036d0f",
@@ -615,7 +537,7 @@
     }
   ],
   "prepare_cursor": "8a05fa05b8f041c4b2fea397c061c1ec",
-  "deliver_cursor": "633e62b0182146fc9dec1375c48f16a7",
+  "deliver_cursor": "6b8e0ec4aa81444ca278b9649efee7d9",
   "excluded_events": [
     {
       "event": {
