@@ -1,8 +1,88 @@
 {
   "version": 1,
-  "events": [],
-  "plans": [],
-  "prepare_cursor": "15bb647cc301416aacc782970fd7087c",
+  "events": [
+    {
+      "id": "fe5e75e0783c4638af7c0e65f190bfd7",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "001250",
+          "name": "GS글로벌",
+          "high20": 2725.0,
+          "price": 2750.0,
+          "atr20": 107.0
+        },
+        {
+          "__datetime__": "2026-09-30T10:23:36.420510+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "67e17893d8f441c4bd356f256de50441",
+      "operation": "_set_outcome",
+      "args": [
+        "001250",
+        "상한제한",
+        "신규매수 일일 상한 0 (운영 보류)",
+        {
+          "__datetime__": "2026-09-30T10:25:40.385776+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    }
+  ],
+  "plans": [
+    {
+      "id": "899cc89f5c9d485e9f8a4e4ce79b265c",
+      "owner": "36654845322:1",
+      "events": [
+        "fe5e75e0783c4638af7c0e65f190bfd7",
+        "67e17893d8f441c4bd356f256de50441"
+      ],
+      "record": {
+        "event_id": "fe5e75e0783c4638af7c0e65f190bfd7",
+        "ticker": "001250",
+        "name": "GS글로벌",
+        "first_detected_at": {
+          "__datetime__": "2026-09-30T10:23:36.420510+09:00"
+        },
+        "first_threshold": 2725.0,
+        "first_price": 2750.0,
+        "first_atr": 107.0,
+        "status": "추적중",
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-30T10:25:40.385776+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "fe5e75e0783c4638af7c0e65f190bfd7",
+        "ticker": "001250",
+        "name": "GS글로벌",
+        "first_detected_at": {
+          "__datetime__": "2026-09-30T10:23:36.420510+09:00"
+        },
+        "first_threshold": 2725.0,
+        "first_price": 2750.0,
+        "first_atr": 107.0,
+        "status": "추적중",
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-09-30T10:25:40.385776+09:00"
+        }
+      },
+      "state": "queued"
+    }
+  ],
+  "prepare_cursor": "76eeecbb400e4bb6849a011567065e1f",
   "deliver_cursor": "bdc7848a9acf488aa78c4806807f84af",
   "excluded_events": [
     {
@@ -4876,6 +4956,48 @@
       },
       "reason": "held_without_active_track",
       "resolved_by": "36654044931:1"
+    },
+    {
+      "event": {
+        "id": "10845e2e160b40149c99c4d7840f5bb6",
+        "operation": "_set_outcome",
+        "args": [
+          "200470",
+          "상한제한",
+          "신규매수 일일 상한 0 (운영 보류)",
+          {
+            "__datetime__": "2026-09-30T10:25:40.440878+09:00"
+          }
+        ],
+        "kwargs": {
+          "order_no": "",
+          "order_day": null,
+          "identity": null
+        }
+      },
+      "reason": "held_without_active_track",
+      "resolved_by": "36654845322:1"
+    },
+    {
+      "event": {
+        "id": "94ae1976a3144966897d6b31966e3a74",
+        "operation": "_set_outcome",
+        "args": [
+          "122640",
+          "상한제한",
+          "신규매수 일일 상한 0 (운영 보류)",
+          {
+            "__datetime__": "2026-09-30T10:25:40.516814+09:00"
+          }
+        ],
+        "kwargs": {
+          "order_no": "",
+          "order_day": null,
+          "identity": null
+        }
+      },
+      "reason": "held_without_active_track",
+      "resolved_by": "36654845322:1"
     }
   ]
 }
