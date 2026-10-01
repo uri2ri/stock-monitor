@@ -1,8 +1,88 @@
 {
   "version": 1,
-  "events": [],
-  "plans": [],
-  "prepare_cursor": "a40279e65f0d4c9a939bc22673fd53ee",
+  "events": [
+    {
+      "id": "b3ad4e3ff1a84b34bb18c6d06eb5c95b",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "489790",
+          "name": "한화비전",
+          "high20": 51100.0,
+          "price": 51600.0,
+          "atr20": 2693.0
+        },
+        {
+          "__datetime__": "2026-10-01T12:53:35.214159+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "44d4cc55c5a54a649d3558b73f9063f8",
+      "operation": "_set_outcome",
+      "args": [
+        "489790",
+        "상한제한",
+        "신규매수 일일 상한 0 (운영 보류)",
+        {
+          "__datetime__": "2026-10-01T12:54:54.425210+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    }
+  ],
+  "plans": [
+    {
+      "id": "13d52deaa1d14777b5c7c085bf27d642",
+      "owner": "36812541844:1",
+      "events": [
+        "b3ad4e3ff1a84b34bb18c6d06eb5c95b",
+        "44d4cc55c5a54a649d3558b73f9063f8"
+      ],
+      "record": {
+        "event_id": "b3ad4e3ff1a84b34bb18c6d06eb5c95b",
+        "ticker": "489790",
+        "name": "한화비전",
+        "first_detected_at": {
+          "__datetime__": "2026-10-01T12:53:35.214159+09:00"
+        },
+        "first_threshold": 51100.0,
+        "first_price": 51600.0,
+        "first_atr": 2693.0,
+        "status": "추적중",
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-10-01T12:54:54.425210+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "b3ad4e3ff1a84b34bb18c6d06eb5c95b",
+        "ticker": "489790",
+        "name": "한화비전",
+        "first_detected_at": {
+          "__datetime__": "2026-10-01T12:53:35.214159+09:00"
+        },
+        "first_threshold": 51100.0,
+        "first_price": 51600.0,
+        "first_atr": 2693.0,
+        "status": "추적중",
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-10-01T12:54:54.425210+09:00"
+        }
+      },
+      "state": "queued"
+    }
+  ],
+  "prepare_cursor": "09076911a02e4e88b3ea7454594b9853",
   "deliver_cursor": "f5f520ce045c43c6b090ca2c937f2973",
   "excluded_events": [
     {
