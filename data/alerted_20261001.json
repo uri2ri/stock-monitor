@@ -720,6 +720,18 @@
       "gap_atr": 0.186,
       "unit_shares": 185,
       "status": "진입가능"
+    },
+    "357580": {
+      "time": "13:13",
+      "name": "아모센스",
+      "sector": "전기전자",
+      "market": "KOSDAQ",
+      "price": 8010.0,
+      "high20": 7950.0,
+      "atr20": 577.0,
+      "gap_atr": 0.104,
+      "unit_shares": 866,
+      "status": "진입가능"
     }
   }
 }
