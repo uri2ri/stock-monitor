@@ -264,6 +264,30 @@
       "gap_atr": 0.099,
       "unit_shares": 657,
       "status": "진입가능"
+    },
+    "036010": {
+      "time": "09:23",
+      "name": "아비코전자",
+      "sector": "전기전자",
+      "market": "KOSDAQ",
+      "price": 7910.0,
+      "high20": 7900.0,
+      "atr20": 443.0,
+      "gap_atr": 0.023,
+      "unit_shares": 1128,
+      "status": "진입가능"
+    },
+    "156100": {
+      "time": "09:23",
+      "name": "엘앤케이바이오",
+      "sector": "의료·정밀기기",
+      "market": "KOSDAQ",
+      "price": 6170.0,
+      "high20": 6160.0,
+      "atr20": 383.0,
+      "gap_atr": 0.026,
+      "unit_shares": 1305,
+      "status": "진입가능"
     }
   }
 }
