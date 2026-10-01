@@ -2,23 +2,6 @@
   "version": 1,
   "events": [
     {
-      "id": "2f3590d03ffe42edb529ae4cb49049d4",
-      "operation": "record_breakout",
-      "args": [
-        {
-          "ticker": "039440",
-          "name": "에스티아이",
-          "high20": 23750.0,
-          "price": 24450.0,
-          "atr20": 1298.0
-        },
-        {
-          "__datetime__": "2026-10-01T09:13:43.646549+09:00"
-        }
-      ],
-      "kwargs": {}
-    },
-    {
       "id": "de176ddad3594c3a9ad849e932d91684",
       "operation": "record_breakout",
       "args": [
@@ -93,23 +76,6 @@
         "272110",
         "미주문",
         "추격 구간(+0.53N) - 매수 대상 제외",
-        {
-          "__datetime__": "2026-10-01T09:13:43.646549+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
-      "id": "b5c59e042aee4d4ca32a31c34aed4cdb",
-      "operation": "_set_outcome",
-      "args": [
-        "039440",
-        "미주문",
-        "추격 구간(+0.54N) - 매수 대상 제외",
         {
           "__datetime__": "2026-10-01T09:13:43.646549+09:00"
         }
@@ -378,50 +344,6 @@
   ],
   "plans": [
     {
-      "id": "5b7c9e7e14604825aafcf317ba84ab93",
-      "owner": "36795041350:1",
-      "events": [
-        "2f3590d03ffe42edb529ae4cb49049d4",
-        "b5c59e042aee4d4ca32a31c34aed4cdb"
-      ],
-      "record": {
-        "event_id": "2f3590d03ffe42edb529ae4cb49049d4",
-        "ticker": "039440",
-        "name": "에스티아이",
-        "first_detected_at": {
-          "__datetime__": "2026-10-01T09:13:43.646549+09:00"
-        },
-        "first_threshold": 23750.0,
-        "first_price": 24450.0,
-        "first_atr": 1298.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "추격 구간(+0.54N) - 매수 대상 제외",
-        "outcome_at": {
-          "__datetime__": "2026-10-01T09:13:43.646549+09:00"
-        }
-      },
-      "page_id": null,
-      "fields": {
-        "event_id": "2f3590d03ffe42edb529ae4cb49049d4",
-        "ticker": "039440",
-        "name": "에스티아이",
-        "first_detected_at": {
-          "__datetime__": "2026-10-01T09:13:43.646549+09:00"
-        },
-        "first_threshold": 23750.0,
-        "first_price": 24450.0,
-        "first_atr": 1298.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "추격 구간(+0.54N) - 매수 대상 제외",
-        "outcome_at": {
-          "__datetime__": "2026-10-01T09:13:43.646549+09:00"
-        }
-      },
-      "state": "creating"
-    },
-    {
       "id": "bff22ae956e24c929a61e8d09bd22918",
       "owner": "36795041350:1",
       "events": [
@@ -463,7 +385,7 @@
           "__datetime__": "2026-10-01T09:14:36.945001+09:00"
         }
       },
-      "state": "queued"
+      "state": "creating"
     },
     {
       "id": "0d4cb2b2135a4f0abaff5a26c12a618c",
@@ -1512,7 +1434,7 @@
     }
   ],
   "prepare_cursor": "9839c6b328474e579840480a097a845d",
-  "deliver_cursor": "5b7c9e7e14604825aafcf317ba84ab93",
+  "deliver_cursor": "bff22ae956e24c929a61e8d09bd22918",
   "excluded_events": [
     {
       "event": {
