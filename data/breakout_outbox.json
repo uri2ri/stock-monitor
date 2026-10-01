@@ -1,8 +1,90 @@
 {
   "version": 1,
-  "events": [],
-  "plans": [],
-  "prepare_cursor": "462dca2db6f14b6ba2e543ec1bad3058",
+  "events": [
+    {
+      "id": "f0488ea7b0cb457390e75070781c338f",
+      "operation": "_set_outcome",
+      "args": [
+        "214430",
+        "상한제한",
+        "신규매수 일일 상한 0 (운영 보류)",
+        {
+          "__datetime__": "2026-10-01T12:34:26.020902+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    }
+  ],
+  "plans": [
+    {
+      "id": "f7db2deef98e492b8e08f225eb2204eb",
+      "owner": "36811023512:1",
+      "events": [
+        "f0488ea7b0cb457390e75070781c338f"
+      ],
+      "record": {
+        "account_type": "",
+        "account_key": "",
+        "order_side": "",
+        "order_qty": null,
+        "filled_qty": null,
+        "unverified_qty": null,
+        "execution_price": null,
+        "execution_state": "",
+        "execution_checked_at": null,
+        "event_id": "1c7ea2ccc74648eeb677dc19c661c9ed",
+        "order_no": "",
+        "order_day": null,
+        "key": "3e20fc3e-53fc-814c-8031-f02d96a2e20d",
+        "page_id": "3e20fc3e-53fc-814c-8031-f02d96a2e20d",
+        "name": "아이쓰리시스템",
+        "ticker": "214430",
+        "first_detected_at": {
+          "__datetime__": "2026-09-21T09:03:00+09:00"
+        },
+        "first_threshold": 62900.0,
+        "first_price": 63100.0,
+        "first_atr": 3688.0,
+        "status": "추적중",
+        "closed_reason": "",
+        "closed_at": null,
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-10-01T12:34:26.020902+09:00"
+        },
+        "latest_close": 68200.0,
+        "latest_date": {
+          "__date__": "2026-09-30"
+        },
+        "latest_atr": 3558.0,
+        "latest_line": 70400.0,
+        "change_pct": 8.43,
+        "atr_mult": 1.44,
+        "dist_to_line": 2200.0,
+        "dist_to_line_atr": 0.62,
+        "level_state": "최초선위",
+        "new_breakout": "미해당",
+        "refresh_state": "갱신됨",
+        "refresh_note": "",
+        "user_memo": ""
+      },
+      "page_id": "3e20fc3e-53fc-814c-8031-f02d96a2e20d",
+      "fields": {
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-10-01T12:34:26.020902+09:00"
+        }
+      },
+      "state": "queued"
+    }
+  ],
+  "prepare_cursor": "f6241e41da7847b3a1cfc55eaa374fe0",
   "deliver_cursor": "2fc512fcb22e4500a51e9653adccd61e",
   "excluded_events": [
     {
