@@ -1,91 +1,9 @@
 {
   "version": 1,
-  "events": [
-    {
-      "id": "06d88b46bb96432d94b85d1e606b5d43",
-      "operation": "_set_outcome",
-      "args": [
-        "000990",
-        "상한제한",
-        "신규매수 일일 상한 0 (운영 보류)",
-        {
-          "__datetime__": "2026-10-01T10:05:49.472774+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    }
-  ],
-  "plans": [
-    {
-      "id": "bb3f3a92234f44cbbbd2bd1eeebd14fe",
-      "owner": "36799201963:1",
-      "events": [
-        "06d88b46bb96432d94b85d1e606b5d43"
-      ],
-      "record": {
-        "account_type": "",
-        "account_key": "",
-        "order_side": "",
-        "order_qty": null,
-        "filled_qty": null,
-        "unverified_qty": null,
-        "execution_price": null,
-        "execution_state": "",
-        "execution_checked_at": null,
-        "event_id": "b513ef5a9bca46579d032573c48b6a9f",
-        "order_no": "",
-        "order_day": null,
-        "key": "3e20fc3e-53fc-81b9-b91e-c316e02652fc",
-        "page_id": "3e20fc3e-53fc-81b9-b91e-c316e02652fc",
-        "name": "DB하이텍",
-        "ticker": "000990",
-        "first_detected_at": {
-          "__datetime__": "2026-09-21T14:53:00+09:00"
-        },
-        "first_threshold": 131400.0,
-        "first_price": 131500.0,
-        "first_atr": 8368.0,
-        "status": "추적중",
-        "closed_reason": "",
-        "closed_at": null,
-        "outcome": "상한제한",
-        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
-        "outcome_at": {
-          "__datetime__": "2026-10-01T10:05:49.472774+09:00"
-        },
-        "latest_close": 136600.0,
-        "latest_date": {
-          "__date__": "2026-09-30"
-        },
-        "latest_atr": 8163.0,
-        "latest_line": 141100.0,
-        "change_pct": 3.96,
-        "atr_mult": 0.62,
-        "dist_to_line": 4500.0,
-        "dist_to_line_atr": 0.55,
-        "level_state": "최초선위",
-        "new_breakout": "미해당",
-        "refresh_state": "갱신됨",
-        "refresh_note": "",
-        "user_memo": ""
-      },
-      "page_id": "3e20fc3e-53fc-81b9-b91e-c316e02652fc",
-      "fields": {
-        "outcome": "상한제한",
-        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
-        "outcome_at": {
-          "__datetime__": "2026-10-01T10:05:49.472774+09:00"
-        }
-      },
-      "state": "queued"
-    }
-  ],
+  "events": [],
+  "plans": [],
   "prepare_cursor": "311a5ef2f22743b5ac05f0fe677f4916",
-  "deliver_cursor": "76fd01c66187412abf8aeecdcd664f6a",
+  "deliver_cursor": "bb3f3a92234f44cbbbd2bd1eeebd14fe",
   "excluded_events": [
     {
       "event": {
