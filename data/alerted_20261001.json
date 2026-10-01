@@ -288,6 +288,42 @@
       "gap_atr": 0.026,
       "unit_shares": 1305,
       "status": "진입가능"
+    },
+    "093370": {
+      "time": "09:33",
+      "name": "후성",
+      "sector": "화학",
+      "market": "KOSPI",
+      "price": 15510.0,
+      "high20": 15500.0,
+      "atr20": 1076.0,
+      "gap_atr": 0.009,
+      "unit_shares": 464,
+      "status": "진입가능"
+    },
+    "036540": {
+      "time": "09:33",
+      "name": "SFA반도체",
+      "sector": "전기전자",
+      "market": "KOSDAQ",
+      "price": 11400.0,
+      "high20": 11160.0,
+      "atr20": 623.0,
+      "gap_atr": 0.385,
+      "unit_shares": 802,
+      "status": "진입가능"
+    },
+    "061970": {
+      "time": "09:33",
+      "name": "LB세미콘",
+      "sector": "전기전자",
+      "market": "KOSDAQ",
+      "price": 4790.0,
+      "high20": 4705.0,
+      "atr20": 311.0,
+      "gap_atr": 0.273,
+      "unit_shares": 1607,
+      "status": "진입가능"
     }
   }
 }
