@@ -732,6 +732,30 @@
       "gap_atr": 0.104,
       "unit_shares": 866,
       "status": "진입가능"
+    },
+    "220260": {
+      "time": "13:33",
+      "name": "켐트로스",
+      "sector": "화학",
+      "market": "KOSDAQ",
+      "price": 4760.0,
+      "high20": 4690.0,
+      "atr20": 211.0,
+      "gap_atr": 0.332,
+      "unit_shares": 2369,
+      "status": "진입가능"
+    },
+    "031330": {
+      "time": "13:33",
+      "name": "에스에이엠티",
+      "sector": "유통",
+      "market": "KOSDAQ",
+      "price": 8720.0,
+      "high20": 8700.0,
+      "atr20": 509.0,
+      "gap_atr": 0.039,
+      "unit_shares": 982,
+      "status": "진입가능"
     }
   }
 }
