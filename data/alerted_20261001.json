@@ -768,6 +768,18 @@
       "gap_atr": 0.045,
       "unit_shares": 2272,
       "status": "진입가능"
+    },
+    "241520": {
+      "time": "13:53",
+      "name": "DSC인베스트먼트",
+      "sector": "금융",
+      "market": "KOSDAQ",
+      "price": 8460.0,
+      "high20": 8450.0,
+      "atr20": 419.0,
+      "gap_atr": 0.024,
+      "unit_shares": 1193,
+      "status": "진입가능"
     }
   }
 }
