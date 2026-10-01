@@ -588,6 +588,18 @@
       "gap_atr": 0.103,
       "unit_shares": 514,
       "status": "진입가능"
+    },
+    "042520": {
+      "time": "10:33",
+      "name": "한스바이오메드",
+      "sector": "제약",
+      "market": "KOSDAQ",
+      "price": 22350.0,
+      "high20": 21850.0,
+      "atr20": 1482.0,
+      "gap_atr": 0.337,
+      "unit_shares": 337,
+      "status": "진입가능"
     }
   }
 }
