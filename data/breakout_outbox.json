@@ -1,8 +1,90 @@
 {
   "version": 1,
-  "events": [],
-  "plans": [],
-  "prepare_cursor": "a73b8698145f448ba3f5a46d91886132",
+  "events": [
+    {
+      "id": "97270b97cd4e493b8fd45f2038e6089e",
+      "operation": "_set_outcome",
+      "args": [
+        "121600",
+        "상한제한",
+        "신규매수 일일 상한 0 (운영 보류)",
+        {
+          "__datetime__": "2026-10-01T11:44:36.605796+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    }
+  ],
+  "plans": [
+    {
+      "id": "b777f4bd268140c3aa3a6455e8ec0a7e",
+      "owner": "36807133423:1",
+      "events": [
+        "97270b97cd4e493b8fd45f2038e6089e"
+      ],
+      "record": {
+        "account_type": "",
+        "account_key": "",
+        "order_side": "",
+        "order_qty": null,
+        "filled_qty": null,
+        "unverified_qty": null,
+        "execution_price": null,
+        "execution_state": "",
+        "execution_checked_at": null,
+        "event_id": "b6b5a5509dc14511b00a03e74640c91a",
+        "order_no": "",
+        "order_day": null,
+        "key": "3e90fc3e-53fc-817e-9657-c2a7a5879451",
+        "page_id": "3e90fc3e-53fc-817e-9657-c2a7a5879451",
+        "name": "나노신소재",
+        "ticker": "121600",
+        "first_detected_at": {
+          "__datetime__": "2026-09-28T09:33:00+09:00"
+        },
+        "first_threshold": 53500.0,
+        "first_price": 55000.0,
+        "first_atr": 2699.0,
+        "status": "추적중",
+        "closed_reason": "",
+        "closed_at": null,
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-10-01T11:44:36.605796+09:00"
+        },
+        "latest_close": 55700.0,
+        "latest_date": {
+          "__date__": "2026-09-30"
+        },
+        "latest_atr": 2803.0,
+        "latest_line": 56600.0,
+        "change_pct": 4.11,
+        "atr_mult": 0.82,
+        "dist_to_line": 900.0,
+        "dist_to_line_atr": 0.32,
+        "level_state": "최초선위",
+        "new_breakout": "미해당",
+        "refresh_state": "갱신됨",
+        "refresh_note": "",
+        "user_memo": ""
+      },
+      "page_id": "3e90fc3e-53fc-817e-9657-c2a7a5879451",
+      "fields": {
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-10-01T11:44:36.605796+09:00"
+        }
+      },
+      "state": "queued"
+    }
+  ],
+  "prepare_cursor": "b5ce0a5fe7664177a51d441cea0ae1e7",
   "deliver_cursor": "c4c07c3c741d456d816c6ad63a8d412e",
   "excluded_events": [
     {
