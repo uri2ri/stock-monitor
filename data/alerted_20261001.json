@@ -756,6 +756,18 @@
       "gap_atr": 0.039,
       "unit_shares": 982,
       "status": "진입가능"
+    },
+    "137310": {
+      "time": "13:43",
+      "name": "에스디바이오센서",
+      "sector": "의료·정밀기기",
+      "market": "KOSPI",
+      "price": 6290.0,
+      "high20": 6280.0,
+      "atr20": 220.0,
+      "gap_atr": 0.045,
+      "unit_shares": 2272,
+      "status": "진입가능"
     }
   }
 }
