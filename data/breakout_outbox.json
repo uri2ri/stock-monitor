@@ -17,6 +17,74 @@
         "order_day": null,
         "identity": null
       }
+    },
+    {
+      "id": "640816ed00314c779374ff6c7ebe5597",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "156100",
+          "name": "엘앤케이바이오",
+          "high20": 6160.0,
+          "price": 6170.0,
+          "atr20": 383.0
+        },
+        {
+          "__datetime__": "2026-10-01T09:23:35.294950+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "049dcc0878544681b4db6ebf81a5f048",
+      "operation": "_set_outcome",
+      "args": [
+        "036010",
+        "상한제한",
+        "신규매수 일일 상한 0 (운영 보류)",
+        {
+          "__datetime__": "2026-10-01T09:24:49.832313+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "e56e79a46759465596ed2516b64e1b4a",
+      "operation": "_set_outcome",
+      "args": [
+        "156100",
+        "상한제한",
+        "신규매수 일일 상한 0 (운영 보류)",
+        {
+          "__datetime__": "2026-10-01T09:24:49.841684+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "19da9cd1487042c7917b83d128aacfaa",
+      "operation": "_set_outcome",
+      "args": [
+        "018880",
+        "상한제한",
+        "신규매수 일일 상한 0 (운영 보류)",
+        {
+          "__datetime__": "2026-10-01T09:24:49.867657+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
     }
   ],
   "plans": [
@@ -80,9 +148,116 @@
         }
       },
       "state": "queued"
+    },
+    {
+      "id": "d3e9bbf8caae469786052613f91c79a9",
+      "owner": "36795902022:1",
+      "events": [
+        "640816ed00314c779374ff6c7ebe5597",
+        "e56e79a46759465596ed2516b64e1b4a"
+      ],
+      "record": {
+        "event_id": "640816ed00314c779374ff6c7ebe5597",
+        "ticker": "156100",
+        "name": "엘앤케이바이오",
+        "first_detected_at": {
+          "__datetime__": "2026-10-01T09:23:35.294950+09:00"
+        },
+        "first_threshold": 6160.0,
+        "first_price": 6170.0,
+        "first_atr": 383.0,
+        "status": "추적중",
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-10-01T09:24:49.841684+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "640816ed00314c779374ff6c7ebe5597",
+        "ticker": "156100",
+        "name": "엘앤케이바이오",
+        "first_detected_at": {
+          "__datetime__": "2026-10-01T09:23:35.294950+09:00"
+        },
+        "first_threshold": 6160.0,
+        "first_price": 6170.0,
+        "first_atr": 383.0,
+        "status": "추적중",
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-10-01T09:24:49.841684+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "256eaac2acd348beabc93f22402275f8",
+      "owner": "36795902022:1",
+      "events": [
+        "049dcc0878544681b4db6ebf81a5f048"
+      ],
+      "record": {
+        "account_type": "",
+        "account_key": "",
+        "order_side": "",
+        "order_qty": null,
+        "filled_qty": null,
+        "unverified_qty": null,
+        "execution_price": null,
+        "execution_state": "",
+        "execution_checked_at": null,
+        "event_id": "c9b276b3cbb348bdbffbd0d3db30133e",
+        "order_no": "",
+        "order_day": null,
+        "key": "3eb0fc3e-53fc-8165-b402-f38e93bb37bd",
+        "page_id": "3eb0fc3e-53fc-8165-b402-f38e93bb37bd",
+        "name": "아비코전자",
+        "ticker": "036010",
+        "first_detected_at": {
+          "__datetime__": "2026-09-30T09:03:00+09:00"
+        },
+        "first_threshold": 7750.0,
+        "first_price": 7790.0,
+        "first_atr": 450.0,
+        "status": "추적중",
+        "closed_reason": "",
+        "closed_at": null,
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-10-01T09:24:49.832313+09:00"
+        },
+        "latest_close": 7660.0,
+        "latest_date": {
+          "__date__": "2026-09-30"
+        },
+        "latest_atr": 443.0,
+        "latest_line": 7900.0,
+        "change_pct": -1.16,
+        "atr_mult": -0.2,
+        "dist_to_line": 240.0,
+        "dist_to_line_atr": 0.54,
+        "level_state": "최초선아래",
+        "new_breakout": "미해당",
+        "refresh_state": "갱신됨",
+        "refresh_note": "",
+        "user_memo": ""
+      },
+      "page_id": "3eb0fc3e-53fc-8165-b402-f38e93bb37bd",
+      "fields": {
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-10-01T09:24:49.832313+09:00"
+        }
+      },
+      "state": "queued"
     }
   ],
-  "prepare_cursor": "9839c6b328474e579840480a097a845d",
+  "prepare_cursor": "bb60604ecd294467acc541cc56c7ecf2",
   "deliver_cursor": "c1625924673b44909c09f419b0719b11",
   "excluded_events": [
     {
