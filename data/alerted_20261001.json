@@ -324,6 +324,66 @@
       "gap_atr": 0.273,
       "unit_shares": 1607,
       "status": "진입가능"
+    },
+    "319660": {
+      "time": "09:43",
+      "name": "피에스케이",
+      "sector": "기계·장비",
+      "market": "KOSDAQ",
+      "price": 154200.0,
+      "high20": 153300.0,
+      "atr20": 11008.0,
+      "gap_atr": 0.082,
+      "unit_shares": 45,
+      "status": "진입가능"
+    },
+    "265520": {
+      "time": "09:43",
+      "name": "AP시스템",
+      "sector": "기계·장비",
+      "market": "KOSDAQ",
+      "price": 19740.0,
+      "high20": 19490.0,
+      "atr20": 716.0,
+      "gap_atr": 0.349,
+      "unit_shares": 698,
+      "status": "진입가능"
+    },
+    "340450": {
+      "time": "09:43",
+      "name": "지씨지놈",
+      "sector": "일반서비스",
+      "market": "KOSDAQ",
+      "price": 8970.0,
+      "high20": 8920.0,
+      "atr20": 442.0,
+      "gap_atr": 0.113,
+      "unit_shares": 1131,
+      "status": "진입가능"
+    },
+    "170920": {
+      "time": "09:43",
+      "name": "엘티씨",
+      "sector": "화학",
+      "market": "KOSDAQ",
+      "price": 43500.0,
+      "high20": 43150.0,
+      "atr20": 3210.0,
+      "gap_atr": 0.109,
+      "unit_shares": 155,
+      "status": "진입가능"
+    },
+    "159010": {
+      "time": "09:43",
+      "name": "아스플로",
+      "sector": "기계·장비",
+      "market": "KOSDAQ",
+      "price": 31600.0,
+      "high20": 30950.0,
+      "atr20": 2207.0,
+      "gap_atr": 0.295,
+      "unit_shares": 226,
+      "status": "진입가능"
     }
   }
 }
