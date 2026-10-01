@@ -79,11 +79,11 @@
           "__datetime__": "2026-10-01T10:35:30.565839+09:00"
         }
       },
-      "state": "queued"
+      "state": "creating"
     }
   ],
   "prepare_cursor": "51c356b204e74623bdedfce9427ee9d3",
-  "deliver_cursor": "b7ef36de36b44d25adf52905472c53fd",
+  "deliver_cursor": "5e3bd4497e5347e2b7359defc6e22e81",
   "excluded_events": [
     {
       "event": {
