@@ -629,6 +629,635 @@
         "order_day": null,
         "identity": null
       }
+    },
+    {
+      "id": "ed1f48368fe14c3296b304c0408d414a",
+      "operation": "_set_outcome",
+      "args": [
+        "061970",
+        "미주문",
+        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        {
+          "__datetime__": "2026-10-01T15:34:09.440776+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "951215ea0c3e461e9002dda49611bc44",
+      "operation": "_set_outcome",
+      "args": [
+        "319660",
+        "미주문",
+        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        {
+          "__datetime__": "2026-10-01T15:34:09.453329+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "9b57afb7ff8b42b09c0b2620093fe473",
+      "operation": "_set_outcome",
+      "args": [
+        "265520",
+        "미주문",
+        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        {
+          "__datetime__": "2026-10-01T15:34:09.466734+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "e4cf74e1cf904da3a7e5febd48466fbe",
+      "operation": "_set_outcome",
+      "args": [
+        "340450",
+        "미주문",
+        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        {
+          "__datetime__": "2026-10-01T15:34:09.480927+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "45aaf5f1227b4ccea7ea7ad76f3c86a5",
+      "operation": "_set_outcome",
+      "args": [
+        "170920",
+        "미주문",
+        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        {
+          "__datetime__": "2026-10-01T15:34:09.495803+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "8f35e2ce473d4f779d1d4517fbe23285",
+      "operation": "_set_outcome",
+      "args": [
+        "159010",
+        "미주문",
+        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        {
+          "__datetime__": "2026-10-01T15:34:09.509469+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "02a1a5449d5b4dcfa6213203f639f0f5",
+      "operation": "_set_outcome",
+      "args": [
+        "356860",
+        "미주문",
+        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        {
+          "__datetime__": "2026-10-01T15:34:09.522574+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "b16287897f844509b79b694458386a0e",
+      "operation": "_set_outcome",
+      "args": [
+        "077500",
+        "미주문",
+        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        {
+          "__datetime__": "2026-10-01T15:34:09.535299+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "04fa12d9fbcf476f8c1f345528c3bc2e",
+      "operation": "_set_outcome",
+      "args": [
+        "417500",
+        "미주문",
+        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        {
+          "__datetime__": "2026-10-01T15:34:09.547823+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "2e081a006dd2496ea16f80ee045db1b0",
+      "operation": "_set_outcome",
+      "args": [
+        "000990",
+        "미주문",
+        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        {
+          "__datetime__": "2026-10-01T15:34:09.560737+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "42ac3e0edc5948a6ad0159a5331286e9",
+      "operation": "_set_outcome",
+      "args": [
+        "142210",
+        "미주문",
+        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        {
+          "__datetime__": "2026-10-01T15:34:09.573349+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "ce16339f573448ada98ed906562ed3a2",
+      "operation": "_set_outcome",
+      "args": [
+        "259630",
+        "미주문",
+        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        {
+          "__datetime__": "2026-10-01T15:34:09.585965+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "f4c8ebf2a44142b3839e3f544f0732bd",
+      "operation": "_set_outcome",
+      "args": [
+        "041920",
+        "미주문",
+        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        {
+          "__datetime__": "2026-10-01T15:34:09.598550+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "f4b0c113454b434d9bc9fbf3e80911d3",
+      "operation": "_set_outcome",
+      "args": [
+        "110990",
+        "미주문",
+        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        {
+          "__datetime__": "2026-10-01T15:34:09.611138+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "8b344742160a4ee9a62f4ec87033a0c6",
+      "operation": "_set_outcome",
+      "args": [
+        "105740",
+        "미주문",
+        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        {
+          "__datetime__": "2026-10-01T15:34:09.623949+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "62ef9eb2328046dabc9cdc269589262a",
+      "operation": "_set_outcome",
+      "args": [
+        "011930",
+        "미주문",
+        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        {
+          "__datetime__": "2026-10-01T15:34:09.636510+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "5b3a07bc0eb946deaee348a37324b79b",
+      "operation": "_set_outcome",
+      "args": [
+        "042520",
+        "미주문",
+        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        {
+          "__datetime__": "2026-10-01T15:34:09.649144+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "ce5f8d64043343ceb47a933241b4512c",
+      "operation": "_set_outcome",
+      "args": [
+        "484120",
+        "미주문",
+        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        {
+          "__datetime__": "2026-10-01T15:34:09.697158+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "74ec61581a68493da087aa011a425746",
+      "operation": "_set_outcome",
+      "args": [
+        "195870",
+        "미주문",
+        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        {
+          "__datetime__": "2026-10-01T15:34:09.709982+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "7f5d167a410f4c889c24c84ae45b3ba2",
+      "operation": "_set_outcome",
+      "args": [
+        "007810",
+        "미주문",
+        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        {
+          "__datetime__": "2026-10-01T15:34:09.722644+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "3e4e36fd38e749a6b3b02f082292d246",
+      "operation": "_set_outcome",
+      "args": [
+        "036200",
+        "미주문",
+        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        {
+          "__datetime__": "2026-10-01T15:34:09.735569+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "5f1c467f01074f6391cf321aab76dec5",
+      "operation": "_set_outcome",
+      "args": [
+        "121600",
+        "미주문",
+        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        {
+          "__datetime__": "2026-10-01T15:34:09.748416+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "9ab8f0b44a1b428ea76578d906b41184",
+      "operation": "_set_outcome",
+      "args": [
+        "007660",
+        "미주문",
+        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        {
+          "__datetime__": "2026-10-01T15:34:09.761157+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "a9086c320ef648e594270d51657b6739",
+      "operation": "_set_outcome",
+      "args": [
+        "260970",
+        "미주문",
+        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        {
+          "__datetime__": "2026-10-01T15:34:09.773995+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "ebb66629577b44ac9997a44b93e5006b",
+      "operation": "_set_outcome",
+      "args": [
+        "214430",
+        "미주문",
+        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        {
+          "__datetime__": "2026-10-01T15:34:09.786760+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "6edad5ce76f849d28afb0f9c16ea7b53",
+      "operation": "_set_outcome",
+      "args": [
+        "037460",
+        "미주문",
+        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        {
+          "__datetime__": "2026-10-01T15:34:09.799422+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "47d314f3ec944382b3d3d0cc349caf45",
+      "operation": "_set_outcome",
+      "args": [
+        "489790",
+        "미주문",
+        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        {
+          "__datetime__": "2026-10-01T15:34:09.812187+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "7fc8fd85d5c54ce9a31cc481e0960152",
+      "operation": "_set_outcome",
+      "args": [
+        "357580",
+        "미주문",
+        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        {
+          "__datetime__": "2026-10-01T15:34:09.824956+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "f588d0031ca642839763b0fb5c83b2f3",
+      "operation": "_set_outcome",
+      "args": [
+        "220260",
+        "미주문",
+        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        {
+          "__datetime__": "2026-10-01T15:34:09.837704+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "cdec5d8f72f34177ad814814df5776c3",
+      "operation": "_set_outcome",
+      "args": [
+        "031330",
+        "미주문",
+        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        {
+          "__datetime__": "2026-10-01T15:34:09.850697+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "51f0f70eba60419a82de881f6935e8b9",
+      "operation": "_set_outcome",
+      "args": [
+        "137310",
+        "미주문",
+        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        {
+          "__datetime__": "2026-10-01T15:34:09.863747+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "5012f7acef23469dbde997539181fe47",
+      "operation": "_set_outcome",
+      "args": [
+        "241520",
+        "미주문",
+        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        {
+          "__datetime__": "2026-10-01T15:34:09.876718+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "5b342c48806b4be9a78e6062c11a5d95",
+      "operation": "_set_outcome",
+      "args": [
+        "095340",
+        "미주문",
+        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        {
+          "__datetime__": "2026-10-01T15:34:09.889625+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "91e9cd76fa194580874f815de9260370",
+      "operation": "_set_outcome",
+      "args": [
+        "228760",
+        "미주문",
+        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        {
+          "__datetime__": "2026-10-01T15:34:09.902507+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "125844cf8aae49849abe638e8731b3fd",
+      "operation": "_set_outcome",
+      "args": [
+        "015860",
+        "미주문",
+        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        {
+          "__datetime__": "2026-10-01T15:34:09.915435+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "4781f5c10f214c15b0c6153b3d2b88af",
+      "operation": "_set_outcome",
+      "args": [
+        "474610",
+        "미주문",
+        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        {
+          "__datetime__": "2026-10-01T15:34:09.929205+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "bb4c48ec83554afa98afc39aec13243f",
+      "operation": "_set_outcome",
+      "args": [
+        "042700",
+        "미주문",
+        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        {
+          "__datetime__": "2026-10-01T15:34:09.942251+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
     }
   ],
   "plans": [
@@ -2920,7 +3549,7 @@
       "state": "queued"
     }
   ],
-  "prepare_cursor": "cdc9ccd1fe3e42a2a5bd15b3c2e9bfba",
+  "prepare_cursor": "bb4c48ec83554afa98afc39aec13243f",
   "deliver_cursor": "edd213767ce545f9987910d28f2dccb7",
   "excluded_events": [
     {
