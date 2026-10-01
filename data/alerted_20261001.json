@@ -780,6 +780,18 @@
       "gap_atr": 0.024,
       "unit_shares": 1193,
       "status": "진입가능"
+    },
+    "095340": {
+      "time": "14:23",
+      "name": "ISC",
+      "sector": "유통",
+      "market": "KOSDAQ",
+      "price": 223500.0,
+      "high20": 221500.0,
+      "atr20": 12708.0,
+      "gap_atr": 0.157,
+      "unit_shares": 39,
+      "status": "진입가능"
     }
   }
 }

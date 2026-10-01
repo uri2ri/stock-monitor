@@ -1,91 +1,9 @@
 {
   "version": 1,
-  "events": [
-    {
-      "id": "6bcdb8382c884ddcb34cbedf5adf5485",
-      "operation": "_set_outcome",
-      "args": [
-        "095340",
-        "상한제한",
-        "신규매수 일일 상한 0 (운영 보류)",
-        {
-          "__datetime__": "2026-10-01T14:24:47.847492+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    }
-  ],
-  "plans": [
-    {
-      "id": "9c67f8d6c7dd49749ecff77b07e726ea",
-      "owner": "36819503671:1",
-      "events": [
-        "6bcdb8382c884ddcb34cbedf5adf5485"
-      ],
-      "record": {
-        "account_type": "",
-        "account_key": "",
-        "order_side": "",
-        "order_qty": null,
-        "filled_qty": null,
-        "unverified_qty": null,
-        "execution_price": null,
-        "execution_state": "",
-        "execution_checked_at": null,
-        "event_id": "88ade70cb57b47d19b792b6026490e45",
-        "order_no": "",
-        "order_day": null,
-        "key": "3e30fc3e-53fc-81d2-a55c-e6c926dc1e74",
-        "page_id": "3e30fc3e-53fc-81d2-a55c-e6c926dc1e74",
-        "name": "ISC",
-        "ticker": "095340",
-        "first_detected_at": {
-          "__datetime__": "2026-09-22T09:03:00+09:00"
-        },
-        "first_threshold": 203500.0,
-        "first_price": 216500.0,
-        "first_atr": 13181.0,
-        "status": "추적중",
-        "closed_reason": "",
-        "closed_at": null,
-        "outcome": "상한제한",
-        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
-        "outcome_at": {
-          "__datetime__": "2026-10-01T14:24:47.847492+09:00"
-        },
-        "latest_close": 213500.0,
-        "latest_date": {
-          "__date__": "2026-09-30"
-        },
-        "latest_atr": 12708.0,
-        "latest_line": 221500.0,
-        "change_pct": 4.91,
-        "atr_mult": 0.76,
-        "dist_to_line": 8000.0,
-        "dist_to_line_atr": 0.63,
-        "level_state": "최초선위",
-        "new_breakout": "미해당",
-        "refresh_state": "갱신됨",
-        "refresh_note": "",
-        "user_memo": ""
-      },
-      "page_id": "3e30fc3e-53fc-81d2-a55c-e6c926dc1e74",
-      "fields": {
-        "outcome": "상한제한",
-        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
-        "outcome_at": {
-          "__datetime__": "2026-10-01T14:24:47.847492+09:00"
-        }
-      },
-      "state": "queued"
-    }
-  ],
+  "events": [],
+  "plans": [],
   "prepare_cursor": "194f2335b35941588f49db064f1c1da1",
-  "deliver_cursor": "92e56fa3c4654fa9859cf61bec600da7",
+  "deliver_cursor": "9c67f8d6c7dd49749ecff77b07e726ea",
   "excluded_events": [
     {
       "event": {
