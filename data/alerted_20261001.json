@@ -516,6 +516,54 @@
       "gap_atr": 0.086,
       "unit_shares": 61,
       "status": "진입가능"
+    },
+    "142210": {
+      "time": "10:13",
+      "name": "유니트론텍",
+      "sector": "유통",
+      "market": "KOSDAQ",
+      "price": 6540.0,
+      "high20": 6520.0,
+      "atr20": 267.0,
+      "gap_atr": 0.075,
+      "unit_shares": 1872,
+      "status": "진입가능"
+    },
+    "259630": {
+      "time": "10:13",
+      "name": "엠플러스",
+      "sector": "기계·장비",
+      "market": "KOSDAQ",
+      "price": 9830.0,
+      "high20": 9810.0,
+      "atr20": 444.0,
+      "gap_atr": 0.045,
+      "unit_shares": 1126,
+      "status": "진입가능"
+    },
+    "041920": {
+      "time": "10:13",
+      "name": "메디아나",
+      "sector": "의료·정밀기기",
+      "market": "KOSDAQ",
+      "price": 10090.0,
+      "high20": 10030.0,
+      "atr20": 529.0,
+      "gap_atr": 0.113,
+      "unit_shares": 945,
+      "status": "진입가능"
+    },
+    "110990": {
+      "time": "10:13",
+      "name": "디아이티",
+      "sector": "기계·장비",
+      "market": "KOSDAQ",
+      "price": 18230.0,
+      "high20": 18200.0,
+      "atr20": 901.0,
+      "gap_atr": 0.033,
+      "unit_shares": 554,
+      "status": "진입가능"
     }
   }
 }
