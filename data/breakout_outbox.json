@@ -2,23 +2,6 @@
   "version": 1,
   "events": [
     {
-      "id": "41ca81c5d9f44c29acb34aeb3ad6fe9c",
-      "operation": "record_breakout",
-      "args": [
-        {
-          "ticker": "007660",
-          "name": "이수페타시스",
-          "high20": 119800.0,
-          "price": 119900.0,
-          "atr20": 7452.0
-        },
-        {
-          "__datetime__": "2026-10-01T11:53:37.463665+09:00"
-        }
-      ],
-      "kwargs": {}
-    },
-    {
       "id": "7edd1567edb7401eac7d7cd17bbfe2a6",
       "operation": "record_breakout",
       "args": [
@@ -34,23 +17,6 @@
         }
       ],
       "kwargs": {}
-    },
-    {
-      "id": "924110867c924846aa6b91a8ab415964",
-      "operation": "_set_outcome",
-      "args": [
-        "007660",
-        "상한제한",
-        "신규매수 일일 상한 0 (운영 보류)",
-        {
-          "__datetime__": "2026-10-01T11:54:41.227291+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
     },
     {
       "id": "3f495d136fcc40258f1c260c8b2aee89",
@@ -71,50 +37,6 @@
     }
   ],
   "plans": [
-    {
-      "id": "63d6db26387140e4b9a1a93c7d08d0ac",
-      "owner": "36807917532:1",
-      "events": [
-        "41ca81c5d9f44c29acb34aeb3ad6fe9c",
-        "924110867c924846aa6b91a8ab415964"
-      ],
-      "record": {
-        "event_id": "41ca81c5d9f44c29acb34aeb3ad6fe9c",
-        "ticker": "007660",
-        "name": "이수페타시스",
-        "first_detected_at": {
-          "__datetime__": "2026-10-01T11:53:37.463665+09:00"
-        },
-        "first_threshold": 119800.0,
-        "first_price": 119900.0,
-        "first_atr": 7452.0,
-        "status": "추적중",
-        "outcome": "상한제한",
-        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
-        "outcome_at": {
-          "__datetime__": "2026-10-01T11:54:41.227291+09:00"
-        }
-      },
-      "page_id": null,
-      "fields": {
-        "event_id": "41ca81c5d9f44c29acb34aeb3ad6fe9c",
-        "ticker": "007660",
-        "name": "이수페타시스",
-        "first_detected_at": {
-          "__datetime__": "2026-10-01T11:53:37.463665+09:00"
-        },
-        "first_threshold": 119800.0,
-        "first_price": 119900.0,
-        "first_atr": 7452.0,
-        "status": "추적중",
-        "outcome": "상한제한",
-        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
-        "outcome_at": {
-          "__datetime__": "2026-10-01T11:54:41.227291+09:00"
-        }
-      },
-      "state": "creating"
-    },
     {
       "id": "2fc512fcb22e4500a51e9653adccd61e",
       "owner": "36807917532:1",
@@ -157,11 +79,11 @@
           "__datetime__": "2026-10-01T11:54:41.236902+09:00"
         }
       },
-      "state": "queued"
+      "state": "creating"
     }
   ],
   "prepare_cursor": "d9afd82ed1184759b2911df72c598ff6",
-  "deliver_cursor": "63d6db26387140e4b9a1a93c7d08d0ac",
+  "deliver_cursor": "2fc512fcb22e4500a51e9653adccd61e",
   "excluded_events": [
     {
       "event": {
