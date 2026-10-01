@@ -696,6 +696,18 @@
       "gap_atr": 0.056,
       "unit_shares": 140,
       "status": "진입가능"
+    },
+    "037460": {
+      "time": "12:43",
+      "name": "삼지전자",
+      "sector": "전기전자",
+      "market": "KOSDAQ",
+      "price": 31875.0,
+      "high20": 31850.0,
+      "atr20": 1541.0,
+      "gap_atr": 0.016,
+      "unit_shares": 324,
+      "status": "진입가능"
     }
   }
 }
