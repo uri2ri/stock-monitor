@@ -384,6 +384,54 @@
       "gap_atr": 0.295,
       "unit_shares": 226,
       "status": "진입가능"
+    },
+    "356860": {
+      "time": "09:53",
+      "name": "티엘비",
+      "sector": "전기전자",
+      "market": "KOSDAQ",
+      "price": 46600.0,
+      "high20": 46500.0,
+      "atr20": 3603.0,
+      "gap_atr": 0.028,
+      "unit_shares": 138,
+      "status": "진입가능"
+    },
+    "232680": {
+      "time": "09:53",
+      "name": "라온로보틱스",
+      "sector": "기계·장비",
+      "market": "KOSDAQ",
+      "price": 11060.0,
+      "high20": 10670.0,
+      "atr20": 593.0,
+      "gap_atr": 0.658,
+      "unit_shares": 843,
+      "status": "추격금지"
+    },
+    "077500": {
+      "time": "09:53",
+      "name": "유니퀘스트",
+      "sector": "유통",
+      "market": "KOSPI",
+      "price": 10430.0,
+      "high20": 10410.0,
+      "atr20": 606.0,
+      "gap_atr": 0.033,
+      "unit_shares": 825,
+      "status": "진입가능"
+    },
+    "417500": {
+      "time": "09:53",
+      "name": "제이아이테크",
+      "sector": "화학",
+      "market": "KOSDAQ",
+      "price": 4240.0,
+      "high20": 4195.0,
+      "atr20": 211.0,
+      "gap_atr": 0.213,
+      "unit_shares": 2369,
+      "status": "진입가능"
     }
   }
 }
