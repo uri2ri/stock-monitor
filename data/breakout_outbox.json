@@ -1,8 +1,88 @@
 {
   "version": 1,
-  "events": [],
-  "plans": [],
-  "prepare_cursor": "8f1dce36331a4ea4b95ce4f1c20fba94",
+  "events": [
+    {
+      "id": "db6c681fae784a25b071393d38e8d37e",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "137310",
+          "name": "에스디바이오센서",
+          "high20": 6280.0,
+          "price": 6290.0,
+          "atr20": 220.0
+        },
+        {
+          "__datetime__": "2026-10-01T13:43:44.159362+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "26d0e3f6ef204ea48b90dde00140cb40",
+      "operation": "_set_outcome",
+      "args": [
+        "137310",
+        "상한제한",
+        "신규매수 일일 상한 0 (운영 보류)",
+        {
+          "__datetime__": "2026-10-01T13:44:57.321636+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    }
+  ],
+  "plans": [
+    {
+      "id": "bb7c68dd23ea456b846e216c65d80e9e",
+      "owner": "36816405214:1",
+      "events": [
+        "db6c681fae784a25b071393d38e8d37e",
+        "26d0e3f6ef204ea48b90dde00140cb40"
+      ],
+      "record": {
+        "event_id": "db6c681fae784a25b071393d38e8d37e",
+        "ticker": "137310",
+        "name": "에스디바이오센서",
+        "first_detected_at": {
+          "__datetime__": "2026-10-01T13:43:44.159362+09:00"
+        },
+        "first_threshold": 6280.0,
+        "first_price": 6290.0,
+        "first_atr": 220.0,
+        "status": "추적중",
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-10-01T13:44:57.321636+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "db6c681fae784a25b071393d38e8d37e",
+        "ticker": "137310",
+        "name": "에스디바이오센서",
+        "first_detected_at": {
+          "__datetime__": "2026-10-01T13:43:44.159362+09:00"
+        },
+        "first_threshold": 6280.0,
+        "first_price": 6290.0,
+        "first_atr": 220.0,
+        "status": "추적중",
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-10-01T13:44:57.321636+09:00"
+        }
+      },
+      "state": "queued"
+    }
+  ],
+  "prepare_cursor": "a2a1affe82a946599e05e40e4bac7c45",
   "deliver_cursor": "e9127fefcadf4074aee4b2d63595318a",
   "excluded_events": [
     {
