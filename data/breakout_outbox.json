@@ -2,14 +2,65 @@
   "version": 1,
   "events": [
     {
-      "id": "d64991bbcc2d487ca8f7b1c3dcba6b00",
+      "id": "1ac561f6263c42ae942d8f1731a65678",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "044450",
+          "name": "KSS해운",
+          "high20": 12650.0,
+          "price": 12720.0,
+          "atr20": 395.0
+        },
+        {
+          "__datetime__": "2026-10-01T09:03:40.042678+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "954f42c7b0314a27a32115db24b3c4b1",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "236200",
+          "name": "슈프리마",
+          "high20": 57000.0,
+          "price": 58200.0,
+          "atr20": 2314.0
+        },
+        {
+          "__datetime__": "2026-10-01T09:03:40.042678+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "73e41f3128554e14b7655b5a4401f876",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "018880",
+          "name": "한온시스템",
+          "high20": 3635.0,
+          "price": 3680.0,
+          "atr20": 168.0
+        },
+        {
+          "__datetime__": "2026-10-01T09:03:40.042678+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "24c27cdf79804200a26be46f46c7a2dc",
       "operation": "_set_outcome",
       "args": [
-        "255440",
+        "236200",
         "미주문",
-        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        "추격 구간(+0.52N) - 매수 대상 제외",
         {
-          "__datetime__": "2026-09-30T15:44:10.355558+09:00"
+          "__datetime__": "2026-10-01T09:03:40.042678+09:00"
         }
       ],
       "kwargs": {
@@ -19,14 +70,14 @@
       }
     },
     {
-      "id": "64e627e6ea814cbba734ab3ac4f4cf90",
+      "id": "16c3e341e5f04f58a137b2c02a619e06",
       "operation": "_set_outcome",
       "args": [
-        "001040",
+        "044450",
         "미주문",
         "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
         {
-          "__datetime__": "2026-09-30T15:44:10.363238+09:00"
+          "__datetime__": "2026-10-01T09:03:51.057821+09:00"
         }
       ],
       "kwargs": {
@@ -36,133 +87,14 @@
       }
     },
     {
-      "id": "a5a31b429a4b493eb0c8224d92ebf0bb",
+      "id": "b9e62adfe24441e0b33ea99aa78efc60",
       "operation": "_set_outcome",
       "args": [
-        "002360",
+        "018880",
         "미주문",
         "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
         {
-          "__datetime__": "2026-09-30T15:44:10.482856+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
-      "id": "85f28090521a4e59af730d5d14e4f098",
-      "operation": "_set_outcome",
-      "args": [
-        "071320",
-        "미주문",
-        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        {
-          "__datetime__": "2026-09-30T15:44:10.508484+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
-      "id": "676f5fa6ad9c4e53bcc8c983515ecbd0",
-      "operation": "_set_outcome",
-      "args": [
-        "161580",
-        "미주문",
-        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        {
-          "__datetime__": "2026-09-30T15:44:10.517065+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
-      "id": "c5f2188a6ad7407995c13a3c6d3ee541",
-      "operation": "_set_outcome",
-      "args": [
-        "255440",
-        "미주문",
-        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        {
-          "__datetime__": "2026-09-30T15:54:03.234922+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
-      "id": "dede19e6ae75432fa3bbc94a3ec4074b",
-      "operation": "_set_outcome",
-      "args": [
-        "001040",
-        "미주문",
-        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        {
-          "__datetime__": "2026-09-30T15:54:03.244801+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
-      "id": "8f56eda860dd4746b3f415c1d7e9ac66",
-      "operation": "_set_outcome",
-      "args": [
-        "002360",
-        "미주문",
-        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        {
-          "__datetime__": "2026-09-30T15:54:03.254671+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
-      "id": "d42a143ce1b842ffb09c1e5dce6e2262",
-      "operation": "_set_outcome",
-      "args": [
-        "071320",
-        "미주문",
-        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        {
-          "__datetime__": "2026-09-30T15:54:03.264700+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
-      "id": "cdfc761c4a25452caa231b5e8eb95734",
-      "operation": "_set_outcome",
-      "args": [
-        "161580",
-        "미주문",
-        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        {
-          "__datetime__": "2026-09-30T15:54:03.274680+09:00"
+          "__datetime__": "2026-10-01T09:03:51.076038+09:00"
         }
       ],
       "kwargs": {
@@ -172,8 +104,141 @@
       }
     }
   ],
-  "plans": [],
-  "prepare_cursor": "a778632c2d3f41d69b2179d2e4baab42",
+  "plans": [
+    {
+      "id": "ddf72aea7b704e7aa47fff976f77c4b3",
+      "owner": "36794189726:1",
+      "events": [
+        "1ac561f6263c42ae942d8f1731a65678",
+        "16c3e341e5f04f58a137b2c02a619e06"
+      ],
+      "record": {
+        "event_id": "1ac561f6263c42ae942d8f1731a65678",
+        "ticker": "044450",
+        "name": "KSS해운",
+        "first_detected_at": {
+          "__datetime__": "2026-10-01T09:03:40.042678+09:00"
+        },
+        "first_threshold": 12650.0,
+        "first_price": 12720.0,
+        "first_atr": 395.0,
+        "status": "추적중",
+        "outcome": "미주문",
+        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        "outcome_at": {
+          "__datetime__": "2026-10-01T09:03:51.057821+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "1ac561f6263c42ae942d8f1731a65678",
+        "ticker": "044450",
+        "name": "KSS해운",
+        "first_detected_at": {
+          "__datetime__": "2026-10-01T09:03:40.042678+09:00"
+        },
+        "first_threshold": 12650.0,
+        "first_price": 12720.0,
+        "first_atr": 395.0,
+        "status": "추적중",
+        "outcome": "미주문",
+        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        "outcome_at": {
+          "__datetime__": "2026-10-01T09:03:51.057821+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "b4c1c63f4b3949449b720b7c3fe23f7e",
+      "owner": "36794189726:1",
+      "events": [
+        "954f42c7b0314a27a32115db24b3c4b1",
+        "24c27cdf79804200a26be46f46c7a2dc"
+      ],
+      "record": {
+        "event_id": "954f42c7b0314a27a32115db24b3c4b1",
+        "ticker": "236200",
+        "name": "슈프리마",
+        "first_detected_at": {
+          "__datetime__": "2026-10-01T09:03:40.042678+09:00"
+        },
+        "first_threshold": 57000.0,
+        "first_price": 58200.0,
+        "first_atr": 2314.0,
+        "status": "추적중",
+        "outcome": "미주문",
+        "outcome_reason": "추격 구간(+0.52N) - 매수 대상 제외",
+        "outcome_at": {
+          "__datetime__": "2026-10-01T09:03:40.042678+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "954f42c7b0314a27a32115db24b3c4b1",
+        "ticker": "236200",
+        "name": "슈프리마",
+        "first_detected_at": {
+          "__datetime__": "2026-10-01T09:03:40.042678+09:00"
+        },
+        "first_threshold": 57000.0,
+        "first_price": 58200.0,
+        "first_atr": 2314.0,
+        "status": "추적중",
+        "outcome": "미주문",
+        "outcome_reason": "추격 구간(+0.52N) - 매수 대상 제외",
+        "outcome_at": {
+          "__datetime__": "2026-10-01T09:03:40.042678+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "9a52ec0be2464999992c49ea9d4c8365",
+      "owner": "36794189726:1",
+      "events": [
+        "73e41f3128554e14b7655b5a4401f876",
+        "b9e62adfe24441e0b33ea99aa78efc60"
+      ],
+      "record": {
+        "event_id": "73e41f3128554e14b7655b5a4401f876",
+        "ticker": "018880",
+        "name": "한온시스템",
+        "first_detected_at": {
+          "__datetime__": "2026-10-01T09:03:40.042678+09:00"
+        },
+        "first_threshold": 3635.0,
+        "first_price": 3680.0,
+        "first_atr": 168.0,
+        "status": "추적중",
+        "outcome": "미주문",
+        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        "outcome_at": {
+          "__datetime__": "2026-10-01T09:03:51.076038+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "73e41f3128554e14b7655b5a4401f876",
+        "ticker": "018880",
+        "name": "한온시스템",
+        "first_detected_at": {
+          "__datetime__": "2026-10-01T09:03:40.042678+09:00"
+        },
+        "first_threshold": 3635.0,
+        "first_price": 3680.0,
+        "first_atr": 168.0,
+        "status": "추적중",
+        "outcome": "미주문",
+        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        "outcome_at": {
+          "__datetime__": "2026-10-01T09:03:51.076038+09:00"
+        }
+      },
+      "state": "queued"
+    }
+  ],
+  "prepare_cursor": "b9e62adfe24441e0b33ea99aa78efc60",
   "deliver_cursor": "c88c4ba377b5423a8459ed7a7aa025e1",
   "excluded_events": [
     {
