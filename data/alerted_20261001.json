@@ -792,6 +792,18 @@
       "gap_atr": 0.157,
       "unit_shares": 39,
       "status": "진입가능"
+    },
+    "228760": {
+      "time": "14:53",
+      "name": "지노믹트리",
+      "sector": "일반서비스",
+      "market": "KOSDAQ",
+      "price": 12680.0,
+      "high20": 12610.0,
+      "atr20": 735.0,
+      "gap_atr": 0.095,
+      "unit_shares": 680,
+      "status": "진입가능"
     }
   }
 }
