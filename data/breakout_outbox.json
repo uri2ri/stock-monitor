@@ -1,8 +1,166 @@
 {
   "version": 1,
-  "events": [],
-  "plans": [],
-  "prepare_cursor": "b2f6328ea1f34c8789d556f388661ff6",
+  "events": [
+    {
+      "id": "ced3b2c2ea124b2db3f91b5cb98d50e5",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "105740",
+          "name": "디케이락",
+          "high20": 9760.0,
+          "price": 9770.0,
+          "atr20": 367.0
+        },
+        {
+          "__datetime__": "2026-10-01T10:23:40.724871+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "b9894c56d45f46bea1f114b59ac16460",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "011930",
+          "name": "신성이엔지",
+          "high20": 18500.0,
+          "price": 18600.0,
+          "atr20": 971.0
+        },
+        {
+          "__datetime__": "2026-10-01T10:23:40.724871+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "9e472663203743d5b60e9b021b782c0f",
+      "operation": "_set_outcome",
+      "args": [
+        "105740",
+        "상한제한",
+        "신규매수 일일 상한 0 (운영 보류)",
+        {
+          "__datetime__": "2026-10-01T10:25:04.105741+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "495de9e880054758a8fdcb6da61c2613",
+      "operation": "_set_outcome",
+      "args": [
+        "011930",
+        "상한제한",
+        "신규매수 일일 상한 0 (운영 보류)",
+        {
+          "__datetime__": "2026-10-01T10:25:04.114755+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    }
+  ],
+  "plans": [
+    {
+      "id": "5fc69399ba3449f7a861331be436da9c",
+      "owner": "36800832219:1",
+      "events": [
+        "ced3b2c2ea124b2db3f91b5cb98d50e5",
+        "9e472663203743d5b60e9b021b782c0f"
+      ],
+      "record": {
+        "event_id": "ced3b2c2ea124b2db3f91b5cb98d50e5",
+        "ticker": "105740",
+        "name": "디케이락",
+        "first_detected_at": {
+          "__datetime__": "2026-10-01T10:23:40.724871+09:00"
+        },
+        "first_threshold": 9760.0,
+        "first_price": 9770.0,
+        "first_atr": 367.0,
+        "status": "추적중",
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-10-01T10:25:04.105741+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "ced3b2c2ea124b2db3f91b5cb98d50e5",
+        "ticker": "105740",
+        "name": "디케이락",
+        "first_detected_at": {
+          "__datetime__": "2026-10-01T10:23:40.724871+09:00"
+        },
+        "first_threshold": 9760.0,
+        "first_price": 9770.0,
+        "first_atr": 367.0,
+        "status": "추적중",
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-10-01T10:25:04.105741+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "b7ef36de36b44d25adf52905472c53fd",
+      "owner": "36800832219:1",
+      "events": [
+        "b9894c56d45f46bea1f114b59ac16460",
+        "495de9e880054758a8fdcb6da61c2613"
+      ],
+      "record": {
+        "event_id": "b9894c56d45f46bea1f114b59ac16460",
+        "ticker": "011930",
+        "name": "신성이엔지",
+        "first_detected_at": {
+          "__datetime__": "2026-10-01T10:23:40.724871+09:00"
+        },
+        "first_threshold": 18500.0,
+        "first_price": 18600.0,
+        "first_atr": 971.0,
+        "status": "추적중",
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-10-01T10:25:04.114755+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "b9894c56d45f46bea1f114b59ac16460",
+        "ticker": "011930",
+        "name": "신성이엔지",
+        "first_detected_at": {
+          "__datetime__": "2026-10-01T10:23:40.724871+09:00"
+        },
+        "first_threshold": 18500.0,
+        "first_price": 18600.0,
+        "first_atr": 971.0,
+        "status": "추적중",
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-10-01T10:25:04.114755+09:00"
+        }
+      },
+      "state": "queued"
+    }
+  ],
+  "prepare_cursor": "79e9211895ad4412a2e3b8f0103238b4",
   "deliver_cursor": "39b7fc8632844d9688979320624f4215",
   "excluded_events": [
     {
