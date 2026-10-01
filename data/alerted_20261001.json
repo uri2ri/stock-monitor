@@ -708,6 +708,18 @@
       "gap_atr": 0.016,
       "unit_shares": 324,
       "status": "진입가능"
+    },
+    "489790": {
+      "time": "12:53",
+      "name": "한화비전",
+      "sector": "전기전자",
+      "market": "KOSPI",
+      "price": 51600.0,
+      "high20": 51100.0,
+      "atr20": 2693.0,
+      "gap_atr": 0.186,
+      "unit_shares": 185,
+      "status": "진입가능"
     }
   }
 }
