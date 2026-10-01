@@ -2,23 +2,6 @@
   "version": 1,
   "events": [
     {
-      "id": "16a7f0d1f792491294589aa19a88a5a9",
-      "operation": "record_breakout",
-      "args": [
-        {
-          "ticker": "356860",
-          "name": "티엘비",
-          "high20": 46500.0,
-          "price": 46600.0,
-          "atr20": 3603.0
-        },
-        {
-          "__datetime__": "2026-10-01T09:53:41.173317+09:00"
-        }
-      ],
-      "kwargs": {}
-    },
-    {
       "id": "298dbe019cac4d56b9303a3b93635dfa",
       "operation": "record_breakout",
       "args": [
@@ -44,23 +27,6 @@
         "추격 구간(+0.66N) - 매수 대상 제외",
         {
           "__datetime__": "2026-10-01T09:53:41.173317+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
-      "id": "ee91397aaa784036af8c30427ead466c",
-      "operation": "_set_outcome",
-      "args": [
-        "356860",
-        "상한제한",
-        "신규매수 일일 상한 0 (운영 보류)",
-        {
-          "__datetime__": "2026-10-01T09:54:20.145827+09:00"
         }
       ],
       "kwargs": {
@@ -106,50 +72,6 @@
   ],
   "plans": [
     {
-      "id": "124221ede2db43d1a65486cb4435689c",
-      "owner": "36798381176:1",
-      "events": [
-        "16a7f0d1f792491294589aa19a88a5a9",
-        "ee91397aaa784036af8c30427ead466c"
-      ],
-      "record": {
-        "event_id": "16a7f0d1f792491294589aa19a88a5a9",
-        "ticker": "356860",
-        "name": "티엘비",
-        "first_detected_at": {
-          "__datetime__": "2026-10-01T09:53:41.173317+09:00"
-        },
-        "first_threshold": 46500.0,
-        "first_price": 46600.0,
-        "first_atr": 3603.0,
-        "status": "추적중",
-        "outcome": "상한제한",
-        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
-        "outcome_at": {
-          "__datetime__": "2026-10-01T09:54:20.145827+09:00"
-        }
-      },
-      "page_id": null,
-      "fields": {
-        "event_id": "16a7f0d1f792491294589aa19a88a5a9",
-        "ticker": "356860",
-        "name": "티엘비",
-        "first_detected_at": {
-          "__datetime__": "2026-10-01T09:53:41.173317+09:00"
-        },
-        "first_threshold": 46500.0,
-        "first_price": 46600.0,
-        "first_atr": 3603.0,
-        "status": "추적중",
-        "outcome": "상한제한",
-        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
-        "outcome_at": {
-          "__datetime__": "2026-10-01T09:54:20.145827+09:00"
-        }
-      },
-      "state": "creating"
-    },
-    {
       "id": "4d32f33dd5eb40cd900a2f8d9dbe6759",
       "owner": "36798381176:1",
       "events": [
@@ -191,7 +113,7 @@
           "__datetime__": "2026-10-01T09:54:20.164042+09:00"
         }
       },
-      "state": "queued"
+      "state": "creating"
     },
     {
       "id": "86e925e8c2f0440f8f4747ff3309b0c8",
@@ -320,7 +242,7 @@
     }
   ],
   "prepare_cursor": "7bd859931f994d7b85a898d38e542858",
-  "deliver_cursor": "124221ede2db43d1a65486cb4435689c",
+  "deliver_cursor": "4d32f33dd5eb40cd900a2f8d9dbe6759",
   "excluded_events": [
     {
       "event": {
