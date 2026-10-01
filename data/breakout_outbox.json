@@ -1,8 +1,170 @@
 {
   "version": 1,
-  "events": [],
-  "plans": [],
-  "prepare_cursor": "2ecb4aa6d1a04d97a87d4d280889ea45",
+  "events": [
+    {
+      "id": "ce779bc4b40a4dfcac83525fddb4f81f",
+      "operation": "_set_outcome",
+      "args": [
+        "007810",
+        "상한제한",
+        "신규매수 일일 상한 0 (운영 보류)",
+        {
+          "__datetime__": "2026-10-01T11:15:25.824513+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "bdbbd7cd5782479fb1b12a9ee6ada33c",
+      "operation": "_set_outcome",
+      "args": [
+        "036200",
+        "상한제한",
+        "신규매수 일일 상한 0 (운영 보류)",
+        {
+          "__datetime__": "2026-10-01T11:15:25.833854+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    }
+  ],
+  "plans": [
+    {
+      "id": "36125d8cee0647bba01652a5de88454e",
+      "owner": "36804776911:1",
+      "events": [
+        "ce779bc4b40a4dfcac83525fddb4f81f"
+      ],
+      "record": {
+        "account_type": "",
+        "account_key": "",
+        "order_side": "",
+        "order_qty": null,
+        "filled_qty": null,
+        "unverified_qty": null,
+        "execution_price": null,
+        "execution_state": "",
+        "execution_checked_at": null,
+        "event_id": "fefeb7fa4abb4ccf90e7fda59ece1de2",
+        "order_no": "",
+        "order_day": null,
+        "key": "3e90fc3e-53fc-8113-93af-c3eeaf5b1ffe",
+        "page_id": "3e90fc3e-53fc-8113-93af-c3eeaf5b1ffe",
+        "name": "코리아써키트",
+        "ticker": "007810",
+        "first_detected_at": {
+          "__datetime__": "2026-09-28T09:13:00+09:00"
+        },
+        "first_threshold": 67900.0,
+        "first_price": 68200.0,
+        "first_atr": 5214.0,
+        "status": "추적중",
+        "closed_reason": "",
+        "closed_at": null,
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-10-01T11:15:25.824513+09:00"
+        },
+        "latest_close": 74300.0,
+        "latest_date": {
+          "__date__": "2026-09-30"
+        },
+        "latest_atr": 5207.0,
+        "latest_line": 75300.0,
+        "change_pct": 9.43,
+        "atr_mult": 1.23,
+        "dist_to_line": 1000.0,
+        "dist_to_line_atr": 0.19,
+        "level_state": "최초선위",
+        "new_breakout": "미해당",
+        "refresh_state": "갱신됨",
+        "refresh_note": "",
+        "user_memo": ""
+      },
+      "page_id": "3e90fc3e-53fc-8113-93af-c3eeaf5b1ffe",
+      "fields": {
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-10-01T11:15:25.824513+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "c4c07c3c741d456d816c6ad63a8d412e",
+      "owner": "36804776911:1",
+      "events": [
+        "bdbbd7cd5782479fb1b12a9ee6ada33c"
+      ],
+      "record": {
+        "account_type": "",
+        "account_key": "",
+        "order_side": "",
+        "order_qty": null,
+        "filled_qty": null,
+        "unverified_qty": null,
+        "execution_price": null,
+        "execution_state": "",
+        "execution_checked_at": null,
+        "event_id": "b0a43cb56207436f986ba2cb0013de85",
+        "order_no": "",
+        "order_day": null,
+        "key": "3e90fc3e-53fc-813f-b916-ebc7b1c09c9f",
+        "page_id": "3e90fc3e-53fc-813f-b916-ebc7b1c09c9f",
+        "name": "유니셈",
+        "ticker": "036200",
+        "first_detected_at": {
+          "__datetime__": "2026-09-28T09:23:00+09:00"
+        },
+        "first_threshold": 9620.0,
+        "first_price": 9660.0,
+        "first_atr": 509.0,
+        "status": "추적중",
+        "closed_reason": "",
+        "closed_at": null,
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-10-01T11:15:25.833854+09:00"
+        },
+        "latest_close": 10250.0,
+        "latest_date": {
+          "__date__": "2026-09-30"
+        },
+        "latest_atr": 541.0,
+        "latest_line": 10590.0,
+        "change_pct": 6.55,
+        "atr_mult": 1.24,
+        "dist_to_line": 340.0,
+        "dist_to_line_atr": 0.63,
+        "level_state": "최초선위",
+        "new_breakout": "미해당",
+        "refresh_state": "갱신됨",
+        "refresh_note": "",
+        "user_memo": ""
+      },
+      "page_id": "3e90fc3e-53fc-813f-b916-ebc7b1c09c9f",
+      "fields": {
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-10-01T11:15:25.833854+09:00"
+        }
+      },
+      "state": "queued"
+    }
+  ],
+  "prepare_cursor": "6254fef3564443c6992d904cf4489f3d",
   "deliver_cursor": "878add25d80a4c3bb00026f60eed5e36",
   "excluded_events": [
     {
