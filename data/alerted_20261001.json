@@ -660,6 +660,30 @@
       "gap_atr": 0.071,
       "unit_shares": 178,
       "status": "진입가능"
+    },
+    "007660": {
+      "time": "11:53",
+      "name": "이수페타시스",
+      "sector": "전기전자",
+      "market": "KOSPI",
+      "price": 119900.0,
+      "high20": 119800.0,
+      "atr20": 7452.0,
+      "gap_atr": 0.013,
+      "unit_shares": 67,
+      "status": "진입가능"
+    },
+    "260970": {
+      "time": "11:53",
+      "name": "에스앤디",
+      "sector": "음식료·담배",
+      "market": "KOSDAQ",
+      "price": 61000.0,
+      "high20": 60900.0,
+      "atr20": 3062.0,
+      "gap_atr": 0.033,
+      "unit_shares": 163,
+      "status": "진입가능"
     }
   }
 }
