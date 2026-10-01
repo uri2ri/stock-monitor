@@ -2,23 +2,6 @@
   "version": 1,
   "events": [
     {
-      "id": "7152fe628a36460c83c4f7d52246d661",
-      "operation": "record_breakout",
-      "args": [
-        {
-          "ticker": "340450",
-          "name": "지씨지놈",
-          "high20": 8920.0,
-          "price": 8970.0,
-          "atr20": 442.0
-        },
-        {
-          "__datetime__": "2026-10-01T09:43:33.981249+09:00"
-        }
-      ],
-      "kwargs": {}
-    },
-    {
       "id": "b00757177fc24ebe921a1a725637a1f9",
       "operation": "record_breakout",
       "args": [
@@ -87,23 +70,6 @@
       }
     },
     {
-      "id": "917becdd629e43b68eecb304729936a7",
-      "operation": "_set_outcome",
-      "args": [
-        "340450",
-        "상한제한",
-        "신규매수 일일 상한 0 (운영 보류)",
-        {
-          "__datetime__": "2026-10-01T09:44:17.949375+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
       "id": "092f5160b446453ea9bc931b074a8f55",
       "operation": "_set_outcome",
       "args": [
@@ -139,50 +105,6 @@
     }
   ],
   "plans": [
-    {
-      "id": "c9fa7c47c21b41e394fe7b188cca5fb4",
-      "owner": "36797551935:1",
-      "events": [
-        "7152fe628a36460c83c4f7d52246d661",
-        "917becdd629e43b68eecb304729936a7"
-      ],
-      "record": {
-        "event_id": "7152fe628a36460c83c4f7d52246d661",
-        "ticker": "340450",
-        "name": "지씨지놈",
-        "first_detected_at": {
-          "__datetime__": "2026-10-01T09:43:33.981249+09:00"
-        },
-        "first_threshold": 8920.0,
-        "first_price": 8970.0,
-        "first_atr": 442.0,
-        "status": "추적중",
-        "outcome": "상한제한",
-        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
-        "outcome_at": {
-          "__datetime__": "2026-10-01T09:44:17.949375+09:00"
-        }
-      },
-      "page_id": null,
-      "fields": {
-        "event_id": "7152fe628a36460c83c4f7d52246d661",
-        "ticker": "340450",
-        "name": "지씨지놈",
-        "first_detected_at": {
-          "__datetime__": "2026-10-01T09:43:33.981249+09:00"
-        },
-        "first_threshold": 8920.0,
-        "first_price": 8970.0,
-        "first_atr": 442.0,
-        "status": "추적중",
-        "outcome": "상한제한",
-        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
-        "outcome_at": {
-          "__datetime__": "2026-10-01T09:44:17.949375+09:00"
-        }
-      },
-      "state": "creating"
-    },
     {
       "id": "4f6aaff821d0490bb39c8c238049e298",
       "owner": "36797551935:1",
@@ -225,7 +147,7 @@
           "__datetime__": "2026-10-01T09:44:17.956189+09:00"
         }
       },
-      "state": "queued"
+      "state": "creating"
     },
     {
       "id": "13e81960575044e4a1341f21ce8dc3c4",
@@ -399,7 +321,7 @@
     }
   ],
   "prepare_cursor": "75802811ccb042e8a1410e55331b9f7c",
-  "deliver_cursor": "c9fa7c47c21b41e394fe7b188cca5fb4",
+  "deliver_cursor": "4f6aaff821d0490bb39c8c238049e298",
   "excluded_events": [
     {
       "event": {
