@@ -600,6 +600,18 @@
       "gap_atr": 0.337,
       "unit_shares": 337,
       "status": "진입가능"
+    },
+    "484120": {
+      "time": "10:53",
+      "name": "도우인시스",
+      "sector": "전기전자",
+      "market": "KOSDAQ",
+      "price": 25100.0,
+      "high20": 24950.0,
+      "atr20": 1539.0,
+      "gap_atr": 0.097,
+      "unit_shares": 324,
+      "status": "진입가능"
     }
   }
 }

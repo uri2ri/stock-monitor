@@ -1,91 +1,9 @@
 {
   "version": 1,
-  "events": [
-    {
-      "id": "7e548560e82a4f24b166139bfd5b9aa9",
-      "operation": "_set_outcome",
-      "args": [
-        "484120",
-        "상한제한",
-        "신규매수 일일 상한 0 (운영 보류)",
-        {
-          "__datetime__": "2026-10-01T10:54:37.154089+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    }
-  ],
-  "plans": [
-    {
-      "id": "cb5be3414697407ab89f588080629773",
-      "owner": "36803200613:1",
-      "events": [
-        "7e548560e82a4f24b166139bfd5b9aa9"
-      ],
-      "record": {
-        "account_type": "",
-        "account_key": "",
-        "order_side": "",
-        "order_qty": null,
-        "filled_qty": null,
-        "unverified_qty": null,
-        "execution_price": null,
-        "execution_state": "",
-        "execution_checked_at": null,
-        "event_id": "3aa240aef3db4f04b9a787b276f7c7e8",
-        "order_no": "",
-        "order_day": null,
-        "key": "3e40fc3e-53fc-8135-84fc-fec6e1cb16bc",
-        "page_id": "3e40fc3e-53fc-8135-84fc-fec6e1cb16bc",
-        "name": "도우인시스",
-        "ticker": "484120",
-        "first_detected_at": {
-          "__datetime__": "2026-09-23T09:13:00+09:00"
-        },
-        "first_threshold": 23750.0,
-        "first_price": 24100.0,
-        "first_atr": 1485.0,
-        "status": "추적중",
-        "closed_reason": "",
-        "closed_at": null,
-        "outcome": "상한제한",
-        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
-        "outcome_at": {
-          "__datetime__": "2026-10-01T10:54:37.154089+09:00"
-        },
-        "latest_close": 24100.0,
-        "latest_date": {
-          "__date__": "2026-09-30"
-        },
-        "latest_atr": 1539.0,
-        "latest_line": 24950.0,
-        "change_pct": 1.47,
-        "atr_mult": 0.24,
-        "dist_to_line": 850.0,
-        "dist_to_line_atr": 0.55,
-        "level_state": "최초선위",
-        "new_breakout": "미해당",
-        "refresh_state": "갱신됨",
-        "refresh_note": "",
-        "user_memo": ""
-      },
-      "page_id": "3e40fc3e-53fc-8135-84fc-fec6e1cb16bc",
-      "fields": {
-        "outcome": "상한제한",
-        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
-        "outcome_at": {
-          "__datetime__": "2026-10-01T10:54:37.154089+09:00"
-        }
-      },
-      "state": "queued"
-    }
-  ],
+  "events": [],
+  "plans": [],
   "prepare_cursor": "51582328ea1044d28b65f2cfcb96f68e",
-  "deliver_cursor": "5e3bd4497e5347e2b7359defc6e22e81",
+  "deliver_cursor": "cb5be3414697407ab89f588080629773",
   "excluded_events": [
     {
       "event": {
