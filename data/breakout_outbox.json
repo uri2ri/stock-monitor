@@ -2,23 +2,6 @@
   "version": 1,
   "events": [
     {
-      "id": "167f9fc4dfb742e78128f4fbb88df140",
-      "operation": "record_breakout",
-      "args": [
-        {
-          "ticker": "248070",
-          "name": "솔루엠",
-          "high20": 13610.0,
-          "price": 14100.0,
-          "atr20": 523.0
-        },
-        {
-          "__datetime__": "2026-10-01T09:13:43.646549+09:00"
-        }
-      ],
-      "kwargs": {}
-    },
-    {
       "id": "2f3590d03ffe42edb529ae4cb49049d4",
       "operation": "record_breakout",
       "args": [
@@ -76,23 +59,6 @@
         "033640",
         "미주문",
         "추격 구간(+0.51N) - 매수 대상 제외",
-        {
-          "__datetime__": "2026-10-01T09:13:43.646549+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
-      "id": "a7e213d441054e0fa14249ccaf888593",
-      "operation": "_set_outcome",
-      "args": [
-        "248070",
-        "미주문",
-        "추격 구간(+0.94N) - 매수 대상 제외",
         {
           "__datetime__": "2026-10-01T09:13:43.646549+09:00"
         }
@@ -412,50 +378,6 @@
   ],
   "plans": [
     {
-      "id": "fd71d2746b114032a9923291730398dc",
-      "owner": "36795041350:1",
-      "events": [
-        "167f9fc4dfb742e78128f4fbb88df140",
-        "a7e213d441054e0fa14249ccaf888593"
-      ],
-      "record": {
-        "event_id": "167f9fc4dfb742e78128f4fbb88df140",
-        "ticker": "248070",
-        "name": "솔루엠",
-        "first_detected_at": {
-          "__datetime__": "2026-10-01T09:13:43.646549+09:00"
-        },
-        "first_threshold": 13610.0,
-        "first_price": 14100.0,
-        "first_atr": 523.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "추격 구간(+0.94N) - 매수 대상 제외",
-        "outcome_at": {
-          "__datetime__": "2026-10-01T09:13:43.646549+09:00"
-        }
-      },
-      "page_id": null,
-      "fields": {
-        "event_id": "167f9fc4dfb742e78128f4fbb88df140",
-        "ticker": "248070",
-        "name": "솔루엠",
-        "first_detected_at": {
-          "__datetime__": "2026-10-01T09:13:43.646549+09:00"
-        },
-        "first_threshold": 13610.0,
-        "first_price": 14100.0,
-        "first_atr": 523.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "추격 구간(+0.94N) - 매수 대상 제외",
-        "outcome_at": {
-          "__datetime__": "2026-10-01T09:13:43.646549+09:00"
-        }
-      },
-      "state": "creating"
-    },
-    {
       "id": "5b7c9e7e14604825aafcf317ba84ab93",
       "owner": "36795041350:1",
       "events": [
@@ -497,7 +419,7 @@
           "__datetime__": "2026-10-01T09:13:43.646549+09:00"
         }
       },
-      "state": "queued"
+      "state": "creating"
     },
     {
       "id": "bff22ae956e24c929a61e8d09bd22918",
@@ -1590,7 +1512,7 @@
     }
   ],
   "prepare_cursor": "9839c6b328474e579840480a097a845d",
-  "deliver_cursor": "fd71d2746b114032a9923291730398dc",
+  "deliver_cursor": "5b7c9e7e14604825aafcf317ba84ab93",
   "excluded_events": [
     {
       "event": {
