@@ -2,23 +2,6 @@
   "version": 1,
   "events": [
     {
-      "id": "9839c6b328474e579840480a097a845d",
-      "operation": "_set_outcome",
-      "args": [
-        "018880",
-        "상한제한",
-        "신규매수 일일 상한 0 (운영 보류)",
-        {
-          "__datetime__": "2026-10-01T09:14:36.999430+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
       "id": "640816ed00314c779374ff6c7ebe5597",
       "operation": "record_breakout",
       "args": [
@@ -89,67 +72,6 @@
   ],
   "plans": [
     {
-      "id": "0f01c85bf2564f34ab5a43d249b5b277",
-      "owner": "36795041350:1",
-      "events": [
-        "9839c6b328474e579840480a097a845d"
-      ],
-      "record": {
-        "account_type": "",
-        "account_key": "",
-        "order_side": "",
-        "order_qty": null,
-        "filled_qty": null,
-        "unverified_qty": null,
-        "execution_price": null,
-        "execution_state": "",
-        "execution_checked_at": null,
-        "event_id": "73e41f3128554e14b7655b5a4401f876",
-        "order_no": "",
-        "order_day": null,
-        "key": "3ec0fc3e-53fc-8147-a457-dc77d1ee4b98",
-        "page_id": "3ec0fc3e-53fc-8147-a457-dc77d1ee4b98",
-        "name": "한온시스템",
-        "ticker": "018880",
-        "first_detected_at": {
-          "__datetime__": "2026-10-01T09:03:00+09:00"
-        },
-        "first_threshold": 3635.0,
-        "first_price": 3680.0,
-        "first_atr": 168.0,
-        "status": "추적중",
-        "closed_reason": "",
-        "closed_at": null,
-        "outcome": "상한제한",
-        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
-        "outcome_at": {
-          "__datetime__": "2026-10-01T09:14:36.999430+09:00"
-        },
-        "latest_close": null,
-        "latest_date": null,
-        "latest_atr": null,
-        "latest_line": null,
-        "change_pct": null,
-        "atr_mult": null,
-        "dist_to_line": null,
-        "dist_to_line_atr": null,
-        "level_state": "",
-        "new_breakout": "",
-        "refresh_state": "",
-        "refresh_note": "",
-        "user_memo": ""
-      },
-      "page_id": "3ec0fc3e-53fc-8147-a457-dc77d1ee4b98",
-      "fields": {
-        "outcome": "상한제한",
-        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
-        "outcome_at": {
-          "__datetime__": "2026-10-01T09:14:36.999430+09:00"
-        }
-      },
-      "state": "queued"
-    },
-    {
       "id": "d3e9bbf8caae469786052613f91c79a9",
       "owner": "36795902022:1",
       "events": [
@@ -191,7 +113,7 @@
           "__datetime__": "2026-10-01T09:24:49.841684+09:00"
         }
       },
-      "state": "queued"
+      "state": "creating"
     },
     {
       "id": "256eaac2acd348beabc93f22402275f8",
@@ -258,7 +180,7 @@
     }
   ],
   "prepare_cursor": "bb60604ecd294467acc541cc56c7ecf2",
-  "deliver_cursor": "c1625924673b44909c09f419b0719b11",
+  "deliver_cursor": "d3e9bbf8caae469786052613f91c79a9",
   "excluded_events": [
     {
       "event": {
