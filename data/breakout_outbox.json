@@ -2,23 +2,6 @@
   "version": 1,
   "events": [
     {
-      "id": "1ac561f6263c42ae942d8f1731a65678",
-      "operation": "record_breakout",
-      "args": [
-        {
-          "ticker": "044450",
-          "name": "KSS해운",
-          "high20": 12650.0,
-          "price": 12720.0,
-          "atr20": 395.0
-        },
-        {
-          "__datetime__": "2026-10-01T09:03:40.042678+09:00"
-        }
-      ],
-      "kwargs": {}
-    },
-    {
       "id": "954f42c7b0314a27a32115db24b3c4b1",
       "operation": "record_breakout",
       "args": [
@@ -70,23 +53,6 @@
       }
     },
     {
-      "id": "16c3e341e5f04f58a137b2c02a619e06",
-      "operation": "_set_outcome",
-      "args": [
-        "044450",
-        "미주문",
-        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        {
-          "__datetime__": "2026-10-01T09:03:51.057821+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
       "id": "b9e62adfe24441e0b33ea99aa78efc60",
       "operation": "_set_outcome",
       "args": [
@@ -105,50 +71,6 @@
     }
   ],
   "plans": [
-    {
-      "id": "ddf72aea7b704e7aa47fff976f77c4b3",
-      "owner": "36794189726:1",
-      "events": [
-        "1ac561f6263c42ae942d8f1731a65678",
-        "16c3e341e5f04f58a137b2c02a619e06"
-      ],
-      "record": {
-        "event_id": "1ac561f6263c42ae942d8f1731a65678",
-        "ticker": "044450",
-        "name": "KSS해운",
-        "first_detected_at": {
-          "__datetime__": "2026-10-01T09:03:40.042678+09:00"
-        },
-        "first_threshold": 12650.0,
-        "first_price": 12720.0,
-        "first_atr": 395.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        "outcome_at": {
-          "__datetime__": "2026-10-01T09:03:51.057821+09:00"
-        }
-      },
-      "page_id": null,
-      "fields": {
-        "event_id": "1ac561f6263c42ae942d8f1731a65678",
-        "ticker": "044450",
-        "name": "KSS해운",
-        "first_detected_at": {
-          "__datetime__": "2026-10-01T09:03:40.042678+09:00"
-        },
-        "first_threshold": 12650.0,
-        "first_price": 12720.0,
-        "first_atr": 395.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        "outcome_at": {
-          "__datetime__": "2026-10-01T09:03:51.057821+09:00"
-        }
-      },
-      "state": "creating"
-    },
     {
       "id": "b4c1c63f4b3949449b720b7c3fe23f7e",
       "owner": "36794189726:1",
@@ -191,7 +113,7 @@
           "__datetime__": "2026-10-01T09:03:40.042678+09:00"
         }
       },
-      "state": "queued"
+      "state": "creating"
     },
     {
       "id": "9a52ec0be2464999992c49ea9d4c8365",
@@ -239,7 +161,7 @@
     }
   ],
   "prepare_cursor": "b9e62adfe24441e0b33ea99aa78efc60",
-  "deliver_cursor": "ddf72aea7b704e7aa47fff976f77c4b3",
+  "deliver_cursor": "b4c1c63f4b3949449b720b7c3fe23f7e",
   "excluded_events": [
     {
       "event": {
