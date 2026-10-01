@@ -684,6 +684,18 @@
       "gap_atr": 0.033,
       "unit_shares": 163,
       "status": "진입가능"
+    },
+    "214430": {
+      "time": "12:33",
+      "name": "아이쓰리시스템",
+      "sector": "전기전자",
+      "market": "KOSDAQ",
+      "price": 70600.0,
+      "high20": 70400.0,
+      "atr20": 3558.0,
+      "gap_atr": 0.056,
+      "unit_shares": 140,
+      "status": "진입가능"
     }
   }
 }
