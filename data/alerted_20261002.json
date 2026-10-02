@@ -1050,6 +1050,18 @@
       "status": "진입가능",
       "price_10am": 14810.0,
       "time_10am": "10:03"
+    },
+    "036800": {
+      "time": "10:43",
+      "name": "나이스정보통신",
+      "sector": "통신",
+      "market": "KOSDAQ",
+      "price": 8650.0,
+      "high20": 8320.0,
+      "atr20": 847.0,
+      "gap_atr": 0.39,
+      "unit_shares": 590,
+      "status": "진입가능"
     }
   }
 }
