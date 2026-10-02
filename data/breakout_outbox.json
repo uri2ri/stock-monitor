@@ -2,23 +2,6 @@
   "version": 1,
   "events": [
     {
-      "id": "8b57be5fc9b348dcba97ce5c11a1462b",
-      "operation": "record_breakout",
-      "args": [
-        {
-          "ticker": "147830",
-          "name": "제룡산업",
-          "high20": 7250.0,
-          "price": 7260.0,
-          "atr20": 275.0
-        },
-        {
-          "__datetime__": "2026-10-02T11:03:41.299613+09:00"
-        }
-      ],
-      "kwargs": {}
-    },
-    {
       "id": "09c866be168f4270920334b613b7ea0e",
       "operation": "record_breakout",
       "args": [
@@ -53,23 +36,6 @@
       }
     },
     {
-      "id": "37352da534724312be064bc4220fb203",
-      "operation": "_set_outcome",
-      "args": [
-        "147830",
-        "미주문",
-        "야간 스캔 신선도 불량(scan_date=20260930) - 신규 진입 보류",
-        {
-          "__datetime__": "2026-10-02T11:03:41.299613+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
       "id": "dd7562722de14080a35efa28b9ab5cda",
       "operation": "_set_outcome",
       "args": [
@@ -88,50 +54,6 @@
     }
   ],
   "plans": [
-    {
-      "id": "7871097de76c4a18968765fd943caddb",
-      "owner": "36953806006:1",
-      "events": [
-        "8b57be5fc9b348dcba97ce5c11a1462b",
-        "37352da534724312be064bc4220fb203"
-      ],
-      "record": {
-        "event_id": "8b57be5fc9b348dcba97ce5c11a1462b",
-        "ticker": "147830",
-        "name": "제룡산업",
-        "first_detected_at": {
-          "__datetime__": "2026-10-02T11:03:41.299613+09:00"
-        },
-        "first_threshold": 7250.0,
-        "first_price": 7260.0,
-        "first_atr": 275.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "야간 스캔 신선도 불량(scan_date=20260930) - 신규 진입 보류",
-        "outcome_at": {
-          "__datetime__": "2026-10-02T11:03:41.299613+09:00"
-        }
-      },
-      "page_id": null,
-      "fields": {
-        "event_id": "8b57be5fc9b348dcba97ce5c11a1462b",
-        "ticker": "147830",
-        "name": "제룡산업",
-        "first_detected_at": {
-          "__datetime__": "2026-10-02T11:03:41.299613+09:00"
-        },
-        "first_threshold": 7250.0,
-        "first_price": 7260.0,
-        "first_atr": 275.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "야간 스캔 신선도 불량(scan_date=20260930) - 신규 진입 보류",
-        "outcome_at": {
-          "__datetime__": "2026-10-02T11:03:41.299613+09:00"
-        }
-      },
-      "state": "creating"
-    },
     {
       "id": "6c6c290ba2e149fdbe0a96bd3f7d38c3",
       "owner": "36953806006:1",
@@ -174,7 +96,7 @@
           "__datetime__": "2026-10-02T11:03:41.299613+09:00"
         }
       },
-      "state": "queued"
+      "state": "creating"
     },
     {
       "id": "c1576f618e9346dc9ee0a0c977b382e2",
@@ -240,7 +162,7 @@
     }
   ],
   "prepare_cursor": "fa997cb9686542c5b67ec01837a4e553",
-  "deliver_cursor": "7871097de76c4a18968765fd943caddb",
+  "deliver_cursor": "6c6c290ba2e149fdbe0a96bd3f7d38c3",
   "excluded_events": [
     {
       "event": {
