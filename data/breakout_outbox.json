@@ -1379,7 +1379,7 @@
         "status": "추적중",
         "outcome": ""
       },
-      "state": "queued"
+      "state": "creating"
     },
     {
       "id": "a96ef8b6c27e4570a242825484200c78",
@@ -1488,7 +1488,7 @@
     }
   ],
   "prepare_cursor": "14732b2fe3024576a28fc742a9aec9ac",
-  "deliver_cursor": "ebf3af8b3ba049beb7b4ea0e72e4bd99",
+  "deliver_cursor": "c189846c57ce4537bc8083f8c69a27a3",
   "excluded_events": [
     {
       "event": {
