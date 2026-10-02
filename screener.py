@@ -29,6 +29,7 @@ import json
 import logging
 import os
 import random
+import re
 import sys
 import time
 from dataclasses import asdict, dataclass, field
@@ -1092,19 +1093,98 @@ def save_result(result: dict) -> Path:
 
 # ── 결과 읽기 (app.py에서 재사용) ───────────────────────────
 
-def latest_result() -> Optional[dict]:
-    """data/ 에서 가장 최근 breakout_*.json. 없으면 None.
+# 스캔 결과는 save_result()가 result_path()로 저장한 breakout_YYYYMMDD.json
+# **뿐**이다. 그런데 data/에는 같은 glob(breakout_*.json)에 걸리는 추적·보조
+# 파일도 산다 - breakout_outbox.json(추적 저널)이 그렇다. 파일명 역순 정렬에서
+# 'o'(0x6f)가 숫자 '2'(0x32)보다 커서 저널이 날짜 파일들보다 앞에 오고,
+# 그래서 저널이 "가장 최근 스캔 결과"로 반환됐다. 저널에는 scan_date가 없어
+# [오늘의 돌파] 화면이 KeyError로 죽었다(2026-10-02).
+#
+# 저널 쪽을 건드려 해결하지 않는다(이름을 바꾸면 추적 파이프라인이 깨진다) -
+# 읽는 쪽에서 날짜 형식 파일만 고른다.
+RESULT_NAME_RE = re.compile(r"^breakout_(\d{8})\.json$")
 
-    파일이 깨져 있으면 그다음 최근 파일로 내려간다.
+# 화면(app.render_breakout)과 CLI 요약이 .get() 없이 바로 꺼내 쓰는 칸.
+# 여기에 없는 칸이 빠진 건 이 검증에서 걸러내지 않는다(화면이 .get()으로
+# 이미 감싸고 있다).
+REQUIRED_RESULT_KEYS = ("scan_date", "total_scanned", "passed", "stocks")
+REQUIRED_STOCK_KEYS = ("ticker", "name", "sector", "price", "atr_pct", "vol_mult")
+
+
+def result_problem(data) -> Optional[str]:
+    """스캔 결과로 쓸 수 없는 이유(사람이 읽을 문구). 쓸 수 있으면 None.
+
+    JSON 파싱이 됐다는 것만으로 유효하다고 보지 않는다 - 저널도 올바른
+    JSON이다. 최상위 타입, 기준일, 집계 숫자, 종목 목록 구조까지 본다.
+
+    **조건 통과 0종목은 유효하다** - 돌파가 없었던 날의 정상적인 결과이고,
+    화면도 "오늘 조건을 통과한 종목이 없습니다"로 제대로 보여준다.
+    """
+    if not isinstance(data, dict):
+        return f"최상위가 객체가 아닙니다({type(data).__name__})"
+
+    missing = [k for k in REQUIRED_RESULT_KEYS if k not in data]
+    if missing:
+        return f"필수 칸이 없습니다: {', '.join(missing)}"
+
+    try:
+        date.fromisoformat(str(data["scan_date"]))
+    except (TypeError, ValueError):
+        return f"scan_date를 날짜로 읽을 수 없습니다: {data['scan_date']!r}"
+
+    for key in ("total_scanned", "passed"):
+        value = data[key]
+        # bool은 int의 하위 타입이라 따로 막는다 - True가 1로 통과하면 안 된다.
+        if isinstance(value, bool) or not isinstance(value, (int, float)):
+            return f"{key}가 숫자가 아닙니다: {value!r}"
+
+    stocks = data["stocks"]
+    if not isinstance(stocks, list):
+        return f"stocks가 목록이 아닙니다({type(stocks).__name__})"
+    for i, stock in enumerate(stocks):
+        if not isinstance(stock, dict):
+            return f"stocks[{i}]가 객체가 아닙니다({type(stock).__name__})"
+        missing = [k for k in REQUIRED_STOCK_KEYS if k not in stock]
+        if missing:
+            return f"stocks[{i}]에 필수 칸이 없습니다: {', '.join(missing)}"
+
+    return None
+
+
+def latest_result() -> Optional[dict]:
+    """data/ 에서 가장 최근 스캔 결과. 쓸 수 있는 게 없으면 None.
+
+    파일명이 breakout_YYYYMMDD.json인 것만 후보로 본다(위 RESULT_NAME_RE
+    주석 참고). 후보를 기준일 내림차순으로 보면서, 읽기가 실패하거나
+    구조 검증을 통과하지 못하면 **로그를 남기고 그다음 최신 결과로
+    내려간다** - 빠진 값을 메워 반환하지 않는다.
     """
     if not DATA_DIR.exists():
         return None
-    for path in sorted(DATA_DIR.glob("breakout_*.json"), reverse=True):
+
+    dated: list[tuple[str, Path]] = []
+    for path in DATA_DIR.glob("breakout_*.json"):
+        matched = RESULT_NAME_RE.match(path.name)
+        if matched:
+            dated.append((matched.group(1), path))
+        else:
+            # 저널·임시 파일이 여기 걸린다. 평상시에도 매번 지나가므로
+            # warning이 아니라 debug다.
+            logger.debug("%s - 스캔 결과 파일명이 아니라 건너뜁니다.", path.name)
+
+    for _, path in sorted(dated, key=lambda item: item[0], reverse=True):
         try:
             data = json.loads(path.read_text(encoding="utf-8"))
         except Exception as e:              # noqa: BLE001
-            logger.warning("%s 읽기 실패: %s", path.name, e)
+            logger.warning("%s 읽기 실패: %s - 이전 결과를 찾습니다.", path.name, e)
             continue
+
+        problem = result_problem(data)
+        if problem:
+            logger.warning("%s 스캔 결과로 쓸 수 없습니다 (%s) - 이전 결과를 찾습니다.",
+                           path.name, problem)
+            continue
+
         data["_file"] = path.name
         data["_mtime"] = datetime.fromtimestamp(
             path.stat().st_mtime

@@ -1,5 +1,59 @@
 # PROJECT STATUS
 
+## 돌파 화면 KeyError — 추적 저널을 스캔 결과로 읽던 문제 — 2026-10-02 (운영 미반영)
+
+- **증상**: [오늘의 돌파] 화면이 `KeyError: 'scan_date'`로 죽었다.
+  발생 지점은 `app._breakout_freshness()`의
+  `shown = f"{result['scan_date']} 스캔 · 파일 {result['_file']} …"`.
+- **원인**: `screener.latest_result()`가 `data/breakout_*.json`을 **파일명
+  역순**으로 읽었다. 스캔 결과는 `save_result()` → `result_path()`가 쓰는
+  `breakout_YYYYMMDD.json`뿐인데, 같은 glob에 추적 저널
+  `breakout_outbox.json`이 함께 걸린다. 역순 정렬에서 `'o'`(0x6f)가
+  숫자 `'2'`(0x32)보다 커서 **저널이 날짜 파일들보다 앞에 오고**, 그래서
+  저널이 "가장 최근 스캔 결과"로 반환됐다. 저널 최상위는
+  `version·events·plans·prepare_cursor·deliver_cursor·excluded_events`로
+  `scan_date`가 없다.
+  - 저널은 **올바른 JSON**이다 — 그래서 기존의 "파싱되면 유효" 판정
+    (`try: json.loads` / `except: continue`)으로는 전혀 걸러지지 않았다.
+- **수정 (읽는 쪽만 고친다 — 저널은 손대지 않았다)**:
+  1. `screener.RESULT_NAME_RE = ^breakout_(\d{8})\.json$` — 날짜 형식
+     파일만 후보로 본다. 저널·보조 파일은 후보에서 빠진다(debug 로그).
+     정렬도 파일명 전체가 아니라 **파일명에서 뽑은 8자리 기준일**로 한다.
+  2. `screener.result_problem(data)` 신규 — 쓸 수 없는 이유를 문구로,
+     쓸 수 있으면 `None`. 최상위 타입(dict), 필수 칸
+     (`scan_date`·`total_scanned`·`passed`·`stocks`), `scan_date`의 날짜
+     파싱, 집계 2칸의 숫자 여부(`bool`은 `int` 하위 타입이라 따로 막음),
+     `stocks`가 목록인지, 각 종목이 dict이고 화면이 `.get()` 없이 바로
+     꺼내는 6칸(`ticker·name·sector·price·atr_pct·vol_mult`)을 갖는지 검사.
+     **조건 통과 0종목은 유효**로 둔다 — 돌파가 없었던 날의 정상 결과다.
+  3. `latest_result()`는 기준일 내림차순으로 보며, 읽기 실패나 검증 실패면
+     **경고 로그를 남기고 그다음 최신 결과로 내려간다**. 빠진 값을 메워
+     반환하지 않는다.
+  4. `app.render_breakout()` — 결과가 없으면(파일 없음 **또는** 전부 무효)
+     "스캔 결과 확인 불가"를 안내하고 반환한다. 두 경우를 구분해 단정하지
+     않는다. 받은 결과에도 `screener.result_problem()`을 한 번 더 걸어
+     2차 방어선을 둔다(다른 경로로 만든 dict가 들어올 때). **누락 데이터를
+     오늘 날짜·0종목으로 꾸며 표시하지 않는다** — 그렇게 하면 "돌파 없음"과
+     구분이 안 된다. `_breakout_freshness()`의 표시용 메타(`_file`·`_mtime`)
+     는 `.get()`으로 읽어 그 둘이 없다고 화면이 죽지 않게 했다.
+- **검증**: `python -m pytest tests/ -q` → **364 passed**(신규 22건).
+  - `tests/test_breakout_result_selection.py` (16건) — 저널 혼재 시 정상
+    스캔 선택, 저널만 있으면 결과 없음, 보조 파일명 제외, **저널 파일이
+    그대로 남는지(바이트 비교)**, 깨진 JSON·필수 칸 누락·`stocks` 타입
+    오류·종목 칸 누락 시 이전 유효 결과로 폴백(+로그에 이유 남음),
+    전부 무효면 `None`, 0종목 유효, `result_problem` 단위 검증, 그리고
+    **저장소의 실제 결과 파일 41건이 모두 검증을 통과**(검증이 과하게
+    엄격해 멀쩡한 과거 결과를 버리지 않는지 확인).
+  - `tests/test_breakout_screen_renders.py` (6건) — `streamlit.testing.v1.AppTest`로
+    화면을 실제로 그려 확인(하네스 `tests/harness_breakout_screen.py`,
+    읽을 폴더는 환경변수로 받아 저장소 `data/`를 건드리지 않음).
+  - **수정을 되돌리고 돌려 테스트가 실제로 잡는지 확인**했다: 19건 실패하며
+    `app._breakout_freshness`에서 보고된 것과 **동일한 `KeyError: 'scan_date'`**
+    가 재현됐다.
+  - pyflakes 클린(`app.py:1277` f-string 경고는 이전부터 있던 것으로 손대지 않음).
+- **범위 밖(건드리지 않음)**: 추적 저널의 삭제·초기화·이름 변경, 매매 규칙,
+  운영 데이터(노션·주문). `MAX_ORDERS_PER_DAY = 0` 등 상한 무변경.
+
 ## P2 후속 체결 확인 및 P1 통합 검증 — 2026-09-20 (운영 미반영)
 
 - 새 돌파가 없는 회차에도 별도 후처리 worker가 접수된 추적 건의 체결을 확인한다. 계좌 연결키/모의 구분·종목·매수·주문일·주문번호·요청수량을 대조한다. 기존 매매 경로의 주문 판단은 그대로다.
@@ -109,6 +163,66 @@
 아래는 main에 남아 있던 당시의 판단과 실행 기록을 보존한 것이다. 현금 증가나
 잔고 0으로 특정 주문의 체결가·청산을 확정한다는 설명은 위 후속 검토에서
 철회·수정했다. 현재 정책과 운영 상태는 최신 추적 문서 및 청산 증빙 검토를 따른다.
+## 야간 스캔 중단 → 낡은 스캔 경고 반복 — 원인·수정·복구 — 2026-09-20
+
+- **증상**: `[KIS] ⚠ 야간 스캔 기준일이 오래됐습니다(scan_date=20260917,
+  기대 20260918) - 신규 진입을 보류합니다` 카톡이 **주말 내내** 반복.
+- **원인 1 — 스캔이 import에서 죽었다**: 09-18 야간 전종목 스캔
+  ([run 35367705949](https://github.com/uri2ri/stock-monitor/actions/runs/35367705949))이
+  `scan_all.py:35 import core` → `core.py:24 from pykrx import stock` →
+  `pykrx/website/comm/webio.py:12 build_krx_session()` →
+  `auth.py:153 data = resp.json()`에서
+  `requests.exceptions.JSONDecodeError: Expecting value: line 1 column 1 (char 0)`
+  로 종료. pykrx는 **import 시점에 KRX 로그인**을 하는데 `login_krx()`가
+  응답을 검증 없이 파싱해서, KRX가 JSON이 아닌 것(점검 페이지 등)을 주면
+  예외가 import 밖으로 올라온다. 이쪽 코드는 한 줄도 실행되지 못했다.
+  - 같은 날 16:30 KST 스크리너는 같은 자격증명으로 **성공**했다. 야간
+    스캔은 cron이 21:07 KST인데 GitHub 스케줄 지연으로 **01:18 KST에
+    실행**됐다 — KRX 야간 점검 시간대로 밀려 들어간 것으로 보인다(추정).
+  - 로그인은 **선택 사항**이다: 같은 실패한 실행의 즐겨찾기 배치는
+    자격증명 없이(익명 세션) 12종목 시세를 정상 조회하고 끝났다.
+- **원인 2 — 경고가 휴장일 게이트를 안 탔다**: 2026-09-20(일) cron-job.org가
+  요일을 모른 채 10분마다 auto-trade를 트리거했다(일요일 13:23~14:03 KST
+  실행 확인, run 1376~1380). 자동매도·추가매수는
+  `_within_trading_hours` → `_is_trading_day` 두 게이트에 막혀 아무것도
+  하지 않는데 **이 경고만 게이트를 타지 않고** 억제 창(1시간)마다 나갔다.
+  같은 원인(주말 외부 트리거)으로 2026-08-22(토) 토큰 발급 경고가 반복돼
+  그 게이트를 만들었는데, 나중에 추가된 이 경고가 빠져 있었다.
+- **수정 (PR #7, merge `474e56f`)**:
+  1. `6e411f4` `krx_session.py` 신규 — pykrx import를 감싸 로그인 단계에서
+     터지면 자격증명을 뺀 익명 세션으로 한 번 더 import한다. `core`·
+     `screener`·`app`·`build_universe`·`backtest_data`의 import를 전부 이
+     모듈로 돌렸다(하나라도 남으면 import 순서에 따라 보호가 우회된다).
+     자격증명이 **없는** 상태의 실패는 로그인과 무관하므로 그대로 올린다.
+     환경변수는 그 import 동안만 비우고 되돌린다. 익명으로도 시세를 못
+     받으면 `scan_all`이 `KrxUnavailable`로 실패한다 — **빈 값이나 옛
+     기준선으로 CSV를 덮어쓰는 경로는 없다**.
+  2. `23961ad` 낡은 스캔 경고에 두 게이트 적용. 억제되는 회차도
+     `logger.warning`은 남긴다. 거래일 판정이 안 되면 기존대로 보낸다
+     (`_is_trading_day`는 fail-open). **신규 진입을 막는 동작 자체는
+     건드리지 않았다.**
+- **검증**: `python -m pytest tests/ -q` → **215 passed**(신규 10건:
+  `test_krx_login_failure_does_not_kill_import.py` 6건,
+  `test_stale_scan_warning_respects_market_gates.py` 4건). 실제 pykrx로
+  운영과 동일한 예외를 재현(requests 응답을 점검 HTML로 치환, 네트워크
+  미사용)해 `import scan_all`/`core`/`screener`가 모두 살아남고
+  `pykrx.stock`이 정상 사용 가능함을 확인. 전략·상한 무변경
+  (`MAX_ORDERS_PER_DAY = 0`, `MAX_PYRAMID_ORDERS_PER_DAY = 4`).
+- **복구 (사용자 승인 후 수동 실행)**: `nightly-scan`을 `main`에서 1회 실행
+  ([run 35496177497](https://github.com/uri2ri/stock-monitor/actions/runs/35496177497),
+  성공) → `data/scan_latest.csv`의 `scan_date`가 **20260918**로 채워졌다
+  (커밋 `882bcfa`). 월요일 장중 감시가 기대하는 기준일과 일치한다.
+  커밋 제목이 `2026-09-20`인 것은 워크플로가 `date -u`로 제목을 만들기
+  때문이고, 파일 안의 실제 기준일은 09-18이다.
+- **미확인**: 수정 후 실제 실행 로그로 "경고가 안 나간다"를 확인하지
+  못했다 — cron-job.org 트리거가 **15:53 KST(06:53 UTC)를 마지막으로
+  멈췄고**(장 마감 이후 창이 닫힘) 병합은 그 뒤인 16:10 KST였다. 다음
+  실행은 월요일 장 시작 무렵이다. 월요일 첫 회차 로그로 확인해야 한다.
+- **남은 것**: 야간 스캔이 실패해도 **아무도 알려주지 않는다** — 이번에도
+  다음 거래일 장중 경고로 뒤늦게 알았다. `nightly-scan.yml`에 실패 알림
+  단계를 붙일지는 미결(워크플로에 KAKAO 시크릿 추가가 필요).
+
+## GS 매도 미확정 — 원인 확인·장부 정리·코드 보완 — 2026-09-18
 
 - **증상**: 어제(09-17) 실제로 팔린 GS인데 오늘도 매 회차
   `[KIS] GS 매도 확인 보류 - 확인 필요: 이전 거래일 매도 미완료` 카톡 발송.
