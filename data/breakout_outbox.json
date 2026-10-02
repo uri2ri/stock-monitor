@@ -2,23 +2,6 @@
   "version": 1,
   "events": [
     {
-      "id": "698311483f6a443bacd08a3cc697b040",
-      "operation": "record_breakout",
-      "args": [
-        {
-          "ticker": "354320",
-          "name": "알멕",
-          "high20": 42900.0,
-          "price": 43300.0,
-          "atr20": 3754.0
-        },
-        {
-          "__datetime__": "2026-10-02T09:13:38.850926+09:00"
-        }
-      ],
-      "kwargs": {}
-    },
-    {
       "id": "9ba00d8beb95481ca13c107f8dc8b046",
       "operation": "record_breakout",
       "args": [
@@ -34,23 +17,6 @@
         }
       ],
       "kwargs": {}
-    },
-    {
-      "id": "71cc0d5621044dd0afee94b6c2d37ea8",
-      "operation": "_set_outcome",
-      "args": [
-        "354320",
-        "미주문",
-        "야간 스캔 신선도 불량(scan_date=20260930) - 신규 진입 보류",
-        {
-          "__datetime__": "2026-10-02T09:13:38.850926+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
     },
     {
       "id": "7097f2485bcf401a9fc136a43cb98359",
@@ -1891,52 +1857,8 @@
   ],
   "plans": [
     {
-      "id": "6375335cdb424f969b895c46a2ed7f62",
-      "owner": "36947384081:1",
-      "events": [
-        "698311483f6a443bacd08a3cc697b040",
-        "71cc0d5621044dd0afee94b6c2d37ea8"
-      ],
-      "record": {
-        "event_id": "698311483f6a443bacd08a3cc697b040",
-        "ticker": "354320",
-        "name": "알멕",
-        "first_detected_at": {
-          "__datetime__": "2026-10-02T09:13:38.850926+09:00"
-        },
-        "first_threshold": 42900.0,
-        "first_price": 43300.0,
-        "first_atr": 3754.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "야간 스캔 신선도 불량(scan_date=20260930) - 신규 진입 보류",
-        "outcome_at": {
-          "__datetime__": "2026-10-02T09:13:38.850926+09:00"
-        }
-      },
-      "page_id": null,
-      "fields": {
-        "event_id": "698311483f6a443bacd08a3cc697b040",
-        "ticker": "354320",
-        "name": "알멕",
-        "first_detected_at": {
-          "__datetime__": "2026-10-02T09:13:38.850926+09:00"
-        },
-        "first_threshold": 42900.0,
-        "first_price": 43300.0,
-        "first_atr": 3754.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "야간 스캔 신선도 불량(scan_date=20260930) - 신규 진입 보류",
-        "outcome_at": {
-          "__datetime__": "2026-10-02T09:13:38.850926+09:00"
-        }
-      },
-      "state": "creating"
-    },
-    {
       "id": "e50dce9dc4bd4d8c87e3aaffdfd9752d",
-      "owner": "36944859957:1",
+      "owner": "36947384081:1",
       "events": [
         "9ba00d8beb95481ca13c107f8dc8b046",
         "6e943682cce84f928292ebdb5e8ebfdf"
@@ -1976,7 +1898,7 @@
           "__datetime__": "2026-10-02T09:13:38.850926+09:00"
         }
       },
-      "state": "queued"
+      "state": "creating"
     },
     {
       "id": "3269a1a2e10c4ae3b6cfeb146afa1a2c",
@@ -2422,7 +2344,7 @@
     }
   ],
   "prepare_cursor": "9956a94e6c924cd0bd40c7c31f78d21d",
-  "deliver_cursor": "6375335cdb424f969b895c46a2ed7f62",
+  "deliver_cursor": "e50dce9dc4bd4d8c87e3aaffdfd9752d",
   "excluded_events": [
     {
       "event": {
