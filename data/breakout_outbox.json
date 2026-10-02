@@ -1,8 +1,245 @@
 {
   "version": 1,
-  "events": [],
-  "plans": [],
-  "prepare_cursor": "7aeb0cfe16c540bc96e43f31d8d79290",
+  "events": [
+    {
+      "id": "8b57be5fc9b348dcba97ce5c11a1462b",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "147830",
+          "name": "제룡산업",
+          "high20": 7250.0,
+          "price": 7260.0,
+          "atr20": 275.0
+        },
+        {
+          "__datetime__": "2026-10-02T11:03:41.299613+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "09c866be168f4270920334b613b7ea0e",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "355150",
+          "name": "코스텍시스",
+          "high20": 24000.0,
+          "price": 24150.0,
+          "atr20": 2015.0
+        },
+        {
+          "__datetime__": "2026-10-02T11:03:41.299613+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "9708ccb0fd704e6b891fd5a1234f076b",
+      "operation": "_set_outcome",
+      "args": [
+        "000240",
+        "미주문",
+        "야간 스캔 신선도 불량(scan_date=20260930) - 신규 진입 보류",
+        {
+          "__datetime__": "2026-10-02T11:03:41.299613+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "37352da534724312be064bc4220fb203",
+      "operation": "_set_outcome",
+      "args": [
+        "147830",
+        "미주문",
+        "야간 스캔 신선도 불량(scan_date=20260930) - 신규 진입 보류",
+        {
+          "__datetime__": "2026-10-02T11:03:41.299613+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "dd7562722de14080a35efa28b9ab5cda",
+      "operation": "_set_outcome",
+      "args": [
+        "355150",
+        "미주문",
+        "야간 스캔 신선도 불량(scan_date=20260930) - 신규 진입 보류",
+        {
+          "__datetime__": "2026-10-02T11:03:41.299613+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    }
+  ],
+  "plans": [
+    {
+      "id": "7871097de76c4a18968765fd943caddb",
+      "owner": "36953806006:1",
+      "events": [
+        "8b57be5fc9b348dcba97ce5c11a1462b",
+        "37352da534724312be064bc4220fb203"
+      ],
+      "record": {
+        "event_id": "8b57be5fc9b348dcba97ce5c11a1462b",
+        "ticker": "147830",
+        "name": "제룡산업",
+        "first_detected_at": {
+          "__datetime__": "2026-10-02T11:03:41.299613+09:00"
+        },
+        "first_threshold": 7250.0,
+        "first_price": 7260.0,
+        "first_atr": 275.0,
+        "status": "추적중",
+        "outcome": "미주문",
+        "outcome_reason": "야간 스캔 신선도 불량(scan_date=20260930) - 신규 진입 보류",
+        "outcome_at": {
+          "__datetime__": "2026-10-02T11:03:41.299613+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "8b57be5fc9b348dcba97ce5c11a1462b",
+        "ticker": "147830",
+        "name": "제룡산업",
+        "first_detected_at": {
+          "__datetime__": "2026-10-02T11:03:41.299613+09:00"
+        },
+        "first_threshold": 7250.0,
+        "first_price": 7260.0,
+        "first_atr": 275.0,
+        "status": "추적중",
+        "outcome": "미주문",
+        "outcome_reason": "야간 스캔 신선도 불량(scan_date=20260930) - 신규 진입 보류",
+        "outcome_at": {
+          "__datetime__": "2026-10-02T11:03:41.299613+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "6c6c290ba2e149fdbe0a96bd3f7d38c3",
+      "owner": "36953806006:1",
+      "events": [
+        "09c866be168f4270920334b613b7ea0e",
+        "dd7562722de14080a35efa28b9ab5cda"
+      ],
+      "record": {
+        "event_id": "09c866be168f4270920334b613b7ea0e",
+        "ticker": "355150",
+        "name": "코스텍시스",
+        "first_detected_at": {
+          "__datetime__": "2026-10-02T11:03:41.299613+09:00"
+        },
+        "first_threshold": 24000.0,
+        "first_price": 24150.0,
+        "first_atr": 2015.0,
+        "status": "추적중",
+        "outcome": "미주문",
+        "outcome_reason": "야간 스캔 신선도 불량(scan_date=20260930) - 신규 진입 보류",
+        "outcome_at": {
+          "__datetime__": "2026-10-02T11:03:41.299613+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "09c866be168f4270920334b613b7ea0e",
+        "ticker": "355150",
+        "name": "코스텍시스",
+        "first_detected_at": {
+          "__datetime__": "2026-10-02T11:03:41.299613+09:00"
+        },
+        "first_threshold": 24000.0,
+        "first_price": 24150.0,
+        "first_atr": 2015.0,
+        "status": "추적중",
+        "outcome": "미주문",
+        "outcome_reason": "야간 스캔 신선도 불량(scan_date=20260930) - 신규 진입 보류",
+        "outcome_at": {
+          "__datetime__": "2026-10-02T11:03:41.299613+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "c1576f618e9346dc9ee0a0c977b382e2",
+      "owner": "36953806006:1",
+      "events": [
+        "9708ccb0fd704e6b891fd5a1234f076b"
+      ],
+      "record": {
+        "account_type": "",
+        "account_key": "",
+        "order_side": "",
+        "order_qty": null,
+        "filled_qty": null,
+        "unverified_qty": null,
+        "execution_price": null,
+        "execution_state": "",
+        "execution_checked_at": null,
+        "event_id": "1c251773362b41fd939078bfce5c78a4",
+        "order_no": "",
+        "order_day": null,
+        "key": "3e90fc3e-53fc-812c-9d48-e91916087821",
+        "page_id": "3e90fc3e-53fc-812c-9d48-e91916087821",
+        "name": "한국앤컴퍼니",
+        "ticker": "000240",
+        "first_detected_at": {
+          "__datetime__": "2026-09-28T12:43:00+09:00"
+        },
+        "first_threshold": 25200.0,
+        "first_price": 25250.0,
+        "first_atr": 889.0,
+        "status": "추적중",
+        "closed_reason": "",
+        "closed_at": null,
+        "outcome": "미주문",
+        "outcome_reason": "야간 스캔 신선도 불량(scan_date=20260930) - 신규 진입 보류",
+        "outcome_at": {
+          "__datetime__": "2026-10-02T11:03:41.299613+09:00"
+        },
+        "latest_close": 25100.0,
+        "latest_date": {
+          "__date__": "2026-09-30"
+        },
+        "latest_atr": 878.0,
+        "latest_line": 25400.0,
+        "change_pct": -0.4,
+        "atr_mult": -0.11,
+        "dist_to_line": 300.0,
+        "dist_to_line_atr": 0.34,
+        "level_state": "최초선아래",
+        "new_breakout": "미해당",
+        "refresh_state": "갱신됨",
+        "refresh_note": "",
+        "user_memo": ""
+      },
+      "page_id": "3e90fc3e-53fc-812c-9d48-e91916087821",
+      "fields": {
+        "outcome_reason": "야간 스캔 신선도 불량(scan_date=20260930) - 신규 진입 보류",
+        "outcome_at": {
+          "__datetime__": "2026-10-02T11:03:41.299613+09:00"
+        }
+      },
+      "state": "queued"
+    }
+  ],
+  "prepare_cursor": "fa997cb9686542c5b67ec01837a4e553",
   "deliver_cursor": "c6ab0e8d4d96448d913c42f7a5ac70b1",
   "excluded_events": [
     {
