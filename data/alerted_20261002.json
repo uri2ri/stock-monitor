@@ -828,6 +828,42 @@
       "gap_atr": 0.019,
       "unit_shares": 46,
       "status": "진입가능"
+    },
+    "062040": {
+      "time": "09:23",
+      "name": "산일전기",
+      "sector": "전기전자",
+      "market": "KOSPI",
+      "price": 215500.0,
+      "high20": 215000.0,
+      "atr20": 12341.0,
+      "gap_atr": 0.041,
+      "unit_shares": 40,
+      "status": "진입가능"
+    },
+    "000990": {
+      "time": "09:23",
+      "name": "DB하이텍",
+      "sector": "전기전자",
+      "market": "KOSPI",
+      "price": 141200.0,
+      "high20": 141100.0,
+      "atr20": 8163.0,
+      "gap_atr": 0.012,
+      "unit_shares": 61,
+      "status": "진입가능"
+    },
+    "036170": {
+      "time": "09:23",
+      "name": "에이치엠넥스",
+      "sector": "전기전자",
+      "market": "KOSDAQ",
+      "price": 2955.0,
+      "high20": 2935.0,
+      "atr20": 211.0,
+      "gap_atr": 0.095,
+      "unit_shares": 2369,
+      "status": "진입가능"
     }
   }
 }
