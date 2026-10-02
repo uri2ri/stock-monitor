@@ -1,8 +1,88 @@
 {
   "version": 1,
-  "events": [],
-  "plans": [],
-  "prepare_cursor": "c414018978594624a3524071eba4f600",
+  "events": [
+    {
+      "id": "1a43197750cf479aaeb1055a06e21cbe",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "475430",
+          "name": "키스트론",
+          "high20": 4510.0,
+          "price": 4515.0,
+          "atr20": 219.0
+        },
+        {
+          "__datetime__": "2026-10-02T14:13:29.334443+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "86a117b2248c45a38baea3e0495419c5",
+      "operation": "_set_outcome",
+      "args": [
+        "475430",
+        "미주문",
+        "야간 스캔 신선도 불량(scan_date=20260930) - 신규 진입 보류",
+        {
+          "__datetime__": "2026-10-02T14:13:29.334443+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    }
+  ],
+  "plans": [
+    {
+      "id": "6127955214fe482ca8a6db1847a75b2c",
+      "owner": "36967942620:1",
+      "events": [
+        "1a43197750cf479aaeb1055a06e21cbe",
+        "86a117b2248c45a38baea3e0495419c5"
+      ],
+      "record": {
+        "event_id": "1a43197750cf479aaeb1055a06e21cbe",
+        "ticker": "475430",
+        "name": "키스트론",
+        "first_detected_at": {
+          "__datetime__": "2026-10-02T14:13:29.334443+09:00"
+        },
+        "first_threshold": 4510.0,
+        "first_price": 4515.0,
+        "first_atr": 219.0,
+        "status": "추적중",
+        "outcome": "미주문",
+        "outcome_reason": "야간 스캔 신선도 불량(scan_date=20260930) - 신규 진입 보류",
+        "outcome_at": {
+          "__datetime__": "2026-10-02T14:13:29.334443+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "1a43197750cf479aaeb1055a06e21cbe",
+        "ticker": "475430",
+        "name": "키스트론",
+        "first_detected_at": {
+          "__datetime__": "2026-10-02T14:13:29.334443+09:00"
+        },
+        "first_threshold": 4510.0,
+        "first_price": 4515.0,
+        "first_atr": 219.0,
+        "status": "추적중",
+        "outcome": "미주문",
+        "outcome_reason": "야간 스캔 신선도 불량(scan_date=20260930) - 신규 진입 보류",
+        "outcome_at": {
+          "__datetime__": "2026-10-02T14:13:29.334443+09:00"
+        }
+      },
+      "state": "queued"
+    }
+  ],
+  "prepare_cursor": "27864ce856484654ae473ee83100d912",
   "deliver_cursor": "c1576f618e9346dc9ee0a0c977b382e2",
   "excluded_events": [
     {
