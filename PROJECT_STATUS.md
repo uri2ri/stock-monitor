@@ -1,5 +1,59 @@
 # PROJECT STATUS
 
+## 돌파 화면 KeyError — 추적 저널을 스캔 결과로 읽던 문제 — 2026-10-02 (운영 미반영)
+
+- **증상**: [오늘의 돌파] 화면이 `KeyError: 'scan_date'`로 죽었다.
+  발생 지점은 `app._breakout_freshness()`의
+  `shown = f"{result['scan_date']} 스캔 · 파일 {result['_file']} …"`.
+- **원인**: `screener.latest_result()`가 `data/breakout_*.json`을 **파일명
+  역순**으로 읽었다. 스캔 결과는 `save_result()` → `result_path()`가 쓰는
+  `breakout_YYYYMMDD.json`뿐인데, 같은 glob에 추적 저널
+  `breakout_outbox.json`이 함께 걸린다. 역순 정렬에서 `'o'`(0x6f)가
+  숫자 `'2'`(0x32)보다 커서 **저널이 날짜 파일들보다 앞에 오고**, 그래서
+  저널이 "가장 최근 스캔 결과"로 반환됐다. 저널 최상위는
+  `version·events·plans·prepare_cursor·deliver_cursor·excluded_events`로
+  `scan_date`가 없다.
+  - 저널은 **올바른 JSON**이다 — 그래서 기존의 "파싱되면 유효" 판정
+    (`try: json.loads` / `except: continue`)으로는 전혀 걸러지지 않았다.
+- **수정 (읽는 쪽만 고친다 — 저널은 손대지 않았다)**:
+  1. `screener.RESULT_NAME_RE = ^breakout_(\d{8})\.json$` — 날짜 형식
+     파일만 후보로 본다. 저널·보조 파일은 후보에서 빠진다(debug 로그).
+     정렬도 파일명 전체가 아니라 **파일명에서 뽑은 8자리 기준일**로 한다.
+  2. `screener.result_problem(data)` 신규 — 쓸 수 없는 이유를 문구로,
+     쓸 수 있으면 `None`. 최상위 타입(dict), 필수 칸
+     (`scan_date`·`total_scanned`·`passed`·`stocks`), `scan_date`의 날짜
+     파싱, 집계 2칸의 숫자 여부(`bool`은 `int` 하위 타입이라 따로 막음),
+     `stocks`가 목록인지, 각 종목이 dict이고 화면이 `.get()` 없이 바로
+     꺼내는 6칸(`ticker·name·sector·price·atr_pct·vol_mult`)을 갖는지 검사.
+     **조건 통과 0종목은 유효**로 둔다 — 돌파가 없었던 날의 정상 결과다.
+  3. `latest_result()`는 기준일 내림차순으로 보며, 읽기 실패나 검증 실패면
+     **경고 로그를 남기고 그다음 최신 결과로 내려간다**. 빠진 값을 메워
+     반환하지 않는다.
+  4. `app.render_breakout()` — 결과가 없으면(파일 없음 **또는** 전부 무효)
+     "스캔 결과 확인 불가"를 안내하고 반환한다. 두 경우를 구분해 단정하지
+     않는다. 받은 결과에도 `screener.result_problem()`을 한 번 더 걸어
+     2차 방어선을 둔다(다른 경로로 만든 dict가 들어올 때). **누락 데이터를
+     오늘 날짜·0종목으로 꾸며 표시하지 않는다** — 그렇게 하면 "돌파 없음"과
+     구분이 안 된다. `_breakout_freshness()`의 표시용 메타(`_file`·`_mtime`)
+     는 `.get()`으로 읽어 그 둘이 없다고 화면이 죽지 않게 했다.
+- **검증**: `python -m pytest tests/ -q` → **364 passed**(신규 22건).
+  - `tests/test_breakout_result_selection.py` (16건) — 저널 혼재 시 정상
+    스캔 선택, 저널만 있으면 결과 없음, 보조 파일명 제외, **저널 파일이
+    그대로 남는지(바이트 비교)**, 깨진 JSON·필수 칸 누락·`stocks` 타입
+    오류·종목 칸 누락 시 이전 유효 결과로 폴백(+로그에 이유 남음),
+    전부 무효면 `None`, 0종목 유효, `result_problem` 단위 검증, 그리고
+    **저장소의 실제 결과 파일 41건이 모두 검증을 통과**(검증이 과하게
+    엄격해 멀쩡한 과거 결과를 버리지 않는지 확인).
+  - `tests/test_breakout_screen_renders.py` (6건) — `streamlit.testing.v1.AppTest`로
+    화면을 실제로 그려 확인(하네스 `tests/harness_breakout_screen.py`,
+    읽을 폴더는 환경변수로 받아 저장소 `data/`를 건드리지 않음).
+  - **수정을 되돌리고 돌려 테스트가 실제로 잡는지 확인**했다: 19건 실패하며
+    `app._breakout_freshness`에서 보고된 것과 **동일한 `KeyError: 'scan_date'`**
+    가 재현됐다.
+  - pyflakes 클린(`app.py:1277` f-string 경고는 이전부터 있던 것으로 손대지 않음).
+- **범위 밖(건드리지 않음)**: 추적 저널의 삭제·초기화·이름 변경, 매매 규칙,
+  운영 데이터(노션·주문). `MAX_ORDERS_PER_DAY = 0` 등 상한 무변경.
+
 ## P2 후속 체결 확인 및 P1 통합 검증 — 2026-09-20 (운영 미반영)
 
 - 새 돌파가 없는 회차에도 별도 후처리 worker가 접수된 추적 건의 체결을 확인한다. 계좌 연결키/모의 구분·종목·매수·주문일·주문번호·요청수량을 대조한다. 기존 매매 경로의 주문 판단은 그대로다.

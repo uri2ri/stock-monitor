@@ -1621,9 +1621,15 @@ def build_sector_user_message(result: dict) -> str:
 
 
 def _breakout_freshness(result: dict) -> tuple[bool, str]:
-    """(최신인가, 안내 문구). 날짜를 못 읽으면 최신이 아닌 것으로 본다."""
-    shown = f"{result['scan_date']} 스캔 · 파일 {result['_file']} " \
-            f"(저장 {result['_mtime'].replace('T', ' ')})"
+    """(최신인가, 안내 문구). 날짜를 못 읽으면 최신이 아닌 것으로 본다.
+
+    `_file`·`_mtime`은 screener.latest_result()가 붙여주는 표시용 메타라
+    없을 수도 있다고 보고 .get()으로 읽는다 - 이 둘이 없다는 이유로
+    화면 전체가 죽으면 안 된다. 기준일(scan_date)은 호출 전에
+    screener.result_problem()으로 이미 검증된다.
+    """
+    shown = f"{result['scan_date']} 스캔 · 파일 {result.get('_file', '알 수 없음')} " \
+            f"(저장 {str(result.get('_mtime', '알 수 없음')).replace('T', ' ')})"
     try:
         scanned = date.fromisoformat(result["scan_date"])
     except Exception:
@@ -1643,10 +1649,30 @@ def render_breakout(capital: float, ai_unlocked: bool) -> None:
     """
     result = screener.latest_result()
     if result is None:
+        # 파일이 아예 없는 경우와, 있지만 전부 구조 검증을 통과하지 못한
+        # 경우가 모두 여기로 온다 - 둘을 구분해 단정하지 않는다.
         st.info(
-            "**최신 스캔 결과 없음** — `data/`에 `breakout_*.json`이 없습니다.  \n"
+            "**스캔 결과 확인 불가** — `data/`에 쓸 수 있는 "
+            "`breakout_YYYYMMDD.json`이 없습니다  \n"
+            "(파일이 없거나, 있는 파일의 구조가 스캔 결과가 아닙니다. "
+            "서버 로그에 어느 파일이 왜 제외됐는지 남습니다).  \n"
             "장 마감 후 스크리너가 돌면 생깁니다 "
             "(GitHub Actions 평일 16:30 KST)."
+        )
+        return
+
+    # 2차 방어선. latest_result()가 이미 같은 검증을 통과한 결과만 돌려주므로
+    # 평상시엔 걸리지 않는다 - 다른 경로로 만든 dict가 들어오거나 양쪽
+    # 검증이 어긋날 때를 위한 것이다. 빠진 값을 오늘 날짜·0종목으로 메워
+    # 보여주지 않는다. 그렇게 꾸미면 "돌파 없음"과 구분이 안 된다.
+    problem = screener.result_problem(result)
+    if problem:
+        st.warning(
+            "**스캔 결과 확인 불가** — 스캔 결과 파일의 구조가 예상과 "
+            f"다릅니다: {problem}  \n"
+            f"파일: `{result.get('_file', '알 수 없음')}`  \n"
+            "빠진 값을 임의로 메워 표시하지 않습니다. 다음 스캔이 정상으로 "
+            "저장되면 복구됩니다."
         )
         return
 
