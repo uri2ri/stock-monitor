@@ -1110,6 +1110,18 @@
       "gap_atr": 0.023,
       "unit_shares": 2283,
       "status": "진입가능"
+    },
+    "016610": {
+      "time": "14:53",
+      "name": "DB증권",
+      "sector": "증권",
+      "market": "KOSPI",
+      "price": 10510.0,
+      "high20": 10500.0,
+      "atr20": 298.0,
+      "gap_atr": 0.034,
+      "unit_shares": 1677,
+      "status": "진입가능"
     }
   }
 }
