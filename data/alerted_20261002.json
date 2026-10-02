@@ -1062,6 +1062,42 @@
       "gap_atr": 0.39,
       "unit_shares": 590,
       "status": "진입가능"
+    },
+    "000240": {
+      "time": "11:03",
+      "name": "한국앤컴퍼니",
+      "sector": "금융",
+      "market": "KOSPI",
+      "price": 25450.0,
+      "high20": 25400.0,
+      "atr20": 878.0,
+      "gap_atr": 0.057,
+      "unit_shares": 569,
+      "status": "진입가능"
+    },
+    "147830": {
+      "time": "11:03",
+      "name": "제룡산업",
+      "sector": "금속",
+      "market": "KOSDAQ",
+      "price": 7260.0,
+      "high20": 7250.0,
+      "atr20": 275.0,
+      "gap_atr": 0.036,
+      "unit_shares": 1818,
+      "status": "진입가능"
+    },
+    "355150": {
+      "time": "11:03",
+      "name": "코스텍시스",
+      "sector": "전기전자",
+      "market": "KOSDAQ",
+      "price": 24150.0,
+      "high20": 24000.0,
+      "atr20": 2015.0,
+      "gap_atr": 0.074,
+      "unit_shares": 248,
+      "status": "진입가능"
     }
   }
 }
