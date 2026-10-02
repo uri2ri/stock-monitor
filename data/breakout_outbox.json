@@ -2,23 +2,6 @@
   "version": 1,
   "events": [
     {
-      "id": "a290cc4f293a4fec9bd7b541797e0b4a",
-      "operation": "record_breakout",
-      "args": [
-        {
-          "ticker": "078600",
-          "name": "대주전자재료",
-          "high20": 97700.0,
-          "price": 102100.0,
-          "atr20": 5264.0
-        },
-        {
-          "__datetime__": "2026-10-02T09:03:37.429417+09:00"
-        }
-      ],
-      "kwargs": {}
-    },
-    {
       "id": "670dc79397144d939aacfe3fdbf224ef",
       "operation": "record_breakout",
       "args": [
@@ -1294,43 +1277,7 @@
       }
     }
   ],
-  "plans": [
-    {
-      "id": "a749ed3545cd4f7fa695300ab8d03d37",
-      "owner": "36943999950:1",
-      "events": [
-        "a290cc4f293a4fec9bd7b541797e0b4a"
-      ],
-      "record": {
-        "event_id": "a290cc4f293a4fec9bd7b541797e0b4a",
-        "ticker": "078600",
-        "name": "대주전자재료",
-        "first_detected_at": {
-          "__datetime__": "2026-10-02T09:03:37.429417+09:00"
-        },
-        "first_threshold": 97700.0,
-        "first_price": 102100.0,
-        "first_atr": 5264.0,
-        "status": "추적중",
-        "outcome": ""
-      },
-      "page_id": null,
-      "fields": {
-        "event_id": "a290cc4f293a4fec9bd7b541797e0b4a",
-        "ticker": "078600",
-        "name": "대주전자재료",
-        "first_detected_at": {
-          "__datetime__": "2026-10-02T09:03:37.429417+09:00"
-        },
-        "first_threshold": 97700.0,
-        "first_price": 102100.0,
-        "first_atr": 5264.0,
-        "status": "추적중",
-        "outcome": ""
-      },
-      "state": "creating"
-    }
-  ],
+  "plans": [],
   "prepare_cursor": "14732b2fe3024576a28fc742a9aec9ac",
   "deliver_cursor": "a749ed3545cd4f7fa695300ab8d03d37",
   "excluded_events": [
