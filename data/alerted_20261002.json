@@ -1098,6 +1098,18 @@
       "gap_atr": 0.074,
       "unit_shares": 248,
       "status": "진입가능"
+    },
+    "475430": {
+      "time": "14:13",
+      "name": "키스트론",
+      "sector": "전기전자",
+      "market": "KOSDAQ",
+      "price": 4515.0,
+      "high20": 4510.0,
+      "atr20": 219.0,
+      "gap_atr": 0.023,
+      "unit_shares": 2283,
+      "status": "진입가능"
     }
   }
 }
