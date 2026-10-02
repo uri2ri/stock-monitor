@@ -189,176 +189,6 @@
       }
     },
     {
-      "id": "a8933210be7e4d57ab86cce8c90639a1",
-      "operation": "_set_outcome",
-      "args": [
-        "037460",
-        "미주문",
-        "야간 스캔 신선도 불량(scan_date=20260930) - 신규 진입 보류",
-        {
-          "__datetime__": "2026-10-02T09:13:38.850926+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
-      "id": "60a09ec20db340fc84c5d23f4f358a2c",
-      "operation": "_set_outcome",
-      "args": [
-        "036200",
-        "미주문",
-        "야간 스캔 신선도 불량(scan_date=20260930) - 신규 진입 보류",
-        {
-          "__datetime__": "2026-10-02T09:13:38.850926+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
-      "id": "0ca8b3f76cab42bda68d6c18076cd3ce",
-      "operation": "_set_outcome",
-      "args": [
-        "095340",
-        "미주문",
-        "야간 스캔 신선도 불량(scan_date=20260930) - 신규 진입 보류",
-        {
-          "__datetime__": "2026-10-02T09:13:38.850926+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
-      "id": "b8aa1945bb8246ca8e5f0efa8c74a472",
-      "operation": "_set_outcome",
-      "args": [
-        "259630",
-        "미주문",
-        "야간 스캔 신선도 불량(scan_date=20260930) - 신규 진입 보류",
-        {
-          "__datetime__": "2026-10-02T09:13:38.850926+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
-      "id": "8e2691292e3748ce8f36331a0bb333e6",
-      "operation": "_set_outcome",
-      "args": [
-        "007660",
-        "미주문",
-        "야간 스캔 신선도 불량(scan_date=20260930) - 신규 진입 보류",
-        {
-          "__datetime__": "2026-10-02T09:13:38.850926+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
-      "id": "300efec2ab6a4266b629834400fa5422",
-      "operation": "_set_outcome",
-      "args": [
-        "041920",
-        "미주문",
-        "야간 스캔 신선도 불량(scan_date=20260930) - 신규 진입 보류",
-        {
-          "__datetime__": "2026-10-02T09:13:38.850926+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
-      "id": "9a857fd09b4b4c2dad1282258477101d",
-      "operation": "_set_outcome",
-      "args": [
-        "241520",
-        "미주문",
-        "야간 스캔 신선도 불량(scan_date=20260930) - 신규 진입 보류",
-        {
-          "__datetime__": "2026-10-02T09:13:38.850926+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
-      "id": "61619773554c438f9d8e3a5b840d9036",
-      "operation": "_set_outcome",
-      "args": [
-        "156100",
-        "미주문",
-        "야간 스캔 신선도 불량(scan_date=20260930) - 신규 진입 보류",
-        {
-          "__datetime__": "2026-10-02T09:13:38.850926+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
-      "id": "83e0cf8ccf7b4290b03c20c4be613ea0",
-      "operation": "_set_outcome",
-      "args": [
-        "061970",
-        "미주문",
-        "야간 스캔 신선도 불량(scan_date=20260930) - 신규 진입 보류",
-        {
-          "__datetime__": "2026-10-02T09:13:38.850926+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
-      "id": "e170278936ec4060a94819360fc2f05a",
-      "operation": "_set_outcome",
-      "args": [
-        "137310",
-        "미주문",
-        "야간 스캔 신선도 불량(scan_date=20260930) - 신규 진입 보류",
-        {
-          "__datetime__": "2026-10-02T09:13:38.850926+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
       "id": "17c5e4bff9c64affa4378e46603ec5ed",
       "operation": "_set_outcome",
       "args": [
@@ -516,57 +346,6 @@
       "operation": "_set_outcome",
       "args": [
         "036170",
-        "미주문",
-        "야간 스캔 신선도 불량(scan_date=20260930) - 신규 진입 보류",
-        {
-          "__datetime__": "2026-10-02T09:23:36.324485+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
-      "id": "76f25ce6387641d0ba12247bdeb2a59c",
-      "operation": "_set_outcome",
-      "args": [
-        "215200",
-        "미주문",
-        "야간 스캔 신선도 불량(scan_date=20260930) - 신규 진입 보류",
-        {
-          "__datetime__": "2026-10-02T09:23:36.324485+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
-      "id": "0f5ea48211cf4c7ead511d2826b059cc",
-      "operation": "_set_outcome",
-      "args": [
-        "357580",
-        "미주문",
-        "야간 스캔 신선도 불량(scan_date=20260930) - 신규 진입 보류",
-        {
-          "__datetime__": "2026-10-02T09:23:36.324485+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
-      "id": "9956a94e6c924cd0bd40c7c31f78d21d",
-      "operation": "_set_outcome",
-      "args": [
-        "077500",
         "미주문",
         "야간 스캔 신선도 불량(scan_date=20260930) - 신규 진입 보류",
         {
@@ -1060,125 +839,6 @@
       "operation": "_set_outcome",
       "args": [
         "129920",
-        "미주문",
-        "야간 스캔 신선도 불량(scan_date=20260930) - 신규 진입 보류",
-        {
-          "__datetime__": "2026-10-02T09:33:40.190365+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
-      "id": "e06529d64b604c0385790b431f95c8d6",
-      "operation": "_set_outcome",
-      "args": [
-        "121600",
-        "미주문",
-        "야간 스캔 신선도 불량(scan_date=20260930) - 신규 진입 보류",
-        {
-          "__datetime__": "2026-10-02T09:33:40.190365+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
-      "id": "66236c1ff7364662b49bf70820c5bb0a",
-      "operation": "_set_outcome",
-      "args": [
-        "394280",
-        "미주문",
-        "야간 스캔 신선도 불량(scan_date=20260930) - 신규 진입 보류",
-        {
-          "__datetime__": "2026-10-02T09:33:40.190365+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
-      "id": "0fdd3f170e17491796b50fcf3d4dfaf8",
-      "operation": "_set_outcome",
-      "args": [
-        "378340",
-        "미주문",
-        "야간 스캔 신선도 불량(scan_date=20260930) - 신규 진입 보류",
-        {
-          "__datetime__": "2026-10-02T09:33:40.190365+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
-      "id": "181f99a8efc943e493f1ba24f21e161b",
-      "operation": "_set_outcome",
-      "args": [
-        "232680",
-        "미주문",
-        "야간 스캔 신선도 불량(scan_date=20260930) - 신규 진입 보류",
-        {
-          "__datetime__": "2026-10-02T09:33:40.190365+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
-      "id": "0a5c121b3da14ba5b90dc6ba0d38e63f",
-      "operation": "_set_outcome",
-      "args": [
-        "009830",
-        "미주문",
-        "야간 스캔 신선도 불량(scan_date=20260930) - 신규 진입 보류",
-        {
-          "__datetime__": "2026-10-02T09:33:40.190365+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
-      "id": "1e0aacea49c64e799e6f3f8301aca8f7",
-      "operation": "_set_outcome",
-      "args": [
-        "093370",
-        "미주문",
-        "야간 스캔 신선도 불량(scan_date=20260930) - 신규 진입 보류",
-        {
-          "__datetime__": "2026-10-02T09:33:40.190365+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
-      "id": "a4dea288228644e4931a3d9d36972ed2",
-      "operation": "_set_outcome",
-      "args": [
-        "160980",
         "미주문",
         "야간 스캔 신선도 불량(scan_date=20260930) - 신규 진입 보류",
         {
@@ -1727,6 +1387,584 @@
         "야간 스캔 신선도 불량(scan_date=20260930) - 신규 진입 보류",
         {
           "__datetime__": "2026-10-02T09:33:40.190365+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "cb8af2d3bb6e4927991f5e5adbc7a667",
+      "operation": "_set_outcome",
+      "args": [
+        "163730",
+        "미주문",
+        "야간 스캔 신선도 불량(scan_date=20260930) - 신규 진입 보류",
+        {
+          "__datetime__": "2026-10-02T09:43:27.076745+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "dcf7375d86f44b75b9749ff3b4d4ef50",
+      "operation": "_set_outcome",
+      "args": [
+        "215200",
+        "미주문",
+        "야간 스캔 신선도 불량(scan_date=20260930) - 신규 진입 보류",
+        {
+          "__datetime__": "2026-10-02T09:43:27.076745+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "2c85a6c2340147aab610f64f6960e8b9",
+      "operation": "_set_outcome",
+      "args": [
+        "357580",
+        "미주문",
+        "야간 스캔 신선도 불량(scan_date=20260930) - 신규 진입 보류",
+        {
+          "__datetime__": "2026-10-02T09:43:27.076745+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "8d29820dd08d4d9d9ec91c72b8a93a5c",
+      "operation": "_set_outcome",
+      "args": [
+        "077500",
+        "미주문",
+        "야간 스캔 신선도 불량(scan_date=20260930) - 신규 진입 보류",
+        {
+          "__datetime__": "2026-10-02T09:43:27.076745+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "7f582a3d2bb24cbfb517a693a6ee7d81",
+      "operation": "_set_outcome",
+      "args": [
+        "031980",
+        "미주문",
+        "야간 스캔 신선도 불량(scan_date=20260930) - 신규 진입 보류",
+        {
+          "__datetime__": "2026-10-02T09:43:27.076745+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "cce99ae107894ffe85390c159612b84a",
+      "operation": "_set_outcome",
+      "args": [
+        "114810",
+        "미주문",
+        "야간 스캔 신선도 불량(scan_date=20260930) - 신규 진입 보류",
+        {
+          "__datetime__": "2026-10-02T09:43:27.076745+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "451652ae38764f6da23c6ae7b9dac1e7",
+      "operation": "_set_outcome",
+      "args": [
+        "330860",
+        "미주문",
+        "야간 스캔 신선도 불량(scan_date=20260930) - 신규 진입 보류",
+        {
+          "__datetime__": "2026-10-02T09:43:27.076745+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "cf98d61aaa7f4cc3b55e1f6bc496444e",
+      "operation": "_set_outcome",
+      "args": [
+        "348340",
+        "미주문",
+        "야간 스캔 신선도 불량(scan_date=20260930) - 신규 진입 보류",
+        {
+          "__datetime__": "2026-10-02T09:43:27.076745+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "937a53e06b2f46fc9a1b8ec644cf3f7d",
+      "operation": "_set_outcome",
+      "args": [
+        "376300",
+        "미주문",
+        "야간 스캔 신선도 불량(scan_date=20260930) - 신규 진입 보류",
+        {
+          "__datetime__": "2026-10-02T09:43:27.076745+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "8eb721ac77244fd5b1f0647ee3b15e09",
+      "operation": "_set_outcome",
+      "args": [
+        "170920",
+        "미주문",
+        "야간 스캔 신선도 불량(scan_date=20260930) - 신규 진입 보류",
+        {
+          "__datetime__": "2026-10-02T09:43:27.076745+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "46c6b6a8d85e4c299cc6c903060ba134",
+      "operation": "_set_outcome",
+      "args": [
+        "474610",
+        "미주문",
+        "야간 스캔 신선도 불량(scan_date=20260930) - 신규 진입 보류",
+        {
+          "__datetime__": "2026-10-02T09:43:27.076745+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "d90d60684d0d495dbd698fb903f12387",
+      "operation": "_set_outcome",
+      "args": [
+        "037460",
+        "미주문",
+        "야간 스캔 신선도 불량(scan_date=20260930) - 신규 진입 보류",
+        {
+          "__datetime__": "2026-10-02T09:43:27.076745+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "734515a8b01a4becb403106bb3b3733e",
+      "operation": "_set_outcome",
+      "args": [
+        "036200",
+        "미주문",
+        "야간 스캔 신선도 불량(scan_date=20260930) - 신규 진입 보류",
+        {
+          "__datetime__": "2026-10-02T09:43:27.076745+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "1264d49ae6d94946810e5b98e69532c8",
+      "operation": "_set_outcome",
+      "args": [
+        "095340",
+        "미주문",
+        "야간 스캔 신선도 불량(scan_date=20260930) - 신규 진입 보류",
+        {
+          "__datetime__": "2026-10-02T09:43:27.076745+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "fc9360087e324d8bb0abefd2ff43c594",
+      "operation": "_set_outcome",
+      "args": [
+        "259630",
+        "미주문",
+        "야간 스캔 신선도 불량(scan_date=20260930) - 신규 진입 보류",
+        {
+          "__datetime__": "2026-10-02T09:43:27.076745+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "f547fd24f09a48819b959352ef9ecd08",
+      "operation": "_set_outcome",
+      "args": [
+        "007660",
+        "미주문",
+        "야간 스캔 신선도 불량(scan_date=20260930) - 신규 진입 보류",
+        {
+          "__datetime__": "2026-10-02T09:43:27.076745+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "241d92e60c83441ba6d86709d99004ae",
+      "operation": "_set_outcome",
+      "args": [
+        "041920",
+        "미주문",
+        "야간 스캔 신선도 불량(scan_date=20260930) - 신규 진입 보류",
+        {
+          "__datetime__": "2026-10-02T09:43:27.076745+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "11da73b86f574071a2293803d9003b34",
+      "operation": "_set_outcome",
+      "args": [
+        "241520",
+        "미주문",
+        "야간 스캔 신선도 불량(scan_date=20260930) - 신규 진입 보류",
+        {
+          "__datetime__": "2026-10-02T09:43:27.076745+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "755ded4e46dc4673924d95c9d6d3cb08",
+      "operation": "_set_outcome",
+      "args": [
+        "156100",
+        "미주문",
+        "야간 스캔 신선도 불량(scan_date=20260930) - 신규 진입 보류",
+        {
+          "__datetime__": "2026-10-02T09:43:27.076745+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "c888e102991142bea08a4421c28d6953",
+      "operation": "_set_outcome",
+      "args": [
+        "061970",
+        "미주문",
+        "야간 스캔 신선도 불량(scan_date=20260930) - 신규 진입 보류",
+        {
+          "__datetime__": "2026-10-02T09:43:27.076745+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "c4b95f21bc934f4eb1b14139dd859bcc",
+      "operation": "_set_outcome",
+      "args": [
+        "137310",
+        "미주문",
+        "야간 스캔 신선도 불량(scan_date=20260930) - 신규 진입 보류",
+        {
+          "__datetime__": "2026-10-02T09:43:27.076745+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "829887b9554742038978f3e757b19361",
+      "operation": "_set_outcome",
+      "args": [
+        "260970",
+        "미주문",
+        "야간 스캔 신선도 불량(scan_date=20260930) - 신규 진입 보류",
+        {
+          "__datetime__": "2026-10-02T09:43:27.076745+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "0fe950a5d127479a8c9a1e2e65f5d35d",
+      "operation": "_set_outcome",
+      "args": [
+        "220260",
+        "미주문",
+        "야간 스캔 신선도 불량(scan_date=20260930) - 신규 진입 보류",
+        {
+          "__datetime__": "2026-10-02T09:43:27.076745+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "b253849e7822494dafeebe3eaf736c46",
+      "operation": "_set_outcome",
+      "args": [
+        "159010",
+        "미주문",
+        "야간 스캔 신선도 불량(scan_date=20260930) - 신규 진입 보류",
+        {
+          "__datetime__": "2026-10-02T09:43:27.076745+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "6b69fd7cc167495eb75d19b4c2802014",
+      "operation": "_set_outcome",
+      "args": [
+        "031330",
+        "미주문",
+        "야간 스캔 신선도 불량(scan_date=20260930) - 신규 진입 보류",
+        {
+          "__datetime__": "2026-10-02T09:43:27.076745+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "1f510ff83c3f45749d5394dba6883473",
+      "operation": "_set_outcome",
+      "args": [
+        "042520",
+        "미주문",
+        "야간 스캔 신선도 불량(scan_date=20260930) - 신규 진입 보류",
+        {
+          "__datetime__": "2026-10-02T09:43:27.076745+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "65097a471f13403180268d30b6408c9e",
+      "operation": "_set_outcome",
+      "args": [
+        "354320",
+        "미주문",
+        "야간 스캔 신선도 불량(scan_date=20260930) - 신규 진입 보류",
+        {
+          "__datetime__": "2026-10-02T09:43:27.076745+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "b6fcd9c9f1e24a81ba7f6630cb7ca82d",
+      "operation": "_set_outcome",
+      "args": [
+        "036540",
+        "미주문",
+        "야간 스캔 신선도 불량(scan_date=20260930) - 신규 진입 보류",
+        {
+          "__datetime__": "2026-10-02T09:43:27.076745+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "565f8e7dbe254676899b9c3816a6cb75",
+      "operation": "_set_outcome",
+      "args": [
+        "178320",
+        "미주문",
+        "야간 스캔 신선도 불량(scan_date=20260930) - 신규 진입 보류",
+        {
+          "__datetime__": "2026-10-02T09:43:27.076745+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "2c26f57bafb0428ebd63ce0b63313a28",
+      "operation": "_set_outcome",
+      "args": [
+        "420770",
+        "미주문",
+        "야간 스캔 신선도 불량(scan_date=20260930) - 신규 진입 보류",
+        {
+          "__datetime__": "2026-10-02T09:43:27.076745+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "c3bd18e4736d41e18afc28701e6bb606",
+      "operation": "_set_outcome",
+      "args": [
+        "062040",
+        "미주문",
+        "야간 스캔 신선도 불량(scan_date=20260930) - 신규 진입 보류",
+        {
+          "__datetime__": "2026-10-02T09:43:27.076745+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "af688d3eba794b8eb0dd6993e805c65f",
+      "operation": "_set_outcome",
+      "args": [
+        "000990",
+        "미주문",
+        "야간 스캔 신선도 불량(scan_date=20260930) - 신규 진입 보류",
+        {
+          "__datetime__": "2026-10-02T09:43:27.076745+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "bd8c23b2985d406d8c74fadda44c425e",
+      "operation": "_set_outcome",
+      "args": [
+        "036170",
+        "미주문",
+        "야간 스캔 신선도 불량(scan_date=20260930) - 신규 진입 보류",
+        {
+          "__datetime__": "2026-10-02T09:43:27.076745+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "bf7706077f29472297ccee649c0f05e0",
+      "operation": "_set_outcome",
+      "args": [
+        "129920",
+        "미주문",
+        "야간 스캔 신선도 불량(scan_date=20260930) - 신규 진입 보류",
+        {
+          "__datetime__": "2026-10-02T09:43:27.076745+09:00"
         }
       ],
       "kwargs": {
@@ -2506,9 +2744,71 @@
         }
       },
       "state": "queued"
+    },
+    {
+      "id": "b2077fa61169449981ce59eebb45ee50",
+      "owner": "36947384081:1",
+      "events": [
+        "cb8af2d3bb6e4927991f5e5adbc7a667"
+      ],
+      "record": {
+        "account_type": "",
+        "account_key": "",
+        "order_side": "",
+        "order_qty": null,
+        "filled_qty": null,
+        "unverified_qty": null,
+        "execution_price": null,
+        "execution_state": "",
+        "execution_checked_at": null,
+        "event_id": "4118820d5936478ab89b0aa1564f8898",
+        "order_no": "",
+        "order_day": null,
+        "key": "3e20fc3e-53fc-8165-8422-db6cd6b183d3",
+        "page_id": "3e20fc3e-53fc-8165-8422-db6cd6b183d3",
+        "name": "핑거",
+        "ticker": "163730",
+        "first_detected_at": {
+          "__datetime__": "2026-09-21T09:33:00+09:00"
+        },
+        "first_threshold": 10500.0,
+        "first_price": 10600.0,
+        "first_atr": 798.0,
+        "status": "추적중",
+        "closed_reason": "",
+        "closed_at": null,
+        "outcome": "미주문",
+        "outcome_reason": "야간 스캔 신선도 불량(scan_date=20260930) - 신규 진입 보류",
+        "outcome_at": {
+          "__datetime__": "2026-10-02T09:43:27.076745+09:00"
+        },
+        "latest_close": 14080.0,
+        "latest_date": {
+          "__date__": "2026-09-30"
+        },
+        "latest_atr": 943.0,
+        "latest_line": 14620.0,
+        "change_pct": 34.1,
+        "atr_mult": 4.49,
+        "dist_to_line": 540.0,
+        "dist_to_line_atr": 0.57,
+        "level_state": "최초선위",
+        "new_breakout": "미해당",
+        "refresh_state": "갱신됨",
+        "refresh_note": "",
+        "user_memo": ""
+      },
+      "page_id": "3e20fc3e-53fc-8165-8422-db6cd6b183d3",
+      "fields": {
+        "outcome_reason": "야간 스캔 신선도 불량(scan_date=20260930) - 신규 진입 보류",
+        "outcome_at": {
+          "__datetime__": "2026-10-02T09:43:27.076745+09:00"
+        }
+      },
+      "state": "queued"
     }
   ],
-  "prepare_cursor": "9826deccc5de4b5c9d4715ee15946943",
+  "prepare_cursor": "9956a94e6c924cd0bd40c7c31f78d21d",
   "deliver_cursor": "d061e3b2fa1446a080616a97b11b0553",
   "excluded_events": [
     {
