@@ -2,23 +2,6 @@
   "version": 1,
   "events": [
     {
-      "id": "3ff253abc1da4ee9acf7ccdc3b81ae15",
-      "operation": "record_breakout",
-      "args": [
-        {
-          "ticker": "376300",
-          "name": "디어유",
-          "high20": 18940.0,
-          "price": 19220.0,
-          "atr20": 813.0
-        },
-        {
-          "__datetime__": "2026-10-02T09:03:37.429417+09:00"
-        }
-      ],
-      "kwargs": {}
-    },
-    {
       "id": "a290cc4f293a4fec9bd7b541797e0b4a",
       "operation": "record_breakout",
       "args": [
@@ -1313,41 +1296,6 @@
   ],
   "plans": [
     {
-      "id": "ff1846e5136f4a9f87cd1958e0a458f1",
-      "owner": "36943999950:1",
-      "events": [
-        "3ff253abc1da4ee9acf7ccdc3b81ae15"
-      ],
-      "record": {
-        "event_id": "3ff253abc1da4ee9acf7ccdc3b81ae15",
-        "ticker": "376300",
-        "name": "디어유",
-        "first_detected_at": {
-          "__datetime__": "2026-10-02T09:03:37.429417+09:00"
-        },
-        "first_threshold": 18940.0,
-        "first_price": 19220.0,
-        "first_atr": 813.0,
-        "status": "추적중",
-        "outcome": ""
-      },
-      "page_id": null,
-      "fields": {
-        "event_id": "3ff253abc1da4ee9acf7ccdc3b81ae15",
-        "ticker": "376300",
-        "name": "디어유",
-        "first_detected_at": {
-          "__datetime__": "2026-10-02T09:03:37.429417+09:00"
-        },
-        "first_threshold": 18940.0,
-        "first_price": 19220.0,
-        "first_atr": 813.0,
-        "status": "추적중",
-        "outcome": ""
-      },
-      "state": "creating"
-    },
-    {
       "id": "a749ed3545cd4f7fa695300ab8d03d37",
       "owner": "36943999950:1",
       "events": [
@@ -1380,11 +1328,11 @@
         "status": "추적중",
         "outcome": ""
       },
-      "state": "queued"
+      "state": "creating"
     }
   ],
   "prepare_cursor": "14732b2fe3024576a28fc742a9aec9ac",
-  "deliver_cursor": "ff1846e5136f4a9f87cd1958e0a458f1",
+  "deliver_cursor": "a749ed3545cd4f7fa695300ab8d03d37",
   "excluded_events": [
     {
       "event": {
