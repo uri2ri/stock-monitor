@@ -87,23 +87,6 @@
       }
     },
     {
-      "id": "b47e2469f3e242a2a8f742736696a687",
-      "operation": "record_breakout",
-      "args": [
-        {
-          "ticker": "062040",
-          "name": "산일전기",
-          "high20": 215000.0,
-          "price": 215500.0,
-          "atr20": 12341.0
-        },
-        {
-          "__datetime__": "2026-10-02T09:23:36.324485+09:00"
-        }
-      ],
-      "kwargs": {}
-    },
-    {
       "id": "c92ea4eb5e324364a5d3d4f1c81d670f",
       "operation": "record_breakout",
       "args": [
@@ -119,23 +102,6 @@
         }
       ],
       "kwargs": {}
-    },
-    {
-      "id": "05e425aea6594f04b9e62572b011b343",
-      "operation": "_set_outcome",
-      "args": [
-        "062040",
-        "미주문",
-        "야간 스캔 신선도 불량(scan_date=20260930) - 신규 진입 보류",
-        {
-          "__datetime__": "2026-10-02T09:23:36.324485+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
     },
     {
       "id": "3b4c0b39a47e4a7a84127f36e6f606d5",
@@ -1789,52 +1755,8 @@
   ],
   "plans": [
     {
-      "id": "e8bbdb22a4b34115b74d0ed6f8b88e4c",
-      "owner": "36947384081:1",
-      "events": [
-        "b47e2469f3e242a2a8f742736696a687",
-        "05e425aea6594f04b9e62572b011b343"
-      ],
-      "record": {
-        "event_id": "b47e2469f3e242a2a8f742736696a687",
-        "ticker": "062040",
-        "name": "산일전기",
-        "first_detected_at": {
-          "__datetime__": "2026-10-02T09:23:36.324485+09:00"
-        },
-        "first_threshold": 215000.0,
-        "first_price": 215500.0,
-        "first_atr": 12341.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "야간 스캔 신선도 불량(scan_date=20260930) - 신규 진입 보류",
-        "outcome_at": {
-          "__datetime__": "2026-10-02T09:23:36.324485+09:00"
-        }
-      },
-      "page_id": null,
-      "fields": {
-        "event_id": "b47e2469f3e242a2a8f742736696a687",
-        "ticker": "062040",
-        "name": "산일전기",
-        "first_detected_at": {
-          "__datetime__": "2026-10-02T09:23:36.324485+09:00"
-        },
-        "first_threshold": 215000.0,
-        "first_price": 215500.0,
-        "first_atr": 12341.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "야간 스캔 신선도 불량(scan_date=20260930) - 신규 진입 보류",
-        "outcome_at": {
-          "__datetime__": "2026-10-02T09:23:36.324485+09:00"
-        }
-      },
-      "state": "creating"
-    },
-    {
       "id": "ae0ee5cc5e9844e7a86eadef8b4f39a3",
-      "owner": "36945703915:1",
+      "owner": "36947384081:1",
       "events": [
         "c92ea4eb5e324364a5d3d4f1c81d670f",
         "0b1cbf690c984ca9ad2198a441fb0d3e"
@@ -1874,7 +1796,7 @@
           "__datetime__": "2026-10-02T09:23:36.324485+09:00"
         }
       },
-      "state": "queued"
+      "state": "creating"
     },
     {
       "id": "5465aa7a1da24997b2e8388eb3128351",
@@ -2108,7 +2030,7 @@
     }
   ],
   "prepare_cursor": "9956a94e6c924cd0bd40c7c31f78d21d",
-  "deliver_cursor": "e8bbdb22a4b34115b74d0ed6f8b88e4c",
+  "deliver_cursor": "ae0ee5cc5e9844e7a86eadef8b4f39a3",
   "excluded_events": [
     {
       "event": {
