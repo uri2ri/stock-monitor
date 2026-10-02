@@ -2,23 +2,6 @@
   "version": 1,
   "events": [
     {
-      "id": "0308316e7b634aa5870681f556d32517",
-      "operation": "record_breakout",
-      "args": [
-        {
-          "ticker": "009830",
-          "name": "한화솔루션",
-          "high20": 34900.0,
-          "price": 34950.0,
-          "atr20": 2183.0
-        },
-        {
-          "__datetime__": "2026-10-02T09:03:37.429417+09:00"
-        }
-      ],
-      "kwargs": {}
-    },
-    {
       "id": "3ff253abc1da4ee9acf7ccdc3b81ae15",
       "operation": "record_breakout",
       "args": [
@@ -1330,41 +1313,6 @@
   ],
   "plans": [
     {
-      "id": "a96ef8b6c27e4570a242825484200c78",
-      "owner": "36943999950:1",
-      "events": [
-        "0308316e7b634aa5870681f556d32517"
-      ],
-      "record": {
-        "event_id": "0308316e7b634aa5870681f556d32517",
-        "ticker": "009830",
-        "name": "한화솔루션",
-        "first_detected_at": {
-          "__datetime__": "2026-10-02T09:03:37.429417+09:00"
-        },
-        "first_threshold": 34900.0,
-        "first_price": 34950.0,
-        "first_atr": 2183.0,
-        "status": "추적중",
-        "outcome": ""
-      },
-      "page_id": null,
-      "fields": {
-        "event_id": "0308316e7b634aa5870681f556d32517",
-        "ticker": "009830",
-        "name": "한화솔루션",
-        "first_detected_at": {
-          "__datetime__": "2026-10-02T09:03:37.429417+09:00"
-        },
-        "first_threshold": 34900.0,
-        "first_price": 34950.0,
-        "first_atr": 2183.0,
-        "status": "추적중",
-        "outcome": ""
-      },
-      "state": "creating"
-    },
-    {
       "id": "ff1846e5136f4a9f87cd1958e0a458f1",
       "owner": "36943999950:1",
       "events": [
@@ -1397,7 +1345,7 @@
         "status": "추적중",
         "outcome": ""
       },
-      "state": "queued"
+      "state": "creating"
     },
     {
       "id": "a749ed3545cd4f7fa695300ab8d03d37",
@@ -1436,7 +1384,7 @@
     }
   ],
   "prepare_cursor": "14732b2fe3024576a28fc742a9aec9ac",
-  "deliver_cursor": "a96ef8b6c27e4570a242825484200c78",
+  "deliver_cursor": "ff1846e5136f4a9f87cd1958e0a458f1",
   "excluded_events": [
     {
       "event": {
