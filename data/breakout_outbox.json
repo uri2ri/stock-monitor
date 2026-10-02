@@ -2,74 +2,6 @@
   "version": 1,
   "events": [
     {
-      "id": "9ba00d8beb95481ca13c107f8dc8b046",
-      "operation": "record_breakout",
-      "args": [
-        {
-          "ticker": "178320",
-          "name": "서진시스템",
-          "high20": 40400.0,
-          "price": 41400.0,
-          "atr20": 2967.0
-        },
-        {
-          "__datetime__": "2026-10-02T09:13:38.850926+09:00"
-        }
-      ],
-      "kwargs": {}
-    },
-    {
-      "id": "7097f2485bcf401a9fc136a43cb98359",
-      "operation": "_set_outcome",
-      "args": [
-        "036540",
-        "미주문",
-        "야간 스캔 신선도 불량(scan_date=20260930) - 신규 진입 보류",
-        {
-          "__datetime__": "2026-10-02T09:13:38.850926+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
-      "id": "6e943682cce84f928292ebdb5e8ebfdf",
-      "operation": "_set_outcome",
-      "args": [
-        "178320",
-        "미주문",
-        "야간 스캔 신선도 불량(scan_date=20260930) - 신규 진입 보류",
-        {
-          "__datetime__": "2026-10-02T09:13:38.850926+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
-      "id": "2d5f947176ac46ff86b495cdae4a65b7",
-      "operation": "_set_outcome",
-      "args": [
-        "420770",
-        "미주문",
-        "야간 스캔 신선도 불량(scan_date=20260930) - 신규 진입 보류",
-        {
-          "__datetime__": "2026-10-02T09:13:38.850926+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
       "id": "17c5e4bff9c64affa4378e46603ec5ed",
       "operation": "_set_outcome",
       "args": [
@@ -1857,176 +1789,8 @@
   ],
   "plans": [
     {
-      "id": "e50dce9dc4bd4d8c87e3aaffdfd9752d",
-      "owner": "36947384081:1",
-      "events": [
-        "9ba00d8beb95481ca13c107f8dc8b046",
-        "6e943682cce84f928292ebdb5e8ebfdf"
-      ],
-      "record": {
-        "event_id": "9ba00d8beb95481ca13c107f8dc8b046",
-        "ticker": "178320",
-        "name": "서진시스템",
-        "first_detected_at": {
-          "__datetime__": "2026-10-02T09:13:38.850926+09:00"
-        },
-        "first_threshold": 40400.0,
-        "first_price": 41400.0,
-        "first_atr": 2967.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "야간 스캔 신선도 불량(scan_date=20260930) - 신규 진입 보류",
-        "outcome_at": {
-          "__datetime__": "2026-10-02T09:13:38.850926+09:00"
-        }
-      },
-      "page_id": null,
-      "fields": {
-        "event_id": "9ba00d8beb95481ca13c107f8dc8b046",
-        "ticker": "178320",
-        "name": "서진시스템",
-        "first_detected_at": {
-          "__datetime__": "2026-10-02T09:13:38.850926+09:00"
-        },
-        "first_threshold": 40400.0,
-        "first_price": 41400.0,
-        "first_atr": 2967.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "야간 스캔 신선도 불량(scan_date=20260930) - 신규 진입 보류",
-        "outcome_at": {
-          "__datetime__": "2026-10-02T09:13:38.850926+09:00"
-        }
-      },
-      "state": "creating"
-    },
-    {
-      "id": "3269a1a2e10c4ae3b6cfeb146afa1a2c",
-      "owner": "36944859957:1",
-      "events": [
-        "7097f2485bcf401a9fc136a43cb98359"
-      ],
-      "record": {
-        "account_type": "",
-        "account_key": "",
-        "order_side": "",
-        "order_qty": null,
-        "filled_qty": null,
-        "unverified_qty": null,
-        "execution_price": null,
-        "execution_state": "",
-        "execution_checked_at": null,
-        "event_id": "b66cab78fe4f4548bae68d263d9c62b7",
-        "order_no": "",
-        "order_day": null,
-        "key": "3e20fc3e-53fc-8179-9cdc-dfce59ea9dd0",
-        "page_id": "3e20fc3e-53fc-8179-9cdc-dfce59ea9dd0",
-        "name": "SFA반도체",
-        "ticker": "036540",
-        "first_detected_at": {
-          "__datetime__": "2026-09-21T09:03:00+09:00"
-        },
-        "first_threshold": 9110.0,
-        "first_price": 9300.0,
-        "first_atr": 571.0,
-        "status": "추적중",
-        "closed_reason": "",
-        "closed_at": null,
-        "outcome": "미주문",
-        "outcome_reason": "야간 스캔 신선도 불량(scan_date=20260930) - 신규 진입 보류",
-        "outcome_at": {
-          "__datetime__": "2026-10-02T09:13:38.850926+09:00"
-        },
-        "latest_close": 10780.0,
-        "latest_date": {
-          "__date__": "2026-09-30"
-        },
-        "latest_atr": 623.0,
-        "latest_line": 11160.0,
-        "change_pct": 18.33,
-        "atr_mult": 2.92,
-        "dist_to_line": 380.0,
-        "dist_to_line_atr": 0.61,
-        "level_state": "최초선위",
-        "new_breakout": "미해당",
-        "refresh_state": "갱신됨",
-        "refresh_note": "",
-        "user_memo": ""
-      },
-      "page_id": "3e20fc3e-53fc-8179-9cdc-dfce59ea9dd0",
-      "fields": {
-        "outcome_reason": "야간 스캔 신선도 불량(scan_date=20260930) - 신규 진입 보류",
-        "outcome_at": {
-          "__datetime__": "2026-10-02T09:13:38.850926+09:00"
-        }
-      },
-      "state": "queued"
-    },
-    {
-      "id": "2745f16d0ee24d4fac5a75b274fb4adc",
-      "owner": "36944859957:1",
-      "events": [
-        "2d5f947176ac46ff86b495cdae4a65b7"
-      ],
-      "record": {
-        "account_type": "",
-        "account_key": "",
-        "order_side": "",
-        "order_qty": null,
-        "filled_qty": null,
-        "unverified_qty": null,
-        "execution_price": null,
-        "execution_state": "",
-        "execution_checked_at": null,
-        "event_id": "87b0eb2dd3744ee5844a32cb8dedef10",
-        "order_no": "",
-        "order_day": null,
-        "key": "3e30fc3e-53fc-81e9-a02a-ec5ba4fd9949",
-        "page_id": "3e30fc3e-53fc-81e9-a02a-ec5ba4fd9949",
-        "name": "기가비스",
-        "ticker": "420770",
-        "first_detected_at": {
-          "__datetime__": "2026-09-22T09:03:00+09:00"
-        },
-        "first_threshold": 114200.0,
-        "first_price": 117300.0,
-        "first_atr": 10662.0,
-        "status": "추적중",
-        "closed_reason": "",
-        "closed_at": null,
-        "outcome": "미주문",
-        "outcome_reason": "야간 스캔 신선도 불량(scan_date=20260930) - 신규 진입 보류",
-        "outcome_at": {
-          "__datetime__": "2026-10-02T09:13:38.850926+09:00"
-        },
-        "latest_close": 127100.0,
-        "latest_date": {
-          "__date__": "2026-09-30"
-        },
-        "latest_atr": 10744.0,
-        "latest_line": 134700.0,
-        "change_pct": 11.3,
-        "atr_mult": 1.21,
-        "dist_to_line": 7600.0,
-        "dist_to_line_atr": 0.71,
-        "level_state": "최초선위",
-        "new_breakout": "미해당",
-        "refresh_state": "갱신됨",
-        "refresh_note": "",
-        "user_memo": ""
-      },
-      "page_id": "3e30fc3e-53fc-81e9-a02a-ec5ba4fd9949",
-      "fields": {
-        "outcome_reason": "야간 스캔 신선도 불량(scan_date=20260930) - 신규 진입 보류",
-        "outcome_at": {
-          "__datetime__": "2026-10-02T09:13:38.850926+09:00"
-        }
-      },
-      "state": "queued"
-    },
-    {
       "id": "e8bbdb22a4b34115b74d0ed6f8b88e4c",
-      "owner": "36945703915:1",
+      "owner": "36947384081:1",
       "events": [
         "b47e2469f3e242a2a8f742736696a687",
         "05e425aea6594f04b9e62572b011b343"
@@ -2066,7 +1830,7 @@
           "__datetime__": "2026-10-02T09:23:36.324485+09:00"
         }
       },
-      "state": "queued"
+      "state": "creating"
     },
     {
       "id": "ae0ee5cc5e9844e7a86eadef8b4f39a3",
@@ -2344,7 +2108,7 @@
     }
   ],
   "prepare_cursor": "9956a94e6c924cd0bd40c7c31f78d21d",
-  "deliver_cursor": "e50dce9dc4bd4d8c87e3aaffdfd9752d",
+  "deliver_cursor": "e8bbdb22a4b34115b74d0ed6f8b88e4c",
   "excluded_events": [
     {
       "event": {
