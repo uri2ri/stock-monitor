@@ -2,23 +2,6 @@
   "version": 1,
   "events": [
     {
-      "id": "8f01e3bf28774567ad2904afa807dd00",
-      "operation": "record_breakout",
-      "args": [
-        {
-          "ticker": "378340",
-          "name": "필에너지",
-          "high20": 12560.0,
-          "price": 12780.0,
-          "atr20": 634.0
-        },
-        {
-          "__datetime__": "2026-10-02T09:03:37.429417+09:00"
-        }
-      ],
-      "kwargs": {}
-    },
-    {
       "id": "0308316e7b634aa5870681f556d32517",
       "operation": "record_breakout",
       "args": [
@@ -1347,41 +1330,6 @@
   ],
   "plans": [
     {
-      "id": "c189846c57ce4537bc8083f8c69a27a3",
-      "owner": "36943999950:1",
-      "events": [
-        "8f01e3bf28774567ad2904afa807dd00"
-      ],
-      "record": {
-        "event_id": "8f01e3bf28774567ad2904afa807dd00",
-        "ticker": "378340",
-        "name": "필에너지",
-        "first_detected_at": {
-          "__datetime__": "2026-10-02T09:03:37.429417+09:00"
-        },
-        "first_threshold": 12560.0,
-        "first_price": 12780.0,
-        "first_atr": 634.0,
-        "status": "추적중",
-        "outcome": ""
-      },
-      "page_id": null,
-      "fields": {
-        "event_id": "8f01e3bf28774567ad2904afa807dd00",
-        "ticker": "378340",
-        "name": "필에너지",
-        "first_detected_at": {
-          "__datetime__": "2026-10-02T09:03:37.429417+09:00"
-        },
-        "first_threshold": 12560.0,
-        "first_price": 12780.0,
-        "first_atr": 634.0,
-        "status": "추적중",
-        "outcome": ""
-      },
-      "state": "creating"
-    },
-    {
       "id": "a96ef8b6c27e4570a242825484200c78",
       "owner": "36943999950:1",
       "events": [
@@ -1414,7 +1362,7 @@
         "status": "추적중",
         "outcome": ""
       },
-      "state": "queued"
+      "state": "creating"
     },
     {
       "id": "ff1846e5136f4a9f87cd1958e0a458f1",
@@ -1488,7 +1436,7 @@
     }
   ],
   "prepare_cursor": "14732b2fe3024576a28fc742a9aec9ac",
-  "deliver_cursor": "c189846c57ce4537bc8083f8c69a27a3",
+  "deliver_cursor": "a96ef8b6c27e4570a242825484200c78",
   "excluded_events": [
     {
       "event": {
