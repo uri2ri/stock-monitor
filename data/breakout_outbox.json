@@ -1,8 +1,88 @@
 {
   "version": 1,
-  "events": [],
-  "plans": [],
-  "prepare_cursor": "33f888fed58d49ffbc565c39e7ada0ea",
+  "events": [
+    {
+      "id": "3cb923f855fc40c284ab9c1638db00dd",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "016610",
+          "name": "DB증권",
+          "high20": 10500.0,
+          "price": 10510.0,
+          "atr20": 298.0
+        },
+        {
+          "__datetime__": "2026-10-02T14:53:44.957316+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "898a49d8075c40fb8288e7ffcf89b07e",
+      "operation": "_set_outcome",
+      "args": [
+        "016610",
+        "미주문",
+        "야간 스캔 신선도 불량(scan_date=20260930) - 신규 진입 보류",
+        {
+          "__datetime__": "2026-10-02T14:53:44.957316+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    }
+  ],
+  "plans": [
+    {
+      "id": "9e5b3d4bb827412db5a244c13e1dd99a",
+      "owner": "36970936281:1",
+      "events": [
+        "3cb923f855fc40c284ab9c1638db00dd",
+        "898a49d8075c40fb8288e7ffcf89b07e"
+      ],
+      "record": {
+        "event_id": "3cb923f855fc40c284ab9c1638db00dd",
+        "ticker": "016610",
+        "name": "DB증권",
+        "first_detected_at": {
+          "__datetime__": "2026-10-02T14:53:44.957316+09:00"
+        },
+        "first_threshold": 10500.0,
+        "first_price": 10510.0,
+        "first_atr": 298.0,
+        "status": "추적중",
+        "outcome": "미주문",
+        "outcome_reason": "야간 스캔 신선도 불량(scan_date=20260930) - 신규 진입 보류",
+        "outcome_at": {
+          "__datetime__": "2026-10-02T14:53:44.957316+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "3cb923f855fc40c284ab9c1638db00dd",
+        "ticker": "016610",
+        "name": "DB증권",
+        "first_detected_at": {
+          "__datetime__": "2026-10-02T14:53:44.957316+09:00"
+        },
+        "first_threshold": 10500.0,
+        "first_price": 10510.0,
+        "first_atr": 298.0,
+        "status": "추적중",
+        "outcome": "미주문",
+        "outcome_reason": "야간 스캔 신선도 불량(scan_date=20260930) - 신규 진입 보류",
+        "outcome_at": {
+          "__datetime__": "2026-10-02T14:53:44.957316+09:00"
+        }
+      },
+      "state": "queued"
+    }
+  ],
+  "prepare_cursor": "6c74b9ba2e61453987df9f627fc90fe3",
   "deliver_cursor": "6127955214fe482ca8a6db1847a75b2c",
   "excluded_events": [
     {
