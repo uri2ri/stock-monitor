@@ -646,6 +646,18 @@
       "gap_atr": 0.028,
       "unit_shares": 141,
       "status": "진입가능"
+    },
+    "012030": {
+      "time": "10:53",
+      "name": "DB",
+      "sector": "IT 서비스",
+      "market": "KOSPI",
+      "price": 2090.0,
+      "high20": 2080.0,
+      "atr20": 91.0,
+      "gap_atr": 0.11,
+      "unit_shares": 5494,
+      "status": "진입가능"
     }
   }
 }
