@@ -2,23 +2,6 @@
   "version": 1,
   "events": [
     {
-      "id": "ea4fe6a6a5fe46c19368d0077ca38c74",
-      "operation": "record_breakout",
-      "args": [
-        {
-          "ticker": "383220",
-          "name": "F&F",
-          "high20": 69900.0,
-          "price": 70100.0,
-          "atr20": 2522.0
-        },
-        {
-          "__datetime__": "2026-10-06T09:03:46.499072+09:00"
-        }
-      ],
-      "kwargs": {}
-    },
-    {
       "id": "ff2882359c0f432e98a10f5b296003fe",
       "operation": "record_breakout",
       "args": [
@@ -393,23 +376,6 @@
       }
     },
     {
-      "id": "33cb919685914d1f9d99070de7865753",
-      "operation": "_set_outcome",
-      "args": [
-        "383220",
-        "미주문",
-        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        {
-          "__datetime__": "2026-10-06T09:03:58.772731+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
       "id": "d93259751ce14a5a968e316afb398a0e",
       "operation": "_set_outcome",
       "args": [
@@ -684,50 +650,6 @@
   ],
   "plans": [
     {
-      "id": "b6391e0e0d7b4f168c4c325f3bfb36c7",
-      "owner": "37391890516:1",
-      "events": [
-        "ea4fe6a6a5fe46c19368d0077ca38c74",
-        "33cb919685914d1f9d99070de7865753"
-      ],
-      "record": {
-        "event_id": "ea4fe6a6a5fe46c19368d0077ca38c74",
-        "ticker": "383220",
-        "name": "F&F",
-        "first_detected_at": {
-          "__datetime__": "2026-10-06T09:03:46.499072+09:00"
-        },
-        "first_threshold": 69900.0,
-        "first_price": 70100.0,
-        "first_atr": 2522.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        "outcome_at": {
-          "__datetime__": "2026-10-06T09:03:58.772731+09:00"
-        }
-      },
-      "page_id": null,
-      "fields": {
-        "event_id": "ea4fe6a6a5fe46c19368d0077ca38c74",
-        "ticker": "383220",
-        "name": "F&F",
-        "first_detected_at": {
-          "__datetime__": "2026-10-06T09:03:46.499072+09:00"
-        },
-        "first_threshold": 69900.0,
-        "first_price": 70100.0,
-        "first_atr": 2522.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        "outcome_at": {
-          "__datetime__": "2026-10-06T09:03:58.772731+09:00"
-        }
-      },
-      "state": "creating"
-    },
-    {
       "id": "4235ad17594e4baab2ed240b2c5490db",
       "owner": "37391890516:1",
       "events": [
@@ -769,7 +691,7 @@
           "__datetime__": "2026-10-06T09:03:58.782365+09:00"
         }
       },
-      "state": "queued"
+      "state": "creating"
     },
     {
       "id": "f9d52b1f43dc4a8680fa635462229b08",
@@ -1805,7 +1727,7 @@
     }
   ],
   "prepare_cursor": "6bd64a90d4ba4d909a657b2cd93f722d",
-  "deliver_cursor": "b6391e0e0d7b4f168c4c325f3bfb36c7",
+  "deliver_cursor": "4235ad17594e4baab2ed240b2c5490db",
   "excluded_events": [
     {
       "event": {
