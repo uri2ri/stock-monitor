@@ -2,23 +2,6 @@
   "version": 1,
   "events": [
     {
-      "id": "ef8a7004ef7740d9bbfb7886e74ffdb3",
-      "operation": "record_breakout",
-      "args": [
-        {
-          "ticker": "056080",
-          "name": "유진로봇",
-          "high20": 12970.0,
-          "price": 13040.0,
-          "atr20": 850.0
-        },
-        {
-          "__datetime__": "2026-10-06T09:03:46.499072+09:00"
-        }
-      ],
-      "kwargs": {}
-    },
-    {
       "id": "d51668c85b464aa1bba58e7ec4bb0d55",
       "operation": "record_breakout",
       "args": [
@@ -240,23 +223,6 @@
       }
     },
     {
-      "id": "61d975977fea4a85bde39effbf996a25",
-      "operation": "_set_outcome",
-      "args": [
-        "056080",
-        "미주문",
-        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        {
-          "__datetime__": "2026-10-06T09:03:58.899227+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
       "id": "93d46176542f4b47acedeb2fd837cd21",
       "operation": "_set_outcome",
       "args": [
@@ -310,50 +276,6 @@
   ],
   "plans": [
     {
-      "id": "e9406a59cb6d41aa9a6e31670a5c5396",
-      "owner": "37391890516:1",
-      "events": [
-        "ef8a7004ef7740d9bbfb7886e74ffdb3",
-        "61d975977fea4a85bde39effbf996a25"
-      ],
-      "record": {
-        "event_id": "ef8a7004ef7740d9bbfb7886e74ffdb3",
-        "ticker": "056080",
-        "name": "유진로봇",
-        "first_detected_at": {
-          "__datetime__": "2026-10-06T09:03:46.499072+09:00"
-        },
-        "first_threshold": 12970.0,
-        "first_price": 13040.0,
-        "first_atr": 850.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        "outcome_at": {
-          "__datetime__": "2026-10-06T09:03:58.899227+09:00"
-        }
-      },
-      "page_id": null,
-      "fields": {
-        "event_id": "ef8a7004ef7740d9bbfb7886e74ffdb3",
-        "ticker": "056080",
-        "name": "유진로봇",
-        "first_detected_at": {
-          "__datetime__": "2026-10-06T09:03:46.499072+09:00"
-        },
-        "first_threshold": 12970.0,
-        "first_price": 13040.0,
-        "first_atr": 850.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        "outcome_at": {
-          "__datetime__": "2026-10-06T09:03:58.899227+09:00"
-        }
-      },
-      "state": "creating"
-    },
-    {
       "id": "62d96e4aaa274d6187023f272c7f7f3e",
       "owner": "37391890516:1",
       "events": [
@@ -395,7 +317,7 @@
           "__datetime__": "2026-10-06T09:03:58.920703+09:00"
         }
       },
-      "state": "queued"
+      "state": "creating"
     },
     {
       "id": "eb728197610d40228b2ea8242d5fdee7",
@@ -947,7 +869,7 @@
     }
   ],
   "prepare_cursor": "6bd64a90d4ba4d909a657b2cd93f722d",
-  "deliver_cursor": "e9406a59cb6d41aa9a6e31670a5c5396",
+  "deliver_cursor": "62d96e4aaa274d6187023f272c7f7f3e",
   "excluded_events": [
     {
       "event": {
