@@ -2,23 +2,6 @@
   "version": 1,
   "events": [
     {
-      "id": "5f51d83ea81b46ccb0fba5d44491d286",
-      "operation": "record_breakout",
-      "args": [
-        {
-          "ticker": "005850",
-          "name": "에스엘",
-          "high20": 52600.0,
-          "price": 52700.0,
-          "atr20": 2202.0
-        },
-        {
-          "__datetime__": "2026-10-06T09:03:46.499072+09:00"
-        }
-      ],
-      "kwargs": {}
-    },
-    {
       "id": "78bc8441c44d4291bd296b5c7dd412ea",
       "operation": "record_breakout",
       "args": [
@@ -325,23 +308,6 @@
       }
     },
     {
-      "id": "3200e27ce2284045a30b5ac6aac457fd",
-      "operation": "_set_outcome",
-      "args": [
-        "005850",
-        "미주문",
-        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        {
-          "__datetime__": "2026-10-06T09:03:58.850099+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
       "id": "15a3a96a30fe4d5cb66b86891afa5b2c",
       "operation": "_set_outcome",
       "args": [
@@ -480,50 +446,6 @@
   ],
   "plans": [
     {
-      "id": "315abfe3d05a46c6a7afb6ee2a76803b",
-      "owner": "37391890516:1",
-      "events": [
-        "5f51d83ea81b46ccb0fba5d44491d286",
-        "3200e27ce2284045a30b5ac6aac457fd"
-      ],
-      "record": {
-        "event_id": "5f51d83ea81b46ccb0fba5d44491d286",
-        "ticker": "005850",
-        "name": "에스엘",
-        "first_detected_at": {
-          "__datetime__": "2026-10-06T09:03:46.499072+09:00"
-        },
-        "first_threshold": 52600.0,
-        "first_price": 52700.0,
-        "first_atr": 2202.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        "outcome_at": {
-          "__datetime__": "2026-10-06T09:03:58.850099+09:00"
-        }
-      },
-      "page_id": null,
-      "fields": {
-        "event_id": "5f51d83ea81b46ccb0fba5d44491d286",
-        "ticker": "005850",
-        "name": "에스엘",
-        "first_detected_at": {
-          "__datetime__": "2026-10-06T09:03:46.499072+09:00"
-        },
-        "first_threshold": 52600.0,
-        "first_price": 52700.0,
-        "first_atr": 2202.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        "outcome_at": {
-          "__datetime__": "2026-10-06T09:03:58.850099+09:00"
-        }
-      },
-      "state": "creating"
-    },
-    {
       "id": "f7d48cf193804b46b0b4faff8e51cdec",
       "owner": "37391890516:1",
       "events": [
@@ -565,7 +487,7 @@
           "__datetime__": "2026-10-06T09:03:58.859723+09:00"
         }
       },
-      "state": "queued"
+      "state": "creating"
     },
     {
       "id": "819500fcdcac4b848a5b3b599faa33c4",
@@ -1337,7 +1259,7 @@
     }
   ],
   "prepare_cursor": "6bd64a90d4ba4d909a657b2cd93f722d",
-  "deliver_cursor": "315abfe3d05a46c6a7afb6ee2a76803b",
+  "deliver_cursor": "f7d48cf193804b46b0b4faff8e51cdec",
   "excluded_events": [
     {
       "event": {
