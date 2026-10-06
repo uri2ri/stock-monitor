@@ -2,23 +2,6 @@
   "version": 1,
   "events": [
     {
-      "id": "b6e4caf1f1914a4fbc0c1603bb794bc1",
-      "operation": "record_breakout",
-      "args": [
-        {
-          "ticker": "299030",
-          "name": "하나기술",
-          "high20": 15720.0,
-          "price": 16110.0,
-          "atr20": 844.0
-        },
-        {
-          "__datetime__": "2026-10-06T09:03:46.499072+09:00"
-        }
-      ],
-      "kwargs": {}
-    },
-    {
       "id": "58a0ec0e39784945aa7c188d039be24f",
       "operation": "record_breakout",
       "args": [
@@ -342,23 +325,6 @@
       }
     },
     {
-      "id": "1759e55286fe4ca9aa5874fde7f8396d",
-      "operation": "_set_outcome",
-      "args": [
-        "299030",
-        "미주문",
-        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        {
-          "__datetime__": "2026-10-06T09:03:58.821130+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
       "id": "1b1cc7011b744cb995c42d26085928eb",
       "operation": "_set_outcome",
       "args": [
@@ -548,50 +514,6 @@
   ],
   "plans": [
     {
-      "id": "c4aaa4c87f2441548bfbfa733468d06f",
-      "owner": "37391890516:1",
-      "events": [
-        "b6e4caf1f1914a4fbc0c1603bb794bc1",
-        "1759e55286fe4ca9aa5874fde7f8396d"
-      ],
-      "record": {
-        "event_id": "b6e4caf1f1914a4fbc0c1603bb794bc1",
-        "ticker": "299030",
-        "name": "하나기술",
-        "first_detected_at": {
-          "__datetime__": "2026-10-06T09:03:46.499072+09:00"
-        },
-        "first_threshold": 15720.0,
-        "first_price": 16110.0,
-        "first_atr": 844.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        "outcome_at": {
-          "__datetime__": "2026-10-06T09:03:58.821130+09:00"
-        }
-      },
-      "page_id": null,
-      "fields": {
-        "event_id": "b6e4caf1f1914a4fbc0c1603bb794bc1",
-        "ticker": "299030",
-        "name": "하나기술",
-        "first_detected_at": {
-          "__datetime__": "2026-10-06T09:03:46.499072+09:00"
-        },
-        "first_threshold": 15720.0,
-        "first_price": 16110.0,
-        "first_atr": 844.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        "outcome_at": {
-          "__datetime__": "2026-10-06T09:03:58.821130+09:00"
-        }
-      },
-      "state": "creating"
-    },
-    {
       "id": "b40f3fc3a7a142159465a5e0aa478a22",
       "owner": "37391890516:1",
       "events": [
@@ -633,7 +555,7 @@
           "__datetime__": "2026-10-06T09:03:58.840289+09:00"
         }
       },
-      "state": "queued"
+      "state": "creating"
     },
     {
       "id": "315abfe3d05a46c6a7afb6ee2a76803b",
@@ -1493,7 +1415,7 @@
     }
   ],
   "prepare_cursor": "6bd64a90d4ba4d909a657b2cd93f722d",
-  "deliver_cursor": "c4aaa4c87f2441548bfbfa733468d06f",
+  "deliver_cursor": "b40f3fc3a7a142159465a5e0aa478a22",
   "excluded_events": [
     {
       "event": {
