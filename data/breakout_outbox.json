@@ -1,8 +1,170 @@
 {
   "version": 1,
-  "events": [],
-  "plans": [],
-  "prepare_cursor": "a6756f937f6c4303a24bf875c44e54a4",
+  "events": [
+    {
+      "id": "e812c671405341a08157a2bf055e8239",
+      "operation": "_set_outcome",
+      "args": [
+        "396470",
+        "상한제한",
+        "신규매수 일일 상한 0 (운영 보류)",
+        {
+          "__datetime__": "2026-10-06T09:44:53.263448+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "5e55fe0bdc1f48559085f3f65b853be1",
+      "operation": "_set_outcome",
+      "args": [
+        "259630",
+        "상한제한",
+        "신규매수 일일 상한 0 (운영 보류)",
+        {
+          "__datetime__": "2026-10-06T09:44:53.271049+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    }
+  ],
+  "plans": [
+    {
+      "id": "39384dc53ffd413bbccb3e28077feb29",
+      "owner": "37395444396:1",
+      "events": [
+        "e812c671405341a08157a2bf055e8239"
+      ],
+      "record": {
+        "account_type": "",
+        "account_key": "",
+        "order_side": "",
+        "order_qty": null,
+        "filled_qty": null,
+        "unverified_qty": null,
+        "execution_price": null,
+        "execution_state": "",
+        "execution_checked_at": null,
+        "event_id": "b2f338bb39184f3db09639cc12d3c8a0",
+        "order_no": "",
+        "order_day": null,
+        "key": "3ed0fc3e-53fc-816e-9ee7-ced05956d7c8",
+        "page_id": "3ed0fc3e-53fc-816e-9ee7-ced05956d7c8",
+        "name": "워트",
+        "ticker": "396470",
+        "first_detected_at": {
+          "__datetime__": "2026-10-02T09:03:00+09:00"
+        },
+        "first_threshold": 7170.0,
+        "first_price": 7280.0,
+        "first_atr": 344.0,
+        "status": "추적중",
+        "closed_reason": "",
+        "closed_at": null,
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-10-06T09:44:53.263448+09:00"
+        },
+        "latest_close": 7180.0,
+        "latest_date": {
+          "__date__": "2026-10-02"
+        },
+        "latest_atr": 338.0,
+        "latest_line": 7330.0,
+        "change_pct": 0.14,
+        "atr_mult": 0.03,
+        "dist_to_line": 150.0,
+        "dist_to_line_atr": 0.44,
+        "level_state": "최초선위",
+        "new_breakout": "미해당",
+        "refresh_state": "갱신됨",
+        "refresh_note": "",
+        "user_memo": ""
+      },
+      "page_id": "3ed0fc3e-53fc-816e-9ee7-ced05956d7c8",
+      "fields": {
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-10-06T09:44:53.263448+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "31c83467a1204b4c81c504498a90165b",
+      "owner": "37395444396:1",
+      "events": [
+        "5e55fe0bdc1f48559085f3f65b853be1"
+      ],
+      "record": {
+        "account_type": "",
+        "account_key": "",
+        "order_side": "",
+        "order_qty": null,
+        "filled_qty": null,
+        "unverified_qty": null,
+        "execution_price": null,
+        "execution_state": "",
+        "execution_checked_at": null,
+        "event_id": "d3e0dbde23b544fbb46d79ed43d82761",
+        "order_no": "",
+        "order_day": null,
+        "key": "3ec0fc3e-53fc-8147-82c7-fa7046cb9724",
+        "page_id": "3ec0fc3e-53fc-8147-82c7-fa7046cb9724",
+        "name": "엠플러스",
+        "ticker": "259630",
+        "first_detected_at": {
+          "__datetime__": "2026-10-01T10:13:00+09:00"
+        },
+        "first_threshold": 9810.0,
+        "first_price": 9830.0,
+        "first_atr": 444.0,
+        "status": "추적중",
+        "closed_reason": "",
+        "closed_at": null,
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-10-06T09:44:53.271049+09:00"
+        },
+        "latest_close": 9940.0,
+        "latest_date": {
+          "__date__": "2026-10-02"
+        },
+        "latest_atr": 448.0,
+        "latest_line": 10190.0,
+        "change_pct": 1.33,
+        "atr_mult": 0.29,
+        "dist_to_line": 250.0,
+        "dist_to_line_atr": 0.56,
+        "level_state": "최초선위",
+        "new_breakout": "미해당",
+        "refresh_state": "갱신됨",
+        "refresh_note": "",
+        "user_memo": ""
+      },
+      "page_id": "3ec0fc3e-53fc-8147-82c7-fa7046cb9724",
+      "fields": {
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-10-06T09:44:53.271049+09:00"
+        }
+      },
+      "state": "queued"
+    }
+  ],
+  "prepare_cursor": "5ffec0a710a44bd6ba7dba95d2c16561",
   "deliver_cursor": "129b9ec28ffe484c980d18edb8eb10a1",
   "excluded_events": [
     {
@@ -6409,6 +6571,27 @@
       },
       "reason": "held_without_active_track",
       "resolved_by": "37394595586:1"
+    },
+    {
+      "event": {
+        "id": "6675b97e648f43c7af816d83d8ed5e34",
+        "operation": "_set_outcome",
+        "args": [
+          "009150",
+          "상한제한",
+          "신규매수 일일 상한 0 (운영 보류)",
+          {
+            "__datetime__": "2026-10-06T09:44:53.284874+09:00"
+          }
+        ],
+        "kwargs": {
+          "order_no": "",
+          "order_day": null,
+          "identity": null
+        }
+      },
+      "reason": "held_without_active_track",
+      "resolved_by": "37395444396:1"
     }
   ]
 }
