@@ -185,9 +185,10 @@ def test_invalid_output1_still_raises(kis_env, monkeypatch, bad):
 
 
 @pytest.mark.parametrize("tr_cont", ["F", "M"])
-def test_continuation_still_raises(kis_env, monkeypatch, tr_cont):
+def test_continuation_without_keys_raises(kis_env, monkeypatch, tr_cont):
+    """F/M인데 연속조회 키가 없으면 다음 페이지를 못 받는다 - 보류."""
     _respond(monkeypatch, [_row(ORDER_NO)], tr_cont=tr_cont)
-    with pytest.raises(RuntimeError, match="연속조회"):
+    with pytest.raises(RuntimeError, match="연속조회 키 없음"):
         k.get_order_execution("tok", ORDER_NO)
 
 
