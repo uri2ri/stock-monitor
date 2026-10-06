@@ -19,6 +19,10 @@
 
 사용:
     python tools/inspect_fill.py --order-no 0000006229 --date 2026-09-17
+
+    # 빈 응답의 원인을 가리는 비교 실행 (조회 TR·거래소 구분을 바꿔본다)
+    python tools/inspect_fill.py --order-no 0000006229 --date 2026-09-17 \
+        --tr-id VTTC0081R --excg KRX
 """
 
 from __future__ import annotations
@@ -56,6 +60,20 @@ ROW_FIELDS = (
 # 매매 경로(10초)보다 길게 잡는다 - 아래 _query() 주석 참고.
 QUERY_TIMEOUT_SECONDS = 30
 
+# --tr-id로 받을 수 있는 값. **조회 TR만** 넣는다 - 주문·정정·취소 TR을
+# 오타로 집어넣어도 이 목록에서 걸러져 전송 자체가 일어나지 않게 하는 것이
+# 목적이다(이 스크립트는 주문 함수를 import조차 하지 않지만, 임의의 tr_id를
+# 그대로 헤더에 실어 보내면 그 방어가 무의미해진다).
+#   VTTC8001R - 모의투자 일별 주문체결 조회 (kis_client가 쓰는 값)
+#   VTTC0081R - 모의투자 일별 주문체결 조회 (3개월 이전 조회용 TR)
+#   VTSC9215R - 모의투자 주식 일별 주문체결 조회 변형
+ALLOWED_TR_IDS = frozenset({"VTTC8001R", "VTTC0081R", "VTSC9215R"})
+
+# --excg로 받을 수 있는 거래소 구분. 빈 문자열이면 파라미터 자체를 넣지
+# 않는다(= 기존 요청과 바이트 단위로 동일). 빈 응답이 거래소 구분 때문인지
+# 가리려고 넣은 인자다.
+ALLOWED_EXCG = frozenset({"", "KRX", "NXT", "SOR", "ALL"})
+
 
 def _mask(account: str) -> str:
     cano, prdt = kis_client._parse_account(account)
@@ -68,6 +86,14 @@ def main() -> int:
                     help="대조할 주문번호 (노션 '주문번호' 칸 값 그대로)")
     ap.add_argument("--date", required=True,
                     help="주문일 YYYY-MM-DD (노션 '주문일시'의 날짜)")
+    # choices로 argparse가 직접 거른다 - 허용 목록 밖이면 usage를 찍고
+    # exit code 2로 끝나며, 요청은 만들어지지도 않는다.
+    ap.add_argument("--tr-id", default=kis_client.INQUIRE_CCLD_TR_ID,
+                    choices=sorted(ALLOWED_TR_IDS),
+                    help="조회 TR ID (기본: 운영 코드와 동일한 값)")
+    ap.add_argument("--excg", default="", choices=sorted(ALLOWED_EXCG),
+                    help="거래소 구분 EXCG_ID_DVSN_CD "
+                         "(기본: 비움 = 파라미터를 보내지 않음)")
     args = ap.parse_args()
 
     day = args.date.replace("-", "")
@@ -78,15 +104,38 @@ def main() -> int:
     account = os.environ["KIS_ACCOUNT"]
     cano, acnt_prdt_cd = kis_client._parse_account(account)
     print(f"[조회] 계좌 {_mask(account)} · 조회일 {day} "
-          f"· 대조 주문번호 {args.order_no!r} (길이 {len(args.order_no)})")
+          f"· 대조 주문번호 {args.order_no!r} (길이 {len(args.order_no)}) "
+          f"· tr_id={args.tr_id!r} "
+          f"· excg={args.excg!r}{'' if args.excg else ' (파라미터 미전송)'}")
 
     token = kis_client.get_access_token()
 
-    # get_order_execution()과 동일한 헤더·파라미터. 다만 타임아웃은 길게
+    # 기본값으로 돌리면 get_order_execution()과 동일한 헤더·파라미터다
+    # (--tr-id 기본값이 운영 코드의 INQUIRE_CCLD_TR_ID이고, --excg를 비워두면
+    # EXCG_ID_DVSN_CD를 아예 보내지 않는다). 그래야 기본 실행 결과가 실제
+    # 실행 경로에 대한 증거가 된다 - 인자를 준 실행은 "무엇을 바꿨을 때
+    # 응답이 달라지는가"를 보는 비교용이고, 바꾼 값은 [조회] 줄에 찍힌다.
+    #
+    # 다만 타임아웃은 길게
     # 잡고 재시도를 건다 - 2026-09-18 진단 3회가 전부 이 조회의 10초 읽기
     # 시간초과로 끝나 정작 보려던 응답을 한 번도 못 받았다. 진단은 매매
     # 경로가 아니라 사람이 기다리는 1회성 조회라, 실행 시간을 조금 더 쓰더라도
     # 답을 받아오는 쪽이 낫다(워크플로 제한 5분 안에 든다).
+    params = {
+        "CANO": cano, "ACNT_PRDT_CD": acnt_prdt_cd,
+        "INQR_STRT_DT": day, "INQR_END_DT": day,
+        "SLL_BUY_DVSN_CD": "00", "INQR_DVSN": "00",
+        "PDNO": "", "CCLD_DVSN": "00",
+        "ORD_GNO_BRNO": "", "ODNO": "",
+        "INQR_DVSN_3": "00", "INQR_DVSN_1": "",
+        "CTX_AREA_FK100": "", "CTX_AREA_NK100": "",
+    }
+    # 비어 있으면 칸 자체를 넣지 않는다 - 빈 값으로 보내는 것과 안 보내는
+    # 것이 KIS에서 같은 뜻이라는 보장이 없고, 기본 실행은 기존 요청과
+    # 완전히 동일해야 비교 대상이 된다.
+    if args.excg:
+        params["EXCG_ID_DVSN_CD"] = args.excg
+
     def _query():
         return requests.get(
             f"{kis_client.BASE_URL}/uapi/domestic-stock/v1/trading/inquire-daily-ccld",
@@ -95,17 +144,9 @@ def main() -> int:
                 "authorization": f"Bearer {token}",
                 "appkey": os.environ["KIS_APP_KEY"],
                 "appsecret": os.environ["KIS_APP_SECRET"],
-                "tr_id": kis_client.INQUIRE_CCLD_TR_ID,
+                "tr_id": args.tr_id,
             },
-            params={
-                "CANO": cano, "ACNT_PRDT_CD": acnt_prdt_cd,
-                "INQR_STRT_DT": day, "INQR_END_DT": day,
-                "SLL_BUY_DVSN_CD": "00", "INQR_DVSN": "00",
-                "PDNO": "", "CCLD_DVSN": "00",
-                "ORD_GNO_BRNO": "", "ODNO": "",
-                "INQR_DVSN_3": "00", "INQR_DVSN_1": "",
-                "CTX_AREA_FK100": "", "CTX_AREA_NK100": "",
-            },
+            params=params,
             timeout=QUERY_TIMEOUT_SECONDS,
         )
 
