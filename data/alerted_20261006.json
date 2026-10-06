@@ -682,6 +682,18 @@
       "gap_atr": 0.165,
       "unit_shares": 2066,
       "status": "진입가능"
+    },
+    "017860": {
+      "time": "12:43",
+      "name": "DS단석",
+      "sector": "화학",
+      "market": "KOSPI",
+      "price": 13140.0,
+      "high20": 13120.0,
+      "atr20": 536.0,
+      "gap_atr": 0.037,
+      "unit_shares": 932,
+      "status": "진입가능"
     }
   }
 }
