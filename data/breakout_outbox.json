@@ -2,23 +2,6 @@
   "version": 1,
   "events": [
     {
-      "id": "11937c9feef048f89d53aa62c7a3dfbc",
-      "operation": "record_breakout",
-      "args": [
-        {
-          "ticker": "161000",
-          "name": "애경케미칼",
-          "high20": 11040.0,
-          "price": 11080.0,
-          "atr20": 487.0
-        },
-        {
-          "__datetime__": "2026-10-06T09:03:46.499072+09:00"
-        }
-      ],
-      "kwargs": {}
-    },
-    {
       "id": "7bc7785214a144f5bb0d3ca7fea45dc0",
       "operation": "record_breakout",
       "args": [
@@ -291,23 +274,6 @@
       }
     },
     {
-      "id": "37c476c032a34d94adc39025624ca122",
-      "operation": "_set_outcome",
-      "args": [
-        "161000",
-        "미주문",
-        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        {
-          "__datetime__": "2026-10-06T09:03:58.869325+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
       "id": "5ca752a18b664f2a94448d9538d15e8d",
       "operation": "_set_outcome",
       "args": [
@@ -412,50 +378,6 @@
   ],
   "plans": [
     {
-      "id": "819500fcdcac4b848a5b3b599faa33c4",
-      "owner": "37391890516:1",
-      "events": [
-        "11937c9feef048f89d53aa62c7a3dfbc",
-        "37c476c032a34d94adc39025624ca122"
-      ],
-      "record": {
-        "event_id": "11937c9feef048f89d53aa62c7a3dfbc",
-        "ticker": "161000",
-        "name": "애경케미칼",
-        "first_detected_at": {
-          "__datetime__": "2026-10-06T09:03:46.499072+09:00"
-        },
-        "first_threshold": 11040.0,
-        "first_price": 11080.0,
-        "first_atr": 487.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        "outcome_at": {
-          "__datetime__": "2026-10-06T09:03:58.869325+09:00"
-        }
-      },
-      "page_id": null,
-      "fields": {
-        "event_id": "11937c9feef048f89d53aa62c7a3dfbc",
-        "ticker": "161000",
-        "name": "애경케미칼",
-        "first_detected_at": {
-          "__datetime__": "2026-10-06T09:03:46.499072+09:00"
-        },
-        "first_threshold": 11040.0,
-        "first_price": 11080.0,
-        "first_atr": 487.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        "outcome_at": {
-          "__datetime__": "2026-10-06T09:03:58.869325+09:00"
-        }
-      },
-      "state": "creating"
-    },
-    {
       "id": "669c191c254e4cd58269fe45f4b2062b",
       "owner": "37391890516:1",
       "events": [
@@ -497,7 +419,7 @@
           "__datetime__": "2026-10-06T09:03:46.499072+09:00"
         }
       },
-      "state": "queued"
+      "state": "creating"
     },
     {
       "id": "1d3c077009964644a946027c1003713d",
@@ -1181,7 +1103,7 @@
     }
   ],
   "prepare_cursor": "6bd64a90d4ba4d909a657b2cd93f722d",
-  "deliver_cursor": "819500fcdcac4b848a5b3b599faa33c4",
+  "deliver_cursor": "669c191c254e4cd58269fe45f4b2062b",
   "excluded_events": [
     {
       "event": {
