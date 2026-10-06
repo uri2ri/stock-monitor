@@ -2,23 +2,6 @@
   "version": 1,
   "events": [
     {
-      "id": "1d241a4d6664400faefddd435bbb94a8",
-      "operation": "record_breakout",
-      "args": [
-        {
-          "ticker": "067080",
-          "name": "대화제약",
-          "high20": 11690.0,
-          "price": 11800.0,
-          "atr20": 459.0
-        },
-        {
-          "__datetime__": "2026-10-06T09:03:46.499072+09:00"
-        }
-      ],
-      "kwargs": {}
-    },
-    {
       "id": "b6e4caf1f1914a4fbc0c1603bb794bc1",
       "operation": "record_breakout",
       "args": [
@@ -359,23 +342,6 @@
       }
     },
     {
-      "id": "046a5cf78672427b82eab4b9bb820bb5",
-      "operation": "_set_outcome",
-      "args": [
-        "067080",
-        "미주문",
-        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        {
-          "__datetime__": "2026-10-06T09:03:58.811448+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
       "id": "1759e55286fe4ca9aa5874fde7f8396d",
       "operation": "_set_outcome",
       "args": [
@@ -582,50 +548,6 @@
   ],
   "plans": [
     {
-      "id": "4cf3590b8e6d4ce3b3c7ddb67f451e87",
-      "owner": "37391890516:1",
-      "events": [
-        "1d241a4d6664400faefddd435bbb94a8",
-        "046a5cf78672427b82eab4b9bb820bb5"
-      ],
-      "record": {
-        "event_id": "1d241a4d6664400faefddd435bbb94a8",
-        "ticker": "067080",
-        "name": "대화제약",
-        "first_detected_at": {
-          "__datetime__": "2026-10-06T09:03:46.499072+09:00"
-        },
-        "first_threshold": 11690.0,
-        "first_price": 11800.0,
-        "first_atr": 459.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        "outcome_at": {
-          "__datetime__": "2026-10-06T09:03:58.811448+09:00"
-        }
-      },
-      "page_id": null,
-      "fields": {
-        "event_id": "1d241a4d6664400faefddd435bbb94a8",
-        "ticker": "067080",
-        "name": "대화제약",
-        "first_detected_at": {
-          "__datetime__": "2026-10-06T09:03:46.499072+09:00"
-        },
-        "first_threshold": 11690.0,
-        "first_price": 11800.0,
-        "first_atr": 459.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        "outcome_at": {
-          "__datetime__": "2026-10-06T09:03:58.811448+09:00"
-        }
-      },
-      "state": "creating"
-    },
-    {
       "id": "c4aaa4c87f2441548bfbfa733468d06f",
       "owner": "37391890516:1",
       "events": [
@@ -667,7 +589,7 @@
           "__datetime__": "2026-10-06T09:03:58.821130+09:00"
         }
       },
-      "state": "queued"
+      "state": "creating"
     },
     {
       "id": "b40f3fc3a7a142159465a5e0aa478a22",
@@ -1571,7 +1493,7 @@
     }
   ],
   "prepare_cursor": "6bd64a90d4ba4d909a657b2cd93f722d",
-  "deliver_cursor": "4cf3590b8e6d4ce3b3c7ddb67f451e87",
+  "deliver_cursor": "c4aaa4c87f2441548bfbfa733468d06f",
   "excluded_events": [
     {
       "event": {
