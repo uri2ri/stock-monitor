@@ -2,23 +2,6 @@
   "version": 1,
   "events": [
     {
-      "id": "3cbe8f5fd6aa47dda0c897480a482829",
-      "operation": "record_breakout",
-      "args": [
-        {
-          "ticker": "001430",
-          "name": "세아베스틸지주",
-          "high20": 47500.0,
-          "price": 48150.0,
-          "atr20": 2427.0
-        },
-        {
-          "__datetime__": "2026-10-06T09:03:46.499072+09:00"
-        }
-      ],
-      "kwargs": {}
-    },
-    {
       "id": "ef8a7004ef7740d9bbfb7886e74ffdb3",
       "operation": "record_breakout",
       "args": [
@@ -257,23 +240,6 @@
       }
     },
     {
-      "id": "5dd95ce7886a4b44b8f30d7646968ee0",
-      "operation": "_set_outcome",
-      "args": [
-        "001430",
-        "미주문",
-        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        {
-          "__datetime__": "2026-10-06T09:03:58.889046+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
       "id": "61d975977fea4a85bde39effbf996a25",
       "operation": "_set_outcome",
       "args": [
@@ -344,50 +310,6 @@
   ],
   "plans": [
     {
-      "id": "1d3c077009964644a946027c1003713d",
-      "owner": "37391890516:1",
-      "events": [
-        "3cbe8f5fd6aa47dda0c897480a482829",
-        "5dd95ce7886a4b44b8f30d7646968ee0"
-      ],
-      "record": {
-        "event_id": "3cbe8f5fd6aa47dda0c897480a482829",
-        "ticker": "001430",
-        "name": "세아베스틸지주",
-        "first_detected_at": {
-          "__datetime__": "2026-10-06T09:03:46.499072+09:00"
-        },
-        "first_threshold": 47500.0,
-        "first_price": 48150.0,
-        "first_atr": 2427.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        "outcome_at": {
-          "__datetime__": "2026-10-06T09:03:58.889046+09:00"
-        }
-      },
-      "page_id": null,
-      "fields": {
-        "event_id": "3cbe8f5fd6aa47dda0c897480a482829",
-        "ticker": "001430",
-        "name": "세아베스틸지주",
-        "first_detected_at": {
-          "__datetime__": "2026-10-06T09:03:46.499072+09:00"
-        },
-        "first_threshold": 47500.0,
-        "first_price": 48150.0,
-        "first_atr": 2427.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        "outcome_at": {
-          "__datetime__": "2026-10-06T09:03:58.889046+09:00"
-        }
-      },
-      "state": "creating"
-    },
-    {
       "id": "e9406a59cb6d41aa9a6e31670a5c5396",
       "owner": "37391890516:1",
       "events": [
@@ -429,7 +351,7 @@
           "__datetime__": "2026-10-06T09:03:58.899227+09:00"
         }
       },
-      "state": "queued"
+      "state": "creating"
     },
     {
       "id": "62d96e4aaa274d6187023f272c7f7f3e",
@@ -1025,7 +947,7 @@
     }
   ],
   "prepare_cursor": "6bd64a90d4ba4d909a657b2cd93f722d",
-  "deliver_cursor": "1d3c077009964644a946027c1003713d",
+  "deliver_cursor": "e9406a59cb6d41aa9a6e31670a5c5396",
   "excluded_events": [
     {
       "event": {
