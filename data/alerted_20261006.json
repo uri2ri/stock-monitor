@@ -586,6 +586,18 @@
       "gap_atr": 0.082,
       "unit_shares": 27,
       "status": "진입가능"
+    },
+    "373220": {
+      "time": "10:13",
+      "name": "LG에너지솔루션",
+      "sector": "전기전자",
+      "market": "KOSPI",
+      "price": 377500.0,
+      "high20": 376000.0,
+      "atr20": 15643.0,
+      "gap_atr": 0.096,
+      "unit_shares": 31,
+      "status": "진입가능"
     }
   }
 }
