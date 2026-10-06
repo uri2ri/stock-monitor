@@ -685,10 +685,15 @@ def _notify_new_buy_rejections(rejections: list[tuple[str, str]],
     )
 
 
-def _notify_warning_throttled(reason_key: str, message: str) -> None:
+def _notify_warning_throttled(reason_key: str, message: str,
+                              window_seconds: Optional[int] = None) -> None:
     """반복되는 시스템 경고(조회/발급/기록 실패류)를 억제해서 보낸다.
 
-    같은 reason_key로 WARNING_SUPPRESS_WINDOW_SECONDS(1시간) 안에 이미
+    window_seconds를 주면 그 간격으로, 안 주면 기본
+    WARNING_SUPPRESS_WINDOW_SECONDS(1시간)로 억제한다 - 하루 한 번이면
+    충분한 경고(업종 맵 노후 등)가 매시간 오지 않게 한다.
+
+    같은 reason_key로 그 창 안에 이미
     보냈으면 이번엔 카톡을 건너뛴다 - cron-job.org가 10분마다 불러도 노션/KIS가
     몇 시간 죽어 있으면 같은 경고가 수십 통 오는 걸 막는다. 억제되더라도
     logger.warning은 매번 남긴다 (알림만 줄이고 기록까지 줄이면 안 됨).
@@ -705,20 +710,21 @@ def _notify_warning_throttled(reason_key: str, message: str) -> None:
     방향이 다르다.
     """
     logger.warning(message)
+    window = (WARNING_SUPPRESS_WINDOW_SECONDS if window_seconds is None
+              else window_seconds)
 
     try:
         last = notion_repo.latest_warning_at(reason_key)
         suppress = (
             last is not None
-            and (datetime.now(KST) - last).total_seconds() < WARNING_SUPPRESS_WINDOW_SECONDS
+            and (datetime.now(KST) - last).total_seconds() < window
         )
     except Exception as e:                  # noqa: BLE001
         logger.warning("경고 억제 판단 실패 (%s) - fail-open으로 그냥 보냅니다", e)
         suppress = False
 
     if suppress:
-        logger.info("경고 억제됨 (최근 %d초 내 동일 사유): %s",
-                    WARNING_SUPPRESS_WINDOW_SECONDS, reason_key)
+        logger.info("경고 억제됨 (최근 %d초 내 동일 사유): %s", window, reason_key)
         return
 
     _notify_failure(message)
@@ -2074,21 +2080,56 @@ def get_account_balance(access_token: str) -> dict:
     }
 
 
+# 장중 경로가 업종 맵을 "오래됐다"고 다시 만들지 않게 하는 한계값.
+# 재생성은 KRX 로그인이 필요한데(아래 _get_sector_map 주석 참고) 장중
+# 워크플로에는 KRX 자격증명이 없다. 이 값은 "너무 낡았으니 사람이 보라"는
+# 경고 기준일 뿐, 맵을 버리는 기준이 아니다.
+SECTOR_MAP_WARN_AGE_DAYS = 14
+WARN_STALE_SECTOR_MAP = "업종 맵 오래됨"
+
+
 def _get_sector_map() -> dict[str, str]:
-    """캐시된 업종 맵(data/sector_map.json). 상관군 그룹 구분에 쓴다.
+    """캐시된 업종 맵(data/sector_map.json)을 **읽기만** 한다. 상관군 구분용.
 
     상관군(corr_group)은 노션에 사람이 직접 매기는 값이라 시스템이 미리
     알 수 없다 (intraday_watch.py의 _unit_suffix와 같은 전제). 업종을
-    대용으로 쓴다. 못 불러오면 빈 dict - 그룹 구분 없이 전체 캡만 적용된다.
+    대용으로 쓴다. 못 불러오면 빈 dict - 그 경우 노션 상관군 키로만 센다.
+
+    **재생성하지 않는다(나이와 무관).** 재생성은 KRX 지수 목록 조회가
+    필요하고 그 엔드포인트는 로그인을 요구한다 - 자격증명 없이 부르면
+    KRX가 `HTTP 400 "LOGOUT"`을 돌려주고, 그게 JSON이 아니라서 pykrx가
+    빈 DataFrame으로 떨어진 뒤 `KeyError: '시장'`이 된다(2026-10-06 확인).
+    장중(auto-trade) 워크플로에는 KRX_ID/KRX_PW가 없으므로 시도해봐야
+    매번 실패하고, 지수 목록을 종목마다 훑느라 회차 시간만 길게 먹는다.
+    맵 생성은 자격증명이 있는 야간 스캔(nightly-scan)이 하고 결과
+    파일(data/sector_map.json)을 커밋한다.
+
+    캐시가 SECTOR_MAP_WARN_AGE_DAYS보다 오래되면 하루 한 번 경고한다 -
+    신규 상장·업종 변경이 반영되지 않은 상태로 돌고 있다는 뜻이다.
     """
     try:
         import screener
-        day = datetime.now(KST).strftime("%Y%m%d")
-        return screener.load_sector_map(day)
+        cached = screener.read_sector_map_cache()
     except Exception as e:                  # noqa: BLE001
-        logger.warning("업종 맵을 불러오지 못했습니다 (%s) - 상관군별 캡 없이 "
-                       "전체 캡만 적용합니다", e)
+        logger.warning("업종 맵을 불러오지 못했습니다 (%s) - 노션 상관군 "
+                       "키로만 집계합니다", e)
         return {}
+
+    if cached is None:
+        logger.warning("업종 맵 캐시가 없습니다 - 노션 상관군 키로만 집계합니다")
+        return {}
+
+    built_on, mapping = cached
+    age = (_today() - built_on).days
+    if age > SECTOR_MAP_WARN_AGE_DAYS:
+        _notify_warning_throttled(
+            WARN_STALE_SECTOR_MAP,
+            f"[KIS] ⚠ 업종 맵이 {age}일째 갱신되지 않았습니다 "
+            f"(기준일 {built_on}). 신규 상장·업종 변경이 상관군 집계에 "
+            f"반영되지 않습니다 - 야간 스캔의 업종 맵 생성을 확인하세요.",
+            window_seconds=86400,           # 하루 한 번
+        )
+    return mapping
 
 
 class CorrUnitsUnavailable(RuntimeError):
