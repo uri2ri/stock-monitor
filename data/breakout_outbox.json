@@ -1,8 +1,88 @@
 {
   "version": 1,
-  "events": [],
-  "plans": [],
-  "prepare_cursor": "6f38ad4614424c1897672fa8008295ca",
+  "events": [
+    {
+      "id": "566c9abb323f489bb125400c0dd1a004",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "010060",
+          "name": "OCI홀딩스",
+          "high20": 239500.0,
+          "price": 241000.0,
+          "atr20": 18378.0
+        },
+        {
+          "__datetime__": "2026-10-06T10:03:42.001427+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "c11e0bc4494e4788a210271aa0140b45",
+      "operation": "_set_outcome",
+      "args": [
+        "010060",
+        "상한제한",
+        "신규매수 일일 상한 0 (운영 보류)",
+        {
+          "__datetime__": "2026-10-06T10:04:49.474397+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    }
+  ],
+  "plans": [
+    {
+      "id": "66f0f5c56e804dc58e13d5379d105dc5",
+      "owner": "37397178195:1",
+      "events": [
+        "566c9abb323f489bb125400c0dd1a004",
+        "c11e0bc4494e4788a210271aa0140b45"
+      ],
+      "record": {
+        "event_id": "566c9abb323f489bb125400c0dd1a004",
+        "ticker": "010060",
+        "name": "OCI홀딩스",
+        "first_detected_at": {
+          "__datetime__": "2026-10-06T10:03:42.001427+09:00"
+        },
+        "first_threshold": 239500.0,
+        "first_price": 241000.0,
+        "first_atr": 18378.0,
+        "status": "추적중",
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-10-06T10:04:49.474397+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "566c9abb323f489bb125400c0dd1a004",
+        "ticker": "010060",
+        "name": "OCI홀딩스",
+        "first_detected_at": {
+          "__datetime__": "2026-10-06T10:03:42.001427+09:00"
+        },
+        "first_threshold": 239500.0,
+        "first_price": 241000.0,
+        "first_atr": 18378.0,
+        "status": "추적중",
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-10-06T10:04:49.474397+09:00"
+        }
+      },
+      "state": "queued"
+    }
+  ],
+  "prepare_cursor": "726ed2c1714945fa86de0b7f6601449d",
   "deliver_cursor": "31c83467a1204b4c81c504498a90165b",
   "excluded_events": [
     {
@@ -6451,6 +6531,27 @@
       },
       "reason": "held_without_active_track",
       "resolved_by": "37396310209:1"
+    },
+    {
+      "event": {
+        "id": "80424339496e4244be262075450e5f87",
+        "operation": "_set_outcome",
+        "args": [
+          "009150",
+          "상한제한",
+          "신규매수 일일 상한 0 (운영 보류)",
+          {
+            "__datetime__": "2026-10-06T10:04:49.489737+09:00"
+          }
+        ],
+        "kwargs": {
+          "order_no": "",
+          "order_day": null,
+          "identity": null
+        }
+      },
+      "reason": "held_without_active_track",
+      "resolved_by": "37397178195:1"
     }
   ]
 }
