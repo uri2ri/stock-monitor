@@ -324,6 +324,78 @@
       "gap_atr": 0.034,
       "unit_shares": 171,
       "status": "진입가능"
+    },
+    "025560": {
+      "time": "09:13",
+      "name": "미래산업",
+      "sector": "의료·정밀기기",
+      "market": "KOSPI",
+      "price": 8710.0,
+      "high20": 8640.0,
+      "atr20": 1254.0,
+      "gap_atr": 0.056,
+      "unit_shares": 398,
+      "status": "진입가능"
+    },
+    "287840": {
+      "time": "09:13",
+      "name": "인투셀",
+      "sector": "일반서비스",
+      "market": "KOSDAQ",
+      "price": 18610.0,
+      "high20": 18590.0,
+      "atr20": 1307.0,
+      "gap_atr": 0.015,
+      "unit_shares": 382,
+      "status": "진입가능"
+    },
+    "355150": {
+      "time": "09:13",
+      "name": "코스텍시스",
+      "sector": "전기전자",
+      "market": "KOSDAQ",
+      "price": 24900.0,
+      "high20": 24150.0,
+      "atr20": 1953.0,
+      "gap_atr": 0.384,
+      "unit_shares": 256,
+      "status": "진입가능"
+    },
+    "348370": {
+      "time": "09:13",
+      "name": "엔켐",
+      "sector": "화학",
+      "market": "KOSDAQ",
+      "price": 23850.0,
+      "high20": 23350.0,
+      "atr20": 1623.0,
+      "gap_atr": 0.308,
+      "unit_shares": 308,
+      "status": "진입가능"
+    },
+    "142210": {
+      "time": "09:13",
+      "name": "유니트론텍",
+      "sector": "유통",
+      "market": "KOSDAQ",
+      "price": 6860.0,
+      "high20": 6800.0,
+      "atr20": 275.0,
+      "gap_atr": 0.218,
+      "unit_shares": 1818,
+      "status": "진입가능"
+    },
+    "491000": {
+      "time": "09:13",
+      "name": "리브스메드",
+      "sector": "의료·정밀기기",
+      "market": "KOSDAQ",
+      "price": 37950.0,
+      "high20": 37850.0,
+      "atr20": 2796.0,
+      "gap_atr": 0.036,
+      "unit_shares": 178,
+      "status": "진입가능"
     }
   }
 }
