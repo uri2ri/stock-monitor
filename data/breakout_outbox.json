@@ -2,23 +2,6 @@
   "version": 1,
   "events": [
     {
-      "id": "443add0b55ec4df4bfdb7ed1a47f3443",
-      "operation": "record_breakout",
-      "args": [
-        {
-          "ticker": "071280",
-          "name": "로체시스템즈",
-          "high20": 8850.0,
-          "price": 9250.0,
-          "atr20": 447.0
-        },
-        {
-          "__datetime__": "2026-10-06T09:03:46.499072+09:00"
-        }
-      ],
-      "kwargs": {}
-    },
-    {
       "id": "2f505047abf44e408d7e935c1f34aafe",
       "operation": "record_breakout",
       "args": [
@@ -42,23 +25,6 @@
         "007660",
         "미주문",
         "추격 구간(+1.08N) - 매수 대상 제외",
-        {
-          "__datetime__": "2026-10-06T09:03:46.499072+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
-      "id": "e8d820c00c654383b4d6de2ee30f3774",
-      "operation": "_set_outcome",
-      "args": [
-        "071280",
-        "미주문",
-        "추격 구간(+0.89N) - 매수 대상 제외",
         {
           "__datetime__": "2026-10-06T09:03:46.499072+09:00"
         }
@@ -174,50 +140,6 @@
   ],
   "plans": [
     {
-      "id": "adc85fd3cf3842dabd2f8d6de5510fba",
-      "owner": "37391890516:1",
-      "events": [
-        "443add0b55ec4df4bfdb7ed1a47f3443",
-        "e8d820c00c654383b4d6de2ee30f3774"
-      ],
-      "record": {
-        "event_id": "443add0b55ec4df4bfdb7ed1a47f3443",
-        "ticker": "071280",
-        "name": "로체시스템즈",
-        "first_detected_at": {
-          "__datetime__": "2026-10-06T09:03:46.499072+09:00"
-        },
-        "first_threshold": 8850.0,
-        "first_price": 9250.0,
-        "first_atr": 447.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "추격 구간(+0.89N) - 매수 대상 제외",
-        "outcome_at": {
-          "__datetime__": "2026-10-06T09:03:46.499072+09:00"
-        }
-      },
-      "page_id": null,
-      "fields": {
-        "event_id": "443add0b55ec4df4bfdb7ed1a47f3443",
-        "ticker": "071280",
-        "name": "로체시스템즈",
-        "first_detected_at": {
-          "__datetime__": "2026-10-06T09:03:46.499072+09:00"
-        },
-        "first_threshold": 8850.0,
-        "first_price": 9250.0,
-        "first_atr": 447.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "추격 구간(+0.89N) - 매수 대상 제외",
-        "outcome_at": {
-          "__datetime__": "2026-10-06T09:03:46.499072+09:00"
-        }
-      },
-      "state": "creating"
-    },
-    {
       "id": "1788f7e3991748909283c29e32283f44",
       "owner": "37391890516:1",
       "events": [
@@ -259,7 +181,7 @@
           "__datetime__": "2026-10-06T09:03:58.942335+09:00"
         }
       },
-      "state": "queued"
+      "state": "creating"
     },
     {
       "id": "b4234d72bc1a4ae8afcdbfccb28cac5f",
@@ -635,7 +557,7 @@
     }
   ],
   "prepare_cursor": "6bd64a90d4ba4d909a657b2cd93f722d",
-  "deliver_cursor": "adc85fd3cf3842dabd2f8d6de5510fba",
+  "deliver_cursor": "1788f7e3991748909283c29e32283f44",
   "excluded_events": [
     {
       "event": {
