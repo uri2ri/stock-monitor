@@ -1727,10 +1727,64 @@ def _same_order_no(response_odno, wanted: str) -> bool:
     return not a.isdigit() and not b.isdigit() and a == b
 
 
+# ── 체결 조회 연속조회(페이징) ──────────────────────────────
+#
+# 모의 VTTC0081R은 한 페이지에 15건까지만 준다. 그래서 하루 주문이 15건을
+# 넘으면 첫 페이지의 tr_cont가 F/M으로 오고, 예전 코드는 그 자리에서
+# 보류했다 - 찾는 주문이 1페이지에 있어도 그날 체결 확인이 통째로 막혔다.
+# 이제는 끝까지 모아서 대조한다.
+#
+# 상한을 두는 이유는 "서버가 계속 F를 돌려주는" 상황에서 호출이 무한정
+# 늘어나지 않게 하는 것이다. 10페이지 = 하루 150건으로, 이 계좌의 하루
+# 주문량(신규 상한 + 추가매수 4 + 보유 종목 수 + 거부·재시도)보다 한참 크다.
+CCLD_MAX_PAGES = 10
+# 페이지 사이 간격. 모의투자 유량 제한이 빡빡해 연속 호출이 막힐 수 있다.
+CCLD_PAGE_INTERVAL_SECONDS = 0.5
+
+
+def _ccld_continuation_keys(data: dict, resp_headers) -> tuple[str, str]:
+    """다음 페이지 요청에 넣을 (CTX_AREA_FK100, CTX_AREA_NK100).
+
+    KIS는 이 값을 응답 **본문**(`ctx_area_fk100`/`ctx_area_nk100`)으로 준다.
+    헤더로 오는 경우도 있다는 보고가 있어 본문에 없으면 헤더도 본다 -
+    실제 응답을 양쪽 다 확인하지는 못했으므로 둘 다 받아들인다.
+
+    어느 쪽에서도 못 찾으면 다음 페이지를 요청할 수 없다. 이때 모아둔
+    일부 페이지로 판정하면 "없음 = 미체결"을 틀리게 단정할 수 있으므로
+    보류시킨다(이 모듈의 fail-closed 원칙).
+    """
+    def _pick(key: str) -> str:
+        for source in (data, resp_headers):
+            if source is None:
+                continue
+            try:
+                value = source.get(key)
+                if value is None:
+                    value = source.get(key.upper())
+            except Exception:           # noqa: BLE001 - dict이 아닌 응답 방어
+                continue
+            if value is not None and str(value).strip():
+                return str(value).strip()
+        return ""
+
+    # NK100이 다음 페이지 위치다 - 이게 없으면 진행 자체가 불가능하다.
+    # FK100은 빈 값으로 오는 경우가 있어 비어도 그대로 넘긴다.
+    next_key = _pick("ctx_area_nk100")
+    if not next_key:
+        raise RuntimeError(
+            "체결 조회 연속조회 키 없음 - 전체 내역 확인 전 처리 보류")
+    return _pick("ctx_area_fk100"), next_key
+
+
 def get_order_execution(access_token: str, order_no: str,
                         *, order_day: Optional[date] = None,
                         tracking_identity: Optional[dict] = None) -> dict | None:
-    """지정일(기본 오늘) 주문 체결 조회. 체결 전이거나 못 찾으면 None."""
+    """지정일(기본 오늘) 주문 체결 조회. 체결 전이거나 못 찾으면 None.
+
+    tr_cont가 F/M이면 연속조회로 끝까지 모은 뒤 대조한다 - 일부 페이지만
+    보고 "못 찾음"으로 판정하지 않는다. 상한 초과·중간 실패는 예외로
+    올려 호출자가 보류·경고하게 한다.
+    """
     app_key = os.environ["KIS_APP_KEY"]
     app_secret = os.environ["KIS_APP_SECRET"]
     cano, acnt_prdt_cd = _parse_account(os.environ["KIS_ACCOUNT"])
@@ -1765,27 +1819,56 @@ def get_order_execution(access_token: str, order_no: str,
         "CTX_AREA_FK100": "",
         "CTX_AREA_NK100": "",
     }
-    resp = requests.get(
-        f"{BASE_URL}/uapi/domestic-stock/v1/trading/inquire-daily-ccld",
-        headers=headers,
-        params=params,
-        timeout=10,
-    )
-    resp.raise_for_status()
-    data = resp.json()
+    rows: list[dict] = []
+    ctx_fk = ctx_nk = ""
+    cont_flag = ""                      # 2페이지부터 요청 헤더 tr_cont='N'
 
-    # 오류 응답을 "아직 못 찾음(=미체결)"과 구분하지 않으면 조회 자체가
-    # 실패했을 때도 조용히 "미체결"로 해석해 알림 없이 계속 재시도만 하게
-    # 된다(당일엔 다음 전날-미완료 검사 전까지 티가 안 남). 여기서 확실히
-    # 예외로 올려 호출자가 알림을 보내게 한다.
-    if data.get('rt_cd') != '0':
-        raise RuntimeError(f"체결 조회 응답 오류: {data.get('msg1', '알 수 없는 오류')}")
-    if not isinstance(data.get('output1'), list):
-        raise RuntimeError('체결 조회 내역이 유효하지 않습니다')
-    if resp.headers.get('tr_cont', '') in ('F', 'M'):
-        raise RuntimeError('체결 조회 연속조회 필요 - 전체 내역 확인 전 처리 보류')
+    for page in range(1, CCLD_MAX_PAGES + 1):
+        if page > 1:
+            time.sleep(CCLD_PAGE_INTERVAL_SECONDS)
 
-    rows = data["output1"]
+        page_headers = dict(headers)
+        if cont_flag:
+            page_headers["tr_cont"] = cont_flag
+        page_params = dict(params)
+        page_params["CTX_AREA_FK100"] = ctx_fk
+        page_params["CTX_AREA_NK100"] = ctx_nk
+
+        resp = requests.get(
+            f"{BASE_URL}/uapi/domestic-stock/v1/trading/inquire-daily-ccld",
+            headers=page_headers,
+            params=page_params,
+            timeout=10,
+        )
+        resp.raise_for_status()
+        data = resp.json()
+
+        # 오류 응답을 "아직 못 찾음(=미체결)"과 구분하지 않으면 조회 자체가
+        # 실패했을 때도 조용히 "미체결"로 해석해 알림 없이 계속 재시도만 하게
+        # 된다(당일엔 다음 전날-미완료 검사 전까지 티가 안 남). 여기서 확실히
+        # 예외로 올려 호출자가 알림을 보내게 한다. 2페이지 이후에 실패해도
+        # 같다 - 모아둔 앞 페이지로 판정하지 않는다.
+        if data.get('rt_cd') != '0':
+            raise RuntimeError(
+                f"체결 조회 응답 오류({page}페이지): "
+                f"{data.get('msg1', '알 수 없는 오류')}")
+        if not isinstance(data.get('output1'), list):
+            raise RuntimeError(f'체결 조회 내역이 유효하지 않습니다({page}페이지)')
+
+        rows.extend(data["output1"])
+
+        if resp.headers.get('tr_cont', '') not in ('F', 'M'):
+            break                       # D/E/빈값 = 마지막 페이지
+        if page == CCLD_MAX_PAGES:
+            raise RuntimeError(
+                f'체결 조회 연속조회 상한({CCLD_MAX_PAGES}페이지) 초과 - '
+                '전체 내역 확인 전 처리 보류')
+        ctx_fk, ctx_nk = _ccld_continuation_keys(data, resp.headers)
+        cont_flag = 'N'
+
+    if page > 1:
+        logger.info("체결 조회 연속조회 %d페이지 · 누적 %d건 (조회일 %s)",
+                    page, len(rows), today)
     matched = [row for row in rows if _same_order_no(row.get("odno"), order_no)]
     # 같은 주문번호가 두 행 이상이면 어느 쪽이 그 주문인지 우리가 정할 수
     # 없다 - 넘겨짚고 청산하느니 보류시킨다(이 모듈의 fail-closed 원칙).
@@ -2418,6 +2501,11 @@ def _record_holding_after_buy(access_token: str, c: dict, order_no: str) -> None
     buy_price = float(c["price"])
     shares = int(c["unit_shares"])
 
+    # 체결 조회가 예외로 끝나면 진입가가 추정치가 된다. 손절선·R배수·손익이
+    # 전부 이 값에서 나오므로 조용히 넘기지 않는다 - 카톡으로 알리고 기록에도
+    # 추정치임을 남긴다. 기록 자체는 계속 진행한다(여기서 멈추면 그 종목이
+    # 자동매도 대상에서 빠져 "사기만 하고 못 파는" 상태가 된다).
+    price_estimated = False
     try:
         time.sleep(1)  # 체결 처리 대기
         fill = get_order_execution(access_token, order_no) if order_no else None
@@ -2426,22 +2514,36 @@ def _record_holding_after_buy(access_token: str, c: dict, order_no: str) -> None
             if fill.get("filled_qty"):
                 shares = int(fill["filled_qty"])
     except Exception as e:                  # noqa: BLE001
+        price_estimated = True
         logger.warning("[%s] 체결가 조회 실패 - 돌파 시점 현재가로 기록합니다: %s",
                        ticker, e)
+        # 종목별 키 - 한 종목의 경고가 다른 종목의 같은 경고를 억제하면 안 된다.
+        _notify_warning_throttled(
+            f'buy_fill_unconfirmed:{ticker}',
+            f'[KIS] ⚠ {name}({ticker}) 체결 조회 실패 - 돌파 시점 현재가 '
+            f'{buy_price:,.0f}원을 추정 진입가로 기록합니다(체결 미확인). '
+            f'손절선·R배수가 이 값에서 나오므로 실제 체결가 확인이 필요합니다: {e}',
+        )
 
     # Tracking confirmation is handled by the isolated worker with full account,
     # ticker, side, date, order number and requested-quantity validation.
 
     memo = f"자동매수 편입 (주문번호 {order_no}) - 손절선은 다음 아침 배치부터 트레일링"
+    if price_estimated:
+        memo += (" / 추정 진입가(체결 미확인) - 체결 조회 실패로 돌파 시점"
+                 " 현재가를 썼습니다. 실제 체결가 확인 후 보정 필요")
     # 산 이유: intraday_watch.judge()가 이미 계산해 candidates에 실어 보낸
     # 돌파 신호(20일 고가·초과폭)를 그대로 옮긴다 - 웹서치 없이도 "왜 샀는지"가
     # 남는다. high20/gap_atr가 없는 호출부(테스트 등)에서는 빈 문자열로
     # 떨어지고, create_auto_holding이 표준 placeholder로 채운다.
     buy_reason = ""
     if "high20" in c and "gap_atr" in c:
+        # 진입가가 추정치면 그 숫자 바로 옆에 표시한다 - 나중에 이 문구만
+        # 보는 사람이 체결가로 오해하면 안 된다.
+        price_note = " 추정" if price_estimated else ""
         buy_reason = (
             f"자동매매 — 20일 고가 {float(c['high20']):,.0f} 돌파 "
-            f"(+{float(c['gap_atr']):.2f}N, 진입가 {buy_price:,.0f})"
+            f"(+{float(c['gap_atr']):.2f}N,{price_note} 진입가 {buy_price:,.0f})"
         )
     try:
         # 운용="자동" 행만 찾는다 - 같은 종목을 다른 증권사에서 수동으로
