@@ -2,23 +2,6 @@
   "version": 1,
   "events": [
     {
-      "id": "58a0ec0e39784945aa7c188d039be24f",
-      "operation": "record_breakout",
-      "args": [
-        {
-          "ticker": "454910",
-          "name": "두산로보틱스",
-          "high20": 73900.0,
-          "price": 74200.0,
-          "atr20": 3648.0
-        },
-        {
-          "__datetime__": "2026-10-06T09:03:46.499072+09:00"
-        }
-      ],
-      "kwargs": {}
-    },
-    {
       "id": "5f51d83ea81b46ccb0fba5d44491d286",
       "operation": "record_breakout",
       "args": [
@@ -342,23 +325,6 @@
       }
     },
     {
-      "id": "2378b179385b4d6197fae4ff18fab0c4",
-      "operation": "_set_outcome",
-      "args": [
-        "454910",
-        "미주문",
-        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        {
-          "__datetime__": "2026-10-06T09:03:58.840289+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
       "id": "3200e27ce2284045a30b5ac6aac457fd",
       "operation": "_set_outcome",
       "args": [
@@ -514,50 +480,6 @@
   ],
   "plans": [
     {
-      "id": "b40f3fc3a7a142159465a5e0aa478a22",
-      "owner": "37391890516:1",
-      "events": [
-        "58a0ec0e39784945aa7c188d039be24f",
-        "2378b179385b4d6197fae4ff18fab0c4"
-      ],
-      "record": {
-        "event_id": "58a0ec0e39784945aa7c188d039be24f",
-        "ticker": "454910",
-        "name": "두산로보틱스",
-        "first_detected_at": {
-          "__datetime__": "2026-10-06T09:03:46.499072+09:00"
-        },
-        "first_threshold": 73900.0,
-        "first_price": 74200.0,
-        "first_atr": 3648.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        "outcome_at": {
-          "__datetime__": "2026-10-06T09:03:58.840289+09:00"
-        }
-      },
-      "page_id": null,
-      "fields": {
-        "event_id": "58a0ec0e39784945aa7c188d039be24f",
-        "ticker": "454910",
-        "name": "두산로보틱스",
-        "first_detected_at": {
-          "__datetime__": "2026-10-06T09:03:46.499072+09:00"
-        },
-        "first_threshold": 73900.0,
-        "first_price": 74200.0,
-        "first_atr": 3648.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        "outcome_at": {
-          "__datetime__": "2026-10-06T09:03:58.840289+09:00"
-        }
-      },
-      "state": "creating"
-    },
-    {
       "id": "315abfe3d05a46c6a7afb6ee2a76803b",
       "owner": "37391890516:1",
       "events": [
@@ -599,7 +521,7 @@
           "__datetime__": "2026-10-06T09:03:58.850099+09:00"
         }
       },
-      "state": "queued"
+      "state": "creating"
     },
     {
       "id": "f7d48cf193804b46b0b4faff8e51cdec",
@@ -1415,7 +1337,7 @@
     }
   ],
   "prepare_cursor": "6bd64a90d4ba4d909a657b2cd93f722d",
-  "deliver_cursor": "b40f3fc3a7a142159465a5e0aa478a22",
+  "deliver_cursor": "315abfe3d05a46c6a7afb6ee2a76803b",
   "excluded_events": [
     {
       "event": {
