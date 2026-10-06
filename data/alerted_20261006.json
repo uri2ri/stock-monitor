@@ -598,6 +598,18 @@
       "gap_atr": 0.096,
       "unit_shares": 31,
       "status": "진입가능"
+    },
+    "159010": {
+      "time": "10:23",
+      "name": "아스플로",
+      "sector": "기계·장비",
+      "market": "KOSDAQ",
+      "price": 32800.0,
+      "high20": 32550.0,
+      "atr20": 2219.0,
+      "gap_atr": 0.113,
+      "unit_shares": 225,
+      "status": "진입가능"
     }
   }
 }
