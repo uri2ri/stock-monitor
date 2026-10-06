@@ -2145,18 +2145,38 @@ def get_mock_account_corr_units(account_size: float, holdings: list[dict]) -> di
         )
         raise CorrUnitsUnavailable(str(e)) from e
 
+    # 상관군 키가 두 어휘로 갈린다:
+    #   - 집계·추가매수는 노션 '상관군'(사람이 쓰는 자유 텍스트: 반도체, 전력기기…)
+    #   - 신규매수 후보의 sector는 스캔 CSV = 업종 맵(KRX 지수 업종명: 전기전자…)
+    # 그래서 보유를 '반도체'로 적어두면 집계는 {'반도체': 6}인데 반도체 후보의
+    # sector는 '전기전자'라 groups.get('전기전자', 0) == 0이 되어, 같은 리스크
+    # 군인데 캡을 통과한다. 두 키 **모두에** 더해 어느 어휘로 물어도 같은
+    # 유닛이 잡히게 한다(같은 값이면 한 번만, 빈 값은 제외).
+    #
+    # 전체 유닛은 **한 번만** 더한다 - 이건 키와 무관한 포지션 수다.
+    # 맵을 못 읽으면(빈 dict) 노션 키만으로 센다(기존 동작 유지).
+    sector_map = _get_sector_map()
+
     total = 0.0
     groups: dict[str, float] = {}
+    dual: list[str] = []
     for _, inp in auto_holdings:
         units = float(inp.units or 0)
         total += units
-        if inp.corr_group:
-            groups[inp.corr_group] = groups.get(inp.corr_group, 0.0) + units
+        keys = {k for k in (inp.corr_group, sector_map.get(inp.ticker, "")) if k}
+        for key in keys:
+            groups[key] = groups.get(key, 0.0) + units
+        if len(keys) > 1:
+            dual.append(f"{inp.name}({inp.ticker}) {'/'.join(sorted(keys))}")
 
     # 디버그용 - 다음에 또 상관군 캡 오탐이 의심되면 이 로그로 바로
     # 확인한다(실제로 몇 유닛으로 집계됐는지).
-    logger.info("상관군 유닛 집계(노션 기준): 전체 %.2f · 상관군 %s",
+    logger.info("상관군 유닛 집계(노션+업종맵): 전체 %.2f · 상관군 %s",
                 total, {g: round(u, 2) for g, u in groups.items()})
+    if dual:
+        # 두 어휘가 갈린 종목 - 사람이 노션 상관군을 맵 업종명과 맞추면 사라진다.
+        logger.info("상관군 이중 집계(노션≠업종맵) %d종목: %s",
+                    len(dual), ", ".join(dual))
 
     return {"total_units": total, "groups": groups}
 
