@@ -610,6 +610,42 @@
       "gap_atr": 0.113,
       "unit_shares": 225,
       "status": "진입가능"
+    },
+    "281820": {
+      "time": "10:33",
+      "name": "케이씨텍",
+      "sector": "의료·정밀기기",
+      "market": "KOSPI",
+      "price": 94900.0,
+      "high20": 93000.0,
+      "atr20": 5662.0,
+      "gap_atr": 0.336,
+      "unit_shares": 88,
+      "status": "진입가능"
+    },
+    "450080": {
+      "time": "10:33",
+      "name": "에코프로머티",
+      "sector": "전기전자",
+      "market": "KOSPI",
+      "price": 39500.0,
+      "high20": 39100.0,
+      "atr20": 2121.0,
+      "gap_atr": 0.189,
+      "unit_shares": 235,
+      "status": "진입가능"
+    },
+    "166090": {
+      "time": "10:33",
+      "name": "하나머티리얼즈",
+      "sector": "전기전자",
+      "market": "KOSDAQ",
+      "price": 65100.0,
+      "high20": 65000.0,
+      "atr20": 3542.0,
+      "gap_atr": 0.028,
+      "unit_shares": 141,
+      "status": "진입가능"
     }
   }
 }
