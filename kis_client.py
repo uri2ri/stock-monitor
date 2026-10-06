@@ -1648,7 +1648,12 @@ def run_auto_pyramid(holdings: Optional[list] = None) -> None:
     if not held or account_size <= 0:
         return
 
-    corr = get_mock_account_corr_units(account_size, balance["holdings"])
+    try:
+        corr = get_mock_account_corr_units(account_size, balance["holdings"])
+    except CorrUnitsUnavailable:
+        # 경고는 함수 안에서 이미 보냈다. 캡을 모르는 채로 추가매수하지 않는다.
+        logger.info("추가매수 보류: 유닛 캡 확인 불가(노션 상관군 조회 실패)")
+        return
     group_units = dict(corr["groups"])
     total_units = corr["total_units"]
     sector_map = _get_sector_map()
@@ -2086,6 +2091,15 @@ def _get_sector_map() -> dict[str, str]:
         return {}
 
 
+class CorrUnitsUnavailable(RuntimeError):
+    """상관군·전체 유닛 집계를 확인할 수 없다 - 캡 판정 불가.
+
+    호출부는 이 예외를 "모르면 사지 않는다"로 처리한다. 반환값으로 0을
+    돌려주면 호출부가 그걸 "0유닛"으로 읽어 캡이 조용히 풀리므로,
+    판단 불가를 값이 아니라 예외로 전달한다.
+    """
+
+
 def get_mock_account_corr_units(account_size: float, holdings: list[dict]) -> dict:
     """자동매매(운용="자동") 점검표 행의 '유닛수' 칼럼을 상관군별로 합산한다.
 
@@ -2102,23 +2116,34 @@ def get_mock_account_corr_units(account_size: float, holdings: list[dict]) -> di
     run_auto_pyramid)를 그대로 두기 위해 시그니처만 유지한다 - 이 함수
     안에서는 쓰지 않는다.
 
-    노션 조회가 실패하면 상관군별 캡·전체 캡 모두 미적용(0건)으로 fail-open
-    한다 - 호출부가 이미 "이 계좌에 실제로 몇 유닛 있는지" 없이 진행하는
-    걸 전제로 짜여 있어(예: select_buy_candidates의 "업종 맵 없음" 케이스)
-    새로운 실패 모드가 아니다. 대신 카톡으로 알린다(WARN_NOTION_CORR_FAILED,
-    1시간 억제).
+    노션 조회가 실패하면 **CorrUnitsUnavailable을 올린다(fail-closed)**.
+    예전에는 {"total_units": 0.0, "groups": {}}로 fail-open 했는데, 그러면
+    상관군 캡뿐 아니라 **전체 캡까지 같이 풀린다** - total_units가 0으로
+    돌아와 `total_units + 1 > MAX_UNITS_TOTAL` 판정이 실제 보유(예: 10유닛)와
+    무관해지기 때문이다. 당시 주석은 "전체 캡만 적용"이라고 했지만 실제로는
+    두 캡 모두 무효였다. 같은 함수 안의 다른 노션 조회
+    (count_success_orders_today)가 "모르면 주문 중단"인데 여기만 반대 방향인
+    것도 일관성이 없었다.
+
+    호출부는 이 예외를 받아 **그 회차의 신규 진입·추가매수를 통째로
+    건너뛴다**. 자동매도(run_auto_sell)는 이 함수를 쓰지 않으므로 영향이 없다 -
+    못 파는 쪽이 더 위험하다는 기존 원칙 그대로다.
+
+    카톡 경고는 예전과 같다(WARN_NOTION_CORR_FAILED, 1시간 억제).
 
     반환: {"total_units": float, "groups": {상관군명: units}} (예전과 같은 모양)
     """
     try:
         auto_holdings = notion_repo.fetch_holdings(managed_by=notion_repo.MANAGED_AUTO)
     except Exception as e:                  # noqa: BLE001
-        logger.error("노션 상관군 조회 실패 - 상관군별 캡 미적용, 전체 캡만 적용: %s", e)
+        logger.error("노션 상관군 조회 실패 - 이번 회차 신규매수·추가매수를 "
+                     "건너뜁니다(캡을 모르는 채로 주문하지 않는다): %s", e)
         _notify_warning_throttled(
             WARN_NOTION_CORR_FAILED,
-            f"[KIS] ⚠ 노션 상관군 조회 실패 - 상관군별 캡 미적용, 전체 캡만 적용: {e}",
+            f"[KIS] ⚠ 노션 상관군 조회 실패 - 유닛 캡을 확인할 수 없어 "
+            f"이번 회차 신규매수·추가매수를 건너뜁니다: {e}",
         )
-        return {"total_units": 0.0, "groups": {}}
+        raise CorrUnitsUnavailable(str(e)) from e
 
     total = 0.0
     groups: dict[str, float] = {}
@@ -2198,7 +2223,14 @@ def select_buy_candidates(access_token: str, candidates: list[dict]) -> list[dic
         _track_no_entry_all(candidates, "미확인 매도 조회 실패 - 신규매수 보류")
         return []
 
-    corr = get_mock_account_corr_units(account_size, balance["holdings"])
+    try:
+        corr = get_mock_account_corr_units(account_size, balance["holdings"])
+    except CorrUnitsUnavailable:
+        # 경고는 함수 안에서 이미 보냈다. 캡을 모르는 채로 새 포지션을 열지 않는다.
+        logger.info("신규매수 보류: 유닛 캡 확인 불가(노션 상관군 조회 실패)")
+        _track_no_entry_all(candidates,
+                            "유닛 캡 확인 불가(노션 상관군 조회 실패) - 신규매수 보류")
+        return []
     if balance["holdings"] and not corr["groups"]:
         _notify_warning_throttled(
             WARN_NO_SECTOR_MAP,
