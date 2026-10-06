@@ -2,23 +2,6 @@
   "version": 1,
   "events": [
     {
-      "id": "b63d0e80a20d4385afeb6a111fde4a13",
-      "operation": "record_breakout",
-      "args": [
-        {
-          "ticker": "336370",
-          "name": "솔루스첨단소재",
-          "high20": 8980.0,
-          "price": 9120.0,
-          "atr20": 516.0
-        },
-        {
-          "__datetime__": "2026-10-06T09:03:46.499072+09:00"
-        }
-      ],
-      "kwargs": {}
-    },
-    {
       "id": "56604a5e5a8a4bdfbe3f28e9e2db7434",
       "operation": "record_breakout",
       "args": [
@@ -206,23 +189,6 @@
       }
     },
     {
-      "id": "817e8bc88dd342669f57e3e7ed7a1dd5",
-      "operation": "_set_outcome",
-      "args": [
-        "336370",
-        "미주문",
-        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        {
-          "__datetime__": "2026-10-06T09:03:58.931550+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
       "id": "0ea170c7cfe14763b2ec411741fce3b8",
       "operation": "_set_outcome",
       "args": [
@@ -241,50 +207,6 @@
     }
   ],
   "plans": [
-    {
-      "id": "eb728197610d40228b2ea8242d5fdee7",
-      "owner": "37391890516:1",
-      "events": [
-        "b63d0e80a20d4385afeb6a111fde4a13",
-        "817e8bc88dd342669f57e3e7ed7a1dd5"
-      ],
-      "record": {
-        "event_id": "b63d0e80a20d4385afeb6a111fde4a13",
-        "ticker": "336370",
-        "name": "솔루스첨단소재",
-        "first_detected_at": {
-          "__datetime__": "2026-10-06T09:03:46.499072+09:00"
-        },
-        "first_threshold": 8980.0,
-        "first_price": 9120.0,
-        "first_atr": 516.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        "outcome_at": {
-          "__datetime__": "2026-10-06T09:03:58.931550+09:00"
-        }
-      },
-      "page_id": null,
-      "fields": {
-        "event_id": "b63d0e80a20d4385afeb6a111fde4a13",
-        "ticker": "336370",
-        "name": "솔루스첨단소재",
-        "first_detected_at": {
-          "__datetime__": "2026-10-06T09:03:46.499072+09:00"
-        },
-        "first_threshold": 8980.0,
-        "first_price": 9120.0,
-        "first_atr": 516.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        "outcome_at": {
-          "__datetime__": "2026-10-06T09:03:58.931550+09:00"
-        }
-      },
-      "state": "creating"
-    },
     {
       "id": "dc9c180ac41246d695c1cb1ef4d48bee",
       "owner": "37391890516:1",
@@ -327,7 +249,7 @@
           "__datetime__": "2026-10-06T09:03:46.499072+09:00"
         }
       },
-      "state": "queued"
+      "state": "creating"
     },
     {
       "id": "adc85fd3cf3842dabd2f8d6de5510fba",
@@ -791,7 +713,7 @@
     }
   ],
   "prepare_cursor": "6bd64a90d4ba4d909a657b2cd93f722d",
-  "deliver_cursor": "eb728197610d40228b2ea8242d5fdee7",
+  "deliver_cursor": "dc9c180ac41246d695c1cb1ef4d48bee",
   "excluded_events": [
     {
       "event": {
