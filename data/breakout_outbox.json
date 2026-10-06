@@ -2,14 +2,14 @@
   "version": 1,
   "events": [
     {
-      "id": "4b83c8034ab843829ce789cd55ef7596",
+      "id": "5d5401d68f5e4f59aa55bc80b64bfdb8",
       "operation": "_set_outcome",
       "args": [
-        "056080",
+        "464080",
         "상한제한",
         "신규매수 일일 상한 0 (운영 보류)",
         {
-          "__datetime__": "2026-10-06T09:24:46.302746+09:00"
+          "__datetime__": "2026-10-06T09:35:02.702647+09:00"
         }
       ],
       "kwargs": {
@@ -19,14 +19,14 @@
       }
     },
     {
-      "id": "278221394d484eb39acd9ae01d5238bb",
+      "id": "11b16dfcbb52482f94d5035c69d72590",
       "operation": "_set_outcome",
       "args": [
-        "099320",
+        "425040",
         "상한제한",
         "신규매수 일일 상한 0 (운영 보류)",
         {
-          "__datetime__": "2026-10-06T09:24:46.310561+09:00"
+          "__datetime__": "2026-10-06T09:35:02.712208+09:00"
         }
       ],
       "kwargs": {
@@ -36,65 +36,14 @@
       }
     },
     {
-      "id": "9616a51c27e842a98eec67da269ba36e",
+      "id": "6960be29874343709338ae651419e6b3",
       "operation": "_set_outcome",
       "args": [
-        "009290",
+        "0088M0",
         "상한제한",
         "신규매수 일일 상한 0 (운영 보류)",
         {
-          "__datetime__": "2026-10-06T09:24:46.318319+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
-      "id": "343e183854754686855d7542f1abb9fd",
-      "operation": "_set_outcome",
-      "args": [
-        "336370",
-        "상한제한",
-        "신규매수 일일 상한 0 (운영 보류)",
-        {
-          "__datetime__": "2026-10-06T09:24:46.326033+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
-      "id": "61139e55e9524b59b9e45cd1daeee07d",
-      "operation": "_set_outcome",
-      "args": [
-        "125490",
-        "상한제한",
-        "신규매수 일일 상한 0 (운영 보류)",
-        {
-          "__datetime__": "2026-10-06T09:24:46.333763+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
-      "id": "5396aaa510db40748319d5d00e046a16",
-      "operation": "_set_outcome",
-      "args": [
-        "083450",
-        "상한제한",
-        "신규매수 일일 상한 0 (운영 보류)",
-        {
-          "__datetime__": "2026-10-06T09:24:46.341354+09:00"
+          "__datetime__": "2026-10-06T09:35:02.720859+09:00"
         }
       ],
       "kwargs": {
@@ -104,8 +53,198 @@
       }
     }
   ],
-  "plans": [],
-  "prepare_cursor": "d6726013e04046fa933ee98563badd7b",
+  "plans": [
+    {
+      "id": "6a4174d8605f4809bb9409e1f7c5eaad",
+      "owner": "37394595586:1",
+      "events": [
+        "5d5401d68f5e4f59aa55bc80b64bfdb8"
+      ],
+      "record": {
+        "account_type": "",
+        "account_key": "",
+        "order_side": "",
+        "order_qty": null,
+        "filled_qty": null,
+        "unverified_qty": null,
+        "execution_price": null,
+        "execution_state": "",
+        "execution_checked_at": null,
+        "event_id": "72f2d8586ddd41ae8108016bf7ef25e3",
+        "order_no": "",
+        "order_day": null,
+        "key": "3ea0fc3e-53fc-8106-8dda-cbe577611bcf",
+        "page_id": "3ea0fc3e-53fc-8106-8dda-cbe577611bcf",
+        "name": "에스오에스랩",
+        "ticker": "464080",
+        "first_detected_at": {
+          "__datetime__": "2026-09-29T13:23:00+09:00"
+        },
+        "first_threshold": 10350.0,
+        "first_price": 10360.0,
+        "first_atr": 596.0,
+        "status": "추적중",
+        "closed_reason": "",
+        "closed_at": null,
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-10-06T09:35:02.702647+09:00"
+        },
+        "latest_close": 10510.0,
+        "latest_date": {
+          "__date__": "2026-10-02"
+        },
+        "latest_atr": 576.0,
+        "latest_line": 10700.0,
+        "change_pct": 1.55,
+        "atr_mult": 0.27,
+        "dist_to_line": 190.0,
+        "dist_to_line_atr": 0.33,
+        "level_state": "최초선위",
+        "new_breakout": "미해당",
+        "refresh_state": "갱신됨",
+        "refresh_note": "",
+        "user_memo": ""
+      },
+      "page_id": "3ea0fc3e-53fc-8106-8dda-cbe577611bcf",
+      "fields": {
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-10-06T09:35:02.702647+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "f29fed6cc3124cc0aa45ac862ba2601e",
+      "owner": "37394595586:1",
+      "events": [
+        "11b16dfcbb52482f94d5035c69d72590"
+      ],
+      "record": {
+        "account_type": "",
+        "account_key": "",
+        "order_side": "",
+        "order_qty": null,
+        "filled_qty": null,
+        "unverified_qty": null,
+        "execution_price": null,
+        "execution_state": "",
+        "execution_checked_at": null,
+        "event_id": "b3e68bf864394acd97864dbe307d07f9",
+        "order_no": "",
+        "order_day": null,
+        "key": "3e20fc3e-53fc-81a7-b141-c14885662916",
+        "page_id": "3e20fc3e-53fc-81a7-b141-c14885662916",
+        "name": "티이엠씨",
+        "ticker": "425040",
+        "first_detected_at": {
+          "__datetime__": "2026-09-21T12:43:00+09:00"
+        },
+        "first_threshold": 10430.0,
+        "first_price": 11270.0,
+        "first_atr": 649.0,
+        "status": "추적중",
+        "closed_reason": "",
+        "closed_at": null,
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-10-06T09:35:02.712208+09:00"
+        },
+        "latest_close": 14890.0,
+        "latest_date": {
+          "__date__": "2026-10-02"
+        },
+        "latest_atr": 800.0,
+        "latest_line": 15200.0,
+        "change_pct": 42.76,
+        "atr_mult": 6.87,
+        "dist_to_line": 310.0,
+        "dist_to_line_atr": 0.39,
+        "level_state": "최초선위",
+        "new_breakout": "미해당",
+        "refresh_state": "갱신됨",
+        "refresh_note": "",
+        "user_memo": ""
+      },
+      "page_id": "3e20fc3e-53fc-81a7-b141-c14885662916",
+      "fields": {
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-10-06T09:35:02.712208+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "129b9ec28ffe484c980d18edb8eb10a1",
+      "owner": "37394595586:1",
+      "events": [
+        "6960be29874343709338ae651419e6b3"
+      ],
+      "record": {
+        "account_type": "",
+        "account_key": "",
+        "order_side": "",
+        "order_qty": null,
+        "filled_qty": null,
+        "unverified_qty": null,
+        "execution_price": null,
+        "execution_state": "",
+        "execution_checked_at": null,
+        "event_id": "bc806dd262cb494899a8572a6fe48f58",
+        "order_no": "",
+        "order_day": null,
+        "key": "3e90fc3e-53fc-8166-afae-dea6f5e6f682",
+        "page_id": "3e90fc3e-53fc-8166-afae-dea6f5e6f682",
+        "name": "메쥬",
+        "ticker": "0088M0",
+        "first_detected_at": {
+          "__datetime__": "2026-09-28T09:13:00+09:00"
+        },
+        "first_threshold": 14180.0,
+        "first_price": 14290.0,
+        "first_atr": 1057.0,
+        "status": "추적중",
+        "closed_reason": "",
+        "closed_at": null,
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-10-06T09:35:02.720859+09:00"
+        },
+        "latest_close": 14390.0,
+        "latest_date": {
+          "__date__": "2026-10-02"
+        },
+        "latest_atr": 1058.0,
+        "latest_line": 14980.0,
+        "change_pct": 1.48,
+        "atr_mult": 0.2,
+        "dist_to_line": 590.0,
+        "dist_to_line_atr": 0.56,
+        "level_state": "최초선위",
+        "new_breakout": "미해당",
+        "refresh_state": "갱신됨",
+        "refresh_note": "",
+        "user_memo": ""
+      },
+      "page_id": "3e90fc3e-53fc-8166-afae-dea6f5e6f682",
+      "fields": {
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-10-06T09:35:02.720859+09:00"
+        }
+      },
+      "state": "queued"
+    }
+  ],
+  "prepare_cursor": "a6756f937f6c4303a24bf875c44e54a4",
   "deliver_cursor": "fbe5ad5bf7f54f1f8aea3a8674fd959e",
   "excluded_events": [
     {
@@ -6491,6 +6630,27 @@
       },
       "reason": "held_without_active_track",
       "resolved_by": "37393711263:1"
+    },
+    {
+      "event": {
+        "id": "6fdfc2a6ce7e4c1694db0d7330df2704",
+        "operation": "_set_outcome",
+        "args": [
+          "009150",
+          "상한제한",
+          "신규매수 일일 상한 0 (운영 보류)",
+          {
+            "__datetime__": "2026-10-06T09:35:02.738582+09:00"
+          }
+        ],
+        "kwargs": {
+          "order_no": "",
+          "order_day": null,
+          "identity": null
+        }
+      },
+      "reason": "held_without_active_track",
+      "resolved_by": "37394595586:1"
     }
   ]
 }
