@@ -170,6 +170,261 @@
         "order_day": null,
         "identity": null
       }
+    },
+    {
+      "id": "081f49c0fb594183a7a98a1045b2ba71",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "393890",
+          "name": "더블유씨피",
+          "high20": 11060.0,
+          "price": 11130.0,
+          "atr20": 776.0
+        },
+        {
+          "__datetime__": "2026-10-06T09:23:38.396296+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "8cf04dbd15954219b0e1bdaa3f31eaa1",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "138610",
+          "name": "나이벡",
+          "high20": 16450.0,
+          "price": 16460.0,
+          "atr20": 844.0
+        },
+        {
+          "__datetime__": "2026-10-06T09:23:38.396296+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "ff4e980560004f6f93d3098d059cc21e",
+      "operation": "_set_outcome",
+      "args": [
+        "393890",
+        "상한제한",
+        "신규매수 일일 상한 0 (운영 보류)",
+        {
+          "__datetime__": "2026-10-06T09:24:46.149115+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "c929a25a01cb4ef4b2a415331627913d",
+      "operation": "_set_outcome",
+      "args": [
+        "074600",
+        "상한제한",
+        "신규매수 일일 상한 0 (운영 보류)",
+        {
+          "__datetime__": "2026-10-06T09:24:46.157409+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "a9212ac70fe7486698a3555a657e22a5",
+      "operation": "_set_outcome",
+      "args": [
+        "138610",
+        "상한제한",
+        "신규매수 일일 상한 0 (운영 보류)",
+        {
+          "__datetime__": "2026-10-06T09:24:46.164856+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "2af75d69ebe744f5abd1af69b1cce742",
+      "operation": "_set_outcome",
+      "args": [
+        "475430",
+        "상한제한",
+        "신규매수 일일 상한 0 (운영 보류)",
+        {
+          "__datetime__": "2026-10-06T09:24:46.204217+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "24be023674a1484981cd0d171dea4cf4",
+      "operation": "_set_outcome",
+      "args": [
+        "031980",
+        "상한제한",
+        "신규매수 일일 상한 0 (운영 보류)",
+        {
+          "__datetime__": "2026-10-06T09:24:46.211773+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "78a5df9e83c14626807650da1dea5796",
+      "operation": "_set_outcome",
+      "args": [
+        "018880",
+        "상한제한",
+        "신규매수 일일 상한 0 (운영 보류)",
+        {
+          "__datetime__": "2026-10-06T09:24:46.249133+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "3a29ec4e087747f68ac2f9076b89610c",
+      "operation": "_set_outcome",
+      "args": [
+        "241520",
+        "상한제한",
+        "신규매수 일일 상한 0 (운영 보류)",
+        {
+          "__datetime__": "2026-10-06T09:24:46.287194+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "4b83c8034ab843829ce789cd55ef7596",
+      "operation": "_set_outcome",
+      "args": [
+        "056080",
+        "상한제한",
+        "신규매수 일일 상한 0 (운영 보류)",
+        {
+          "__datetime__": "2026-10-06T09:24:46.302746+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "278221394d484eb39acd9ae01d5238bb",
+      "operation": "_set_outcome",
+      "args": [
+        "099320",
+        "상한제한",
+        "신규매수 일일 상한 0 (운영 보류)",
+        {
+          "__datetime__": "2026-10-06T09:24:46.310561+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "9616a51c27e842a98eec67da269ba36e",
+      "operation": "_set_outcome",
+      "args": [
+        "009290",
+        "상한제한",
+        "신규매수 일일 상한 0 (운영 보류)",
+        {
+          "__datetime__": "2026-10-06T09:24:46.318319+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "343e183854754686855d7542f1abb9fd",
+      "operation": "_set_outcome",
+      "args": [
+        "336370",
+        "상한제한",
+        "신규매수 일일 상한 0 (운영 보류)",
+        {
+          "__datetime__": "2026-10-06T09:24:46.326033+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "61139e55e9524b59b9e45cd1daeee07d",
+      "operation": "_set_outcome",
+      "args": [
+        "125490",
+        "상한제한",
+        "신규매수 일일 상한 0 (운영 보류)",
+        {
+          "__datetime__": "2026-10-06T09:24:46.333763+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "5396aaa510db40748319d5d00e046a16",
+      "operation": "_set_outcome",
+      "args": [
+        "083450",
+        "상한제한",
+        "신규매수 일일 상한 0 (운영 보류)",
+        {
+          "__datetime__": "2026-10-06T09:24:46.341354+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
     }
   ],
   "plans": [
@@ -542,9 +797,416 @@
         }
       },
       "state": "queued"
+    },
+    {
+      "id": "55dc33a4fc8742de87683f7a31bdf673",
+      "owner": "37393711263:1",
+      "events": [
+        "a135a1bef79143e197a25eb71e39106f",
+        "2af75d69ebe744f5abd1af69b1cce742"
+      ],
+      "record": {
+        "account_type": "",
+        "account_key": "",
+        "order_side": "",
+        "order_qty": null,
+        "filled_qty": null,
+        "unverified_qty": null,
+        "execution_price": null,
+        "execution_state": "",
+        "execution_checked_at": null,
+        "event_id": "1a43197750cf479aaeb1055a06e21cbe",
+        "order_no": "",
+        "order_day": null,
+        "key": "3ed0fc3e-53fc-8169-b8ef-fdacf76019d1",
+        "page_id": "3ed0fc3e-53fc-8169-b8ef-fdacf76019d1",
+        "name": "키스트론",
+        "ticker": "475430",
+        "first_detected_at": {
+          "__datetime__": "2026-10-02T14:13:00+09:00"
+        },
+        "first_threshold": 4510.0,
+        "first_price": 4515.0,
+        "first_atr": 219.0,
+        "status": "추적중",
+        "closed_reason": "",
+        "closed_at": null,
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-10-06T09:14:56.286028+09:00"
+        },
+        "latest_close": 4500.0,
+        "latest_date": {
+          "__date__": "2026-10-02"
+        },
+        "latest_atr": 209.0,
+        "latest_line": 4520.0,
+        "change_pct": -0.22,
+        "atr_mult": -0.05,
+        "dist_to_line": 20.0,
+        "dist_to_line_atr": 0.1,
+        "level_state": "최초선아래",
+        "new_breakout": "미해당",
+        "refresh_state": "갱신됨",
+        "refresh_note": "",
+        "user_memo": ""
+      },
+      "page_id": "3ed0fc3e-53fc-8169-b8ef-fdacf76019d1",
+      "fields": {
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-10-06T09:14:56.286028+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "0086e1abd73e498096c1ff6717fbf94e",
+      "owner": "37393711263:1",
+      "events": [
+        "a068dac7822c4d05b2a95476b4909523",
+        "24be023674a1484981cd0d171dea4cf4"
+      ],
+      "record": {
+        "account_type": "",
+        "account_key": "",
+        "order_side": "",
+        "order_qty": null,
+        "filled_qty": null,
+        "unverified_qty": null,
+        "execution_price": null,
+        "execution_state": "",
+        "execution_checked_at": null,
+        "event_id": "d20ee8ee63e841ad91f3d8440e759f9e",
+        "order_no": "",
+        "order_day": null,
+        "key": "3ea0fc3e-53fc-81c6-8609-e7cd9984a9e9",
+        "page_id": "3ea0fc3e-53fc-81c6-8609-e7cd9984a9e9",
+        "name": "피에스케이홀딩스",
+        "ticker": "031980",
+        "first_detected_at": {
+          "__datetime__": "2026-09-29T09:33:00+09:00"
+        },
+        "first_threshold": 174000.0,
+        "first_price": 179000.0,
+        "first_atr": 13608.0,
+        "status": "추적중",
+        "closed_reason": "",
+        "closed_at": null,
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-10-06T09:14:56.307532+09:00"
+        },
+        "latest_close": 193600.0,
+        "latest_date": {
+          "__date__": "2026-10-02"
+        },
+        "latest_atr": 13578.0,
+        "latest_line": 195500.0,
+        "change_pct": 11.26,
+        "atr_mult": 1.44,
+        "dist_to_line": 1900.0,
+        "dist_to_line_atr": 0.14,
+        "level_state": "최초선위",
+        "new_breakout": "미해당",
+        "refresh_state": "갱신됨",
+        "refresh_note": "",
+        "user_memo": ""
+      },
+      "page_id": "3ea0fc3e-53fc-81c6-8609-e7cd9984a9e9",
+      "fields": {
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-10-06T09:14:56.307532+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "fe9f50f70d6a45d7b859b4d36feb62fd",
+      "owner": "37393711263:1",
+      "events": [
+        "61f5af7afd944ae9bc98a8fb5609f7aa",
+        "78a5df9e83c14626807650da1dea5796"
+      ],
+      "record": {
+        "account_type": "",
+        "account_key": "",
+        "order_side": "",
+        "order_qty": null,
+        "filled_qty": null,
+        "unverified_qty": null,
+        "execution_price": null,
+        "execution_state": "",
+        "execution_checked_at": null,
+        "event_id": "73e41f3128554e14b7655b5a4401f876",
+        "order_no": "",
+        "order_day": null,
+        "key": "3ec0fc3e-53fc-8147-a457-dc77d1ee4b98",
+        "page_id": "3ec0fc3e-53fc-8147-a457-dc77d1ee4b98",
+        "name": "한온시스템",
+        "ticker": "018880",
+        "first_detected_at": {
+          "__datetime__": "2026-10-01T09:03:00+09:00"
+        },
+        "first_threshold": 3635.0,
+        "first_price": 3680.0,
+        "first_atr": 168.0,
+        "status": "추적중",
+        "closed_reason": "",
+        "closed_at": null,
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-10-06T09:14:56.330216+09:00"
+        },
+        "latest_close": 3830.0,
+        "latest_date": {
+          "__date__": "2026-10-02"
+        },
+        "latest_atr": 183.0,
+        "latest_line": 3867.0,
+        "change_pct": 5.36,
+        "atr_mult": 1.16,
+        "dist_to_line": 37.0,
+        "dist_to_line_atr": 0.2,
+        "level_state": "최초선위",
+        "new_breakout": "미해당",
+        "refresh_state": "갱신됨",
+        "refresh_note": "",
+        "user_memo": ""
+      },
+      "page_id": "3ec0fc3e-53fc-8147-a457-dc77d1ee4b98",
+      "fields": {
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-10-06T09:14:56.330216+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "5110761ab16042828c6404727c5d9248",
+      "owner": "37393711263:1",
+      "events": [
+        "0bc91cf35da64d2f8f006483b5f6b391",
+        "3a29ec4e087747f68ac2f9076b89610c"
+      ],
+      "record": {
+        "account_type": "",
+        "account_key": "",
+        "order_side": "",
+        "order_qty": null,
+        "filled_qty": null,
+        "unverified_qty": null,
+        "execution_price": null,
+        "execution_state": "",
+        "execution_checked_at": null,
+        "event_id": "2475930ec5ba46fd9604e7b3ce67d7b8",
+        "order_no": "",
+        "order_day": null,
+        "key": "3ec0fc3e-53fc-81e0-931d-d2b48150cca0",
+        "page_id": "3ec0fc3e-53fc-81e0-931d-d2b48150cca0",
+        "name": "DSC인베스트먼트",
+        "ticker": "241520",
+        "first_detected_at": {
+          "__datetime__": "2026-10-01T13:53:00+09:00"
+        },
+        "first_threshold": 8450.0,
+        "first_price": 8460.0,
+        "first_atr": 419.0,
+        "status": "추적중",
+        "closed_reason": "",
+        "closed_at": null,
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-10-06T09:14:56.459353+09:00"
+        },
+        "latest_close": 8480.0,
+        "latest_date": {
+          "__date__": "2026-10-02"
+        },
+        "latest_atr": 411.0,
+        "latest_line": 8620.0,
+        "change_pct": 0.36,
+        "atr_mult": 0.07,
+        "dist_to_line": 140.0,
+        "dist_to_line_atr": 0.34,
+        "level_state": "최초선위",
+        "new_breakout": "미해당",
+        "refresh_state": "갱신됨",
+        "refresh_note": "",
+        "user_memo": ""
+      },
+      "page_id": "3ec0fc3e-53fc-81e0-931d-d2b48150cca0",
+      "fields": {
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-10-06T09:14:56.459353+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "cc3b3bdd52a84890b225753b0df557a1",
+      "owner": "37393711263:1",
+      "events": [
+        "081f49c0fb594183a7a98a1045b2ba71",
+        "ff4e980560004f6f93d3098d059cc21e"
+      ],
+      "record": {
+        "event_id": "081f49c0fb594183a7a98a1045b2ba71",
+        "ticker": "393890",
+        "name": "더블유씨피",
+        "first_detected_at": {
+          "__datetime__": "2026-10-06T09:23:38.396296+09:00"
+        },
+        "first_threshold": 11060.0,
+        "first_price": 11130.0,
+        "first_atr": 776.0,
+        "status": "추적중",
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-10-06T09:24:46.149115+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "081f49c0fb594183a7a98a1045b2ba71",
+        "ticker": "393890",
+        "name": "더블유씨피",
+        "first_detected_at": {
+          "__datetime__": "2026-10-06T09:23:38.396296+09:00"
+        },
+        "first_threshold": 11060.0,
+        "first_price": 11130.0,
+        "first_atr": 776.0,
+        "status": "추적중",
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-10-06T09:24:46.149115+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "e34f21b4323e4c989bc38ee504e5b8bc",
+      "owner": "37393711263:1",
+      "events": [
+        "8cf04dbd15954219b0e1bdaa3f31eaa1",
+        "a9212ac70fe7486698a3555a657e22a5"
+      ],
+      "record": {
+        "event_id": "8cf04dbd15954219b0e1bdaa3f31eaa1",
+        "ticker": "138610",
+        "name": "나이벡",
+        "first_detected_at": {
+          "__datetime__": "2026-10-06T09:23:38.396296+09:00"
+        },
+        "first_threshold": 16450.0,
+        "first_price": 16460.0,
+        "first_atr": 844.0,
+        "status": "추적중",
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-10-06T09:24:46.164856+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "8cf04dbd15954219b0e1bdaa3f31eaa1",
+        "ticker": "138610",
+        "name": "나이벡",
+        "first_detected_at": {
+          "__datetime__": "2026-10-06T09:23:38.396296+09:00"
+        },
+        "first_threshold": 16450.0,
+        "first_price": 16460.0,
+        "first_atr": 844.0,
+        "status": "추적중",
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-10-06T09:24:46.164856+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "fbe5ad5bf7f54f1f8aea3a8674fd959e",
+      "owner": "37393711263:1",
+      "events": [
+        "c929a25a01cb4ef4b2a415331627913d"
+      ],
+      "record": {
+        "account_type": "",
+        "account_key": "",
+        "order_side": "",
+        "order_qty": null,
+        "filled_qty": null,
+        "unverified_qty": null,
+        "execution_price": null,
+        "execution_state": "",
+        "execution_checked_at": null,
+        "event_id": "9d500bbcdd174d00b9e4cdf9caa16e00",
+        "order_no": "",
+        "order_day": null,
+        "key": "3e20fc3e-53fc-812c-94f6-f1b53fa4edef",
+        "page_id": "3e20fc3e-53fc-812c-94f6-f1b53fa4edef",
+        "name": "원익QnC",
+        "ticker": "074600",
+        "first_detected_at": {
+          "__datetime__": "2026-09-21T09:53:00+09:00"
+        },
+        "first_threshold": 28300.0,
+        "first_price": 28500.0,
+        "first_atr": 1721.0,
+        "status": "추적중",
+        "closed_reason": "",
+        "closed_at": null,
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-10-06T09:24:46.157409+09:00"
+        },
+        "latest_close": 32300.0,
+        "latest_date": {
+          "__date__": "2026-10-02"
+        },
+        "latest_atr": 1618.0,
+        "latest_line": 33050.0,
+        "change_pct": 14.13,
+        "atr_mult": 2.32,
+        "dist_to_line": 750.0,
+        "dist_to_line_atr": 0.46,
+        "level_state": "최초선위",
+        "new_breakout": "미해당",
+        "refresh_state": "갱신됨",
+        "refresh_note": "",
+        "user_memo": ""
+      },
+      "page_id": "3e20fc3e-53fc-812c-94f6-f1b53fa4edef",
+      "fields": {
+        "outcome": "상한제한",
+        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
+        "outcome_at": {
+          "__datetime__": "2026-10-06T09:24:46.157409+09:00"
+        }
+      },
+      "state": "queued"
     }
   ],
-  "prepare_cursor": "56a4e98643234cb5952eb6526301b2a6",
+  "prepare_cursor": "d6726013e04046fa933ee98563badd7b",
   "deliver_cursor": "7bd6af241455446893131d05792f6df7",
   "excluded_events": [
     {
@@ -6909,6 +7571,27 @@
       },
       "reason": "held_without_active_track",
       "resolved_by": "37392814913:1"
+    },
+    {
+      "event": {
+        "id": "8fc538786bb94ec88bb8b4b8b85a7469",
+        "operation": "_set_outcome",
+        "args": [
+          "009150",
+          "상한제한",
+          "신규매수 일일 상한 0 (운영 보류)",
+          {
+            "__datetime__": "2026-10-06T09:24:46.179705+09:00"
+          }
+        ],
+        "kwargs": {
+          "order_no": "",
+          "order_day": null,
+          "identity": null
+        }
+      },
+      "reason": "held_without_active_track",
+      "resolved_by": "37393711263:1"
     }
   ]
 }
