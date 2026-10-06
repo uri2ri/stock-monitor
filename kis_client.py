@@ -623,6 +623,18 @@ WARN_MARKET_WARNED_PREFIX = "투자경고종목 제외"
 # 야간 스캔(scan_all.py) 기준일이 직전 거래일이 아닐 때 - intraday_watch.py
 # 가 신규 진입을 보류하며 이 사유로 억제 경고를 보낸다.
 WARN_STALE_SCAN = "야간 스캔 기준일 오래됨"
+# 신규매수 후보가 자금·캡 때문에 막힌 경우. 2026-10-06 신규매수 재개 직후
+# 회차당 수십 통이 나가 카카오가 429(유량 제한)로 토큰 발급을 거부했다 -
+# 거절 알림이 주문 실패·체결 미확인 같은 중요한 알림까지 밀어냈다. 그래서
+# 후보별로 보내지 않고 한 통으로 묶어 억제한다. 종목별 상세는 알림이 아니라
+# 노션 돌파 추적에 남는다(_track_no_entry).
+WARN_NEW_BUY_REJECTED = "신규매수 거절 요약"
+# 가용현금이 어떤 후보의 1유닛 금액에도 못 미쳐 이번 회차에 살 수 있는
+# 종목이 아예 없는 경우. 후보 루프를 돌기 전에 한 번만 알린다.
+WARN_NEW_BUY_NO_CASH = "신규매수 현금 부족(회차 전체)"
+
+# 묶음 알림에서 사유별로 보여줄 종목명 개수. 나머지는 "외 N종목"으로 접는다.
+NEW_BUY_REJECT_NAMES_SHOWN = 5
 
 MAX_REJECTIONS_PER_STOCK = 3  # 같은 종목 오늘 거부 누적 이 값 이상이면 재시도 중단
 
@@ -633,6 +645,44 @@ def _repeated_rejection_reason_key(stock_code: str) -> str:
 
 def _market_warned_reason_key(stock_code: str) -> str:
     return f"{WARN_MARKET_WARNED_PREFIX} - {stock_code}"
+
+
+def _notify_new_buy_rejections(rejections: list[tuple[str, str]],
+                               cash_remaining: float) -> None:
+    """후보별 거절을 사유별로 묶어 **한 통**으로, 억제해서 보낸다.
+
+    후보마다 _notify_failure를 부르면 회차당 수십 통이 나가고, 그 상태가
+    10분마다 반복된다. 종목 하나하나가 왜 막혔는지는 카톡으로 알아야 할
+    정보가 아니라 **기록해 두고 나중에 보는** 정보다 - 그래서 상세는
+    노션 돌파 추적에 남기고, 카톡에는 "몇 건이 어떤 사유로 막혔나"만 보낸다.
+
+    조회 실패·데이터 이상(기존 보유 확인 실패, ATR 이상, 시세 조회 실패
+    등)은 **여기로 오지 않는다** - 그건 시장 상황이 아니라 고장 신호라
+    기존의 즉시 알림 경로를 그대로 탄다.
+    """
+    if not rejections:
+        return
+
+    grouped: dict[str, list[str]] = {}
+    for category, name in rejections:
+        grouped.setdefault(category, []).append(name)
+
+    lines = []
+    # 건수 많은 사유부터 - 지금 무엇이 가장 많이 막고 있는지가 먼저 보여야 한다.
+    for category, names in sorted(grouped.items(),
+                                  key=lambda kv: (-len(kv[1]), kv[0])):
+        shown = ", ".join(names[:NEW_BUY_REJECT_NAMES_SHOWN])
+        hidden = len(names) - NEW_BUY_REJECT_NAMES_SHOWN
+        more = f" 외 {hidden}종목" if hidden > 0 else ""
+        lines.append(f"· {category} {len(names)}건: {shown}{more}")
+
+    _notify_warning_throttled(
+        WARN_NEW_BUY_REJECTED,
+        f"[KIS] 신규매수 거절 {len(rejections)}건 "
+        f"(가용현금 {cash_remaining:,.0f}원)\n"
+        + "\n".join(lines)
+        + "\n종목별 상세는 노션 돌파 추적에 기록됩니다.",
+    )
 
 
 def _notify_warning_throttled(reason_key: str, message: str) -> None:
@@ -2179,6 +2229,50 @@ def select_buy_candidates(access_token: str, candidates: list[dict]) -> list[dic
 
     remaining_slots = max(0, MAX_ORDERS_PER_DAY - already_success)
 
+    # 현금 게이트를 루프 **앞으로** 당긴다. 가용현금이 어떤 후보의 1유닛
+    # 금액에도 못 미치면 이번 회차엔 살 수 있는 종목이 아예 없다 - 후보를
+    # 하나씩 돌며 같은 사유로 수십 통을 보낼 이유가 없고, 종목마다 노션
+    # 보유 조회(find_auto_holding_page)를 하는 비용도 들일 이유가 없다.
+    #
+    # 판정은 순수 산술이라 추가 조회가 없다. 6번 게이트(비용 미포함)와
+    # 같은 기준으로 **가장 싼** 1유닛과 비교하므로, 여기서 끊는 경우는
+    # 루프를 돌아도 전부 현금에서 막혔을 경우뿐이다(살 수 있었던 후보를
+    # 건너뛰지 않는 방향).
+    unit_amounts: dict[str, float] = {}
+    for c in ordered:
+        try:
+            shares = core.calc_position(c["atr20"], account_size).unit_shares
+        except Exception:                   # noqa: BLE001 - ATR 이상 등
+            continue
+        if shares > 0:
+            unit_amounts[c["ticker"]] = shares * c["price"]
+
+    if unit_amounts and cash_remaining < min(unit_amounts.values()):
+        cheapest = min(unit_amounts.values())
+        logger.info("신규매수 보류: 가용현금 %s원 < 최소 1유닛 %s원 "
+                    "(후보 %d종목 전부 현금에서 막힘)",
+                    f"{cash_remaining:,.0f}", f"{cheapest:,.0f}", len(ordered))
+        _notify_warning_throttled(
+            WARN_NEW_BUY_NO_CASH,
+            f"[KIS] 신규매수 보류 - 현금 부족 (가용 {cash_remaining:,.0f}원 · "
+            f"가장 싼 1유닛 {cheapest:,.0f}원)\n"
+            f"후보 {len(ordered)}종목이 모두 현금에서 막혀 이번 회차는 "
+            f"종목별 검사를 건너뜁니다. 청산으로 현금이 생기면 재개됩니다.",
+        )
+        # 추적 기록은 종목별로 남긴다 - 카톡을 묶는 대신 여기 상세가 남는다.
+        for c in ordered:
+            need = unit_amounts.get(c["ticker"])
+            detail = (f"필요 {need:,.0f}원 · " if need is not None else "")
+            _track_no_entry(
+                c, f"현금 부족({detail}가용 {cash_remaining:,.0f}원)",
+                breakout_tracker.OUTCOME_CASH)
+        return []
+
+    # 루프에서 쌓아 뒀다가 마지막에 한 통으로 보낸다 (_notify_new_buy_rejections).
+    # "시장·계좌 상태라 못 산다"만 여기 담는다 - 조회 실패·데이터 이상은
+    # 기존 즉시 알림(_notify_failure)을 그대로 쓴다.
+    rejections: list[tuple[str, str]] = []
+
     selected: list[dict] = []
     for c in ordered:
         name, price, atr = c["name"], c["price"], c["atr20"]
@@ -2215,7 +2309,8 @@ def select_buy_candidates(access_token: str, candidates: list[dict]) -> list[dic
 
         # 3. 가격 상한
         if price > MAX_STOCK_PRICE:
-            _notify_failure(f"[KIS] 가격 상한 초과: {name}")
+            logger.info("[%s] 가격 상한 초과", name)
+            rejections.append(("가격 상한 초과", name))
             _track_no_entry(c, f"가격 상한 초과(상한 {MAX_STOCK_PRICE:,.0f}원)")
             continue
 
@@ -2233,9 +2328,8 @@ def select_buy_candidates(access_token: str, candidates: list[dict]) -> list[dic
             # 1000만원 안팎 계좌에서는 ATR%가 낮은(=변동성 작은) 종목일수록
             # 유닛주수가 커져 유닛금액도 커진다. 여기서 자주 걸리는 건
             # 버그가 아니라 계좌 규모 대비 종목이 안 맞는다는 의도된 신호다.
-            msg = f"[KIS] 유닛금액 과다(계좌 {ratio * 100:.1f}%): {name}"
-            logger.info(msg)
-            _notify_failure(msg)
+            logger.info("[%s] 유닛금액 과다(계좌 %.1f%%)", name, ratio * 100)
+            rejections.append(("유닛금액 과다", name))
             _track_no_entry(c, f"유닛금액 과다(계좌 {ratio * 100:.1f}%)")
             continue
 
@@ -2249,7 +2343,8 @@ def select_buy_candidates(access_token: str, candidates: list[dict]) -> list[dic
         if (stock_units_after > core.MAX_UNITS
                 or group_units_after > core.MAX_UNITS_GROUP
                 or total_units_after > core.MAX_UNITS_TOTAL):
-            _notify_failure(f"[KIS] 상관군 캡: {name}")
+            logger.info("[%s] 상관군 캡", name)
+            rejections.append(("상관군 캡", name))
             _track_no_entry(
                 c,
                 f"상관군 캡(상관군 {sector or '미분류'} "
@@ -2261,7 +2356,8 @@ def select_buy_candidates(access_token: str, candidates: list[dict]) -> list[dic
 
         # 6. 현금 부족 - 마지막 그물
         if unit_amount > cash_remaining:
-            _notify_failure(f"[KIS] 현금 부족: {name}")
+            logger.info("[%s] 현금 부족", name)
+            rejections.append(("현금 부족", name))
             _track_no_entry(
                 c,
                 f"현금 부족(필요 {unit_amount:,.0f}원 · 가용 {cash_remaining:,.0f}원)",
@@ -2272,7 +2368,8 @@ def select_buy_candidates(access_token: str, candidates: list[dict]) -> list[dic
         # 7. 일일 주문 건수 상한 - 갭이 낮은(우선순위 높은) 순으로 이미
         #    남은 자리를 다 채웠으면 나머지는 자격이 있어도 밀린다.
         if len(selected) >= remaining_slots:
-            _notify_failure(f"[KIS] 우선순위 밀림: {name}")
+            logger.info("[%s] 우선순위 밀림", name)
+            rejections.append(("우선순위 밀림", name))
             _track_no_entry(
                 c, f"우선순위 밀림(오늘 남은 신규매수 자리 {remaining_slots}건 소진)",
                 breakout_tracker.OUTCOME_CAP)
@@ -2329,7 +2426,8 @@ def select_buy_candidates(access_token: str, candidates: list[dict]) -> list[dic
 
         high20 = c.get("high20")
         if fresh_price > MAX_STOCK_PRICE:
-            _notify_failure(f"[KIS] 주문 직전 재검증 - 가격 상한 초과: {name}")
+            logger.info("[%s] 재검증 가격 상한 초과", name)
+            rejections.append(("가격 상한 초과(재검증)", name))
             _track_no_entry(c, "주문 직전 재검증 - 가격 상한 초과(최신가 기준)")
             continue
 
@@ -2341,18 +2439,15 @@ def select_buy_candidates(access_token: str, candidates: list[dict]) -> list[dic
             continue
 
         if fresh_price <= high20:
-            msg = f"[KIS] 주문 직전 재검증 - 돌파 유지 안 됨: {name}"
-            logger.info(msg)
-            _notify_failure(msg)
+            logger.info("[%s] 재검증 돌파 유지 안 됨", name)
+            rejections.append(("돌파 유지 안 됨(재검증)", name))
             _track_no_entry(
                 c, f"주문 직전 재검증 - 돌파 유지 안 됨(최신가 {fresh_price:,.0f})")
             continue
         gap_atr_now = (fresh_price - high20) / atr
         if gap_atr_now > core.CHASE_ATR_MULT:
-            msg = (f"[KIS] 주문 직전 재검증 - 추격범위 초과"
-                   f"(+{gap_atr_now:.2f}N): {name}")
-            logger.info(msg)
-            _notify_failure(msg)
+            logger.info("[%s] 재검증 추격범위 초과(+%.2fN)", name, gap_atr_now)
+            rejections.append(("추격범위 초과(재검증)", name))
             _track_no_entry(c, f"주문 직전 재검증 - 추격범위 초과(+{gap_atr_now:.2f}N)")
             continue
 
@@ -2360,10 +2455,8 @@ def select_buy_candidates(access_token: str, candidates: list[dict]) -> list[dic
         fresh_ratio = (fresh_unit_amount / account_size
                        if account_size > 0 else float("inf"))
         if fresh_ratio > MAX_UNIT_RATIO:
-            msg = (f"[KIS] 주문 직전 재검증 - 유닛금액 과다"
-                   f"(최신가 기준 계좌 {fresh_ratio * 100:.1f}%): {name}")
-            logger.info(msg)
-            _notify_failure(msg)
+            logger.info("[%s] 재검증 유닛금액 과다(계좌 %.1f%%)", name, fresh_ratio * 100)
+            rejections.append(("유닛금액 과다(재검증)", name))
             _track_no_entry(
                 c, f"주문 직전 재검증 - 유닛금액 과다(최신가 기준 계좌 "
                    f"{fresh_ratio * 100:.1f}%)")
@@ -2372,9 +2465,8 @@ def select_buy_candidates(access_token: str, candidates: list[dict]) -> list[dic
         # 재검증에만 적용한다(위 6번 게이트는 그대로 비용 미포함).
         fresh_cost = fresh_unit_amount * ORDER_COST_RATE
         if fresh_unit_amount + fresh_cost > cash_remaining:
-            msg = f"[KIS] 주문 직전 재검증 - 현금 부족(최신가+비용 기준): {name}"
-            logger.info(msg)
-            _notify_failure(msg)
+            logger.info("[%s] 재검증 현금 부족(최신가+비용 기준)", name)
+            rejections.append(("현금 부족(재검증)", name))
             _track_no_entry(
                 c,
                 f"현금 부족(최신가+비용 {fresh_unit_amount + fresh_cost:,.0f}원 · "
@@ -2389,6 +2481,10 @@ def select_buy_candidates(access_token: str, candidates: list[dict]) -> list[dic
         group_units[sector] = group_units.get(sector, 0) + 1
         total_units += 1
         cash_remaining -= unit_amount + fresh_cost
+
+    # 루프에서 쌓인 일상적 거절을 한 통으로 묶어 보낸다. 주문 성공·실패
+    # 알림은 호출자(run_auto_trade) 쪽이라 이 묶음에 영향받지 않는다.
+    _notify_new_buy_rejections(rejections, cash_remaining)
 
     return selected
 
