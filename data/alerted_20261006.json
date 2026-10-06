@@ -706,6 +706,18 @@
       "gap_atr": 0.197,
       "unit_shares": 197,
       "status": "진입가능"
+    },
+    "102710": {
+      "time": "15:13",
+      "name": "이엔에프테크놀로지",
+      "sector": "화학",
+      "market": "KOSDAQ",
+      "price": 50100.0,
+      "high20": 49800.0,
+      "atr20": 2584.0,
+      "gap_atr": 0.116,
+      "unit_shares": 193,
+      "status": "진입가능"
     }
   }
 }
