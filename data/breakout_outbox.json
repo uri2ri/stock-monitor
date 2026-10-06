@@ -2,23 +2,6 @@
   "version": 1,
   "events": [
     {
-      "id": "d51668c85b464aa1bba58e7ec4bb0d55",
-      "operation": "record_breakout",
-      "args": [
-        {
-          "ticker": "009290",
-          "name": "광동제약",
-          "high20": 6640.0,
-          "price": 6680.0,
-          "atr20": 215.0
-        },
-        {
-          "__datetime__": "2026-10-06T09:03:46.499072+09:00"
-        }
-      ],
-      "kwargs": {}
-    },
-    {
       "id": "b63d0e80a20d4385afeb6a111fde4a13",
       "operation": "record_breakout",
       "args": [
@@ -223,23 +206,6 @@
       }
     },
     {
-      "id": "93d46176542f4b47acedeb2fd837cd21",
-      "operation": "_set_outcome",
-      "args": [
-        "009290",
-        "미주문",
-        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        {
-          "__datetime__": "2026-10-06T09:03:58.920703+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
       "id": "817e8bc88dd342669f57e3e7ed7a1dd5",
       "operation": "_set_outcome",
       "args": [
@@ -275,50 +241,6 @@
     }
   ],
   "plans": [
-    {
-      "id": "62d96e4aaa274d6187023f272c7f7f3e",
-      "owner": "37391890516:1",
-      "events": [
-        "d51668c85b464aa1bba58e7ec4bb0d55",
-        "93d46176542f4b47acedeb2fd837cd21"
-      ],
-      "record": {
-        "event_id": "d51668c85b464aa1bba58e7ec4bb0d55",
-        "ticker": "009290",
-        "name": "광동제약",
-        "first_detected_at": {
-          "__datetime__": "2026-10-06T09:03:46.499072+09:00"
-        },
-        "first_threshold": 6640.0,
-        "first_price": 6680.0,
-        "first_atr": 215.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        "outcome_at": {
-          "__datetime__": "2026-10-06T09:03:58.920703+09:00"
-        }
-      },
-      "page_id": null,
-      "fields": {
-        "event_id": "d51668c85b464aa1bba58e7ec4bb0d55",
-        "ticker": "009290",
-        "name": "광동제약",
-        "first_detected_at": {
-          "__datetime__": "2026-10-06T09:03:46.499072+09:00"
-        },
-        "first_threshold": 6640.0,
-        "first_price": 6680.0,
-        "first_atr": 215.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        "outcome_at": {
-          "__datetime__": "2026-10-06T09:03:58.920703+09:00"
-        }
-      },
-      "state": "creating"
-    },
     {
       "id": "eb728197610d40228b2ea8242d5fdee7",
       "owner": "37391890516:1",
@@ -361,7 +283,7 @@
           "__datetime__": "2026-10-06T09:03:58.931550+09:00"
         }
       },
-      "state": "queued"
+      "state": "creating"
     },
     {
       "id": "dc9c180ac41246d695c1cb1ef4d48bee",
@@ -869,7 +791,7 @@
     }
   ],
   "prepare_cursor": "6bd64a90d4ba4d909a657b2cd93f722d",
-  "deliver_cursor": "62d96e4aaa274d6187023f272c7f7f3e",
+  "deliver_cursor": "eb728197610d40228b2ea8242d5fdee7",
   "excluded_events": [
     {
       "event": {
