@@ -67,9 +67,13 @@ def test_zero_cap_logs_operation_hold(monkeypatch, caplog):
 
 def test_nonzero_cap_still_runs_existing_candidate_checks_and_limit_notification(monkeypatch):
     # 상한이 정상값(3)이고 이미 그날 상한만큼 성공 주문이 쌓여
-    # remaining_slots == 0이 된 경우 - 이번 수정 대상이 아니므로 기존처럼
+    # remaining_slots == 0이 된 경우 - 상한 0 조기반환 대상이 아니므로
     # 후보별 검사(가격·유닛금액·상관군·현금)를 그대로 거친 뒤 "우선순위
-    # 밀림" 알림을 내야 한다.
+    # 밀림"으로 거절돼야 한다.
+    #
+    # 2026-10-06부터 이런 일상적 거절은 후보마다 보내지 않고 묶음 알림
+    # (_notify_new_buy_rejections → _notify_warning_throttled)으로 나간다.
+    # 검사를 거친다는 사실은 그대로이고 전달 경로만 바뀌었다.
     monkeypatch.setattr(kis_client, "MAX_ORDERS_PER_DAY", 3)
     monkeypatch.setattr(kis_client, "get_account_balance",
                         lambda token: _balance(1_000_000_000.0))
@@ -84,14 +88,20 @@ def test_nonzero_cap_still_runs_existing_candidate_checks_and_limit_notification
     )
     notify_failure_mock = mock.Mock()
     monkeypatch.setattr(kis_client, "_notify_failure", notify_failure_mock)
-    monkeypatch.setattr(kis_client, "_notify_warning_throttled", lambda k, m: None)
+    throttled: list[tuple[str, str]] = []
+    monkeypatch.setattr(kis_client, "_notify_warning_throttled",
+                        lambda k, m: throttled.append((k, m)))
 
     candidate = _candidate("000001", "전기전자", price=10_000.0, high20=9_900.0)
     selected = kis_client.select_buy_candidates("dummy-token", [candidate])
 
     assert selected == []
-    notify_failure_mock.assert_called_once()
-    assert "우선순위 밀림" in notify_failure_mock.call_args.args[0]
+    # 일상적 거절은 즉시 알림으로 나가지 않는다.
+    notify_failure_mock.assert_not_called()
+    # 대신 묶음 알림 한 통에 사유가 담긴다.
+    summaries = [m for k, m in throttled if k == kis_client.WARN_NEW_BUY_REJECTED]
+    assert len(summaries) == 1
+    assert "우선순위 밀림" in summaries[0]
 
 
 def test_pyramid_add_order_unaffected_by_zero_new_buy_cap(monkeypatch):
