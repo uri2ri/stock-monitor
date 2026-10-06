@@ -432,6 +432,42 @@
       "gap_atr": 0.012,
       "unit_shares": 592,
       "status": "진입가능"
+    },
+    "464080": {
+      "time": "09:33",
+      "name": "에스오에스랩",
+      "sector": "의료·정밀기기",
+      "market": "KOSDAQ",
+      "price": 10730.0,
+      "high20": 10700.0,
+      "atr20": 576.0,
+      "gap_atr": 0.052,
+      "unit_shares": 868,
+      "status": "진입가능"
+    },
+    "425040": {
+      "time": "09:33",
+      "name": "티이엠씨",
+      "sector": "화학",
+      "market": "KOSDAQ",
+      "price": 15390.0,
+      "high20": 15200.0,
+      "atr20": 800.0,
+      "gap_atr": 0.237,
+      "unit_shares": 625,
+      "status": "진입가능"
+    },
+    "0088M0": {
+      "time": "09:33",
+      "name": "메쥬",
+      "sector": "의료·정밀기기",
+      "market": "KOSDAQ",
+      "price": 15070.0,
+      "high20": 14980.0,
+      "atr20": 1058.0,
+      "gap_atr": 0.085,
+      "unit_shares": 472,
+      "status": "진입가능"
     }
   }
 }
