@@ -2,23 +2,6 @@
   "version": 1,
   "events": [
     {
-      "id": "78bc8441c44d4291bd296b5c7dd412ea",
-      "operation": "record_breakout",
-      "args": [
-        {
-          "ticker": "389500",
-          "name": "에스비비테크",
-          "high20": 45300.0,
-          "price": 45400.0,
-          "atr20": 3092.0
-        },
-        {
-          "__datetime__": "2026-10-06T09:03:46.499072+09:00"
-        }
-      ],
-      "kwargs": {}
-    },
-    {
       "id": "11937c9feef048f89d53aa62c7a3dfbc",
       "operation": "record_breakout",
       "args": [
@@ -308,23 +291,6 @@
       }
     },
     {
-      "id": "15a3a96a30fe4d5cb66b86891afa5b2c",
-      "operation": "_set_outcome",
-      "args": [
-        "389500",
-        "미주문",
-        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        {
-          "__datetime__": "2026-10-06T09:03:58.859723+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
       "id": "37c476c032a34d94adc39025624ca122",
       "operation": "_set_outcome",
       "args": [
@@ -446,50 +412,6 @@
   ],
   "plans": [
     {
-      "id": "f7d48cf193804b46b0b4faff8e51cdec",
-      "owner": "37391890516:1",
-      "events": [
-        "78bc8441c44d4291bd296b5c7dd412ea",
-        "15a3a96a30fe4d5cb66b86891afa5b2c"
-      ],
-      "record": {
-        "event_id": "78bc8441c44d4291bd296b5c7dd412ea",
-        "ticker": "389500",
-        "name": "에스비비테크",
-        "first_detected_at": {
-          "__datetime__": "2026-10-06T09:03:46.499072+09:00"
-        },
-        "first_threshold": 45300.0,
-        "first_price": 45400.0,
-        "first_atr": 3092.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        "outcome_at": {
-          "__datetime__": "2026-10-06T09:03:58.859723+09:00"
-        }
-      },
-      "page_id": null,
-      "fields": {
-        "event_id": "78bc8441c44d4291bd296b5c7dd412ea",
-        "ticker": "389500",
-        "name": "에스비비테크",
-        "first_detected_at": {
-          "__datetime__": "2026-10-06T09:03:46.499072+09:00"
-        },
-        "first_threshold": 45300.0,
-        "first_price": 45400.0,
-        "first_atr": 3092.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        "outcome_at": {
-          "__datetime__": "2026-10-06T09:03:58.859723+09:00"
-        }
-      },
-      "state": "creating"
-    },
-    {
       "id": "819500fcdcac4b848a5b3b599faa33c4",
       "owner": "37391890516:1",
       "events": [
@@ -531,7 +453,7 @@
           "__datetime__": "2026-10-06T09:03:58.869325+09:00"
         }
       },
-      "state": "queued"
+      "state": "creating"
     },
     {
       "id": "669c191c254e4cd58269fe45f4b2062b",
@@ -1259,7 +1181,7 @@
     }
   ],
   "prepare_cursor": "6bd64a90d4ba4d909a657b2cd93f722d",
-  "deliver_cursor": "f7d48cf193804b46b0b4faff8e51cdec",
+  "deliver_cursor": "819500fcdcac4b848a5b3b599faa33c4",
   "excluded_events": [
     {
       "event": {
