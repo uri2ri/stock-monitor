@@ -2,23 +2,6 @@
   "version": 1,
   "events": [
     {
-      "id": "cd7d0a432f1d4b0e89e6d1c3d3afd63a",
-      "operation": "record_breakout",
-      "args": [
-        {
-          "ticker": "173130",
-          "name": "오파스넷",
-          "high20": 7770.0,
-          "price": 7930.0,
-          "atr20": 289.0
-        },
-        {
-          "__datetime__": "2026-10-06T09:03:46.499072+09:00"
-        }
-      ],
-      "kwargs": {}
-    },
-    {
       "id": "1d241a4d6664400faefddd435bbb94a8",
       "operation": "record_breakout",
       "args": [
@@ -255,23 +238,6 @@
         }
       ],
       "kwargs": {}
-    },
-    {
-      "id": "50f2a345a4324960ab1b613f3dffc40e",
-      "operation": "_set_outcome",
-      "args": [
-        "173130",
-        "미주문",
-        "추격 구간(+0.55N) - 매수 대상 제외",
-        {
-          "__datetime__": "2026-10-06T09:03:46.499072+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
     },
     {
       "id": "b005a6fed4ea40d1b5fa3a26fe489488",
@@ -616,50 +582,6 @@
   ],
   "plans": [
     {
-      "id": "f9d52b1f43dc4a8680fa635462229b08",
-      "owner": "37391890516:1",
-      "events": [
-        "cd7d0a432f1d4b0e89e6d1c3d3afd63a",
-        "50f2a345a4324960ab1b613f3dffc40e"
-      ],
-      "record": {
-        "event_id": "cd7d0a432f1d4b0e89e6d1c3d3afd63a",
-        "ticker": "173130",
-        "name": "오파스넷",
-        "first_detected_at": {
-          "__datetime__": "2026-10-06T09:03:46.499072+09:00"
-        },
-        "first_threshold": 7770.0,
-        "first_price": 7930.0,
-        "first_atr": 289.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "추격 구간(+0.55N) - 매수 대상 제외",
-        "outcome_at": {
-          "__datetime__": "2026-10-06T09:03:46.499072+09:00"
-        }
-      },
-      "page_id": null,
-      "fields": {
-        "event_id": "cd7d0a432f1d4b0e89e6d1c3d3afd63a",
-        "ticker": "173130",
-        "name": "오파스넷",
-        "first_detected_at": {
-          "__datetime__": "2026-10-06T09:03:46.499072+09:00"
-        },
-        "first_threshold": 7770.0,
-        "first_price": 7930.0,
-        "first_atr": 289.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "추격 구간(+0.55N) - 매수 대상 제외",
-        "outcome_at": {
-          "__datetime__": "2026-10-06T09:03:46.499072+09:00"
-        }
-      },
-      "state": "creating"
-    },
-    {
       "id": "4cf3590b8e6d4ce3b3c7ddb67f451e87",
       "owner": "37391890516:1",
       "events": [
@@ -701,7 +623,7 @@
           "__datetime__": "2026-10-06T09:03:58.811448+09:00"
         }
       },
-      "state": "queued"
+      "state": "creating"
     },
     {
       "id": "c4aaa4c87f2441548bfbfa733468d06f",
@@ -1649,7 +1571,7 @@
     }
   ],
   "prepare_cursor": "6bd64a90d4ba4d909a657b2cd93f722d",
-  "deliver_cursor": "f9d52b1f43dc4a8680fa635462229b08",
+  "deliver_cursor": "4cf3590b8e6d4ce3b3c7ddb67f451e87",
   "excluded_events": [
     {
       "event": {
