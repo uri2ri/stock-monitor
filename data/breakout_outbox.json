@@ -2,23 +2,6 @@
   "version": 1,
   "events": [
     {
-      "id": "f2867f305175477e8ec581cf7932b4c4",
-      "operation": "record_breakout",
-      "args": [
-        {
-          "ticker": "287840",
-          "name": "인투셀",
-          "high20": 18590.0,
-          "price": 18610.0,
-          "atr20": 1307.0
-        },
-        {
-          "__datetime__": "2026-10-06T09:13:43.991150+09:00"
-        }
-      ],
-      "kwargs": {}
-    },
-    {
       "id": "efb5c9c7809c4c60981fa07c2793d07c",
       "operation": "record_breakout",
       "args": [
@@ -61,23 +44,6 @@
         "신규매수 일일 상한 0 (운영 보류)",
         {
           "__datetime__": "2026-10-06T09:14:56.183163+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
-      "id": "70cb265c6e1946719ad4fbb5ef581b5d",
-      "operation": "_set_outcome",
-      "args": [
-        "287840",
-        "상한제한",
-        "신규매수 일일 상한 0 (운영 보류)",
-        {
-          "__datetime__": "2026-10-06T09:14:56.191361+09:00"
         }
       ],
       "kwargs": {
@@ -497,50 +463,6 @@
   ],
   "plans": [
     {
-      "id": "decff00298ef4222a9c47b67e50b5cf7",
-      "owner": "37392814913:1",
-      "events": [
-        "f2867f305175477e8ec581cf7932b4c4",
-        "70cb265c6e1946719ad4fbb5ef581b5d"
-      ],
-      "record": {
-        "event_id": "f2867f305175477e8ec581cf7932b4c4",
-        "ticker": "287840",
-        "name": "인투셀",
-        "first_detected_at": {
-          "__datetime__": "2026-10-06T09:13:43.991150+09:00"
-        },
-        "first_threshold": 18590.0,
-        "first_price": 18610.0,
-        "first_atr": 1307.0,
-        "status": "추적중",
-        "outcome": "상한제한",
-        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
-        "outcome_at": {
-          "__datetime__": "2026-10-06T09:14:56.191361+09:00"
-        }
-      },
-      "page_id": null,
-      "fields": {
-        "event_id": "f2867f305175477e8ec581cf7932b4c4",
-        "ticker": "287840",
-        "name": "인투셀",
-        "first_detected_at": {
-          "__datetime__": "2026-10-06T09:13:43.991150+09:00"
-        },
-        "first_threshold": 18590.0,
-        "first_price": 18610.0,
-        "first_atr": 1307.0,
-        "status": "추적중",
-        "outcome": "상한제한",
-        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
-        "outcome_at": {
-          "__datetime__": "2026-10-06T09:14:56.191361+09:00"
-        }
-      },
-      "state": "creating"
-    },
-    {
       "id": "e698e80c9e6a46b08c8c3408ad45ffd0",
       "owner": "37392814913:1",
       "events": [
@@ -582,7 +504,7 @@
           "__datetime__": "2026-10-06T09:14:56.205646+09:00"
         }
       },
-      "state": "queued"
+      "state": "creating"
     },
     {
       "id": "3d981552373f40c8b2047e8b47ec56ef",
@@ -1801,7 +1723,7 @@
     }
   ],
   "prepare_cursor": "56a4e98643234cb5952eb6526301b2a6",
-  "deliver_cursor": "decff00298ef4222a9c47b67e50b5cf7",
+  "deliver_cursor": "e698e80c9e6a46b08c8c3408ad45ffd0",
   "excluded_events": [
     {
       "event": {
