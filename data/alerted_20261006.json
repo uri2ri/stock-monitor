@@ -658,6 +658,18 @@
       "gap_atr": 0.11,
       "unit_shares": 5494,
       "status": "진입가능"
+    },
+    "144960": {
+      "time": "11:03",
+      "name": "뉴파워프라즈마",
+      "sector": "기계·장비",
+      "market": "KOSDAQ",
+      "price": 13410.0,
+      "high20": 13400.0,
+      "atr20": 770.0,
+      "gap_atr": 0.013,
+      "unit_shares": 649,
+      "status": "진입가능"
     }
   }
 }

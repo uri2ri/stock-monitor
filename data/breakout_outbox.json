@@ -1,91 +1,9 @@
 {
   "version": 1,
-  "events": [
-    {
-      "id": "932bf800a5f447b8b56c1c7b75f721ef",
-      "operation": "_set_outcome",
-      "args": [
-        "144960",
-        "상한제한",
-        "신규매수 일일 상한 0 (운영 보류)",
-        {
-          "__datetime__": "2026-10-06T11:05:02.330536+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    }
-  ],
-  "plans": [
-    {
-      "id": "d4708968d3b04e4c8c31658ec96881d2",
-      "owner": "37402228113:1",
-      "events": [
-        "932bf800a5f447b8b56c1c7b75f721ef"
-      ],
-      "record": {
-        "account_type": "",
-        "account_key": "",
-        "order_side": "",
-        "order_qty": null,
-        "filled_qty": null,
-        "unverified_qty": null,
-        "execution_price": null,
-        "execution_state": "",
-        "execution_checked_at": null,
-        "event_id": "96018ca7ede4461d88c52c447c2902b6",
-        "order_no": "",
-        "order_day": null,
-        "key": "3e20fc3e-53fc-8186-9b03-e067d4aea1a9",
-        "page_id": "3e20fc3e-53fc-8186-9b03-e067d4aea1a9",
-        "name": "뉴파워프라즈마",
-        "ticker": "144960",
-        "first_detected_at": {
-          "__datetime__": "2026-09-21T09:03:00+09:00"
-        },
-        "first_threshold": 10400.0,
-        "first_price": 11420.0,
-        "first_atr": 760.0,
-        "status": "추적중",
-        "closed_reason": "",
-        "closed_at": null,
-        "outcome": "상한제한",
-        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
-        "outcome_at": {
-          "__datetime__": "2026-10-06T11:05:02.330536+09:00"
-        },
-        "latest_close": 13200.0,
-        "latest_date": {
-          "__date__": "2026-10-02"
-        },
-        "latest_atr": 770.0,
-        "latest_line": 13400.0,
-        "change_pct": 26.92,
-        "atr_mult": 3.68,
-        "dist_to_line": 200.0,
-        "dist_to_line_atr": 0.26,
-        "level_state": "최초선위",
-        "new_breakout": "미해당",
-        "refresh_state": "갱신됨",
-        "refresh_note": "",
-        "user_memo": ""
-      },
-      "page_id": "3e20fc3e-53fc-8186-9b03-e067d4aea1a9",
-      "fields": {
-        "outcome": "상한제한",
-        "outcome_reason": "신규매수 일일 상한 0 (운영 보류)",
-        "outcome_at": {
-          "__datetime__": "2026-10-06T11:05:02.330536+09:00"
-        }
-      },
-      "state": "queued"
-    }
-  ],
+  "events": [],
+  "plans": [],
   "prepare_cursor": "74f56cc4bcff42ba962c0726b05b4202",
-  "deliver_cursor": "09bdf267e1314059adc4521d12d3920e",
+  "deliver_cursor": "d4708968d3b04e4c8c31658ec96881d2",
   "excluded_events": [
     {
       "event": {
