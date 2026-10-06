@@ -2,47 +2,6 @@
   "version": 1,
   "events": [
     {
-      "id": "32819b16c93a4494a1faecf02acdf139",
-      "operation": "_set_outcome",
-      "args": [
-        "299030",
-        "자금부족",
-        "현금 부족(필요 1,208,250원 · 가용 207,738원)",
-        {
-          "__datetime__": "2026-10-06T11:16:16.105908+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
-      "id": "6cf693c80c7e44878a01587e68c799b5",
-      "operation": "_set_outcome",
-      "args": [
-        "144960",
-        "주문접수",
-        "주문 접수(주문번호 0000018874)",
-        {
-          "__datetime__": "2026-10-06T11:16:22.138716+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "0000018874",
-        "order_day": {
-          "__date__": "2026-10-06"
-        },
-        "identity": {
-          "order_qty": 82,
-          "account_type": "모의",
-          "account_key": "d534c8d981289493d2f84a1e888ebc32d53dfd1df60dcd620d6e4707f0cc4a87",
-          "order_side": "매수"
-        }
-      }
-    },
-    {
       "id": "a68f559db76046119a86bef424ead84c",
       "operation": "record_breakout",
       "args": [
@@ -1337,142 +1296,8 @@
   ],
   "plans": [
     {
-      "id": "0d519692e8b245db8265515aab73fdd6",
-      "owner": "37403047468:1",
-      "events": [
-        "32819b16c93a4494a1faecf02acdf139"
-      ],
-      "record": {
-        "account_type": "",
-        "account_key": "",
-        "order_side": "",
-        "order_qty": null,
-        "filled_qty": null,
-        "unverified_qty": null,
-        "execution_price": null,
-        "execution_state": "",
-        "execution_checked_at": null,
-        "event_id": "b6e4caf1f1914a4fbc0c1603bb794bc1",
-        "order_no": "",
-        "order_day": null,
-        "key": "3f10fc3e-53fc-8194-b6b3-cb791aa63414",
-        "page_id": "3f10fc3e-53fc-8194-b6b3-cb791aa63414",
-        "name": "하나기술",
-        "ticker": "299030",
-        "first_detected_at": {
-          "__datetime__": "2026-10-06T09:03:00+09:00"
-        },
-        "first_threshold": 15720.0,
-        "first_price": 16110.0,
-        "first_atr": 844.0,
-        "status": "추적중",
-        "closed_reason": "",
-        "closed_at": null,
-        "outcome": "자금부족",
-        "outcome_reason": "현금 부족(필요 1,208,250원 · 가용 207,738원)",
-        "outcome_at": {
-          "__datetime__": "2026-10-06T11:16:16.105908+09:00"
-        },
-        "latest_close": null,
-        "latest_date": null,
-        "latest_atr": null,
-        "latest_line": null,
-        "change_pct": null,
-        "atr_mult": null,
-        "dist_to_line": null,
-        "dist_to_line_atr": null,
-        "level_state": "",
-        "new_breakout": "",
-        "refresh_state": "",
-        "refresh_note": "",
-        "user_memo": ""
-      },
-      "page_id": "3f10fc3e-53fc-8194-b6b3-cb791aa63414",
-      "fields": {
-        "outcome": "자금부족",
-        "outcome_reason": "현금 부족(필요 1,208,250원 · 가용 207,738원)",
-        "outcome_at": {
-          "__datetime__": "2026-10-06T11:16:16.105908+09:00"
-        }
-      },
-      "state": "queued"
-    },
-    {
-      "id": "6508dd041edb4c54b426de608949714c",
-      "owner": "37403047468:1",
-      "events": [
-        "6cf693c80c7e44878a01587e68c799b5"
-      ],
-      "record": {
-        "account_type": "모의",
-        "account_key": "d534c8d981289493d2f84a1e888ebc32d53dfd1df60dcd620d6e4707f0cc4a87",
-        "order_side": "매수",
-        "order_qty": 82,
-        "filled_qty": null,
-        "unverified_qty": null,
-        "execution_price": null,
-        "execution_state": "",
-        "execution_checked_at": null,
-        "event_id": "96018ca7ede4461d88c52c447c2902b6",
-        "order_no": "0000018874",
-        "order_day": {
-          "__date__": "2026-10-06"
-        },
-        "key": "3e20fc3e-53fc-8186-9b03-e067d4aea1a9",
-        "page_id": "3e20fc3e-53fc-8186-9b03-e067d4aea1a9",
-        "name": "뉴파워프라즈마",
-        "ticker": "144960",
-        "first_detected_at": {
-          "__datetime__": "2026-09-21T09:03:00+09:00"
-        },
-        "first_threshold": 10400.0,
-        "first_price": 11420.0,
-        "first_atr": 760.0,
-        "status": "추적중",
-        "closed_reason": "",
-        "closed_at": null,
-        "outcome": "주문접수",
-        "outcome_reason": "주문 접수(주문번호 0000018874)",
-        "outcome_at": {
-          "__datetime__": "2026-10-06T11:16:22.138716+09:00"
-        },
-        "latest_close": 13200.0,
-        "latest_date": {
-          "__date__": "2026-10-02"
-        },
-        "latest_atr": 770.0,
-        "latest_line": 13400.0,
-        "change_pct": 26.92,
-        "atr_mult": 3.68,
-        "dist_to_line": 200.0,
-        "dist_to_line_atr": 0.26,
-        "level_state": "최초선위",
-        "new_breakout": "미해당",
-        "refresh_state": "갱신됨",
-        "refresh_note": "",
-        "user_memo": ""
-      },
-      "page_id": "3e20fc3e-53fc-8186-9b03-e067d4aea1a9",
-      "fields": {
-        "account_type": "모의",
-        "account_key": "d534c8d981289493d2f84a1e888ebc32d53dfd1df60dcd620d6e4707f0cc4a87",
-        "order_side": "매수",
-        "order_qty": 82,
-        "order_no": "0000018874",
-        "order_day": {
-          "__date__": "2026-10-06"
-        },
-        "outcome": "주문접수",
-        "outcome_reason": "주문 접수(주문번호 0000018874)",
-        "outcome_at": {
-          "__datetime__": "2026-10-06T11:16:22.138716+09:00"
-        }
-      },
-      "state": "queued"
-    },
-    {
       "id": "7f20938697f14123b8bfb809ff53c0c0",
-      "owner": "37403854336:1",
+      "owner": "37404675127:1",
       "events": [
         "a68f559db76046119a86bef424ead84c",
         "ab98598f63b0453faa79d4200f30a5be"
@@ -1512,7 +1337,7 @@
           "__datetime__": "2026-10-06T11:25:42.703360+09:00"
         }
       },
-      "state": "queued"
+      "state": "creating"
     },
     {
       "id": "916ca3324a2a4674b0163164dd3ded80",
@@ -3980,7 +3805,7 @@
     }
   ],
   "prepare_cursor": "d56cd3a715aa47f4a30eb3dafe4239af",
-  "deliver_cursor": "d51bb22a08b249918bc3fa48f8e8eb47",
+  "deliver_cursor": "7f20938697f14123b8bfb809ff53c0c0",
   "excluded_events": [
     {
       "event": {
