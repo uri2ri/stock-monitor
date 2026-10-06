@@ -694,6 +694,18 @@
       "gap_atr": 0.037,
       "unit_shares": 932,
       "status": "진입가능"
+    },
+    "950260": {
+      "time": "13:24",
+      "name": "인제니아테라퓨틱스(Reg.S)",
+      "sector": "미분류",
+      "market": "KOSDAQ",
+      "price": 29850.0,
+      "high20": 29350.0,
+      "atr20": 2537.0,
+      "gap_atr": 0.197,
+      "unit_shares": 197,
+      "status": "진입가능"
     }
   }
 }
