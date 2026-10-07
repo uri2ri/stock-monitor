@@ -1,8 +1,88 @@
 {
   "version": 1,
-  "events": [],
-  "plans": [],
-  "prepare_cursor": "5ac4ce436f354b41b1c17c985d67749f",
+  "events": [
+    {
+      "id": "89e27f1505924f3c9d4dd4f7020b1ec9",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "0120G0",
+          "name": "삼양바이오팜",
+          "high20": 50900.0,
+          "price": 51000.0,
+          "atr20": 3108.0
+        },
+        {
+          "__datetime__": "2026-10-07T12:23:30.846589+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "3373520bb07c462c96a0c9c5db56e622",
+      "operation": "_set_outcome",
+      "args": [
+        "0120G0",
+        "자금부족",
+        "현금 부족(필요 969,000원 · 가용 212,022원)",
+        {
+          "__datetime__": "2026-10-07T12:24:17.596315+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    }
+  ],
+  "plans": [
+    {
+      "id": "d73a6ef27af14725b7a2d32968279aaa",
+      "owner": "37566489537:1",
+      "events": [
+        "89e27f1505924f3c9d4dd4f7020b1ec9",
+        "3373520bb07c462c96a0c9c5db56e622"
+      ],
+      "record": {
+        "event_id": "89e27f1505924f3c9d4dd4f7020b1ec9",
+        "ticker": "0120G0",
+        "name": "삼양바이오팜",
+        "first_detected_at": {
+          "__datetime__": "2026-10-07T12:23:30.846589+09:00"
+        },
+        "first_threshold": 50900.0,
+        "first_price": 51000.0,
+        "first_atr": 3108.0,
+        "status": "추적중",
+        "outcome": "자금부족",
+        "outcome_reason": "현금 부족(필요 969,000원 · 가용 212,022원)",
+        "outcome_at": {
+          "__datetime__": "2026-10-07T12:24:17.596315+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "89e27f1505924f3c9d4dd4f7020b1ec9",
+        "ticker": "0120G0",
+        "name": "삼양바이오팜",
+        "first_detected_at": {
+          "__datetime__": "2026-10-07T12:23:30.846589+09:00"
+        },
+        "first_threshold": 50900.0,
+        "first_price": 51000.0,
+        "first_atr": 3108.0,
+        "status": "추적중",
+        "outcome": "자금부족",
+        "outcome_reason": "현금 부족(필요 969,000원 · 가용 212,022원)",
+        "outcome_at": {
+          "__datetime__": "2026-10-07T12:24:17.596315+09:00"
+        }
+      },
+      "state": "queued"
+    }
+  ],
+  "prepare_cursor": "a0960c2aaf27464185a3e34f43bfb434",
   "deliver_cursor": "7aef91d0a164452bbba7e1541608800e",
   "excluded_events": [
     {
@@ -7648,6 +7728,27 @@
       },
       "reason": "held_without_active_track",
       "resolved_by": "37565711604:1"
+    },
+    {
+      "event": {
+        "id": "eecde71f3cdd42b0b3be2fa15e828a2b",
+        "operation": "_set_outcome",
+        "args": [
+          "010120",
+          "자금부족",
+          "현금 부족(필요 1,107,500원 · 가용 212,022원)",
+          {
+            "__datetime__": "2026-10-07T12:24:17.665870+09:00"
+          }
+        ],
+        "kwargs": {
+          "order_no": "",
+          "order_day": null,
+          "identity": null
+        }
+      },
+      "reason": "held_without_active_track",
+      "resolved_by": "37566489537:1"
     }
   ]
 }
