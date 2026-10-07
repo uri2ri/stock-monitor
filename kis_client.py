@@ -1338,11 +1338,71 @@ def _recover_closed_sell(token: str, order: dict) -> bool:
     if (not fill or not _valid_sell_qty(fill.get('filled_qty'))
             or fill['filled_qty'] != order['qty'] or not _is_valid_price(fill.get('avg_price'))):
         raise ValueError('옛 포지션 매도 체결 미확인')
-    if not notion_repo.ledger_matches_sell(page_id, order['order_no'], int(fill['filled_qty']), fill['avg_price'], day):
-        raise ValueError('옛 포지션 일지/주문 증거 불일치')
+    qty, exit_price = int(fill['filled_qty']), float(fill['avg_price'])
+    if not notion_repo.ledger_matches_sell(page_id, order['order_no'], qty, exit_price, day):
+        # 여기까지 왔다는 건 **체결은 확인됐다**는 뜻이다(수량 일치·유효
+        # 평균가). 안 맞는 건 일지 쪽이고, 일지는 기록일 뿐 주문이 아니라
+        # 고쳐도 매매 판단에 영향이 없다. 반대로 틀린 채 두면 R배수·승률
+        # 통계가 계속 틀어지고 이 경고가 매일 반복된다.
+        _repair_ledger_from_fill(page_id, order, qty, exit_price, day)
     notion_repo.update_order_record(order['page_id'], status='성공',
                                     order_no=order['order_no'], reason=order['reason'])
     return True
+
+
+def _repair_ledger_from_fill(page_id: str, order: dict, qty: int,
+                             exit_price: float, day: date) -> None:
+    """체결 증거에 맞춰 일지를 맞춘다. 2건 이상이면 손대지 않고 보류.
+
+    - 0건: 정상 자동매도와 같은 형식으로 만든다.
+    - 1건: 수량·청산가·청산일·메모를 체결 증거로 덮어쓴다. 기존 메모는
+      "이전 수기 기록: ..."으로 뒤에 붙여 **지우지 않는다** - 사람이 왜
+      그렇게 적었는지가 나중에 대조할 유일한 단서다.
+    - 2건 이상: 어느 쪽이 이 주문의 것인지 정할 수 없다. 넘겨짚고 고치느니
+      기존처럼 예외로 올려 사람이 보게 한다(이 모듈의 fail-closed 원칙).
+    """
+    rows = notion_repo.fetch_ledger_rows_for_holding(page_id)
+    if len(rows) > 1:
+        raise ValueError(f'옛 포지션 일지 {len(rows)}건 - 어느 것이 이 주문인지 '
+                         f'확인 불가, 수동 확인 필요')
+
+    memo = f"자동매도 (주문번호 {order['order_no']}) - {order.get('reason', '')}".strip()
+    memo += " / 체결 조회로 확정(복구 기록)"
+
+    if not rows:
+        holding = notion_repo.fetch_holding_for_ledger(page_id)
+        if holding.get('entry_price') is None:
+            raise ValueError('옛 포지션 진입가 확인 불가 - 일지 생성 보류')
+        notion_repo.create_ledger_record(
+            name=holding['name'], ticker=holding['ticker'],
+            market=holding['market'],
+            entry_price=holding['entry_price'],
+            entry_atr=holding['entry_atr'],
+            shares=qty,
+            units=int(holding['units']) if holding['units'] is not None else None,
+            exit_date=day, exit_price=exit_price,
+            exit_reason=_ledger_exit_reason(order.get('reason', '')),
+            # 신호 발생일이 없으면 체결일 - 자동매매는 신호 즉시 실행이라
+            # 지연 0으로 보는 게 맞다(_record_ledger_after_sell과 같은 규칙).
+            signal_date=holding['signal_date'] or day,
+            entry_date=holding['entry_date'],
+            holding_page_id=page_id,
+            memo=memo,
+        )
+        logger.info("[%s] 옛 포지션 일지 없음 - 체결 증거로 생성(주문번호 %s)",
+                    order.get('ticker', ''), order['order_no'])
+        return
+
+    row = rows[0]
+    previous = (row.get('memo') or '').strip()
+    if previous:
+        memo += f" / 이전 수기 기록: {previous}"
+    notion_repo.update_ledger_record(row['page_id'], shares=qty,
+                                     exit_price=exit_price, exit_date=day,
+                                     memo=memo)
+    logger.info("[%s] 옛 포지션 일지를 체결 증거로 갱신(주문번호 %s · "
+                "수량 %d · 청산가 %s)", order.get('ticker', ''),
+                order['order_no'], qty, f"{round(exit_price):,}")
 
 
 def _settle_sell_by_balance(token: str, page_id: str, inp, order: dict,

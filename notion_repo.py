@@ -482,6 +482,86 @@ def ledger_matches_sell(page_id: str, order_no: str, qty: int, price: float,
             and _date_val(props.get('✱ 청산일', {})) == order_day)
 
 
+def fetch_ledger_rows_for_holding(page_id: str, limit: int = 3) -> list[dict]:
+    """이 보유 행에 연결된 매매일지 행들. 복구 경로가 몇 건인지 세는 데 쓴다.
+
+    has_ledger_for_holding은 존재 여부만, ledger_matches_sell은 1건일 때의
+    일치 여부만 본다. 복구가 "없으면 만들고 / 1건이면 덮어쓰고 / 2건
+    이상이면 보류"를 하려면 **건수와 그 행의 현재 내용**이 필요하다.
+
+    limit은 2건 이상인지 알면 충분하므로 작게 둔다(기본 3).
+    """
+    resp = requests.post(
+        f"{NOTION_BASE}/databases/{os.environ['NOTION_LEDGER_DB_ID']}/query",
+        headers=_headers(),
+        json={"filter": {"property": "보유종목", "relation": {"contains": page_id}},
+              "page_size": limit},
+        timeout=30)
+    resp.raise_for_status()
+    rows = []
+    for row in resp.json().get("results", []):
+        props = row.get("properties", {})
+        rows.append({
+            "page_id": row["id"],
+            "memo": _text(props.get("청산 메모", {})),
+            "shares": _number(props.get("✱ 매수 수량", {})),
+            "exit_price": _number(props.get("✱ 청산가", {})),
+            "exit_date": _date_val(props.get("✱ 청산일", {})),
+        })
+    return rows
+
+
+def fetch_holding_for_ledger(page_id: str) -> dict:
+    """일지를 새로 만들 때 필요한 점검표 칸들만 읽는다.
+
+    복구 경로(_recover_closed_sell)는 HoldingInput을 들고 있지 않다 -
+    이미 청산된 행이라 보유 목록 조회에 안 잡히기 때문이다. 그래서
+    일지 생성에 쓸 값을 이 행에서 직접 읽는다.
+
+    진입가는 평단가(가중평균)를 우선으로 하고 없으면 ✱ 매수단가를 쓴다 -
+    create_ledger_record 호출부(_record_ledger_after_sell)와 같은 규칙이다.
+    """
+    page_id = str(UUID(page_id))
+    resp = requests.get(f"{NOTION_BASE}/pages/{page_id}", headers=_headers(),
+                        timeout=30)
+    resp.raise_for_status()
+    props = resp.json()["properties"]
+    entry_price = _number(props.get("평단가", {}))
+    if entry_price is None:
+        entry_price = _number(props.get("✱ 매수단가", {}))
+    return {
+        "name": _text(props.get("종목명", {})).strip(),
+        "ticker": _text(props.get("종목코드", {})).strip(),
+        "market": _select(props.get("시장", {})) or "",
+        "entry_price": entry_price,
+        "entry_atr": _number(props.get("✱ 진입시 ATR", {})),
+        "units": _number(props.get("유닛수", {})),
+        "entry_date": _date_val(props.get("매수일", {})),
+        "signal_date": _date_val(props.get("신호 최초 발생일", {})),
+    }
+
+
+def update_ledger_record(page_id: str, *, shares: int, exit_price: float,
+                         exit_date: date, memo: str) -> None:
+    """체결 증거로 일지의 수량·청산가·청산일·메모를 덮어쓴다.
+
+    일지는 **기록**이지 주문이 아니다 - 여기를 고쳐도 주문·보유·매매 판단에
+    영향이 없다. 반대로 틀린 채로 두면 R배수·승률 통계가 전부 틀어진다.
+    진입가·진입시 ATR·유닛수는 건드리지 않는다(청산과 무관한 진입 시점 값).
+    """
+    payload = {"properties": {
+        "✱ 매수 수량": {"number": shares},
+        "✱ 청산가": {"number": round(exit_price)},
+        "✱ 청산일": _date_prop(exit_date),
+        "청산 메모": _rich_text(memo),
+    }}
+    resp = requests.patch(f"{NOTION_BASE}/pages/{page_id}", headers=_headers(),
+                          json=payload, timeout=30)
+    resp.raise_for_status()
+    logger.info("매매일지 체결 증거로 갱신: page_id=%s 수량=%s 청산가=%s 청산일=%s",
+                page_id, shares, round(exit_price), exit_date)
+
+
 def has_ledger_for_holding(page_id: str) -> bool:
     """보유 포지션의 청산 일지 존재 여부. 오류 시 중복 생성을 막는다."""
     resp = requests.post(
