@@ -1,6 +1,6 @@
 {
- "built_on": "2026-09-29",
- "as_of": "20260929",
+ "built_on": "2026-10-07",
+ "as_of": "20261007",
  "source": "KRX 전종목 시세",
  "note": "폴백(종목별 개별 조회) 경로가 쓰는 종목 목록입니다. build_universe.py로 자동 갱신하거나, 아래 stocks 배열에 {\"ticker\": \"005930\", \"name\": \"삼성전자\", \"market\": \"KOSPI\"} 형식으로 직접 채워도 됩니다. name은 비워도 되고, 그때는 통과 종목에 한해 조회로 채웁니다. 신규 상장은 120거래일 미만이라 어차피 필터에서 빠지므로 목록이 며칠 낡아도 됩니다.",
  "stocks": [
@@ -2800,6 +2800,11 @@
    "market": "KOSDAQ"
   },
   {
+   "ticker": "266690",
+   "name": "덕산넵코어스",
+   "market": "KOSDAQ"
+  },
+  {
    "ticker": "317330",
    "name": "덕산테코피아",
    "market": "KOSDAQ"
@@ -3252,11 +3257,6 @@
   {
    "ticker": "031860",
    "name": "디에이치엑스컴퍼니",
-   "market": "KOSDAQ"
-  },
-  {
-   "ticker": "196490",
-   "name": "디에이테크놀로지",
    "market": "KOSDAQ"
   },
   {
@@ -4422,6 +4422,11 @@
   {
    "ticker": "064480",
    "name": "브리지텍",
+   "market": "KOSDAQ"
+  },
+  {
+   "ticker": "468670",
+   "name": "브릴스",
    "market": "KOSDAQ"
   },
   {
@@ -5628,11 +5633,6 @@
    "ticker": "126720",
    "name": "수산인더스트리",
    "market": "KOSPI"
-  },
-  {
-   "ticker": "084180",
-   "name": "수성웹툰",
-   "market": "KOSDAQ"
   },
   {
    "ticker": "253840",
