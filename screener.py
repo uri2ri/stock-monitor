@@ -861,6 +861,23 @@ def build_sector_map(day: str) -> dict[str, str]:
     return mapping
 
 
+def read_sector_map_cache() -> Optional[tuple[date, dict[str, str]]]:
+    """공용 업종 맵 캐시를 **읽기만** 한다. (생성일, 맵) 또는 None.
+
+    재생성을 절대 시도하지 않는다 - 그건 KRX 로그인이 필요해서 자격증명이
+    있는 야간 스캔만 할 수 있다(load_sector_map 참고). 장중 경로는 이
+    함수를 써서 "있는 것만 쓰고, 없으면 없는 대로" 진행한다.
+    """
+    if not SECTOR_PATH.exists():
+        return None
+    try:
+        saved = json.loads(SECTOR_PATH.read_text(encoding="utf-8"))
+        return date.fromisoformat(saved["built_on"]), saved["map"]
+    except Exception as e:                  # noqa: BLE001
+        logger.warning("업종 맵 캐시를 읽지 못했습니다: %s", e)
+        return None
+
+
 def load_sector_map(day: str, refresh: bool = False) -> dict[str, str]:
     """업종 맵. day가 최근(SECTOR_MAX_AGE_DAYS 이내)이면 공용 캐시
     (sector_map.json)를 SECTOR_MAX_AGE_DAYS 동안 재사용하고, 그보다 오래된
@@ -904,13 +921,22 @@ def load_sector_map(day: str, refresh: bool = False) -> dict[str, str]:
         )
         logger.info("업종 맵 %d종목 저장: %s", len(mapping), path.name)
     else:
-        logger.warning("업종 정보를 만들지 못했습니다 – '미분류'로 표시됩니다")
-        # 오래된 맵이라도 있으면 그대로 쓴다 (없는 것보다 낫다)
+        # 여기서 "'미분류'로 표시됩니다"라고 단정하면 안 된다 - 바로 아래
+        # 폴백이 성공하면 미분류가 되지 않는다. 2026-10-06 로그를 읽은
+        # 사람이 실제로는 9/28 맵으로 정상 동작 중인데 미분류로 떨어진
+        # 줄 알았다. 폴백 결과를 보고 나서 나눠 적는다.
+        logger.warning("업종 맵을 새로 만들지 못했습니다 (KRX 지수 목록 조회 실패)")
         if path.exists():
             try:
-                return json.loads(path.read_text(encoding="utf-8"))["map"]
-            except Exception:               # noqa: BLE001
-                pass
+                saved = json.loads(path.read_text(encoding="utf-8"))
+                logger.warning("기존 업종 맵으로 진행합니다 "
+                               "(기준일 %s · %d종목) - 신규 상장·업종 변경은 "
+                               "반영되지 않습니다",
+                               saved.get("built_on", "?"), len(saved["map"]))
+                return saved["map"]
+            except Exception as e:          # noqa: BLE001
+                logger.warning("기존 업종 맵도 읽지 못했습니다: %s", e)
+        logger.warning("업종 맵이 비어 있습니다 – 업종은 '미분류'로 표시됩니다")
     return mapping
 
 

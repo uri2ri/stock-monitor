@@ -685,10 +685,15 @@ def _notify_new_buy_rejections(rejections: list[tuple[str, str]],
     )
 
 
-def _notify_warning_throttled(reason_key: str, message: str) -> None:
+def _notify_warning_throttled(reason_key: str, message: str,
+                              window_seconds: Optional[int] = None) -> None:
     """반복되는 시스템 경고(조회/발급/기록 실패류)를 억제해서 보낸다.
 
-    같은 reason_key로 WARNING_SUPPRESS_WINDOW_SECONDS(1시간) 안에 이미
+    window_seconds를 주면 그 간격으로, 안 주면 기본
+    WARNING_SUPPRESS_WINDOW_SECONDS(1시간)로 억제한다 - 하루 한 번이면
+    충분한 경고(업종 맵 노후 등)가 매시간 오지 않게 한다.
+
+    같은 reason_key로 그 창 안에 이미
     보냈으면 이번엔 카톡을 건너뛴다 - cron-job.org가 10분마다 불러도 노션/KIS가
     몇 시간 죽어 있으면 같은 경고가 수십 통 오는 걸 막는다. 억제되더라도
     logger.warning은 매번 남긴다 (알림만 줄이고 기록까지 줄이면 안 됨).
@@ -705,20 +710,21 @@ def _notify_warning_throttled(reason_key: str, message: str) -> None:
     방향이 다르다.
     """
     logger.warning(message)
+    window = (WARNING_SUPPRESS_WINDOW_SECONDS if window_seconds is None
+              else window_seconds)
 
     try:
         last = notion_repo.latest_warning_at(reason_key)
         suppress = (
             last is not None
-            and (datetime.now(KST) - last).total_seconds() < WARNING_SUPPRESS_WINDOW_SECONDS
+            and (datetime.now(KST) - last).total_seconds() < window
         )
     except Exception as e:                  # noqa: BLE001
         logger.warning("경고 억제 판단 실패 (%s) - fail-open으로 그냥 보냅니다", e)
         suppress = False
 
     if suppress:
-        logger.info("경고 억제됨 (최근 %d초 내 동일 사유): %s",
-                    WARNING_SUPPRESS_WINDOW_SECONDS, reason_key)
+        logger.info("경고 억제됨 (최근 %d초 내 동일 사유): %s", window, reason_key)
         return
 
     _notify_failure(message)
@@ -1332,11 +1338,71 @@ def _recover_closed_sell(token: str, order: dict) -> bool:
     if (not fill or not _valid_sell_qty(fill.get('filled_qty'))
             or fill['filled_qty'] != order['qty'] or not _is_valid_price(fill.get('avg_price'))):
         raise ValueError('옛 포지션 매도 체결 미확인')
-    if not notion_repo.ledger_matches_sell(page_id, order['order_no'], int(fill['filled_qty']), fill['avg_price'], day):
-        raise ValueError('옛 포지션 일지/주문 증거 불일치')
+    qty, exit_price = int(fill['filled_qty']), float(fill['avg_price'])
+    if not notion_repo.ledger_matches_sell(page_id, order['order_no'], qty, exit_price, day):
+        # 여기까지 왔다는 건 **체결은 확인됐다**는 뜻이다(수량 일치·유효
+        # 평균가). 안 맞는 건 일지 쪽이고, 일지는 기록일 뿐 주문이 아니라
+        # 고쳐도 매매 판단에 영향이 없다. 반대로 틀린 채 두면 R배수·승률
+        # 통계가 계속 틀어지고 이 경고가 매일 반복된다.
+        _repair_ledger_from_fill(page_id, order, qty, exit_price, day)
     notion_repo.update_order_record(order['page_id'], status='성공',
                                     order_no=order['order_no'], reason=order['reason'])
     return True
+
+
+def _repair_ledger_from_fill(page_id: str, order: dict, qty: int,
+                             exit_price: float, day: date) -> None:
+    """체결 증거에 맞춰 일지를 맞춘다. 2건 이상이면 손대지 않고 보류.
+
+    - 0건: 정상 자동매도와 같은 형식으로 만든다.
+    - 1건: 수량·청산가·청산일·메모를 체결 증거로 덮어쓴다. 기존 메모는
+      "이전 수기 기록: ..."으로 뒤에 붙여 **지우지 않는다** - 사람이 왜
+      그렇게 적었는지가 나중에 대조할 유일한 단서다.
+    - 2건 이상: 어느 쪽이 이 주문의 것인지 정할 수 없다. 넘겨짚고 고치느니
+      기존처럼 예외로 올려 사람이 보게 한다(이 모듈의 fail-closed 원칙).
+    """
+    rows = notion_repo.fetch_ledger_rows_for_holding(page_id)
+    if len(rows) > 1:
+        raise ValueError(f'옛 포지션 일지 {len(rows)}건 - 어느 것이 이 주문인지 '
+                         f'확인 불가, 수동 확인 필요')
+
+    memo = f"자동매도 (주문번호 {order['order_no']}) - {order.get('reason', '')}".strip()
+    memo += " / 체결 조회로 확정(복구 기록)"
+
+    if not rows:
+        holding = notion_repo.fetch_holding_for_ledger(page_id)
+        if holding.get('entry_price') is None:
+            raise ValueError('옛 포지션 진입가 확인 불가 - 일지 생성 보류')
+        notion_repo.create_ledger_record(
+            name=holding['name'], ticker=holding['ticker'],
+            market=holding['market'],
+            entry_price=holding['entry_price'],
+            entry_atr=holding['entry_atr'],
+            shares=qty,
+            units=int(holding['units']) if holding['units'] is not None else None,
+            exit_date=day, exit_price=exit_price,
+            exit_reason=_ledger_exit_reason(order.get('reason', '')),
+            # 신호 발생일이 없으면 체결일 - 자동매매는 신호 즉시 실행이라
+            # 지연 0으로 보는 게 맞다(_record_ledger_after_sell과 같은 규칙).
+            signal_date=holding['signal_date'] or day,
+            entry_date=holding['entry_date'],
+            holding_page_id=page_id,
+            memo=memo,
+        )
+        logger.info("[%s] 옛 포지션 일지 없음 - 체결 증거로 생성(주문번호 %s)",
+                    order.get('ticker', ''), order['order_no'])
+        return
+
+    row = rows[0]
+    previous = (row.get('memo') or '').strip()
+    if previous:
+        memo += f" / 이전 수기 기록: {previous}"
+    notion_repo.update_ledger_record(row['page_id'], shares=qty,
+                                     exit_price=exit_price, exit_date=day,
+                                     memo=memo)
+    logger.info("[%s] 옛 포지션 일지를 체결 증거로 갱신(주문번호 %s · "
+                "수량 %d · 청산가 %s)", order.get('ticker', ''),
+                order['order_no'], qty, f"{round(exit_price):,}")
 
 
 def _settle_sell_by_balance(token: str, page_id: str, inp, order: dict,
@@ -1648,7 +1714,12 @@ def run_auto_pyramid(holdings: Optional[list] = None) -> None:
     if not held or account_size <= 0:
         return
 
-    corr = get_mock_account_corr_units(account_size, balance["holdings"])
+    try:
+        corr = get_mock_account_corr_units(account_size, balance["holdings"])
+    except CorrUnitsUnavailable:
+        # 경고는 함수 안에서 이미 보냈다. 캡을 모르는 채로 추가매수하지 않는다.
+        logger.info("추가매수 보류: 유닛 캡 확인 불가(노션 상관군 조회 실패)")
+        return
     group_units = dict(corr["groups"])
     total_units = corr["total_units"]
     sector_map = _get_sector_map()
@@ -2069,21 +2140,65 @@ def get_account_balance(access_token: str) -> dict:
     }
 
 
+# 장중 경로가 업종 맵을 "오래됐다"고 다시 만들지 않게 하는 한계값.
+# 재생성은 KRX 로그인이 필요한데(아래 _get_sector_map 주석 참고) 장중
+# 워크플로에는 KRX 자격증명이 없다. 이 값은 "너무 낡았으니 사람이 보라"는
+# 경고 기준일 뿐, 맵을 버리는 기준이 아니다.
+SECTOR_MAP_WARN_AGE_DAYS = 14
+WARN_STALE_SECTOR_MAP = "업종 맵 오래됨"
+
+
 def _get_sector_map() -> dict[str, str]:
-    """캐시된 업종 맵(data/sector_map.json). 상관군 그룹 구분에 쓴다.
+    """캐시된 업종 맵(data/sector_map.json)을 **읽기만** 한다. 상관군 구분용.
 
     상관군(corr_group)은 노션에 사람이 직접 매기는 값이라 시스템이 미리
     알 수 없다 (intraday_watch.py의 _unit_suffix와 같은 전제). 업종을
-    대용으로 쓴다. 못 불러오면 빈 dict - 그룹 구분 없이 전체 캡만 적용된다.
+    대용으로 쓴다. 못 불러오면 빈 dict - 그 경우 노션 상관군 키로만 센다.
+
+    **재생성하지 않는다(나이와 무관).** 재생성은 KRX 지수 목록 조회가
+    필요하고 그 엔드포인트는 로그인을 요구한다 - 자격증명 없이 부르면
+    KRX가 `HTTP 400 "LOGOUT"`을 돌려주고, 그게 JSON이 아니라서 pykrx가
+    빈 DataFrame으로 떨어진 뒤 `KeyError: '시장'`이 된다(2026-10-06 확인).
+    장중(auto-trade) 워크플로에는 KRX_ID/KRX_PW가 없으므로 시도해봐야
+    매번 실패하고, 지수 목록을 종목마다 훑느라 회차 시간만 길게 먹는다.
+    맵 생성은 자격증명이 있는 야간 스캔(nightly-scan)이 하고 결과
+    파일(data/sector_map.json)을 커밋한다.
+
+    캐시가 SECTOR_MAP_WARN_AGE_DAYS보다 오래되면 하루 한 번 경고한다 -
+    신규 상장·업종 변경이 반영되지 않은 상태로 돌고 있다는 뜻이다.
     """
     try:
         import screener
-        day = datetime.now(KST).strftime("%Y%m%d")
-        return screener.load_sector_map(day)
+        cached = screener.read_sector_map_cache()
     except Exception as e:                  # noqa: BLE001
-        logger.warning("업종 맵을 불러오지 못했습니다 (%s) - 상관군별 캡 없이 "
-                       "전체 캡만 적용합니다", e)
+        logger.warning("업종 맵을 불러오지 못했습니다 (%s) - 노션 상관군 "
+                       "키로만 집계합니다", e)
         return {}
+
+    if cached is None:
+        logger.warning("업종 맵 캐시가 없습니다 - 노션 상관군 키로만 집계합니다")
+        return {}
+
+    built_on, mapping = cached
+    age = (_today() - built_on).days
+    if age > SECTOR_MAP_WARN_AGE_DAYS:
+        _notify_warning_throttled(
+            WARN_STALE_SECTOR_MAP,
+            f"[KIS] ⚠ 업종 맵이 {age}일째 갱신되지 않았습니다 "
+            f"(기준일 {built_on}). 신규 상장·업종 변경이 상관군 집계에 "
+            f"반영되지 않습니다 - 야간 스캔의 업종 맵 생성을 확인하세요.",
+            window_seconds=86400,           # 하루 한 번
+        )
+    return mapping
+
+
+class CorrUnitsUnavailable(RuntimeError):
+    """상관군·전체 유닛 집계를 확인할 수 없다 - 캡 판정 불가.
+
+    호출부는 이 예외를 "모르면 사지 않는다"로 처리한다. 반환값으로 0을
+    돌려주면 호출부가 그걸 "0유닛"으로 읽어 캡이 조용히 풀리므로,
+    판단 불가를 값이 아니라 예외로 전달한다.
+    """
 
 
 def get_mock_account_corr_units(account_size: float, holdings: list[dict]) -> dict:
@@ -2102,36 +2217,67 @@ def get_mock_account_corr_units(account_size: float, holdings: list[dict]) -> di
     run_auto_pyramid)를 그대로 두기 위해 시그니처만 유지한다 - 이 함수
     안에서는 쓰지 않는다.
 
-    노션 조회가 실패하면 상관군별 캡·전체 캡 모두 미적용(0건)으로 fail-open
-    한다 - 호출부가 이미 "이 계좌에 실제로 몇 유닛 있는지" 없이 진행하는
-    걸 전제로 짜여 있어(예: select_buy_candidates의 "업종 맵 없음" 케이스)
-    새로운 실패 모드가 아니다. 대신 카톡으로 알린다(WARN_NOTION_CORR_FAILED,
-    1시간 억제).
+    노션 조회가 실패하면 **CorrUnitsUnavailable을 올린다(fail-closed)**.
+    예전에는 {"total_units": 0.0, "groups": {}}로 fail-open 했는데, 그러면
+    상관군 캡뿐 아니라 **전체 캡까지 같이 풀린다** - total_units가 0으로
+    돌아와 `total_units + 1 > MAX_UNITS_TOTAL` 판정이 실제 보유(예: 10유닛)와
+    무관해지기 때문이다. 당시 주석은 "전체 캡만 적용"이라고 했지만 실제로는
+    두 캡 모두 무효였다. 같은 함수 안의 다른 노션 조회
+    (count_success_orders_today)가 "모르면 주문 중단"인데 여기만 반대 방향인
+    것도 일관성이 없었다.
+
+    호출부는 이 예외를 받아 **그 회차의 신규 진입·추가매수를 통째로
+    건너뛴다**. 자동매도(run_auto_sell)는 이 함수를 쓰지 않으므로 영향이 없다 -
+    못 파는 쪽이 더 위험하다는 기존 원칙 그대로다.
+
+    카톡 경고는 예전과 같다(WARN_NOTION_CORR_FAILED, 1시간 억제).
 
     반환: {"total_units": float, "groups": {상관군명: units}} (예전과 같은 모양)
     """
     try:
         auto_holdings = notion_repo.fetch_holdings(managed_by=notion_repo.MANAGED_AUTO)
     except Exception as e:                  # noqa: BLE001
-        logger.error("노션 상관군 조회 실패 - 상관군별 캡 미적용, 전체 캡만 적용: %s", e)
+        logger.error("노션 상관군 조회 실패 - 이번 회차 신규매수·추가매수를 "
+                     "건너뜁니다(캡을 모르는 채로 주문하지 않는다): %s", e)
         _notify_warning_throttled(
             WARN_NOTION_CORR_FAILED,
-            f"[KIS] ⚠ 노션 상관군 조회 실패 - 상관군별 캡 미적용, 전체 캡만 적용: {e}",
+            f"[KIS] ⚠ 노션 상관군 조회 실패 - 유닛 캡을 확인할 수 없어 "
+            f"이번 회차 신규매수·추가매수를 건너뜁니다: {e}",
         )
-        return {"total_units": 0.0, "groups": {}}
+        raise CorrUnitsUnavailable(str(e)) from e
+
+    # 상관군 키가 두 어휘로 갈린다:
+    #   - 집계·추가매수는 노션 '상관군'(사람이 쓰는 자유 텍스트: 반도체, 전력기기…)
+    #   - 신규매수 후보의 sector는 스캔 CSV = 업종 맵(KRX 지수 업종명: 전기전자…)
+    # 그래서 보유를 '반도체'로 적어두면 집계는 {'반도체': 6}인데 반도체 후보의
+    # sector는 '전기전자'라 groups.get('전기전자', 0) == 0이 되어, 같은 리스크
+    # 군인데 캡을 통과한다. 두 키 **모두에** 더해 어느 어휘로 물어도 같은
+    # 유닛이 잡히게 한다(같은 값이면 한 번만, 빈 값은 제외).
+    #
+    # 전체 유닛은 **한 번만** 더한다 - 이건 키와 무관한 포지션 수다.
+    # 맵을 못 읽으면(빈 dict) 노션 키만으로 센다(기존 동작 유지).
+    sector_map = _get_sector_map()
 
     total = 0.0
     groups: dict[str, float] = {}
+    dual: list[str] = []
     for _, inp in auto_holdings:
         units = float(inp.units or 0)
         total += units
-        if inp.corr_group:
-            groups[inp.corr_group] = groups.get(inp.corr_group, 0.0) + units
+        keys = {k for k in (inp.corr_group, sector_map.get(inp.ticker, "")) if k}
+        for key in keys:
+            groups[key] = groups.get(key, 0.0) + units
+        if len(keys) > 1:
+            dual.append(f"{inp.name}({inp.ticker}) {'/'.join(sorted(keys))}")
 
     # 디버그용 - 다음에 또 상관군 캡 오탐이 의심되면 이 로그로 바로
     # 확인한다(실제로 몇 유닛으로 집계됐는지).
-    logger.info("상관군 유닛 집계(노션 기준): 전체 %.2f · 상관군 %s",
+    logger.info("상관군 유닛 집계(노션+업종맵): 전체 %.2f · 상관군 %s",
                 total, {g: round(u, 2) for g, u in groups.items()})
+    if dual:
+        # 두 어휘가 갈린 종목 - 사람이 노션 상관군을 맵 업종명과 맞추면 사라진다.
+        logger.info("상관군 이중 집계(노션≠업종맵) %d종목: %s",
+                    len(dual), ", ".join(dual))
 
     return {"total_units": total, "groups": groups}
 
@@ -2198,7 +2344,14 @@ def select_buy_candidates(access_token: str, candidates: list[dict]) -> list[dic
         _track_no_entry_all(candidates, "미확인 매도 조회 실패 - 신규매수 보류")
         return []
 
-    corr = get_mock_account_corr_units(account_size, balance["holdings"])
+    try:
+        corr = get_mock_account_corr_units(account_size, balance["holdings"])
+    except CorrUnitsUnavailable:
+        # 경고는 함수 안에서 이미 보냈다. 캡을 모르는 채로 새 포지션을 열지 않는다.
+        logger.info("신규매수 보류: 유닛 캡 확인 불가(노션 상관군 조회 실패)")
+        _track_no_entry_all(candidates,
+                            "유닛 캡 확인 불가(노션 상관군 조회 실패) - 신규매수 보류")
+        return []
     if balance["holdings"] and not corr["groups"]:
         _notify_warning_throttled(
             WARN_NO_SECTOR_MAP,
