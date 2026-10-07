@@ -1,8 +1,88 @@
 {
   "version": 1,
-  "events": [],
-  "plans": [],
-  "prepare_cursor": "972b3a420d3249028c47279e042ee211",
+  "events": [
+    {
+      "id": "afc8a51f9e9343e2a0363346291a9bdd",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "128940",
+          "name": "한미약품",
+          "high20": 534000.0,
+          "price": 536000.0,
+          "atr20": 27749.0
+        },
+        {
+          "__datetime__": "2026-10-07T14:33:33.423646+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "05216cb094524428a0d38fb255e918ce",
+      "operation": "_set_outcome",
+      "args": [
+        "128940",
+        "자금부족",
+        "현금 부족(필요 1,072,000원 · 가용 212,022원)",
+        {
+          "__datetime__": "2026-10-07T14:34:38.911690+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    }
+  ],
+  "plans": [
+    {
+      "id": "d077d1698d654834854c433959f9c528",
+      "owner": "37576861404:1",
+      "events": [
+        "afc8a51f9e9343e2a0363346291a9bdd",
+        "05216cb094524428a0d38fb255e918ce"
+      ],
+      "record": {
+        "event_id": "afc8a51f9e9343e2a0363346291a9bdd",
+        "ticker": "128940",
+        "name": "한미약품",
+        "first_detected_at": {
+          "__datetime__": "2026-10-07T14:33:33.423646+09:00"
+        },
+        "first_threshold": 534000.0,
+        "first_price": 536000.0,
+        "first_atr": 27749.0,
+        "status": "추적중",
+        "outcome": "자금부족",
+        "outcome_reason": "현금 부족(필요 1,072,000원 · 가용 212,022원)",
+        "outcome_at": {
+          "__datetime__": "2026-10-07T14:34:38.911690+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "afc8a51f9e9343e2a0363346291a9bdd",
+        "ticker": "128940",
+        "name": "한미약품",
+        "first_detected_at": {
+          "__datetime__": "2026-10-07T14:33:33.423646+09:00"
+        },
+        "first_threshold": 534000.0,
+        "first_price": 536000.0,
+        "first_atr": 27749.0,
+        "status": "추적중",
+        "outcome": "자금부족",
+        "outcome_reason": "현금 부족(필요 1,072,000원 · 가용 212,022원)",
+        "outcome_at": {
+          "__datetime__": "2026-10-07T14:34:38.911690+09:00"
+        }
+      },
+      "state": "queued"
+    }
+  ],
+  "prepare_cursor": "dc9a63173607409ea39b658b3c7157a1",
   "deliver_cursor": "6a59eaa15b0f4b749cfe6e7d1e4290ee",
   "excluded_events": [
     {
@@ -7921,6 +8001,27 @@
       },
       "reason": "held_without_active_track",
       "resolved_by": "37576029961:1"
+    },
+    {
+      "event": {
+        "id": "46e7eb74800b4efba822b633db7b7007",
+        "operation": "_set_outcome",
+        "args": [
+          "010120",
+          "자금부족",
+          "현금 부족(필요 1,107,500원 · 가용 212,022원)",
+          {
+            "__datetime__": "2026-10-07T14:34:38.978333+09:00"
+          }
+        ],
+        "kwargs": {
+          "order_no": "",
+          "order_day": null,
+          "identity": null
+        }
+      },
+      "reason": "held_without_active_track",
+      "resolved_by": "37576861404:1"
     }
   ]
 }
