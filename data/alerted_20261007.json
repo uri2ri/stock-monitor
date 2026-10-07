@@ -230,6 +230,18 @@
       "gap_atr": 0.019,
       "unit_shares": 46,
       "status": "진입가능"
+    },
+    "000240": {
+      "time": "14:23",
+      "name": "한국앤컴퍼니",
+      "sector": "금융",
+      "market": "KOSPI",
+      "price": 25700.0,
+      "high20": 25550.0,
+      "atr20": 824.0,
+      "gap_atr": 0.182,
+      "unit_shares": 606,
+      "status": "진입가능"
     }
   }
 }
