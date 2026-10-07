@@ -2,23 +2,6 @@
   "version": 1,
   "events": [
     {
-      "id": "e23b968e926a423189b58e6148143d1b",
-      "operation": "record_breakout",
-      "args": [
-        {
-          "ticker": "229640",
-          "name": "LS에코에너지",
-          "high20": 67800.0,
-          "price": 69900.0,
-          "atr20": 4069.0
-        },
-        {
-          "__datetime__": "2026-10-07T09:03:39.195777+09:00"
-        }
-      ],
-      "kwargs": {}
-    },
-    {
       "id": "6d9a4354629b4ae484d614633a7cf177",
       "operation": "record_breakout",
       "args": [
@@ -102,23 +85,6 @@
         }
       ],
       "kwargs": {}
-    },
-    {
-      "id": "f31a65bbc502454a89750d2dcc7916e6",
-      "operation": "_set_outcome",
-      "args": [
-        "229640",
-        "미주문",
-        "추격 구간(+0.52N) - 매수 대상 제외",
-        {
-          "__datetime__": "2026-10-07T09:03:39.195777+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
     },
     {
       "id": "da774bcc89e1446e8691b46e5c0487e1",
@@ -242,50 +208,6 @@
   ],
   "plans": [
     {
-      "id": "68da5fd79e81419a9d77de2c7ad9aa5e",
-      "owner": "37549871993:1",
-      "events": [
-        "e23b968e926a423189b58e6148143d1b",
-        "f31a65bbc502454a89750d2dcc7916e6"
-      ],
-      "record": {
-        "event_id": "e23b968e926a423189b58e6148143d1b",
-        "ticker": "229640",
-        "name": "LS에코에너지",
-        "first_detected_at": {
-          "__datetime__": "2026-10-07T09:03:39.195777+09:00"
-        },
-        "first_threshold": 67800.0,
-        "first_price": 69900.0,
-        "first_atr": 4069.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "추격 구간(+0.52N) - 매수 대상 제외",
-        "outcome_at": {
-          "__datetime__": "2026-10-07T09:03:39.195777+09:00"
-        }
-      },
-      "page_id": null,
-      "fields": {
-        "event_id": "e23b968e926a423189b58e6148143d1b",
-        "ticker": "229640",
-        "name": "LS에코에너지",
-        "first_detected_at": {
-          "__datetime__": "2026-10-07T09:03:39.195777+09:00"
-        },
-        "first_threshold": 67800.0,
-        "first_price": 69900.0,
-        "first_atr": 4069.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "추격 구간(+0.52N) - 매수 대상 제외",
-        "outcome_at": {
-          "__datetime__": "2026-10-07T09:03:39.195777+09:00"
-        }
-      },
-      "state": "creating"
-    },
-    {
       "id": "fc19b83f3f1a40fd98059155bd67c7e9",
       "owner": "37549871993:1",
       "events": [
@@ -327,7 +249,7 @@
           "__datetime__": "2026-10-07T09:03:39.195777+09:00"
         }
       },
-      "state": "queued"
+      "state": "creating"
     },
     {
       "id": "f2307a3e59a74004b611eb86e48532d0",
@@ -631,7 +553,7 @@
     }
   ],
   "prepare_cursor": "e171f111ad674fa382bdacdc508815c0",
-  "deliver_cursor": "68da5fd79e81419a9d77de2c7ad9aa5e",
+  "deliver_cursor": "fc19b83f3f1a40fd98059155bd67c7e9",
   "excluded_events": [
     {
       "event": {
