@@ -1,8 +1,1276 @@
 {
   "version": 1,
-  "events": [],
-  "plans": [],
-  "prepare_cursor": "8079a1d8d5334af8b79680c3b7c1c342",
+  "events": [
+    {
+      "id": "b4b5e75e2bea42ed85167b83b0271b85",
+      "operation": "_set_outcome",
+      "args": [
+        "161580",
+        "미주문",
+        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        {
+          "__datetime__": "2026-10-07T15:23:49.176157+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "c7ca3978bace4b70bef19248ebef260b",
+      "operation": "_set_outcome",
+      "args": [
+        "103590",
+        "미주문",
+        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        {
+          "__datetime__": "2026-10-07T15:23:49.187118+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "ff34d8a77e6b4c10bce5f1df253836a3",
+      "operation": "_set_outcome",
+      "args": [
+        "010170",
+        "미주문",
+        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        {
+          "__datetime__": "2026-10-07T15:23:49.197465+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "ad8167a50fec422199613e1d7ce7adc2",
+      "operation": "_set_outcome",
+      "args": [
+        "018670",
+        "미주문",
+        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        {
+          "__datetime__": "2026-10-07T15:23:49.207859+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "0ebcaa7497c34311a226d4b44fb3c569",
+      "operation": "_set_outcome",
+      "args": [
+        "126340",
+        "미주문",
+        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        {
+          "__datetime__": "2026-10-07T15:23:49.218295+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "c9f40681b65347b09a114d3378d7c849",
+      "operation": "_set_outcome",
+      "args": [
+        "388790",
+        "미주문",
+        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        {
+          "__datetime__": "2026-10-07T15:23:49.228941+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "ac0964a4e4084a67be46af003a7bf4e5",
+      "operation": "_set_outcome",
+      "args": [
+        "018290",
+        "미주문",
+        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        {
+          "__datetime__": "2026-10-07T15:23:49.239560+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "344ddb4c5dea4c15a01893a71b1f8ece",
+      "operation": "_set_outcome",
+      "args": [
+        "215200",
+        "미주문",
+        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        {
+          "__datetime__": "2026-10-07T15:23:49.249918+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "c6775b48f9ce4b33b3af6bdb088d8ac8",
+      "operation": "_set_outcome",
+      "args": [
+        "382800",
+        "미주문",
+        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        {
+          "__datetime__": "2026-10-07T15:23:49.260238+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "a9bdf75940704e80b504d5d284bc8ac4",
+      "operation": "_set_outcome",
+      "args": [
+        "484870",
+        "미주문",
+        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        {
+          "__datetime__": "2026-10-07T15:23:49.270865+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "6b56a7231c304d5f929000c040350ba8",
+      "operation": "_set_outcome",
+      "args": [
+        "098120",
+        "미주문",
+        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        {
+          "__datetime__": "2026-10-07T15:23:49.281569+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "b22d0d6c4b2743adb09c2d1284aaac19",
+      "operation": "_set_outcome",
+      "args": [
+        "272110",
+        "미주문",
+        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        {
+          "__datetime__": "2026-10-07T15:23:49.292331+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "d7c615a400db405aaf88e9ef9b0c82cc",
+      "operation": "_set_outcome",
+      "args": [
+        "0120G0",
+        "미주문",
+        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        {
+          "__datetime__": "2026-10-07T15:23:49.302851+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "54da45ba28be48799a32652bb5a28bfa",
+      "operation": "_set_outcome",
+      "args": [
+        "420770",
+        "미주문",
+        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        {
+          "__datetime__": "2026-10-07T15:23:49.313496+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "334a7ecfd1a849f0a13f469849adfc83",
+      "operation": "_set_outcome",
+      "args": [
+        "000240",
+        "미주문",
+        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        {
+          "__datetime__": "2026-10-07T15:23:49.324120+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "edc8f3a3c6d44d50a2f03565b1df6858",
+      "operation": "_set_outcome",
+      "args": [
+        "128940",
+        "미주문",
+        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        {
+          "__datetime__": "2026-10-07T15:23:49.334712+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    }
+  ],
+  "plans": [
+    {
+      "id": "9bb8762ff72a43468e691d7a14b72938",
+      "owner": "37581196958:1",
+      "events": [
+        "b4b5e75e2bea42ed85167b83b0271b85"
+      ],
+      "record": {
+        "account_type": "",
+        "account_key": "",
+        "order_side": "",
+        "order_qty": null,
+        "filled_qty": null,
+        "unverified_qty": null,
+        "execution_price": null,
+        "execution_state": "",
+        "execution_checked_at": null,
+        "event_id": "c7ab55ba2a81448389c1e189ecf689ff",
+        "order_no": "",
+        "order_day": null,
+        "key": "3eb0fc3e-53fc-81f3-ba0e-cc115e8d3491",
+        "page_id": "3eb0fc3e-53fc-81f3-ba0e-cc115e8d3491",
+        "name": "필옵틱스",
+        "ticker": "161580",
+        "first_detected_at": {
+          "__datetime__": "2026-09-30T15:13:00+09:00"
+        },
+        "first_threshold": 39400.0,
+        "first_price": 39450.0,
+        "first_atr": 2336.0,
+        "status": "추적중",
+        "closed_reason": "",
+        "closed_at": null,
+        "outcome": "미주문",
+        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        "outcome_at": {
+          "__datetime__": "2026-10-07T15:23:49.176157+09:00"
+        },
+        "latest_close": 41850.0,
+        "latest_date": {
+          "__date__": "2026-10-06"
+        },
+        "latest_atr": 2360.0,
+        "latest_line": 42250.0,
+        "change_pct": 6.22,
+        "atr_mult": 1.05,
+        "dist_to_line": 400.0,
+        "dist_to_line_atr": 0.17,
+        "level_state": "최초선위",
+        "new_breakout": "미해당",
+        "refresh_state": "갱신됨",
+        "refresh_note": "",
+        "user_memo": ""
+      },
+      "page_id": "3eb0fc3e-53fc-81f3-ba0e-cc115e8d3491",
+      "fields": {
+        "outcome": "미주문",
+        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        "outcome_at": {
+          "__datetime__": "2026-10-07T15:23:49.176157+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "c1166e47aecb482a9b651082ac76ac29",
+      "owner": "37581196958:1",
+      "events": [
+        "c7ca3978bace4b70bef19248ebef260b"
+      ],
+      "record": {
+        "account_type": "",
+        "account_key": "",
+        "order_side": "",
+        "order_qty": null,
+        "filled_qty": null,
+        "unverified_qty": null,
+        "execution_price": null,
+        "execution_state": "",
+        "execution_checked_at": null,
+        "event_id": "7b4c03df372742c3b93eaaa1908e4149",
+        "order_no": "",
+        "order_day": null,
+        "key": "3e40fc3e-53fc-8141-a978-c0bc023f4d4c",
+        "page_id": "3e40fc3e-53fc-8141-a978-c0bc023f4d4c",
+        "name": "일진전기",
+        "ticker": "103590",
+        "first_detected_at": {
+          "__datetime__": "2026-09-23T09:23:00+09:00"
+        },
+        "first_threshold": 79200.0,
+        "first_price": 79400.0,
+        "first_atr": 4558.0,
+        "status": "추적중",
+        "closed_reason": "",
+        "closed_at": null,
+        "outcome": "미주문",
+        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        "outcome_at": {
+          "__datetime__": "2026-10-07T15:23:49.187118+09:00"
+        },
+        "latest_close": 87900.0,
+        "latest_date": {
+          "__date__": "2026-10-06"
+        },
+        "latest_atr": 4501.0,
+        "latest_line": 89200.0,
+        "change_pct": 10.98,
+        "atr_mult": 1.91,
+        "dist_to_line": 1300.0,
+        "dist_to_line_atr": 0.29,
+        "level_state": "최초선위",
+        "new_breakout": "미해당",
+        "refresh_state": "갱신됨",
+        "refresh_note": "",
+        "user_memo": ""
+      },
+      "page_id": "3e40fc3e-53fc-8141-a978-c0bc023f4d4c",
+      "fields": {
+        "outcome": "미주문",
+        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        "outcome_at": {
+          "__datetime__": "2026-10-07T15:23:49.187118+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "c043c5ea03114975986e4bbac140e533",
+      "owner": "37581196958:1",
+      "events": [
+        "ff34d8a77e6b4c10bce5f1df253836a3"
+      ],
+      "record": {
+        "account_type": "",
+        "account_key": "",
+        "order_side": "",
+        "order_qty": null,
+        "filled_qty": null,
+        "unverified_qty": null,
+        "execution_price": null,
+        "execution_state": "",
+        "execution_checked_at": null,
+        "event_id": "8bce435b5ec84fdb8de6e643e6a337f3",
+        "order_no": "",
+        "order_day": null,
+        "key": "3f20fc3e-53fc-81e3-b1b8-e9c41835af6f",
+        "page_id": "3f20fc3e-53fc-81e3-b1b8-e9c41835af6f",
+        "name": "대한광통신",
+        "ticker": "010170",
+        "first_detected_at": {
+          "__datetime__": "2026-10-07T09:03:00+09:00"
+        },
+        "first_threshold": 18990.0,
+        "first_price": 19350.0,
+        "first_atr": 1256.0,
+        "status": "추적중",
+        "closed_reason": "",
+        "closed_at": null,
+        "outcome": "미주문",
+        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        "outcome_at": {
+          "__datetime__": "2026-10-07T15:23:49.197465+09:00"
+        },
+        "latest_close": null,
+        "latest_date": null,
+        "latest_atr": null,
+        "latest_line": null,
+        "change_pct": null,
+        "atr_mult": null,
+        "dist_to_line": null,
+        "dist_to_line_atr": null,
+        "level_state": "",
+        "new_breakout": "",
+        "refresh_state": "",
+        "refresh_note": "",
+        "user_memo": ""
+      },
+      "page_id": "3f20fc3e-53fc-81e3-b1b8-e9c41835af6f",
+      "fields": {
+        "outcome": "미주문",
+        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        "outcome_at": {
+          "__datetime__": "2026-10-07T15:23:49.197465+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "ea610bf72d3b45c5be8200cfda5367ca",
+      "owner": "37581196958:1",
+      "events": [
+        "ad8167a50fec422199613e1d7ce7adc2"
+      ],
+      "record": {
+        "account_type": "",
+        "account_key": "",
+        "order_side": "",
+        "order_qty": null,
+        "filled_qty": null,
+        "unverified_qty": null,
+        "execution_price": null,
+        "execution_state": "",
+        "execution_checked_at": null,
+        "event_id": "6f409b96d42044a1a2a7bf97eb1fecc3",
+        "order_no": "",
+        "order_day": null,
+        "key": "3f20fc3e-53fc-815f-89cd-f1ae9299389e",
+        "page_id": "3f20fc3e-53fc-815f-89cd-f1ae9299389e",
+        "name": "SK가스",
+        "ticker": "018670",
+        "first_detected_at": {
+          "__datetime__": "2026-10-07T09:03:00+09:00"
+        },
+        "first_threshold": 262000.0,
+        "first_price": 263000.0,
+        "first_atr": 9861.0,
+        "status": "추적중",
+        "closed_reason": "",
+        "closed_at": null,
+        "outcome": "미주문",
+        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        "outcome_at": {
+          "__datetime__": "2026-10-07T15:23:49.207859+09:00"
+        },
+        "latest_close": null,
+        "latest_date": null,
+        "latest_atr": null,
+        "latest_line": null,
+        "change_pct": null,
+        "atr_mult": null,
+        "dist_to_line": null,
+        "dist_to_line_atr": null,
+        "level_state": "",
+        "new_breakout": "",
+        "refresh_state": "",
+        "refresh_note": "",
+        "user_memo": ""
+      },
+      "page_id": "3f20fc3e-53fc-815f-89cd-f1ae9299389e",
+      "fields": {
+        "outcome": "미주문",
+        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        "outcome_at": {
+          "__datetime__": "2026-10-07T15:23:49.207859+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "dd57bcf4653b432683047bdf1a2bfee2",
+      "owner": "37581196958:1",
+      "events": [
+        "0ebcaa7497c34311a226d4b44fb3c569"
+      ],
+      "record": {
+        "account_type": "",
+        "account_key": "",
+        "order_side": "",
+        "order_qty": null,
+        "filled_qty": null,
+        "unverified_qty": null,
+        "execution_price": null,
+        "execution_state": "",
+        "execution_checked_at": null,
+        "event_id": "f21bb9e1f45f4853a08f74806c9104ba",
+        "order_no": "",
+        "order_day": null,
+        "key": "3e30fc3e-53fc-8154-9d61-da53718de3ad",
+        "page_id": "3e30fc3e-53fc-8154-9d61-da53718de3ad",
+        "name": "비나텍",
+        "ticker": "126340",
+        "first_detected_at": {
+          "__datetime__": "2026-09-22T09:03:00+09:00"
+        },
+        "first_threshold": 85500.0,
+        "first_price": 85800.0,
+        "first_atr": 6893.0,
+        "status": "추적중",
+        "closed_reason": "",
+        "closed_at": null,
+        "outcome": "미주문",
+        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        "outcome_at": {
+          "__datetime__": "2026-10-07T15:23:49.218295+09:00"
+        },
+        "latest_close": 94000.0,
+        "latest_date": {
+          "__date__": "2026-10-06"
+        },
+        "latest_atr": 6604.0,
+        "latest_line": 96700.0,
+        "change_pct": 9.94,
+        "atr_mult": 1.23,
+        "dist_to_line": 2700.0,
+        "dist_to_line_atr": 0.41,
+        "level_state": "최초선위",
+        "new_breakout": "미해당",
+        "refresh_state": "갱신됨",
+        "refresh_note": "",
+        "user_memo": ""
+      },
+      "page_id": "3e30fc3e-53fc-8154-9d61-da53718de3ad",
+      "fields": {
+        "outcome": "미주문",
+        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        "outcome_at": {
+          "__datetime__": "2026-10-07T15:23:49.218295+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "db911a0a069e4c0590350ef686199915",
+      "owner": "37581196958:1",
+      "events": [
+        "c9f40681b65347b09a114d3378d7c849"
+      ],
+      "record": {
+        "account_type": "",
+        "account_key": "",
+        "order_side": "",
+        "order_qty": null,
+        "filled_qty": null,
+        "unverified_qty": null,
+        "execution_price": null,
+        "execution_state": "",
+        "execution_checked_at": null,
+        "event_id": "168f09702d68475ab70b81ed98a765f0",
+        "order_no": "",
+        "order_day": null,
+        "key": "3f20fc3e-53fc-8149-adbe-fd3d87eeb4e2",
+        "page_id": "3f20fc3e-53fc-8149-adbe-fd3d87eeb4e2",
+        "name": "라이콤",
+        "ticker": "388790",
+        "first_detected_at": {
+          "__datetime__": "2026-10-07T09:03:00+09:00"
+        },
+        "first_threshold": 5890.0,
+        "first_price": 5960.0,
+        "first_atr": 416.0,
+        "status": "추적중",
+        "closed_reason": "",
+        "closed_at": null,
+        "outcome": "미주문",
+        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        "outcome_at": {
+          "__datetime__": "2026-10-07T15:23:49.228941+09:00"
+        },
+        "latest_close": null,
+        "latest_date": null,
+        "latest_atr": null,
+        "latest_line": null,
+        "change_pct": null,
+        "atr_mult": null,
+        "dist_to_line": null,
+        "dist_to_line_atr": null,
+        "level_state": "",
+        "new_breakout": "",
+        "refresh_state": "",
+        "refresh_note": "",
+        "user_memo": ""
+      },
+      "page_id": "3f20fc3e-53fc-8149-adbe-fd3d87eeb4e2",
+      "fields": {
+        "outcome": "미주문",
+        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        "outcome_at": {
+          "__datetime__": "2026-10-07T15:23:49.228941+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "e193e1a195f6416496120ccc815a52c0",
+      "owner": "37581196958:1",
+      "events": [
+        "ac0964a4e4084a67be46af003a7bf4e5"
+      ],
+      "record": {
+        "account_type": "",
+        "account_key": "",
+        "order_side": "",
+        "order_qty": null,
+        "filled_qty": null,
+        "unverified_qty": null,
+        "execution_price": null,
+        "execution_state": "",
+        "execution_checked_at": null,
+        "event_id": "c7a9d0cfc3b349e68910fb5963ab0f16",
+        "order_no": "",
+        "order_day": null,
+        "key": "3f20fc3e-53fc-815d-a04f-df76467cf0b2",
+        "page_id": "3f20fc3e-53fc-815d-a04f-df76467cf0b2",
+        "name": "브이티",
+        "ticker": "018290",
+        "first_detected_at": {
+          "__datetime__": "2026-10-07T09:03:00+09:00"
+        },
+        "first_threshold": 12960.0,
+        "first_price": 13110.0,
+        "first_atr": 550.0,
+        "status": "추적중",
+        "closed_reason": "",
+        "closed_at": null,
+        "outcome": "미주문",
+        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        "outcome_at": {
+          "__datetime__": "2026-10-07T15:23:49.239560+09:00"
+        },
+        "latest_close": null,
+        "latest_date": null,
+        "latest_atr": null,
+        "latest_line": null,
+        "change_pct": null,
+        "atr_mult": null,
+        "dist_to_line": null,
+        "dist_to_line_atr": null,
+        "level_state": "",
+        "new_breakout": "",
+        "refresh_state": "",
+        "refresh_note": "",
+        "user_memo": ""
+      },
+      "page_id": "3f20fc3e-53fc-815d-a04f-df76467cf0b2",
+      "fields": {
+        "outcome": "미주문",
+        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        "outcome_at": {
+          "__datetime__": "2026-10-07T15:23:49.239560+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "89bc2e9c3ae542998ddfe00bff1237cb",
+      "owner": "37581196958:1",
+      "events": [
+        "344ddb4c5dea4c15a01893a71b1f8ece"
+      ],
+      "record": {
+        "account_type": "",
+        "account_key": "",
+        "order_side": "",
+        "order_qty": null,
+        "filled_qty": null,
+        "unverified_qty": null,
+        "execution_price": null,
+        "execution_state": "",
+        "execution_checked_at": null,
+        "event_id": "555a40aa878f4560b0de5542f593d54d",
+        "order_no": "",
+        "order_day": null,
+        "key": "3e40fc3e-53fc-8129-a427-e27c29560abb",
+        "page_id": "3e40fc3e-53fc-8129-a427-e27c29560abb",
+        "name": "메가스터디교육",
+        "ticker": "215200",
+        "first_detected_at": {
+          "__datetime__": "2026-09-23T10:43:00+09:00"
+        },
+        "first_threshold": 36750.0,
+        "first_price": 36800.0,
+        "first_atr": 1109.0,
+        "status": "추적중",
+        "closed_reason": "",
+        "closed_at": null,
+        "outcome": "미주문",
+        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        "outcome_at": {
+          "__datetime__": "2026-10-07T15:23:49.249918+09:00"
+        },
+        "latest_close": 37800.0,
+        "latest_date": {
+          "__date__": "2026-10-06"
+        },
+        "latest_atr": 1126.0,
+        "latest_line": 38150.0,
+        "change_pct": 2.86,
+        "atr_mult": 0.95,
+        "dist_to_line": 350.0,
+        "dist_to_line_atr": 0.31,
+        "level_state": "최초선위",
+        "new_breakout": "미해당",
+        "refresh_state": "갱신됨",
+        "refresh_note": "",
+        "user_memo": ""
+      },
+      "page_id": "3e40fc3e-53fc-8129-a427-e27c29560abb",
+      "fields": {
+        "outcome": "미주문",
+        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        "outcome_at": {
+          "__datetime__": "2026-10-07T15:23:49.249918+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "d7e256d001c7444d934eaeba35ad3726",
+      "owner": "37581196958:1",
+      "events": [
+        "c6775b48f9ce4b33b3af6bdb088d8ac8"
+      ],
+      "record": {
+        "account_type": "",
+        "account_key": "",
+        "order_side": "",
+        "order_qty": null,
+        "filled_qty": null,
+        "unverified_qty": null,
+        "execution_price": null,
+        "execution_state": "",
+        "execution_checked_at": null,
+        "event_id": "f01b4d95c0f145a9ab87ef47c1fda362",
+        "order_no": "",
+        "order_day": null,
+        "key": "3eb0fc3e-53fc-81ff-aa8e-ea65ba08cab0",
+        "page_id": "3eb0fc3e-53fc-81ff-aa8e-ea65ba08cab0",
+        "name": "지앤비에스 에코",
+        "ticker": "382800",
+        "first_detected_at": {
+          "__datetime__": "2026-09-30T09:03:00+09:00"
+        },
+        "first_threshold": 5520.0,
+        "first_price": 5710.0,
+        "first_atr": 330.0,
+        "status": "추적중",
+        "closed_reason": "",
+        "closed_at": null,
+        "outcome": "미주문",
+        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        "outcome_at": {
+          "__datetime__": "2026-10-07T15:23:49.260238+09:00"
+        },
+        "latest_close": 6540.0,
+        "latest_date": {
+          "__date__": "2026-10-06"
+        },
+        "latest_atr": 345.0,
+        "latest_line": 6650.0,
+        "change_pct": 18.48,
+        "atr_mult": 3.09,
+        "dist_to_line": 110.0,
+        "dist_to_line_atr": 0.32,
+        "level_state": "최초선위",
+        "new_breakout": "미해당",
+        "refresh_state": "갱신됨",
+        "refresh_note": "",
+        "user_memo": ""
+      },
+      "page_id": "3eb0fc3e-53fc-81ff-aa8e-ea65ba08cab0",
+      "fields": {
+        "outcome": "미주문",
+        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        "outcome_at": {
+          "__datetime__": "2026-10-07T15:23:49.260238+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "ee2371ad4aec4ddab76de22ebd4ff89e",
+      "owner": "37581196958:1",
+      "events": [
+        "a9bdf75940704e80b504d5d284bc8ac4"
+      ],
+      "record": {
+        "account_type": "",
+        "account_key": "",
+        "order_side": "",
+        "order_qty": null,
+        "filled_qty": null,
+        "unverified_qty": null,
+        "execution_price": null,
+        "execution_state": "",
+        "execution_checked_at": null,
+        "event_id": "dfacafed738c4371a7ccc5a8b97d32fd",
+        "order_no": "",
+        "order_day": null,
+        "key": "3f20fc3e-53fc-8122-845b-fd8f52bc0abe",
+        "page_id": "3f20fc3e-53fc-8122-845b-fd8f52bc0abe",
+        "name": "엠앤씨솔루션",
+        "ticker": "484870",
+        "first_detected_at": {
+          "__datetime__": "2026-10-07T09:53:00+09:00"
+        },
+        "first_threshold": 19380.0,
+        "first_price": 19510.0,
+        "first_atr": 1537.0,
+        "status": "추적중",
+        "closed_reason": "",
+        "closed_at": null,
+        "outcome": "미주문",
+        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        "outcome_at": {
+          "__datetime__": "2026-10-07T15:23:49.270865+09:00"
+        },
+        "latest_close": null,
+        "latest_date": null,
+        "latest_atr": null,
+        "latest_line": null,
+        "change_pct": null,
+        "atr_mult": null,
+        "dist_to_line": null,
+        "dist_to_line_atr": null,
+        "level_state": "",
+        "new_breakout": "",
+        "refresh_state": "",
+        "refresh_note": "",
+        "user_memo": ""
+      },
+      "page_id": "3f20fc3e-53fc-8122-845b-fd8f52bc0abe",
+      "fields": {
+        "outcome": "미주문",
+        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        "outcome_at": {
+          "__datetime__": "2026-10-07T15:23:49.270865+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "719fd3d141a0496abc7eadc27e959900",
+      "owner": "37581196958:1",
+      "events": [
+        "6b56a7231c304d5f929000c040350ba8"
+      ],
+      "record": {
+        "account_type": "",
+        "account_key": "",
+        "order_side": "",
+        "order_qty": null,
+        "filled_qty": null,
+        "unverified_qty": null,
+        "execution_price": null,
+        "execution_state": "",
+        "execution_checked_at": null,
+        "event_id": "b36d7e3633da4cbb9ad6bc6f65f58404",
+        "order_no": "",
+        "order_day": null,
+        "key": "3e40fc3e-53fc-819c-978a-f7f3b6567fb9",
+        "page_id": "3e40fc3e-53fc-819c-978a-f7f3b6567fb9",
+        "name": "마이크로컨텍솔",
+        "ticker": "098120",
+        "first_detected_at": {
+          "__datetime__": "2026-09-23T09:13:00+09:00"
+        },
+        "first_threshold": 59200.0,
+        "first_price": 60200.0,
+        "first_atr": 3680.0,
+        "status": "추적중",
+        "closed_reason": "",
+        "closed_at": null,
+        "outcome": "미주문",
+        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        "outcome_at": {
+          "__datetime__": "2026-10-07T15:23:49.281569+09:00"
+        },
+        "latest_close": 60500.0,
+        "latest_date": {
+          "__date__": "2026-10-06"
+        },
+        "latest_atr": 3686.0,
+        "latest_line": 61900.0,
+        "change_pct": 2.2,
+        "atr_mult": 0.35,
+        "dist_to_line": 1400.0,
+        "dist_to_line_atr": 0.38,
+        "level_state": "최초선위",
+        "new_breakout": "미해당",
+        "refresh_state": "갱신됨",
+        "refresh_note": "",
+        "user_memo": ""
+      },
+      "page_id": "3e40fc3e-53fc-819c-978a-f7f3b6567fb9",
+      "fields": {
+        "outcome": "미주문",
+        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        "outcome_at": {
+          "__datetime__": "2026-10-07T15:23:49.281569+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "24fe1e52301d4f38a0bdf6954d0e244d",
+      "owner": "37581196958:1",
+      "events": [
+        "b22d0d6c4b2743adb09c2d1284aaac19"
+      ],
+      "record": {
+        "account_type": "",
+        "account_key": "",
+        "order_side": "",
+        "order_qty": null,
+        "filled_qty": null,
+        "unverified_qty": null,
+        "execution_price": null,
+        "execution_state": "",
+        "execution_checked_at": null,
+        "event_id": "f99e161eac924db992ee8715975bfa69",
+        "order_no": "",
+        "order_day": null,
+        "key": "3eb0fc3e-53fc-81ba-a541-e92c1990be5e",
+        "page_id": "3eb0fc3e-53fc-81ba-a541-e92c1990be5e",
+        "name": "케이엔제이",
+        "ticker": "272110",
+        "first_detected_at": {
+          "__datetime__": "2026-09-30T09:23:00+09:00"
+        },
+        "first_threshold": 30950.0,
+        "first_price": 31300.0,
+        "first_atr": 1799.0,
+        "status": "추적중",
+        "closed_reason": "",
+        "closed_at": null,
+        "outcome": "미주문",
+        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        "outcome_at": {
+          "__datetime__": "2026-10-07T15:23:49.292331+09:00"
+        },
+        "latest_close": 32550.0,
+        "latest_date": {
+          "__date__": "2026-10-06"
+        },
+        "latest_atr": 1806.0,
+        "latest_line": 33300.0,
+        "change_pct": 5.17,
+        "atr_mult": 0.89,
+        "dist_to_line": 750.0,
+        "dist_to_line_atr": 0.42,
+        "level_state": "최초선위",
+        "new_breakout": "미해당",
+        "refresh_state": "갱신됨",
+        "refresh_note": "",
+        "user_memo": ""
+      },
+      "page_id": "3eb0fc3e-53fc-81ba-a541-e92c1990be5e",
+      "fields": {
+        "outcome": "미주문",
+        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        "outcome_at": {
+          "__datetime__": "2026-10-07T15:23:49.292331+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "7ff63ca98750420b9087a72ef64dcd69",
+      "owner": "37581196958:1",
+      "events": [
+        "d7c615a400db405aaf88e9ef9b0c82cc"
+      ],
+      "record": {
+        "account_type": "",
+        "account_key": "",
+        "order_side": "",
+        "order_qty": null,
+        "filled_qty": null,
+        "unverified_qty": null,
+        "execution_price": null,
+        "execution_state": "",
+        "execution_checked_at": null,
+        "event_id": "89e27f1505924f3c9d4dd4f7020b1ec9",
+        "order_no": "",
+        "order_day": null,
+        "key": "3f20fc3e-53fc-8198-ae2c-eb8c694601a8",
+        "page_id": "3f20fc3e-53fc-8198-ae2c-eb8c694601a8",
+        "name": "삼양바이오팜",
+        "ticker": "0120G0",
+        "first_detected_at": {
+          "__datetime__": "2026-10-07T12:23:00+09:00"
+        },
+        "first_threshold": 50900.0,
+        "first_price": 51000.0,
+        "first_atr": 3108.0,
+        "status": "추적중",
+        "closed_reason": "",
+        "closed_at": null,
+        "outcome": "미주문",
+        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        "outcome_at": {
+          "__datetime__": "2026-10-07T15:23:49.302851+09:00"
+        },
+        "latest_close": null,
+        "latest_date": null,
+        "latest_atr": null,
+        "latest_line": null,
+        "change_pct": null,
+        "atr_mult": null,
+        "dist_to_line": null,
+        "dist_to_line_atr": null,
+        "level_state": "",
+        "new_breakout": "",
+        "refresh_state": "",
+        "refresh_note": "",
+        "user_memo": ""
+      },
+      "page_id": "3f20fc3e-53fc-8198-ae2c-eb8c694601a8",
+      "fields": {
+        "outcome": "미주문",
+        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        "outcome_at": {
+          "__datetime__": "2026-10-07T15:23:49.302851+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "8e8d0be13ed143d699d078c2cbedef02",
+      "owner": "37581196958:1",
+      "events": [
+        "54da45ba28be48799a32652bb5a28bfa"
+      ],
+      "record": {
+        "account_type": "",
+        "account_key": "",
+        "order_side": "",
+        "order_qty": null,
+        "filled_qty": null,
+        "unverified_qty": null,
+        "execution_price": null,
+        "execution_state": "",
+        "execution_checked_at": null,
+        "event_id": "87b0eb2dd3744ee5844a32cb8dedef10",
+        "order_no": "",
+        "order_day": null,
+        "key": "3e30fc3e-53fc-81e9-a02a-ec5ba4fd9949",
+        "page_id": "3e30fc3e-53fc-81e9-a02a-ec5ba4fd9949",
+        "name": "기가비스",
+        "ticker": "420770",
+        "first_detected_at": {
+          "__datetime__": "2026-09-22T09:03:00+09:00"
+        },
+        "first_threshold": 114200.0,
+        "first_price": 117300.0,
+        "first_atr": 10662.0,
+        "status": "추적중",
+        "closed_reason": "",
+        "closed_at": null,
+        "outcome": "미주문",
+        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        "outcome_at": {
+          "__datetime__": "2026-10-07T15:23:49.313496+09:00"
+        },
+        "latest_close": 135500.0,
+        "latest_date": {
+          "__date__": "2026-10-06"
+        },
+        "latest_atr": 10773.0,
+        "latest_line": 139700.0,
+        "change_pct": 18.65,
+        "atr_mult": 2.0,
+        "dist_to_line": 4200.0,
+        "dist_to_line_atr": 0.39,
+        "level_state": "최초선위",
+        "new_breakout": "미해당",
+        "refresh_state": "갱신됨",
+        "refresh_note": "",
+        "user_memo": ""
+      },
+      "page_id": "3e30fc3e-53fc-81e9-a02a-ec5ba4fd9949",
+      "fields": {
+        "outcome": "미주문",
+        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        "outcome_at": {
+          "__datetime__": "2026-10-07T15:23:49.313496+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "c9c0c5e897e047709c6a82d1e275d1a6",
+      "owner": "37581196958:1",
+      "events": [
+        "334a7ecfd1a849f0a13f469849adfc83"
+      ],
+      "record": {
+        "account_type": "",
+        "account_key": "",
+        "order_side": "",
+        "order_qty": null,
+        "filled_qty": null,
+        "unverified_qty": null,
+        "execution_price": null,
+        "execution_state": "",
+        "execution_checked_at": null,
+        "event_id": "1c251773362b41fd939078bfce5c78a4",
+        "order_no": "",
+        "order_day": null,
+        "key": "3e90fc3e-53fc-812c-9d48-e91916087821",
+        "page_id": "3e90fc3e-53fc-812c-9d48-e91916087821",
+        "name": "한국앤컴퍼니",
+        "ticker": "000240",
+        "first_detected_at": {
+          "__datetime__": "2026-09-28T12:43:00+09:00"
+        },
+        "first_threshold": 25200.0,
+        "first_price": 25250.0,
+        "first_atr": 889.0,
+        "status": "추적중",
+        "closed_reason": "",
+        "closed_at": null,
+        "outcome": "미주문",
+        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        "outcome_at": {
+          "__datetime__": "2026-10-07T15:23:49.324120+09:00"
+        },
+        "latest_close": 25300.0,
+        "latest_date": {
+          "__date__": "2026-10-06"
+        },
+        "latest_atr": 824.0,
+        "latest_line": 25550.0,
+        "change_pct": 0.4,
+        "atr_mult": 0.11,
+        "dist_to_line": 250.0,
+        "dist_to_line_atr": 0.3,
+        "level_state": "최초선위",
+        "new_breakout": "미해당",
+        "refresh_state": "갱신됨",
+        "refresh_note": "",
+        "user_memo": ""
+      },
+      "page_id": "3e90fc3e-53fc-812c-9d48-e91916087821",
+      "fields": {
+        "outcome": "미주문",
+        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        "outcome_at": {
+          "__datetime__": "2026-10-07T15:23:49.324120+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "3b84545c4d1441249ace180324c77535",
+      "owner": "37581196958:1",
+      "events": [
+        "edc8f3a3c6d44d50a2f03565b1df6858"
+      ],
+      "record": {
+        "account_type": "",
+        "account_key": "",
+        "order_side": "",
+        "order_qty": null,
+        "filled_qty": null,
+        "unverified_qty": null,
+        "execution_price": null,
+        "execution_state": "",
+        "execution_checked_at": null,
+        "event_id": "afc8a51f9e9343e2a0363346291a9bdd",
+        "order_no": "",
+        "order_day": null,
+        "key": "3f20fc3e-53fc-8125-9506-ee31d0433ab3",
+        "page_id": "3f20fc3e-53fc-8125-9506-ee31d0433ab3",
+        "name": "한미약품",
+        "ticker": "128940",
+        "first_detected_at": {
+          "__datetime__": "2026-10-07T14:33:00+09:00"
+        },
+        "first_threshold": 534000.0,
+        "first_price": 536000.0,
+        "first_atr": 27749.0,
+        "status": "추적중",
+        "closed_reason": "",
+        "closed_at": null,
+        "outcome": "미주문",
+        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        "outcome_at": {
+          "__datetime__": "2026-10-07T15:23:49.334712+09:00"
+        },
+        "latest_close": null,
+        "latest_date": null,
+        "latest_atr": null,
+        "latest_line": null,
+        "change_pct": null,
+        "atr_mult": null,
+        "dist_to_line": null,
+        "dist_to_line_atr": null,
+        "level_state": "",
+        "new_breakout": "",
+        "refresh_state": "",
+        "refresh_note": "",
+        "user_memo": ""
+      },
+      "page_id": "3f20fc3e-53fc-8125-9506-ee31d0433ab3",
+      "fields": {
+        "outcome": "미주문",
+        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        "outcome_at": {
+          "__datetime__": "2026-10-07T15:23:49.334712+09:00"
+        }
+      },
+      "state": "queued"
+    }
+  ],
+  "prepare_cursor": "edc8f3a3c6d44d50a2f03565b1df6858",
   "deliver_cursor": "dd4f53a7cd58444588fb41da5f8c423d",
   "excluded_events": [
     {
@@ -8026,6 +9294,27 @@
       },
       "reason": "held_without_active_track",
       "resolved_by": "37580309024:1"
+    },
+    {
+      "event": {
+        "id": "b23b0fc59f2b44a6ab0e8ddd4dfa5749",
+        "operation": "_set_outcome",
+        "args": [
+          "010120",
+          "미주문",
+          "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+          {
+            "__datetime__": "2026-10-07T15:23:49.156845+09:00"
+          }
+        ],
+        "kwargs": {
+          "order_no": "",
+          "order_day": null,
+          "identity": null
+        }
+      },
+      "reason": "held_without_active_track",
+      "resolved_by": "37581196958:1"
     }
   ]
 }
