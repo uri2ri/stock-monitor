@@ -1,91 +1,9 @@
 {
   "version": 1,
-  "events": [
-    {
-      "id": "6318c253c09f4b20b480a3e7449d3ab6",
-      "operation": "_set_outcome",
-      "args": [
-        "215200",
-        "자금부족",
-        "현금 부족(필요 2,065,500원 · 가용 212,022원)",
-        {
-          "__datetime__": "2026-10-07T09:24:14.487734+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    }
-  ],
-  "plans": [
-    {
-      "id": "0596f9cfb64f4b7b956d4a5a088d4c24",
-      "owner": "37551672974:1",
-      "events": [
-        "6318c253c09f4b20b480a3e7449d3ab6"
-      ],
-      "record": {
-        "account_type": "",
-        "account_key": "",
-        "order_side": "",
-        "order_qty": null,
-        "filled_qty": null,
-        "unverified_qty": null,
-        "execution_price": null,
-        "execution_state": "",
-        "execution_checked_at": null,
-        "event_id": "555a40aa878f4560b0de5542f593d54d",
-        "order_no": "",
-        "order_day": null,
-        "key": "3e40fc3e-53fc-8129-a427-e27c29560abb",
-        "page_id": "3e40fc3e-53fc-8129-a427-e27c29560abb",
-        "name": "메가스터디교육",
-        "ticker": "215200",
-        "first_detected_at": {
-          "__datetime__": "2026-09-23T10:43:00+09:00"
-        },
-        "first_threshold": 36750.0,
-        "first_price": 36800.0,
-        "first_atr": 1109.0,
-        "status": "추적중",
-        "closed_reason": "",
-        "closed_at": null,
-        "outcome": "자금부족",
-        "outcome_reason": "현금 부족(필요 2,065,500원 · 가용 212,022원)",
-        "outcome_at": {
-          "__datetime__": "2026-10-07T09:24:14.487734+09:00"
-        },
-        "latest_close": 37800.0,
-        "latest_date": {
-          "__date__": "2026-10-06"
-        },
-        "latest_atr": 1126.0,
-        "latest_line": 38150.0,
-        "change_pct": 2.86,
-        "atr_mult": 0.95,
-        "dist_to_line": 350.0,
-        "dist_to_line_atr": 0.31,
-        "level_state": "최초선위",
-        "new_breakout": "미해당",
-        "refresh_state": "갱신됨",
-        "refresh_note": "",
-        "user_memo": ""
-      },
-      "page_id": "3e40fc3e-53fc-8129-a427-e27c29560abb",
-      "fields": {
-        "outcome": "자금부족",
-        "outcome_reason": "현금 부족(필요 2,065,500원 · 가용 212,022원)",
-        "outcome_at": {
-          "__datetime__": "2026-10-07T09:24:14.487734+09:00"
-        }
-      },
-      "state": "queued"
-    }
-  ],
+  "events": [],
+  "plans": [],
   "prepare_cursor": "cbb23ebe4b2c460e936ebf320c1a01ea",
-  "deliver_cursor": "c8346af183a34324b04a842984713d04",
+  "deliver_cursor": "0596f9cfb64f4b7b956d4a5a088d4c24",
   "excluded_events": [
     {
       "event": {
