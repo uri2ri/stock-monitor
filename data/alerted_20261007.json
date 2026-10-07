@@ -242,6 +242,18 @@
       "gap_atr": 0.182,
       "unit_shares": 606,
       "status": "진입가능"
+    },
+    "128940": {
+      "time": "14:33",
+      "name": "한미약품",
+      "sector": "제약",
+      "market": "KOSPI",
+      "price": 536000.0,
+      "high20": 534000.0,
+      "atr20": 27749.0,
+      "gap_atr": 0.072,
+      "unit_shares": 18,
+      "status": "진입가능"
     }
   }
 }
