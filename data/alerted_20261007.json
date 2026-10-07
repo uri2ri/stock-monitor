@@ -218,6 +218,18 @@
       "gap_atr": 0.032,
       "unit_shares": 160,
       "status": "진입가능"
+    },
+    "420770": {
+      "time": "13:03",
+      "name": "기가비스",
+      "sector": "기계·장비",
+      "market": "KOSDAQ",
+      "price": 139900.0,
+      "high20": 139700.0,
+      "atr20": 10773.0,
+      "gap_atr": 0.019,
+      "unit_shares": 46,
+      "status": "진입가능"
     }
   }
 }
