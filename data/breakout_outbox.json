@@ -2,14 +2,116 @@
   "version": 1,
   "events": [
     {
-      "id": "d66be0ae24fd4a14a0598d71613f2382",
+      "id": "e23b968e926a423189b58e6148143d1b",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "229640",
+          "name": "LS에코에너지",
+          "high20": 67800.0,
+          "price": 69900.0,
+          "atr20": 4069.0
+        },
+        {
+          "__datetime__": "2026-10-07T09:03:39.195777+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "6d9a4354629b4ae484d614633a7cf177",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "043260",
+          "name": "성호전자",
+          "high20": 32900.0,
+          "price": 34800.0,
+          "atr20": 2439.0
+        },
+        {
+          "__datetime__": "2026-10-07T09:03:39.195777+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "8bce435b5ec84fdb8de6e643e6a337f3",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "010170",
+          "name": "대한광통신",
+          "high20": 18990.0,
+          "price": 19350.0,
+          "atr20": 1256.0
+        },
+        {
+          "__datetime__": "2026-10-07T09:03:39.195777+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "6f409b96d42044a1a2a7bf97eb1fecc3",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "018670",
+          "name": "SK가스",
+          "high20": 262000.0,
+          "price": 263000.0,
+          "atr20": 9861.0
+        },
+        {
+          "__datetime__": "2026-10-07T09:03:39.195777+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "168f09702d68475ab70b81ed98a765f0",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "388790",
+          "name": "라이콤",
+          "high20": 5890.0,
+          "price": 5960.0,
+          "atr20": 416.0
+        },
+        {
+          "__datetime__": "2026-10-07T09:03:39.195777+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "c7a9d0cfc3b349e68910fb5963ab0f16",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "018290",
+          "name": "브이티",
+          "high20": 12960.0,
+          "price": 13110.0,
+          "atr20": 550.0
+        },
+        {
+          "__datetime__": "2026-10-07T09:03:39.195777+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "f31a65bbc502454a89750d2dcc7916e6",
       "operation": "_set_outcome",
       "args": [
-        "012030",
+        "229640",
         "미주문",
-        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        "추격 구간(+0.52N) - 매수 대상 제외",
         {
-          "__datetime__": "2026-10-06T15:44:00.229618+09:00"
+          "__datetime__": "2026-10-07T09:03:39.195777+09:00"
         }
       ],
       "kwargs": {
@@ -19,14 +121,14 @@
       }
     },
     {
-      "id": "88074d8f189141f4a76148e84a23514e",
+      "id": "da774bcc89e1446e8691b46e5c0487e1",
       "operation": "_set_outcome",
       "args": [
-        "297090",
+        "043260",
         "미주문",
-        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        "추격 구간(+0.78N) - 매수 대상 제외",
         {
-          "__datetime__": "2026-10-06T15:44:00.240689+09:00"
+          "__datetime__": "2026-10-07T09:03:39.195777+09:00"
         }
       ],
       "kwargs": {
@@ -36,14 +138,14 @@
       }
     },
     {
-      "id": "6904313ee0094fa9a3dc5043c598490e",
+      "id": "e897e3af04864172b8088f4455d7c58e",
       "operation": "_set_outcome",
       "args": [
-        "017860",
+        "103590",
         "미주문",
         "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
         {
-          "__datetime__": "2026-10-06T15:44:00.252069+09:00"
+          "__datetime__": "2026-10-07T09:03:51.438697+09:00"
         }
       ],
       "kwargs": {
@@ -53,14 +155,14 @@
       }
     },
     {
-      "id": "3a9e2c38739f443b886fe6eeda347832",
+      "id": "eb70ab9d9dea474da72da86c51b3c985",
       "operation": "_set_outcome",
       "args": [
-        "950260",
+        "010170",
         "미주문",
         "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
         {
-          "__datetime__": "2026-10-06T15:44:00.263349+09:00"
+          "__datetime__": "2026-10-07T09:03:51.448361+09:00"
         }
       ],
       "kwargs": {
@@ -70,14 +172,14 @@
       }
     },
     {
-      "id": "8b22ff1602304518ab0a4ce970c0ca9a",
+      "id": "144396905f0841ffb011c72862877ad1",
       "operation": "_set_outcome",
       "args": [
-        "102710",
+        "018670",
         "미주문",
         "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
         {
-          "__datetime__": "2026-10-06T15:44:00.274619+09:00"
+          "__datetime__": "2026-10-07T09:03:51.459034+09:00"
         }
       ],
       "kwargs": {
@@ -87,14 +189,14 @@
       }
     },
     {
-      "id": "3fb1996cb1ed4720b52e9ddf6b4f5a1e",
+      "id": "1e5228a9cfc74f37ba604585e466db2f",
       "operation": "_set_outcome",
       "args": [
-        "012030",
+        "126340",
         "미주문",
         "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
         {
-          "__datetime__": "2026-10-06T15:54:02.927677+09:00"
+          "__datetime__": "2026-10-07T09:03:51.468619+09:00"
         }
       ],
       "kwargs": {
@@ -104,14 +206,14 @@
       }
     },
     {
-      "id": "cc04ea27bd3b4b23a41095b1decc744e",
+      "id": "70a05102471647a88f3a669cb3f8c450",
       "operation": "_set_outcome",
       "args": [
-        "297090",
+        "388790",
         "미주문",
         "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
         {
-          "__datetime__": "2026-10-06T15:54:02.938283+09:00"
+          "__datetime__": "2026-10-07T09:03:51.478081+09:00"
         }
       ],
       "kwargs": {
@@ -121,48 +223,14 @@
       }
     },
     {
-      "id": "6badc7424da94d26bddc4562041e60ed",
+      "id": "e171f111ad674fa382bdacdc508815c0",
       "operation": "_set_outcome",
       "args": [
-        "017860",
+        "018290",
         "미주문",
         "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
         {
-          "__datetime__": "2026-10-06T15:54:02.949116+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
-      "id": "e7df085b4d694d318e8907414720f7ac",
-      "operation": "_set_outcome",
-      "args": [
-        "950260",
-        "미주문",
-        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        {
-          "__datetime__": "2026-10-06T15:54:02.960062+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
-      "id": "5be6cf1b97524f39a6606ffdf9b3752f",
-      "operation": "_set_outcome",
-      "args": [
-        "102710",
-        "미주문",
-        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        {
-          "__datetime__": "2026-10-06T15:54:02.970729+09:00"
+          "__datetime__": "2026-10-07T09:03:51.487487+09:00"
         }
       ],
       "kwargs": {
@@ -172,8 +240,397 @@
       }
     }
   ],
-  "plans": [],
-  "prepare_cursor": "be11389257e14683a0f33306aef1ab78",
+  "plans": [
+    {
+      "id": "68da5fd79e81419a9d77de2c7ad9aa5e",
+      "owner": "37549871993:1",
+      "events": [
+        "e23b968e926a423189b58e6148143d1b",
+        "f31a65bbc502454a89750d2dcc7916e6"
+      ],
+      "record": {
+        "event_id": "e23b968e926a423189b58e6148143d1b",
+        "ticker": "229640",
+        "name": "LS에코에너지",
+        "first_detected_at": {
+          "__datetime__": "2026-10-07T09:03:39.195777+09:00"
+        },
+        "first_threshold": 67800.0,
+        "first_price": 69900.0,
+        "first_atr": 4069.0,
+        "status": "추적중",
+        "outcome": "미주문",
+        "outcome_reason": "추격 구간(+0.52N) - 매수 대상 제외",
+        "outcome_at": {
+          "__datetime__": "2026-10-07T09:03:39.195777+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "e23b968e926a423189b58e6148143d1b",
+        "ticker": "229640",
+        "name": "LS에코에너지",
+        "first_detected_at": {
+          "__datetime__": "2026-10-07T09:03:39.195777+09:00"
+        },
+        "first_threshold": 67800.0,
+        "first_price": 69900.0,
+        "first_atr": 4069.0,
+        "status": "추적중",
+        "outcome": "미주문",
+        "outcome_reason": "추격 구간(+0.52N) - 매수 대상 제외",
+        "outcome_at": {
+          "__datetime__": "2026-10-07T09:03:39.195777+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "fc19b83f3f1a40fd98059155bd67c7e9",
+      "owner": "37549871993:1",
+      "events": [
+        "6d9a4354629b4ae484d614633a7cf177",
+        "da774bcc89e1446e8691b46e5c0487e1"
+      ],
+      "record": {
+        "event_id": "6d9a4354629b4ae484d614633a7cf177",
+        "ticker": "043260",
+        "name": "성호전자",
+        "first_detected_at": {
+          "__datetime__": "2026-10-07T09:03:39.195777+09:00"
+        },
+        "first_threshold": 32900.0,
+        "first_price": 34800.0,
+        "first_atr": 2439.0,
+        "status": "추적중",
+        "outcome": "미주문",
+        "outcome_reason": "추격 구간(+0.78N) - 매수 대상 제외",
+        "outcome_at": {
+          "__datetime__": "2026-10-07T09:03:39.195777+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "6d9a4354629b4ae484d614633a7cf177",
+        "ticker": "043260",
+        "name": "성호전자",
+        "first_detected_at": {
+          "__datetime__": "2026-10-07T09:03:39.195777+09:00"
+        },
+        "first_threshold": 32900.0,
+        "first_price": 34800.0,
+        "first_atr": 2439.0,
+        "status": "추적중",
+        "outcome": "미주문",
+        "outcome_reason": "추격 구간(+0.78N) - 매수 대상 제외",
+        "outcome_at": {
+          "__datetime__": "2026-10-07T09:03:39.195777+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "f2307a3e59a74004b611eb86e48532d0",
+      "owner": "37549871993:1",
+      "events": [
+        "8bce435b5ec84fdb8de6e643e6a337f3",
+        "eb70ab9d9dea474da72da86c51b3c985"
+      ],
+      "record": {
+        "event_id": "8bce435b5ec84fdb8de6e643e6a337f3",
+        "ticker": "010170",
+        "name": "대한광통신",
+        "first_detected_at": {
+          "__datetime__": "2026-10-07T09:03:39.195777+09:00"
+        },
+        "first_threshold": 18990.0,
+        "first_price": 19350.0,
+        "first_atr": 1256.0,
+        "status": "추적중",
+        "outcome": "미주문",
+        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        "outcome_at": {
+          "__datetime__": "2026-10-07T09:03:51.448361+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "8bce435b5ec84fdb8de6e643e6a337f3",
+        "ticker": "010170",
+        "name": "대한광통신",
+        "first_detected_at": {
+          "__datetime__": "2026-10-07T09:03:39.195777+09:00"
+        },
+        "first_threshold": 18990.0,
+        "first_price": 19350.0,
+        "first_atr": 1256.0,
+        "status": "추적중",
+        "outcome": "미주문",
+        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        "outcome_at": {
+          "__datetime__": "2026-10-07T09:03:51.448361+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "aa423d31261f4de0a1358d608fe75dfd",
+      "owner": "37549871993:1",
+      "events": [
+        "6f409b96d42044a1a2a7bf97eb1fecc3",
+        "144396905f0841ffb011c72862877ad1"
+      ],
+      "record": {
+        "event_id": "6f409b96d42044a1a2a7bf97eb1fecc3",
+        "ticker": "018670",
+        "name": "SK가스",
+        "first_detected_at": {
+          "__datetime__": "2026-10-07T09:03:39.195777+09:00"
+        },
+        "first_threshold": 262000.0,
+        "first_price": 263000.0,
+        "first_atr": 9861.0,
+        "status": "추적중",
+        "outcome": "미주문",
+        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        "outcome_at": {
+          "__datetime__": "2026-10-07T09:03:51.459034+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "6f409b96d42044a1a2a7bf97eb1fecc3",
+        "ticker": "018670",
+        "name": "SK가스",
+        "first_detected_at": {
+          "__datetime__": "2026-10-07T09:03:39.195777+09:00"
+        },
+        "first_threshold": 262000.0,
+        "first_price": 263000.0,
+        "first_atr": 9861.0,
+        "status": "추적중",
+        "outcome": "미주문",
+        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        "outcome_at": {
+          "__datetime__": "2026-10-07T09:03:51.459034+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "2f64961e9d06447283906e23e6a8eed6",
+      "owner": "37549871993:1",
+      "events": [
+        "168f09702d68475ab70b81ed98a765f0",
+        "70a05102471647a88f3a669cb3f8c450"
+      ],
+      "record": {
+        "event_id": "168f09702d68475ab70b81ed98a765f0",
+        "ticker": "388790",
+        "name": "라이콤",
+        "first_detected_at": {
+          "__datetime__": "2026-10-07T09:03:39.195777+09:00"
+        },
+        "first_threshold": 5890.0,
+        "first_price": 5960.0,
+        "first_atr": 416.0,
+        "status": "추적중",
+        "outcome": "미주문",
+        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        "outcome_at": {
+          "__datetime__": "2026-10-07T09:03:51.478081+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "168f09702d68475ab70b81ed98a765f0",
+        "ticker": "388790",
+        "name": "라이콤",
+        "first_detected_at": {
+          "__datetime__": "2026-10-07T09:03:39.195777+09:00"
+        },
+        "first_threshold": 5890.0,
+        "first_price": 5960.0,
+        "first_atr": 416.0,
+        "status": "추적중",
+        "outcome": "미주문",
+        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        "outcome_at": {
+          "__datetime__": "2026-10-07T09:03:51.478081+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "25e9bd742cd5464fbfda13732f261f4b",
+      "owner": "37549871993:1",
+      "events": [
+        "c7a9d0cfc3b349e68910fb5963ab0f16",
+        "e171f111ad674fa382bdacdc508815c0"
+      ],
+      "record": {
+        "event_id": "c7a9d0cfc3b349e68910fb5963ab0f16",
+        "ticker": "018290",
+        "name": "브이티",
+        "first_detected_at": {
+          "__datetime__": "2026-10-07T09:03:39.195777+09:00"
+        },
+        "first_threshold": 12960.0,
+        "first_price": 13110.0,
+        "first_atr": 550.0,
+        "status": "추적중",
+        "outcome": "미주문",
+        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        "outcome_at": {
+          "__datetime__": "2026-10-07T09:03:51.487487+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "c7a9d0cfc3b349e68910fb5963ab0f16",
+        "ticker": "018290",
+        "name": "브이티",
+        "first_detected_at": {
+          "__datetime__": "2026-10-07T09:03:39.195777+09:00"
+        },
+        "first_threshold": 12960.0,
+        "first_price": 13110.0,
+        "first_atr": 550.0,
+        "status": "추적중",
+        "outcome": "미주문",
+        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        "outcome_at": {
+          "__datetime__": "2026-10-07T09:03:51.487487+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "1d49d074fee94c7a9bd698435e806b2e",
+      "owner": "37549871993:1",
+      "events": [
+        "e897e3af04864172b8088f4455d7c58e"
+      ],
+      "record": {
+        "account_type": "",
+        "account_key": "",
+        "order_side": "",
+        "order_qty": null,
+        "filled_qty": null,
+        "unverified_qty": null,
+        "execution_price": null,
+        "execution_state": "",
+        "execution_checked_at": null,
+        "event_id": "7b4c03df372742c3b93eaaa1908e4149",
+        "order_no": "",
+        "order_day": null,
+        "key": "3e40fc3e-53fc-8141-a978-c0bc023f4d4c",
+        "page_id": "3e40fc3e-53fc-8141-a978-c0bc023f4d4c",
+        "name": "일진전기",
+        "ticker": "103590",
+        "first_detected_at": {
+          "__datetime__": "2026-09-23T09:23:00+09:00"
+        },
+        "first_threshold": 79200.0,
+        "first_price": 79400.0,
+        "first_atr": 4558.0,
+        "status": "추적중",
+        "closed_reason": "",
+        "closed_at": null,
+        "outcome": "미주문",
+        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        "outcome_at": {
+          "__datetime__": "2026-10-07T09:03:51.438697+09:00"
+        },
+        "latest_close": 87900.0,
+        "latest_date": {
+          "__date__": "2026-10-06"
+        },
+        "latest_atr": 4501.0,
+        "latest_line": 89200.0,
+        "change_pct": 10.98,
+        "atr_mult": 1.91,
+        "dist_to_line": 1300.0,
+        "dist_to_line_atr": 0.29,
+        "level_state": "최초선위",
+        "new_breakout": "미해당",
+        "refresh_state": "갱신됨",
+        "refresh_note": "",
+        "user_memo": ""
+      },
+      "page_id": "3e40fc3e-53fc-8141-a978-c0bc023f4d4c",
+      "fields": {
+        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        "outcome_at": {
+          "__datetime__": "2026-10-07T09:03:51.438697+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "543fe4f6c71c43e6acdb7c13120c9db7",
+      "owner": "37549871993:1",
+      "events": [
+        "1e5228a9cfc74f37ba604585e466db2f"
+      ],
+      "record": {
+        "account_type": "",
+        "account_key": "",
+        "order_side": "",
+        "order_qty": null,
+        "filled_qty": null,
+        "unverified_qty": null,
+        "execution_price": null,
+        "execution_state": "",
+        "execution_checked_at": null,
+        "event_id": "f21bb9e1f45f4853a08f74806c9104ba",
+        "order_no": "",
+        "order_day": null,
+        "key": "3e30fc3e-53fc-8154-9d61-da53718de3ad",
+        "page_id": "3e30fc3e-53fc-8154-9d61-da53718de3ad",
+        "name": "비나텍",
+        "ticker": "126340",
+        "first_detected_at": {
+          "__datetime__": "2026-09-22T09:03:00+09:00"
+        },
+        "first_threshold": 85500.0,
+        "first_price": 85800.0,
+        "first_atr": 6893.0,
+        "status": "추적중",
+        "closed_reason": "",
+        "closed_at": null,
+        "outcome": "미주문",
+        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        "outcome_at": {
+          "__datetime__": "2026-10-07T09:03:51.468619+09:00"
+        },
+        "latest_close": 94000.0,
+        "latest_date": {
+          "__date__": "2026-10-06"
+        },
+        "latest_atr": 6604.0,
+        "latest_line": 96700.0,
+        "change_pct": 9.94,
+        "atr_mult": 1.23,
+        "dist_to_line": 2700.0,
+        "dist_to_line_atr": 0.41,
+        "level_state": "최초선위",
+        "new_breakout": "미해당",
+        "refresh_state": "갱신됨",
+        "refresh_note": "",
+        "user_memo": ""
+      },
+      "page_id": "3e30fc3e-53fc-8154-9d61-da53718de3ad",
+      "fields": {
+        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        "outcome_at": {
+          "__datetime__": "2026-10-07T09:03:51.468619+09:00"
+        }
+      },
+      "state": "queued"
+    }
+  ],
+  "prepare_cursor": "e171f111ad674fa382bdacdc508815c0",
   "deliver_cursor": "eb4105bad7304afeb7f51175314eb1f0",
   "excluded_events": [
     {
@@ -7378,6 +7835,48 @@
       },
       "reason": "held_without_active_track",
       "resolved_by": "37426283610:1"
+    },
+    {
+      "event": {
+        "id": "95c6f23c87344f139a86aacd437f21e4",
+        "operation": "record_breakout",
+        "args": [
+          {
+            "ticker": "010120",
+            "name": "LS ELECTRIC",
+            "high20": 218500.0,
+            "price": 221500.0,
+            "atr20": 10623.0
+          },
+          {
+            "__datetime__": "2026-10-07T09:03:39.195777+09:00"
+          }
+        ],
+        "kwargs": {}
+      },
+      "reason": "held_without_active_track",
+      "resolved_by": "37549871993:1"
+    },
+    {
+      "event": {
+        "id": "4470cad2faa44191b993cd6930df38c0",
+        "operation": "_set_outcome",
+        "args": [
+          "010120",
+          "미주문",
+          "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+          {
+            "__datetime__": "2026-10-07T09:03:51.417804+09:00"
+          }
+        ],
+        "kwargs": {
+          "order_no": "",
+          "order_day": null,
+          "identity": null
+        }
+      },
+      "reason": "held_without_active_track",
+      "resolved_by": "37549871993:1"
     }
   ]
 }
