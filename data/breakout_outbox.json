@@ -2,23 +2,6 @@
   "version": 1,
   "events": [
     {
-      "id": "168f09702d68475ab70b81ed98a765f0",
-      "operation": "record_breakout",
-      "args": [
-        {
-          "ticker": "388790",
-          "name": "라이콤",
-          "high20": 5890.0,
-          "price": 5960.0,
-          "atr20": 416.0
-        },
-        {
-          "__datetime__": "2026-10-07T09:03:39.195777+09:00"
-        }
-      ],
-      "kwargs": {}
-    },
-    {
       "id": "c7a9d0cfc3b349e68910fb5963ab0f16",
       "operation": "record_breakout",
       "args": [
@@ -70,23 +53,6 @@
       }
     },
     {
-      "id": "70a05102471647a88f3a669cb3f8c450",
-      "operation": "_set_outcome",
-      "args": [
-        "388790",
-        "미주문",
-        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        {
-          "__datetime__": "2026-10-07T09:03:51.478081+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
       "id": "e171f111ad674fa382bdacdc508815c0",
       "operation": "_set_outcome",
       "args": [
@@ -105,50 +71,6 @@
     }
   ],
   "plans": [
-    {
-      "id": "2f64961e9d06447283906e23e6a8eed6",
-      "owner": "37549871993:1",
-      "events": [
-        "168f09702d68475ab70b81ed98a765f0",
-        "70a05102471647a88f3a669cb3f8c450"
-      ],
-      "record": {
-        "event_id": "168f09702d68475ab70b81ed98a765f0",
-        "ticker": "388790",
-        "name": "라이콤",
-        "first_detected_at": {
-          "__datetime__": "2026-10-07T09:03:39.195777+09:00"
-        },
-        "first_threshold": 5890.0,
-        "first_price": 5960.0,
-        "first_atr": 416.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        "outcome_at": {
-          "__datetime__": "2026-10-07T09:03:51.478081+09:00"
-        }
-      },
-      "page_id": null,
-      "fields": {
-        "event_id": "168f09702d68475ab70b81ed98a765f0",
-        "ticker": "388790",
-        "name": "라이콤",
-        "first_detected_at": {
-          "__datetime__": "2026-10-07T09:03:39.195777+09:00"
-        },
-        "first_threshold": 5890.0,
-        "first_price": 5960.0,
-        "first_atr": 416.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        "outcome_at": {
-          "__datetime__": "2026-10-07T09:03:51.478081+09:00"
-        }
-      },
-      "state": "creating"
-    },
     {
       "id": "25e9bd742cd5464fbfda13732f261f4b",
       "owner": "37549871993:1",
@@ -191,7 +113,7 @@
           "__datetime__": "2026-10-07T09:03:51.487487+09:00"
         }
       },
-      "state": "queued"
+      "state": "creating"
     },
     {
       "id": "1d49d074fee94c7a9bd698435e806b2e",
@@ -319,7 +241,7 @@
     }
   ],
   "prepare_cursor": "e171f111ad674fa382bdacdc508815c0",
-  "deliver_cursor": "2f64961e9d06447283906e23e6a8eed6",
+  "deliver_cursor": "25e9bd742cd5464fbfda13732f261f4b",
   "excluded_events": [
     {
       "event": {
