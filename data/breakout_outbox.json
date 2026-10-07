@@ -2,23 +2,6 @@
   "version": 1,
   "events": [
     {
-      "id": "6f409b96d42044a1a2a7bf97eb1fecc3",
-      "operation": "record_breakout",
-      "args": [
-        {
-          "ticker": "018670",
-          "name": "SK가스",
-          "high20": 262000.0,
-          "price": 263000.0,
-          "atr20": 9861.0
-        },
-        {
-          "__datetime__": "2026-10-07T09:03:39.195777+09:00"
-        }
-      ],
-      "kwargs": {}
-    },
-    {
       "id": "168f09702d68475ab70b81ed98a765f0",
       "operation": "record_breakout",
       "args": [
@@ -61,23 +44,6 @@
         "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
         {
           "__datetime__": "2026-10-07T09:03:51.438697+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
-      "id": "144396905f0841ffb011c72862877ad1",
-      "operation": "_set_outcome",
-      "args": [
-        "018670",
-        "미주문",
-        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        {
-          "__datetime__": "2026-10-07T09:03:51.459034+09:00"
         }
       ],
       "kwargs": {
@@ -140,50 +106,6 @@
   ],
   "plans": [
     {
-      "id": "aa423d31261f4de0a1358d608fe75dfd",
-      "owner": "37549871993:1",
-      "events": [
-        "6f409b96d42044a1a2a7bf97eb1fecc3",
-        "144396905f0841ffb011c72862877ad1"
-      ],
-      "record": {
-        "event_id": "6f409b96d42044a1a2a7bf97eb1fecc3",
-        "ticker": "018670",
-        "name": "SK가스",
-        "first_detected_at": {
-          "__datetime__": "2026-10-07T09:03:39.195777+09:00"
-        },
-        "first_threshold": 262000.0,
-        "first_price": 263000.0,
-        "first_atr": 9861.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        "outcome_at": {
-          "__datetime__": "2026-10-07T09:03:51.459034+09:00"
-        }
-      },
-      "page_id": null,
-      "fields": {
-        "event_id": "6f409b96d42044a1a2a7bf97eb1fecc3",
-        "ticker": "018670",
-        "name": "SK가스",
-        "first_detected_at": {
-          "__datetime__": "2026-10-07T09:03:39.195777+09:00"
-        },
-        "first_threshold": 262000.0,
-        "first_price": 263000.0,
-        "first_atr": 9861.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        "outcome_at": {
-          "__datetime__": "2026-10-07T09:03:51.459034+09:00"
-        }
-      },
-      "state": "creating"
-    },
-    {
       "id": "2f64961e9d06447283906e23e6a8eed6",
       "owner": "37549871993:1",
       "events": [
@@ -225,7 +147,7 @@
           "__datetime__": "2026-10-07T09:03:51.478081+09:00"
         }
       },
-      "state": "queued"
+      "state": "creating"
     },
     {
       "id": "25e9bd742cd5464fbfda13732f261f4b",
@@ -397,7 +319,7 @@
     }
   ],
   "prepare_cursor": "e171f111ad674fa382bdacdc508815c0",
-  "deliver_cursor": "aa423d31261f4de0a1358d608fe75dfd",
+  "deliver_cursor": "2f64961e9d06447283906e23e6a8eed6",
   "excluded_events": [
     {
       "event": {
