@@ -144,6 +144,18 @@
       "gap_atr": 0.174,
       "unit_shares": 1449,
       "status": "진입가능"
+    },
+    "484870": {
+      "time": "09:53",
+      "name": "엠앤씨솔루션",
+      "sector": "기계·장비",
+      "market": "KOSPI",
+      "price": 19510.0,
+      "high20": 19380.0,
+      "atr20": 1537.0,
+      "gap_atr": 0.085,
+      "unit_shares": 325,
+      "status": "진입가능"
     }
   }
 }
