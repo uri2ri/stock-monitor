@@ -2,23 +2,6 @@
   "version": 1,
   "events": [
     {
-      "id": "8bce435b5ec84fdb8de6e643e6a337f3",
-      "operation": "record_breakout",
-      "args": [
-        {
-          "ticker": "010170",
-          "name": "대한광통신",
-          "high20": 18990.0,
-          "price": 19350.0,
-          "atr20": 1256.0
-        },
-        {
-          "__datetime__": "2026-10-07T09:03:39.195777+09:00"
-        }
-      ],
-      "kwargs": {}
-    },
-    {
       "id": "6f409b96d42044a1a2a7bf97eb1fecc3",
       "operation": "record_breakout",
       "args": [
@@ -78,23 +61,6 @@
         "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
         {
           "__datetime__": "2026-10-07T09:03:51.438697+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
-      "id": "eb70ab9d9dea474da72da86c51b3c985",
-      "operation": "_set_outcome",
-      "args": [
-        "010170",
-        "미주문",
-        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        {
-          "__datetime__": "2026-10-07T09:03:51.448361+09:00"
         }
       ],
       "kwargs": {
@@ -174,50 +140,6 @@
   ],
   "plans": [
     {
-      "id": "f2307a3e59a74004b611eb86e48532d0",
-      "owner": "37549871993:1",
-      "events": [
-        "8bce435b5ec84fdb8de6e643e6a337f3",
-        "eb70ab9d9dea474da72da86c51b3c985"
-      ],
-      "record": {
-        "event_id": "8bce435b5ec84fdb8de6e643e6a337f3",
-        "ticker": "010170",
-        "name": "대한광통신",
-        "first_detected_at": {
-          "__datetime__": "2026-10-07T09:03:39.195777+09:00"
-        },
-        "first_threshold": 18990.0,
-        "first_price": 19350.0,
-        "first_atr": 1256.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        "outcome_at": {
-          "__datetime__": "2026-10-07T09:03:51.448361+09:00"
-        }
-      },
-      "page_id": null,
-      "fields": {
-        "event_id": "8bce435b5ec84fdb8de6e643e6a337f3",
-        "ticker": "010170",
-        "name": "대한광통신",
-        "first_detected_at": {
-          "__datetime__": "2026-10-07T09:03:39.195777+09:00"
-        },
-        "first_threshold": 18990.0,
-        "first_price": 19350.0,
-        "first_atr": 1256.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        "outcome_at": {
-          "__datetime__": "2026-10-07T09:03:51.448361+09:00"
-        }
-      },
-      "state": "creating"
-    },
-    {
       "id": "aa423d31261f4de0a1358d608fe75dfd",
       "owner": "37549871993:1",
       "events": [
@@ -259,7 +181,7 @@
           "__datetime__": "2026-10-07T09:03:51.459034+09:00"
         }
       },
-      "state": "queued"
+      "state": "creating"
     },
     {
       "id": "2f64961e9d06447283906e23e6a8eed6",
@@ -475,7 +397,7 @@
     }
   ],
   "prepare_cursor": "e171f111ad674fa382bdacdc508815c0",
-  "deliver_cursor": "f2307a3e59a74004b611eb86e48532d0",
+  "deliver_cursor": "aa423d31261f4de0a1358d608fe75dfd",
   "excluded_events": [
     {
       "event": {
