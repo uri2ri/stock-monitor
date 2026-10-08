@@ -2,23 +2,6 @@
   "version": 1,
   "events": [
     {
-      "id": "1a7daa7821ed4a45a5b627d9063bb54f",
-      "operation": "record_breakout",
-      "args": [
-        {
-          "ticker": "091580",
-          "name": "상신이디피",
-          "high20": 25500.0,
-          "price": 25600.0,
-          "atr20": 1547.0
-        },
-        {
-          "__datetime__": "2026-10-08T09:03:41.121308+09:00"
-        }
-      ],
-      "kwargs": {}
-    },
-    {
       "id": "52332e02b07b4c5c80c10798ab02d94d",
       "operation": "record_breakout",
       "args": [
@@ -53,23 +36,6 @@
       }
     },
     {
-      "id": "415bc0995c2c4566b207eb8092afbb72",
-      "operation": "_set_outcome",
-      "args": [
-        "091580",
-        "미주문",
-        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        {
-          "__datetime__": "2026-10-08T09:03:52.603809+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
       "id": "59fe0606f6d042fda8e4a0830597e27c",
       "operation": "_set_outcome",
       "args": [
@@ -88,50 +54,6 @@
     }
   ],
   "plans": [
-    {
-      "id": "3a827befb69a4c83bfe6f1c2f639682b",
-      "owner": "37705646883:1",
-      "events": [
-        "1a7daa7821ed4a45a5b627d9063bb54f",
-        "415bc0995c2c4566b207eb8092afbb72"
-      ],
-      "record": {
-        "event_id": "1a7daa7821ed4a45a5b627d9063bb54f",
-        "ticker": "091580",
-        "name": "상신이디피",
-        "first_detected_at": {
-          "__datetime__": "2026-10-08T09:03:41.121308+09:00"
-        },
-        "first_threshold": 25500.0,
-        "first_price": 25600.0,
-        "first_atr": 1547.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        "outcome_at": {
-          "__datetime__": "2026-10-08T09:03:52.603809+09:00"
-        }
-      },
-      "page_id": null,
-      "fields": {
-        "event_id": "1a7daa7821ed4a45a5b627d9063bb54f",
-        "ticker": "091580",
-        "name": "상신이디피",
-        "first_detected_at": {
-          "__datetime__": "2026-10-08T09:03:41.121308+09:00"
-        },
-        "first_threshold": 25500.0,
-        "first_price": 25600.0,
-        "first_atr": 1547.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        "outcome_at": {
-          "__datetime__": "2026-10-08T09:03:52.603809+09:00"
-        }
-      },
-      "state": "creating"
-    },
     {
       "id": "291d635d8a3a44c5b8bf37687fd832d1",
       "owner": "37705646883:1",
@@ -174,7 +96,7 @@
           "__datetime__": "2026-10-08T09:03:52.614542+09:00"
         }
       },
-      "state": "queued"
+      "state": "creating"
     },
     {
       "id": "599ab7c683d14416835cc0d11fe30604",
@@ -240,7 +162,7 @@
     }
   ],
   "prepare_cursor": "59fe0606f6d042fda8e4a0830597e27c",
-  "deliver_cursor": "3a827befb69a4c83bfe6f1c2f639682b",
+  "deliver_cursor": "291d635d8a3a44c5b8bf37687fd832d1",
   "excluded_events": [
     {
       "event": {
