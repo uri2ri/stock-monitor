@@ -1,8 +1,90 @@
 {
   "version": 1,
-  "events": [],
-  "plans": [],
-  "prepare_cursor": "954e811736a74f608ced7dbbb2858e64",
+  "events": [
+    {
+      "id": "f556867adfa343bab738cad8febf38b0",
+      "operation": "_set_outcome",
+      "args": [
+        "163730",
+        "자금부족",
+        "현금 부족(필요 956,660원 · 가용 212,022원)",
+        {
+          "__datetime__": "2026-10-08T14:35:01.804330+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    }
+  ],
+  "plans": [
+    {
+      "id": "202cd9da4f8b48fa93913b80cbca34c0",
+      "owner": "37732940065:1",
+      "events": [
+        "f556867adfa343bab738cad8febf38b0"
+      ],
+      "record": {
+        "account_type": "",
+        "account_key": "",
+        "order_side": "",
+        "order_qty": null,
+        "filled_qty": null,
+        "unverified_qty": null,
+        "execution_price": null,
+        "execution_state": "",
+        "execution_checked_at": null,
+        "event_id": "4118820d5936478ab89b0aa1564f8898",
+        "order_no": "",
+        "order_day": null,
+        "key": "3e20fc3e-53fc-8165-8422-db6cd6b183d3",
+        "page_id": "3e20fc3e-53fc-8165-8422-db6cd6b183d3",
+        "name": "핑거",
+        "ticker": "163730",
+        "first_detected_at": {
+          "__datetime__": "2026-09-21T09:33:00+09:00"
+        },
+        "first_threshold": 10500.0,
+        "first_price": 10600.0,
+        "first_atr": 798.0,
+        "status": "추적중",
+        "closed_reason": "",
+        "closed_at": null,
+        "outcome": "자금부족",
+        "outcome_reason": "현금 부족(필요 956,660원 · 가용 212,022원)",
+        "outcome_at": {
+          "__datetime__": "2026-10-08T14:35:01.804330+09:00"
+        },
+        "latest_close": 14920.0,
+        "latest_date": {
+          "__date__": "2026-10-07"
+        },
+        "latest_atr": 1013.0,
+        "latest_line": 15400.0,
+        "change_pct": 42.1,
+        "atr_mult": 5.54,
+        "dist_to_line": 480.0,
+        "dist_to_line_atr": 0.47,
+        "level_state": "최초선위",
+        "new_breakout": "미해당",
+        "refresh_state": "갱신됨",
+        "refresh_note": "",
+        "user_memo": ""
+      },
+      "page_id": "3e20fc3e-53fc-8165-8422-db6cd6b183d3",
+      "fields": {
+        "outcome": "자금부족",
+        "outcome_reason": "현금 부족(필요 956,660원 · 가용 212,022원)",
+        "outcome_at": {
+          "__datetime__": "2026-10-08T14:35:01.804330+09:00"
+        }
+      },
+      "state": "queued"
+    }
+  ],
+  "prepare_cursor": "f9cb8d32c26146c89868ce9a360db35c",
   "deliver_cursor": "b9642f00ec974bd4b1a54ecd19bbfa07",
   "excluded_events": [
     {
