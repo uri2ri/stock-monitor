@@ -1,88 +1,9 @@
 {
   "version": 1,
-  "events": [
-    {
-      "id": "98f2ad6aad2942379debf4ca23235ce2",
-      "operation": "_set_outcome",
-      "args": [
-        "000400",
-        "자금부족",
-        "현금 부족(필요 1,476,970원 · 가용 212,022원)",
-        {
-          "__datetime__": "2026-10-08T14:54:38.404015+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    }
-  ],
-  "plans": [
-    {
-      "id": "9941f962ba1747a29df1f25f5bd2f449",
-      "owner": "37734629319:1",
-      "events": [
-        "98f2ad6aad2942379debf4ca23235ce2"
-      ],
-      "record": {
-        "account_type": "",
-        "account_key": "",
-        "order_side": "",
-        "order_qty": null,
-        "filled_qty": null,
-        "unverified_qty": null,
-        "execution_price": null,
-        "execution_state": "",
-        "execution_checked_at": null,
-        "event_id": "0dd5577debd04782854eaedeb8e25bf4",
-        "order_no": "",
-        "order_day": null,
-        "key": "3f30fc3e-53fc-8160-a104-d31f7b97ed7e",
-        "page_id": "3f30fc3e-53fc-8160-a104-d31f7b97ed7e",
-        "name": "롯데손해보험",
-        "ticker": "000400",
-        "first_detected_at": {
-          "__datetime__": "2026-10-08T10:43:00+09:00"
-        },
-        "first_threshold": 2295.0,
-        "first_price": 2315.0,
-        "first_atr": 99.0,
-        "status": "추적중",
-        "closed_reason": "",
-        "closed_at": null,
-        "outcome": "자금부족",
-        "outcome_reason": "현금 부족(필요 1,476,970원 · 가용 212,022원)",
-        "outcome_at": {
-          "__datetime__": "2026-10-08T14:54:38.404015+09:00"
-        },
-        "latest_close": null,
-        "latest_date": null,
-        "latest_atr": null,
-        "latest_line": null,
-        "change_pct": null,
-        "atr_mult": null,
-        "dist_to_line": null,
-        "dist_to_line_atr": null,
-        "level_state": "",
-        "new_breakout": "",
-        "refresh_state": "",
-        "refresh_note": "",
-        "user_memo": ""
-      },
-      "page_id": "3f30fc3e-53fc-8160-a104-d31f7b97ed7e",
-      "fields": {
-        "outcome_reason": "현금 부족(필요 1,476,970원 · 가용 212,022원)",
-        "outcome_at": {
-          "__datetime__": "2026-10-08T14:54:38.404015+09:00"
-        }
-      },
-      "state": "queued"
-    }
-  ],
+  "events": [],
+  "plans": [],
   "prepare_cursor": "335d3c8eb9db4f558a463c4886293bcf",
-  "deliver_cursor": "67c57e10ad1b4e17a49ecdb5cefbae92",
+  "deliver_cursor": "9941f962ba1747a29df1f25f5bd2f449",
   "excluded_events": [
     {
       "event": {
