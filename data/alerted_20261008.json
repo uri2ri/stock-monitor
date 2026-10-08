@@ -1,0 +1,125 @@
+{
+  "date": "20261008",
+  "alerted": {
+    "033780": {
+      "time": "09:03",
+      "name": "KT&G",
+      "sector": "음식료·담배",
+      "market": "KOSPI",
+      "price": 179900.0,
+      "high20": 179800.0,
+      "atr20": 4415.0,
+      "gap_atr": 0.023,
+      "unit_shares": 113,
+      "status": "진입가능"
+    },
+    "119610": {
+      "time": "09:03",
+      "name": "인터로조",
+      "sector": "의료·정밀기기",
+      "market": "KOSDAQ",
+      "price": 17340.0,
+      "high20": 17260.0,
+      "atr20": 751.0,
+      "gap_atr": 0.107,
+      "unit_shares": 665,
+      "status": "진입가능"
+    },
+    "000240": {
+      "time": "09:03",
+      "name": "한국앤컴퍼니",
+      "sector": "금융",
+      "market": "KOSPI",
+      "price": 25750.0,
+      "high20": 25700.0,
+      "atr20": 810.0,
+      "gap_atr": 0.062,
+      "unit_shares": 617,
+      "status": "진입가능"
+    },
+    "373220": {
+      "time": "09:03",
+      "name": "LG에너지솔루션",
+      "sector": "전기전자",
+      "market": "KOSPI",
+      "price": 412500.0,
+      "high20": 395000.0,
+      "atr20": 16086.0,
+      "gap_atr": 1.088,
+      "unit_shares": 31,
+      "status": "추격금지"
+    },
+    "089790": {
+      "time": "09:03",
+      "name": "제이티",
+      "sector": "기계·장비",
+      "market": "KOSDAQ",
+      "price": 7100.0,
+      "high20": 7060.0,
+      "atr20": 388.0,
+      "gap_atr": 0.103,
+      "unit_shares": 1288,
+      "status": "진입가능"
+    },
+    "126600": {
+      "time": "09:03",
+      "name": "BGF에코머티리얼즈",
+      "sector": "화학",
+      "market": "KOSDAQ",
+      "price": 3665.0,
+      "high20": 3335.0,
+      "atr20": 114.0,
+      "gap_atr": 2.895,
+      "unit_shares": 4385,
+      "status": "추격금지"
+    },
+    "006400": {
+      "time": "09:03",
+      "name": "삼성SDI",
+      "sector": "전기전자",
+      "market": "KOSPI",
+      "price": 579000.0,
+      "high20": 575000.0,
+      "atr20": 26103.0,
+      "gap_atr": 0.153,
+      "unit_shares": 19,
+      "status": "진입가능"
+    },
+    "445090": {
+      "time": "09:03",
+      "name": "에이직랜드",
+      "sector": "전기전자",
+      "market": "KOSDAQ",
+      "price": 23500.0,
+      "high20": 23400.0,
+      "atr20": 1135.0,
+      "gap_atr": 0.088,
+      "unit_shares": 440,
+      "status": "진입가능"
+    },
+    "091580": {
+      "time": "09:03",
+      "name": "상신이디피",
+      "sector": "전기전자",
+      "market": "KOSDAQ",
+      "price": 25600.0,
+      "high20": 25500.0,
+      "atr20": 1547.0,
+      "gap_atr": 0.065,
+      "unit_shares": 323,
+      "status": "진입가능"
+    },
+    "105330": {
+      "time": "09:03",
+      "name": "케이엔더블유",
+      "sector": "운송장비·부품",
+      "market": "KOSDAQ",
+      "price": 9300.0,
+      "high20": 9290.0,
+      "atr20": 515.0,
+      "gap_atr": 0.019,
+      "unit_shares": 970,
+      "status": "진입가능"
+    }
+  }
+}
