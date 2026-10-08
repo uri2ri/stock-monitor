@@ -382,6 +382,18 @@
       "gap_atr": 0.202,
       "unit_shares": 5050,
       "status": "진입가능"
+    },
+    "417200": {
+      "time": "13:53",
+      "name": "LS머트리얼즈",
+      "sector": "전기전자",
+      "market": "KOSDAQ",
+      "price": 16220.0,
+      "high20": 16080.0,
+      "atr20": 934.0,
+      "gap_atr": 0.15,
+      "unit_shares": 535,
+      "status": "진입가능"
     }
   }
 }
