@@ -2,23 +2,6 @@
   "version": 1,
   "events": [
     {
-      "id": "6928fa523e144a0ab633b7a6fef8a96e",
-      "operation": "record_breakout",
-      "args": [
-        {
-          "ticker": "033780",
-          "name": "KT&G",
-          "high20": 179800.0,
-          "price": 179900.0,
-          "atr20": 4415.0
-        },
-        {
-          "__datetime__": "2026-10-08T09:03:41.121308+09:00"
-        }
-      ],
-      "kwargs": {}
-    },
-    {
       "id": "34563814142342619dbd9e7193c9382d",
       "operation": "record_breakout",
       "args": [
@@ -155,23 +138,6 @@
       }
     },
     {
-      "id": "647593f01a6d40ad937dec324eefe154",
-      "operation": "_set_outcome",
-      "args": [
-        "033780",
-        "미주문",
-        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        {
-          "__datetime__": "2026-10-08T09:03:52.537343+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
       "id": "1c4a5a117ffd48fb9bcbb20bf5fed2d8",
       "operation": "_set_outcome",
       "args": [
@@ -259,50 +225,6 @@
   ],
   "plans": [
     {
-      "id": "7697abe6a6364727bbda7405f57b4768",
-      "owner": "37705646883:1",
-      "events": [
-        "6928fa523e144a0ab633b7a6fef8a96e",
-        "647593f01a6d40ad937dec324eefe154"
-      ],
-      "record": {
-        "event_id": "6928fa523e144a0ab633b7a6fef8a96e",
-        "ticker": "033780",
-        "name": "KT&G",
-        "first_detected_at": {
-          "__datetime__": "2026-10-08T09:03:41.121308+09:00"
-        },
-        "first_threshold": 179800.0,
-        "first_price": 179900.0,
-        "first_atr": 4415.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        "outcome_at": {
-          "__datetime__": "2026-10-08T09:03:52.537343+09:00"
-        }
-      },
-      "page_id": null,
-      "fields": {
-        "event_id": "6928fa523e144a0ab633b7a6fef8a96e",
-        "ticker": "033780",
-        "name": "KT&G",
-        "first_detected_at": {
-          "__datetime__": "2026-10-08T09:03:41.121308+09:00"
-        },
-        "first_threshold": 179800.0,
-        "first_price": 179900.0,
-        "first_atr": 4415.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        "outcome_at": {
-          "__datetime__": "2026-10-08T09:03:52.537343+09:00"
-        }
-      },
-      "state": "creating"
-    },
-    {
       "id": "e8b9bf5f71bb43b1b4aab5f26cd9c8ef",
       "owner": "37705646883:1",
       "events": [
@@ -344,7 +266,7 @@
           "__datetime__": "2026-10-08T09:03:52.549463+09:00"
         }
       },
-      "state": "queued"
+      "state": "creating"
     },
     {
       "id": "c71a025b7e1e42989423bd2fe41bd0ac",
@@ -630,7 +552,7 @@
     }
   ],
   "prepare_cursor": "59fe0606f6d042fda8e4a0830597e27c",
-  "deliver_cursor": "7697abe6a6364727bbda7405f57b4768",
+  "deliver_cursor": "e8b9bf5f71bb43b1b4aab5f26cd9c8ef",
   "excluded_events": [
     {
       "event": {
