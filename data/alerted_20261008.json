@@ -394,6 +394,18 @@
       "gap_atr": 0.15,
       "unit_shares": 535,
       "status": "진입가능"
+    },
+    "163730": {
+      "time": "14:33",
+      "name": "핑거",
+      "sector": "IT 서비스",
+      "market": "KOSDAQ",
+      "price": 15430.0,
+      "high20": 15400.0,
+      "atr20": 1013.0,
+      "gap_atr": 0.03,
+      "unit_shares": 493,
+      "status": "진입가능"
     }
   }
 }
