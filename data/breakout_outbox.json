@@ -2,23 +2,6 @@
   "version": 1,
   "events": [
     {
-      "id": "8c7b2322a12148daafe4ea9c30a5adba",
-      "operation": "record_breakout",
-      "args": [
-        {
-          "ticker": "416180",
-          "name": "신성에스티",
-          "high20": 28600.0,
-          "price": 29050.0,
-          "atr20": 1415.0
-        },
-        {
-          "__datetime__": "2026-10-08T09:43:31.921858+09:00"
-        }
-      ],
-      "kwargs": {}
-    },
-    {
       "id": "dd8e1f17f43840138fbebc505f7518fc",
       "operation": "record_breakout",
       "args": [
@@ -189,23 +172,6 @@
       }
     },
     {
-      "id": "359d0b03c2c74c8cbab4a552d5bb2b00",
-      "operation": "_set_outcome",
-      "args": [
-        "416180",
-        "자금부족",
-        "현금 부족(필요 1,278,200원 · 가용 212,022원)",
-        {
-          "__datetime__": "2026-10-08T09:44:26.235277+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
       "id": "f889818d14f6410583de6cb65940f2e8",
       "operation": "_set_outcome",
       "args": [
@@ -224,50 +190,6 @@
     }
   ],
   "plans": [
-    {
-      "id": "0220fe333c684d799a3385e222650bc1",
-      "owner": "37709209930:1",
-      "events": [
-        "8c7b2322a12148daafe4ea9c30a5adba",
-        "359d0b03c2c74c8cbab4a552d5bb2b00"
-      ],
-      "record": {
-        "event_id": "8c7b2322a12148daafe4ea9c30a5adba",
-        "ticker": "416180",
-        "name": "신성에스티",
-        "first_detected_at": {
-          "__datetime__": "2026-10-08T09:43:31.921858+09:00"
-        },
-        "first_threshold": 28600.0,
-        "first_price": 29050.0,
-        "first_atr": 1415.0,
-        "status": "추적중",
-        "outcome": "자금부족",
-        "outcome_reason": "현금 부족(필요 1,278,200원 · 가용 212,022원)",
-        "outcome_at": {
-          "__datetime__": "2026-10-08T09:44:26.235277+09:00"
-        }
-      },
-      "page_id": null,
-      "fields": {
-        "event_id": "8c7b2322a12148daafe4ea9c30a5adba",
-        "ticker": "416180",
-        "name": "신성에스티",
-        "first_detected_at": {
-          "__datetime__": "2026-10-08T09:43:31.921858+09:00"
-        },
-        "first_threshold": 28600.0,
-        "first_price": 29050.0,
-        "first_atr": 1415.0,
-        "status": "추적중",
-        "outcome": "자금부족",
-        "outcome_reason": "현금 부족(필요 1,278,200원 · 가용 212,022원)",
-        "outcome_at": {
-          "__datetime__": "2026-10-08T09:44:26.235277+09:00"
-        }
-      },
-      "state": "creating"
-    },
     {
       "id": "b167173ad18a40298da42b79c3ceb2de",
       "owner": "37709209930:1",
@@ -310,7 +232,7 @@
           "__datetime__": "2026-10-08T09:44:26.209791+09:00"
         }
       },
-      "state": "queued"
+      "state": "creating"
     },
     {
       "id": "51f24b98b26e41b196f1dadb38927f35",
@@ -868,7 +790,7 @@
     }
   ],
   "prepare_cursor": "f889818d14f6410583de6cb65940f2e8",
-  "deliver_cursor": "0220fe333c684d799a3385e222650bc1",
+  "deliver_cursor": "b167173ad18a40298da42b79c3ceb2de",
   "excluded_events": [
     {
       "event": {
