@@ -1,8 +1,88 @@
 {
   "version": 1,
-  "events": [],
-  "plans": [],
-  "prepare_cursor": "5788aaa6fd3a416aab4311350c5dc8a5",
+  "events": [
+    {
+      "id": "715674bb1f8045c3ad554734f955feaa",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "020150",
+          "name": "롯데에너지머티리얼즈",
+          "high20": 55500.0,
+          "price": 55600.0,
+          "atr20": 3280.0
+        },
+        {
+          "__datetime__": "2026-10-08T10:13:36.130909+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "563c621de7da42a5bffd85f10c82e45a",
+      "operation": "_set_outcome",
+      "args": [
+        "020150",
+        "자금부족",
+        "현금 부족(필요 1,056,400원 · 가용 212,022원)",
+        {
+          "__datetime__": "2026-10-08T10:14:40.440977+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    }
+  ],
+  "plans": [
+    {
+      "id": "77188b1706184405bde952da9828c35a",
+      "owner": "37711799228:1",
+      "events": [
+        "715674bb1f8045c3ad554734f955feaa",
+        "563c621de7da42a5bffd85f10c82e45a"
+      ],
+      "record": {
+        "event_id": "715674bb1f8045c3ad554734f955feaa",
+        "ticker": "020150",
+        "name": "롯데에너지머티리얼즈",
+        "first_detected_at": {
+          "__datetime__": "2026-10-08T10:13:36.130909+09:00"
+        },
+        "first_threshold": 55500.0,
+        "first_price": 55600.0,
+        "first_atr": 3280.0,
+        "status": "추적중",
+        "outcome": "자금부족",
+        "outcome_reason": "현금 부족(필요 1,056,400원 · 가용 212,022원)",
+        "outcome_at": {
+          "__datetime__": "2026-10-08T10:14:40.440977+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "715674bb1f8045c3ad554734f955feaa",
+        "ticker": "020150",
+        "name": "롯데에너지머티리얼즈",
+        "first_detected_at": {
+          "__datetime__": "2026-10-08T10:13:36.130909+09:00"
+        },
+        "first_threshold": 55500.0,
+        "first_price": 55600.0,
+        "first_atr": 3280.0,
+        "status": "추적중",
+        "outcome": "자금부족",
+        "outcome_reason": "현금 부족(필요 1,056,400원 · 가용 212,022원)",
+        "outcome_at": {
+          "__datetime__": "2026-10-08T10:14:40.440977+09:00"
+        }
+      },
+      "state": "queued"
+    }
+  ],
+  "prepare_cursor": "d83ef686b90b4607b576455684210d02",
   "deliver_cursor": "8c2801180e1d44fbab89578fff50b437",
   "excluded_events": [
     {
