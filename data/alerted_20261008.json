@@ -346,6 +346,30 @@
       "gap_atr": 0.03,
       "unit_shares": 152,
       "status": "진입가능"
+    },
+    "054210": {
+      "time": "10:23",
+      "name": "이랜텍",
+      "sector": "전기전자",
+      "market": "KOSDAQ",
+      "price": 7310.0,
+      "high20": 7280.0,
+      "atr20": 325.0,
+      "gap_atr": 0.092,
+      "unit_shares": 1538,
+      "status": "진입가능"
+    },
+    "215200": {
+      "time": "10:23",
+      "name": "메가스터디교육",
+      "sector": "일반서비스",
+      "market": "KOSDAQ",
+      "price": 38600.0,
+      "high20": 38550.0,
+      "atr20": 1119.0,
+      "gap_atr": 0.045,
+      "unit_shares": 446,
+      "status": "진입가능"
     }
   }
 }
