@@ -120,6 +120,18 @@
       "gap_atr": 0.019,
       "unit_shares": 970,
       "status": "진입가능"
+    },
+    "083500": {
+      "time": "09:13",
+      "name": "에프엔에스테크",
+      "sector": "기계·장비",
+      "market": "KOSDAQ",
+      "price": 15630.0,
+      "high20": 14980.0,
+      "atr20": 734.0,
+      "gap_atr": 0.886,
+      "unit_shares": 681,
+      "status": "추격금지"
     }
   }
 }
