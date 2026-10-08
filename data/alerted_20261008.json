@@ -156,6 +156,30 @@
       "gap_atr": 0.088,
       "unit_shares": 87,
       "status": "진입가능"
+    },
+    "083450": {
+      "time": "09:33",
+      "name": "GST",
+      "sector": "기계·장비",
+      "market": "KOSDAQ",
+      "price": 57800.0,
+      "high20": 56900.0,
+      "atr20": 2910.0,
+      "gap_atr": 0.309,
+      "unit_shares": 171,
+      "status": "진입가능"
+    },
+    "098460": {
+      "time": "09:33",
+      "name": "고영",
+      "sector": "기계·장비",
+      "market": "KOSDAQ",
+      "price": 37650.0,
+      "high20": 37000.0,
+      "atr20": 1851.0,
+      "gap_atr": 0.351,
+      "unit_shares": 270,
+      "status": "진입가능"
     }
   }
 }
