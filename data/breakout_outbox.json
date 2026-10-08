@@ -1,8 +1,168 @@
 {
   "version": 1,
-  "events": [],
-  "plans": [],
-  "prepare_cursor": "d83ef686b90b4607b576455684210d02",
+  "events": [
+    {
+      "id": "78181e98f6bd479e8021f473207ac1ba",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "054210",
+          "name": "이랜텍",
+          "high20": 7280.0,
+          "price": 7310.0,
+          "atr20": 325.0
+        },
+        {
+          "__datetime__": "2026-10-08T10:23:42.173864+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "6ea8d433e44a4b25ae6b48f895f2f1bb",
+      "operation": "_set_outcome",
+      "args": [
+        "215200",
+        "자금부족",
+        "현금 부족(필요 2,200,200원 · 가용 212,022원)",
+        {
+          "__datetime__": "2026-10-08T10:24:52.233721+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "0c0d6605369f4be1b5a27663c15db26d",
+      "operation": "_set_outcome",
+      "args": [
+        "054210",
+        "자금부족",
+        "현금 부족(필요 1,440,070원 · 가용 212,022원)",
+        {
+          "__datetime__": "2026-10-08T10:24:52.334784+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    }
+  ],
+  "plans": [
+    {
+      "id": "57e7add476cb4b9b99e0c1ce32b80b99",
+      "owner": "37712647950:1",
+      "events": [
+        "78181e98f6bd479e8021f473207ac1ba",
+        "0c0d6605369f4be1b5a27663c15db26d"
+      ],
+      "record": {
+        "event_id": "78181e98f6bd479e8021f473207ac1ba",
+        "ticker": "054210",
+        "name": "이랜텍",
+        "first_detected_at": {
+          "__datetime__": "2026-10-08T10:23:42.173864+09:00"
+        },
+        "first_threshold": 7280.0,
+        "first_price": 7310.0,
+        "first_atr": 325.0,
+        "status": "추적중",
+        "outcome": "자금부족",
+        "outcome_reason": "현금 부족(필요 1,440,070원 · 가용 212,022원)",
+        "outcome_at": {
+          "__datetime__": "2026-10-08T10:24:52.334784+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "78181e98f6bd479e8021f473207ac1ba",
+        "ticker": "054210",
+        "name": "이랜텍",
+        "first_detected_at": {
+          "__datetime__": "2026-10-08T10:23:42.173864+09:00"
+        },
+        "first_threshold": 7280.0,
+        "first_price": 7310.0,
+        "first_atr": 325.0,
+        "status": "추적중",
+        "outcome": "자금부족",
+        "outcome_reason": "현금 부족(필요 1,440,070원 · 가용 212,022원)",
+        "outcome_at": {
+          "__datetime__": "2026-10-08T10:24:52.334784+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "4b20d930a0924096b28b91f1f9b4af2b",
+      "owner": "37712647950:1",
+      "events": [
+        "6ea8d433e44a4b25ae6b48f895f2f1bb"
+      ],
+      "record": {
+        "account_type": "",
+        "account_key": "",
+        "order_side": "",
+        "order_qty": null,
+        "filled_qty": null,
+        "unverified_qty": null,
+        "execution_price": null,
+        "execution_state": "",
+        "execution_checked_at": null,
+        "event_id": "555a40aa878f4560b0de5542f593d54d",
+        "order_no": "",
+        "order_day": null,
+        "key": "3e40fc3e-53fc-8129-a427-e27c29560abb",
+        "page_id": "3e40fc3e-53fc-8129-a427-e27c29560abb",
+        "name": "메가스터디교육",
+        "ticker": "215200",
+        "first_detected_at": {
+          "__datetime__": "2026-09-23T10:43:00+09:00"
+        },
+        "first_threshold": 36750.0,
+        "first_price": 36800.0,
+        "first_atr": 1109.0,
+        "status": "추적중",
+        "closed_reason": "",
+        "closed_at": null,
+        "outcome": "자금부족",
+        "outcome_reason": "현금 부족(필요 2,200,200원 · 가용 212,022원)",
+        "outcome_at": {
+          "__datetime__": "2026-10-08T10:24:52.233721+09:00"
+        },
+        "latest_close": 38000.0,
+        "latest_date": {
+          "__date__": "2026-10-07"
+        },
+        "latest_atr": 1119.0,
+        "latest_line": 38550.0,
+        "change_pct": 3.4,
+        "atr_mult": 1.13,
+        "dist_to_line": 550.0,
+        "dist_to_line_atr": 0.49,
+        "level_state": "최초선위",
+        "new_breakout": "미해당",
+        "refresh_state": "갱신됨",
+        "refresh_note": "",
+        "user_memo": ""
+      },
+      "page_id": "3e40fc3e-53fc-8129-a427-e27c29560abb",
+      "fields": {
+        "outcome": "자금부족",
+        "outcome_reason": "현금 부족(필요 2,200,200원 · 가용 212,022원)",
+        "outcome_at": {
+          "__datetime__": "2026-10-08T10:24:52.233721+09:00"
+        }
+      },
+      "state": "queued"
+    }
+  ],
+  "prepare_cursor": "47161cba629f4699b29de928c6c96a1d",
   "deliver_cursor": "77188b1706184405bde952da9828c35a",
   "excluded_events": [
     {
