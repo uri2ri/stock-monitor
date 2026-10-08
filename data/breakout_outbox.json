@@ -2,23 +2,6 @@
   "version": 1,
   "events": [
     {
-      "id": "908027e7953e4a02a77a604a0057a83b",
-      "operation": "record_breakout",
-      "args": [
-        {
-          "ticker": "006400",
-          "name": "삼성SDI",
-          "high20": 575000.0,
-          "price": 579000.0,
-          "atr20": 26103.0
-        },
-        {
-          "__datetime__": "2026-10-08T09:03:41.121308+09:00"
-        }
-      ],
-      "kwargs": {}
-    },
-    {
       "id": "e6662dae6796443dbcd0b4b465210055",
       "operation": "record_breakout",
       "args": [
@@ -87,23 +70,6 @@
       }
     },
     {
-      "id": "cd229d1492e547fcb4e963c02dc55b8d",
-      "operation": "_set_outcome",
-      "args": [
-        "006400",
-        "미주문",
-        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        {
-          "__datetime__": "2026-10-08T09:03:52.581772+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
       "id": "78e3971c540d4c09b66f99ee5e8c6eb2",
       "operation": "_set_outcome",
       "args": [
@@ -157,50 +123,6 @@
   ],
   "plans": [
     {
-      "id": "2b341f7ba1a9499ca5088aa1912ddb37",
-      "owner": "37705646883:1",
-      "events": [
-        "908027e7953e4a02a77a604a0057a83b",
-        "cd229d1492e547fcb4e963c02dc55b8d"
-      ],
-      "record": {
-        "event_id": "908027e7953e4a02a77a604a0057a83b",
-        "ticker": "006400",
-        "name": "삼성SDI",
-        "first_detected_at": {
-          "__datetime__": "2026-10-08T09:03:41.121308+09:00"
-        },
-        "first_threshold": 575000.0,
-        "first_price": 579000.0,
-        "first_atr": 26103.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        "outcome_at": {
-          "__datetime__": "2026-10-08T09:03:52.581772+09:00"
-        }
-      },
-      "page_id": null,
-      "fields": {
-        "event_id": "908027e7953e4a02a77a604a0057a83b",
-        "ticker": "006400",
-        "name": "삼성SDI",
-        "first_detected_at": {
-          "__datetime__": "2026-10-08T09:03:41.121308+09:00"
-        },
-        "first_threshold": 575000.0,
-        "first_price": 579000.0,
-        "first_atr": 26103.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        "outcome_at": {
-          "__datetime__": "2026-10-08T09:03:52.581772+09:00"
-        }
-      },
-      "state": "creating"
-    },
-    {
       "id": "3925ba4af1084bfebd9c9de8202d7a85",
       "owner": "37705646883:1",
       "events": [
@@ -242,7 +164,7 @@
           "__datetime__": "2026-10-08T09:03:52.592699+09:00"
         }
       },
-      "state": "queued"
+      "state": "creating"
     },
     {
       "id": "3a827befb69a4c83bfe6f1c2f639682b",
@@ -396,7 +318,7 @@
     }
   ],
   "prepare_cursor": "59fe0606f6d042fda8e4a0830597e27c",
-  "deliver_cursor": "2b341f7ba1a9499ca5088aa1912ddb37",
+  "deliver_cursor": "3925ba4af1084bfebd9c9de8202d7a85",
   "excluded_events": [
     {
       "event": {
