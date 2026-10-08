@@ -180,6 +180,54 @@
       "gap_atr": 0.351,
       "unit_shares": 270,
       "status": "진입가능"
+    },
+    "416180": {
+      "time": "09:43",
+      "name": "신성에스티",
+      "sector": "운송장비·부품",
+      "market": "KOSDAQ",
+      "price": 29050.0,
+      "high20": 28600.0,
+      "atr20": 1415.0,
+      "gap_atr": 0.318,
+      "unit_shares": 353,
+      "status": "진입가능"
+    },
+    "142210": {
+      "time": "09:43",
+      "name": "유니트론텍",
+      "sector": "유통",
+      "market": "KOSDAQ",
+      "price": 7190.0,
+      "high20": 7110.0,
+      "atr20": 278.0,
+      "gap_atr": 0.288,
+      "unit_shares": 1798,
+      "status": "진입가능"
+    },
+    "243840": {
+      "time": "09:43",
+      "name": "신흥에스이씨",
+      "sector": "전기전자",
+      "market": "KOSDAQ",
+      "price": 6350.0,
+      "high20": 6260.0,
+      "atr20": 314.0,
+      "gap_atr": 0.287,
+      "unit_shares": 1592,
+      "status": "진입가능"
+    },
+    "417500": {
+      "time": "09:43",
+      "name": "제이아이테크",
+      "sector": "화학",
+      "market": "KOSDAQ",
+      "price": 4885.0,
+      "high20": 4870.0,
+      "atr20": 236.0,
+      "gap_atr": 0.064,
+      "unit_shares": 2118,
+      "status": "진입가능"
     }
   }
 }
