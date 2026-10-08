@@ -370,6 +370,18 @@
       "gap_atr": 0.045,
       "unit_shares": 446,
       "status": "진입가능"
+    },
+    "000400": {
+      "time": "10:43",
+      "name": "롯데손해보험",
+      "sector": "보험",
+      "market": "KOSPI",
+      "price": 2315.0,
+      "high20": 2295.0,
+      "atr20": 99.0,
+      "gap_atr": 0.202,
+      "unit_shares": 5050,
+      "status": "진입가능"
     }
   }
 }
