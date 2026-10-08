@@ -1,8 +1,476 @@
 {
   "version": 1,
-  "events": [],
-  "plans": [],
-  "prepare_cursor": "ec701c98ef884be08a05ba7a56753540",
+  "events": [
+    {
+      "id": "4bc67a6a3833411d8c760f581ff9c35b",
+      "operation": "_set_outcome",
+      "args": [
+        "178920",
+        "자금부족",
+        "현금 부족(필요 1,590,050원 · 가용 212,022원)",
+        {
+          "__datetime__": "2026-10-08T12:14:38.084290+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "5a9765fed2ac4c179c7d84ac170a0c00",
+      "operation": "_set_outcome",
+      "args": [
+        "417500",
+        "자금부족",
+        "현금 부족(필요 1,309,180원 · 가용 212,022원)",
+        {
+          "__datetime__": "2026-10-08T12:14:38.090884+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "d4231fabeddb430588a2ff811d2b0bde",
+      "operation": "_set_outcome",
+      "args": [
+        "255440",
+        "자금부족",
+        "현금 부족(필요 1,208,250원 · 가용 212,022원)",
+        {
+          "__datetime__": "2026-10-08T12:14:38.097952+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "c3c8eccd7d504bc9b3f596d51bd99b83",
+      "operation": "_set_outcome",
+      "args": [
+        "091580",
+        "자금부족",
+        "현금 부족(필요 1,024,000원 · 가용 212,022원)",
+        {
+          "__datetime__": "2026-10-08T12:14:38.106394+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "71e23b3118fb43998f09faf24fdcb9a8",
+      "operation": "_set_outcome",
+      "args": [
+        "000400",
+        "자금부족",
+        "현금 부족(필요 1,481,600원 · 가용 212,022원)",
+        {
+          "__datetime__": "2026-10-08T12:14:38.167975+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "de11333c2b5c427e8ecb7b97e35cc840",
+      "operation": "_set_outcome",
+      "args": [
+        "243840",
+        "자금부족",
+        "현금 부족(필요 1,276,350원 · 가용 212,022원)",
+        {
+          "__datetime__": "2026-10-08T12:14:38.174919+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    }
+  ],
+  "plans": [
+    {
+      "id": "27b3040ca2c04a84a5c48fc28f2a7e22",
+      "owner": "37721663375:1",
+      "events": [
+        "4bc67a6a3833411d8c760f581ff9c35b"
+      ],
+      "record": {
+        "account_type": "",
+        "account_key": "",
+        "order_side": "",
+        "order_qty": null,
+        "filled_qty": null,
+        "unverified_qty": null,
+        "execution_price": null,
+        "execution_state": "",
+        "execution_checked_at": null,
+        "event_id": "29e22b68398f4175ab4cc94e8215db4e",
+        "order_no": "",
+        "order_day": null,
+        "key": "3f30fc3e-53fc-817d-af12-cbedcf00deba",
+        "page_id": "3f30fc3e-53fc-817d-af12-cbedcf00deba",
+        "name": "PI첨단소재",
+        "ticker": "178920",
+        "first_detected_at": {
+          "__datetime__": "2026-10-08T09:53:00+09:00"
+        },
+        "first_threshold": 20600.0,
+        "first_price": 20650.0,
+        "first_atr": 813.0,
+        "status": "추적중",
+        "closed_reason": "",
+        "closed_at": null,
+        "outcome": "자금부족",
+        "outcome_reason": "현금 부족(필요 1,590,050원 · 가용 212,022원)",
+        "outcome_at": {
+          "__datetime__": "2026-10-08T12:14:38.084290+09:00"
+        },
+        "latest_close": null,
+        "latest_date": null,
+        "latest_atr": null,
+        "latest_line": null,
+        "change_pct": null,
+        "atr_mult": null,
+        "dist_to_line": null,
+        "dist_to_line_atr": null,
+        "level_state": "",
+        "new_breakout": "",
+        "refresh_state": "",
+        "refresh_note": "",
+        "user_memo": ""
+      },
+      "page_id": "3f30fc3e-53fc-817d-af12-cbedcf00deba",
+      "fields": {
+        "outcome_reason": "현금 부족(필요 1,590,050원 · 가용 212,022원)",
+        "outcome_at": {
+          "__datetime__": "2026-10-08T12:14:38.084290+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "b999ac15e5c5497287e20017853c9a2f",
+      "owner": "37721663375:1",
+      "events": [
+        "5a9765fed2ac4c179c7d84ac170a0c00"
+      ],
+      "record": {
+        "account_type": "",
+        "account_key": "",
+        "order_side": "",
+        "order_qty": null,
+        "filled_qty": null,
+        "unverified_qty": null,
+        "execution_price": null,
+        "execution_state": "",
+        "execution_checked_at": null,
+        "event_id": "298dbe019cac4d56b9303a3b93635dfa",
+        "order_no": "",
+        "order_day": null,
+        "key": "3ec0fc3e-53fc-812f-8606-c8960eefbcf6",
+        "page_id": "3ec0fc3e-53fc-812f-8606-c8960eefbcf6",
+        "name": "제이아이테크",
+        "ticker": "417500",
+        "first_detected_at": {
+          "__datetime__": "2026-10-01T09:53:00+09:00"
+        },
+        "first_threshold": 4195.0,
+        "first_price": 4240.0,
+        "first_atr": 211.0,
+        "status": "추적중",
+        "closed_reason": "",
+        "closed_at": null,
+        "outcome": "자금부족",
+        "outcome_reason": "현금 부족(필요 1,309,180원 · 가용 212,022원)",
+        "outcome_at": {
+          "__datetime__": "2026-10-08T12:14:38.090884+09:00"
+        },
+        "latest_close": 4715.0,
+        "latest_date": {
+          "__date__": "2026-10-07"
+        },
+        "latest_atr": 236.0,
+        "latest_line": 4870.0,
+        "change_pct": 12.4,
+        "atr_mult": 2.46,
+        "dist_to_line": 155.0,
+        "dist_to_line_atr": 0.66,
+        "level_state": "최초선위",
+        "new_breakout": "미해당",
+        "refresh_state": "갱신됨",
+        "refresh_note": "",
+        "user_memo": ""
+      },
+      "page_id": "3ec0fc3e-53fc-812f-8606-c8960eefbcf6",
+      "fields": {
+        "outcome_reason": "현금 부족(필요 1,309,180원 · 가용 212,022원)",
+        "outcome_at": {
+          "__datetime__": "2026-10-08T12:14:38.090884+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "c46ddd092931490a9c2ce3329061c945",
+      "owner": "37721663375:1",
+      "events": [
+        "d4231fabeddb430588a2ff811d2b0bde"
+      ],
+      "record": {
+        "account_type": "",
+        "account_key": "",
+        "order_side": "",
+        "order_qty": null,
+        "filled_qty": null,
+        "unverified_qty": null,
+        "execution_price": null,
+        "execution_state": "",
+        "execution_checked_at": null,
+        "event_id": "23996b8ffef64f1a83374b870b3b45db",
+        "order_no": "",
+        "order_day": null,
+        "key": "3eb0fc3e-53fc-8130-8382-d1f1d9736f18",
+        "page_id": "3eb0fc3e-53fc-8130-8382-d1f1d9736f18",
+        "name": "야스",
+        "ticker": "255440",
+        "first_detected_at": {
+          "__datetime__": "2026-09-30T10:53:00+09:00"
+        },
+        "first_threshold": 8200.0,
+        "first_price": 8220.0,
+        "first_atr": 462.0,
+        "status": "추적중",
+        "closed_reason": "",
+        "closed_at": null,
+        "outcome": "자금부족",
+        "outcome_reason": "현금 부족(필요 1,208,250원 · 가용 212,022원)",
+        "outcome_at": {
+          "__datetime__": "2026-10-08T12:14:38.097952+09:00"
+        },
+        "latest_close": 8630.0,
+        "latest_date": {
+          "__date__": "2026-10-07"
+        },
+        "latest_atr": 467.0,
+        "latest_line": 8920.0,
+        "change_pct": 5.24,
+        "atr_mult": 0.93,
+        "dist_to_line": 290.0,
+        "dist_to_line_atr": 0.62,
+        "level_state": "최초선위",
+        "new_breakout": "미해당",
+        "refresh_state": "갱신됨",
+        "refresh_note": "",
+        "user_memo": ""
+      },
+      "page_id": "3eb0fc3e-53fc-8130-8382-d1f1d9736f18",
+      "fields": {
+        "outcome_reason": "현금 부족(필요 1,208,250원 · 가용 212,022원)",
+        "outcome_at": {
+          "__datetime__": "2026-10-08T12:14:38.097952+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "86908ba9921846c99280e22dd4f57f02",
+      "owner": "37721663375:1",
+      "events": [
+        "c3c8eccd7d504bc9b3f596d51bd99b83"
+      ],
+      "record": {
+        "account_type": "",
+        "account_key": "",
+        "order_side": "",
+        "order_qty": null,
+        "filled_qty": null,
+        "unverified_qty": null,
+        "execution_price": null,
+        "execution_state": "",
+        "execution_checked_at": null,
+        "event_id": "1a7daa7821ed4a45a5b627d9063bb54f",
+        "order_no": "",
+        "order_day": null,
+        "key": "3f30fc3e-53fc-81e8-9e60-d28f8615994c",
+        "page_id": "3f30fc3e-53fc-81e8-9e60-d28f8615994c",
+        "name": "상신이디피",
+        "ticker": "091580",
+        "first_detected_at": {
+          "__datetime__": "2026-10-08T09:03:00+09:00"
+        },
+        "first_threshold": 25500.0,
+        "first_price": 25600.0,
+        "first_atr": 1547.0,
+        "status": "추적중",
+        "closed_reason": "",
+        "closed_at": null,
+        "outcome": "자금부족",
+        "outcome_reason": "현금 부족(필요 1,024,000원 · 가용 212,022원)",
+        "outcome_at": {
+          "__datetime__": "2026-10-08T12:14:38.106394+09:00"
+        },
+        "latest_close": null,
+        "latest_date": null,
+        "latest_atr": null,
+        "latest_line": null,
+        "change_pct": null,
+        "atr_mult": null,
+        "dist_to_line": null,
+        "dist_to_line_atr": null,
+        "level_state": "",
+        "new_breakout": "",
+        "refresh_state": "",
+        "refresh_note": "",
+        "user_memo": ""
+      },
+      "page_id": "3f30fc3e-53fc-81e8-9e60-d28f8615994c",
+      "fields": {
+        "outcome_reason": "현금 부족(필요 1,024,000원 · 가용 212,022원)",
+        "outcome_at": {
+          "__datetime__": "2026-10-08T12:14:38.106394+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "9241a4bda3ec4b1db8dc4fe80a22e894",
+      "owner": "37721663375:1",
+      "events": [
+        "71e23b3118fb43998f09faf24fdcb9a8"
+      ],
+      "record": {
+        "account_type": "",
+        "account_key": "",
+        "order_side": "",
+        "order_qty": null,
+        "filled_qty": null,
+        "unverified_qty": null,
+        "execution_price": null,
+        "execution_state": "",
+        "execution_checked_at": null,
+        "event_id": "0dd5577debd04782854eaedeb8e25bf4",
+        "order_no": "",
+        "order_day": null,
+        "key": "3f30fc3e-53fc-8160-a104-d31f7b97ed7e",
+        "page_id": "3f30fc3e-53fc-8160-a104-d31f7b97ed7e",
+        "name": "롯데손해보험",
+        "ticker": "000400",
+        "first_detected_at": {
+          "__datetime__": "2026-10-08T10:43:00+09:00"
+        },
+        "first_threshold": 2295.0,
+        "first_price": 2315.0,
+        "first_atr": 99.0,
+        "status": "추적중",
+        "closed_reason": "",
+        "closed_at": null,
+        "outcome": "자금부족",
+        "outcome_reason": "현금 부족(필요 1,481,600원 · 가용 212,022원)",
+        "outcome_at": {
+          "__datetime__": "2026-10-08T12:14:38.167975+09:00"
+        },
+        "latest_close": null,
+        "latest_date": null,
+        "latest_atr": null,
+        "latest_line": null,
+        "change_pct": null,
+        "atr_mult": null,
+        "dist_to_line": null,
+        "dist_to_line_atr": null,
+        "level_state": "",
+        "new_breakout": "",
+        "refresh_state": "",
+        "refresh_note": "",
+        "user_memo": ""
+      },
+      "page_id": "3f30fc3e-53fc-8160-a104-d31f7b97ed7e",
+      "fields": {
+        "outcome_reason": "현금 부족(필요 1,481,600원 · 가용 212,022원)",
+        "outcome_at": {
+          "__datetime__": "2026-10-08T12:14:38.167975+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "ab13f35f9dfa4f819545daefff3d4f55",
+      "owner": "37721663375:1",
+      "events": [
+        "de11333c2b5c427e8ecb7b97e35cc840"
+      ],
+      "record": {
+        "account_type": "",
+        "account_key": "",
+        "order_side": "",
+        "order_qty": null,
+        "filled_qty": null,
+        "unverified_qty": null,
+        "execution_price": null,
+        "execution_state": "",
+        "execution_checked_at": null,
+        "event_id": "dd8e1f17f43840138fbebc505f7518fc",
+        "order_no": "",
+        "order_day": null,
+        "key": "3f30fc3e-53fc-81b6-b4f9-ed73f7d5f083",
+        "page_id": "3f30fc3e-53fc-81b6-b4f9-ed73f7d5f083",
+        "name": "신흥에스이씨",
+        "ticker": "243840",
+        "first_detected_at": {
+          "__datetime__": "2026-10-08T09:43:00+09:00"
+        },
+        "first_threshold": 6260.0,
+        "first_price": 6350.0,
+        "first_atr": 314.0,
+        "status": "추적중",
+        "closed_reason": "",
+        "closed_at": null,
+        "outcome": "자금부족",
+        "outcome_reason": "현금 부족(필요 1,276,350원 · 가용 212,022원)",
+        "outcome_at": {
+          "__datetime__": "2026-10-08T12:14:38.174919+09:00"
+        },
+        "latest_close": null,
+        "latest_date": null,
+        "latest_atr": null,
+        "latest_line": null,
+        "change_pct": null,
+        "atr_mult": null,
+        "dist_to_line": null,
+        "dist_to_line_atr": null,
+        "level_state": "",
+        "new_breakout": "",
+        "refresh_state": "",
+        "refresh_note": "",
+        "user_memo": ""
+      },
+      "page_id": "3f30fc3e-53fc-81b6-b4f9-ed73f7d5f083",
+      "fields": {
+        "outcome_reason": "현금 부족(필요 1,276,350원 · 가용 212,022원)",
+        "outcome_at": {
+          "__datetime__": "2026-10-08T12:14:38.174919+09:00"
+        }
+      },
+      "state": "queued"
+    }
+  ],
+  "prepare_cursor": "16f4a9fc46324e0d82e03d5fb459e10a",
   "deliver_cursor": "9bc4e0aff7464b33ab41b84672193d25",
   "excluded_events": [
     {
