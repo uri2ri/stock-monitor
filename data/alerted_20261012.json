@@ -132,6 +132,18 @@
       "gap_atr": 0.424,
       "unit_shares": 7575,
       "status": "진입가능"
+    },
+    "011500": {
+      "time": "09:23",
+      "name": "한농화성",
+      "sector": "화학",
+      "market": "KOSPI",
+      "price": 15350.0,
+      "high20": 15230.0,
+      "atr20": 651.0,
+      "gap_atr": 0.184,
+      "unit_shares": 768,
+      "status": "진입가능"
     }
   }
 }
