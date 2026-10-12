@@ -72,6 +72,66 @@
       "gap_atr": 4.124,
       "unit_shares": 1108,
       "status": "추격금지"
+    },
+    "383220": {
+      "time": "09:13",
+      "name": "F&F",
+      "sector": "섬유·의류",
+      "market": "KOSPI",
+      "price": 74900.0,
+      "high20": 74600.0,
+      "atr20": 2669.0,
+      "gap_atr": 0.112,
+      "unit_shares": 187,
+      "status": "진입가능"
+    },
+    "071280": {
+      "time": "09:13",
+      "name": "로체시스템즈",
+      "sector": "기계·장비",
+      "market": "KOSDAQ",
+      "price": 9420.0,
+      "high20": 9330.0,
+      "atr20": 452.0,
+      "gap_atr": 0.199,
+      "unit_shares": 1106,
+      "status": "진입가능"
+    },
+    "323280": {
+      "time": "09:13",
+      "name": "태성",
+      "sector": "기계·장비",
+      "market": "KOSDAQ",
+      "price": 64100.0,
+      "high20": 63800.0,
+      "atr20": 3745.0,
+      "gap_atr": 0.08,
+      "unit_shares": 133,
+      "status": "진입가능"
+    },
+    "001250": {
+      "time": "09:13",
+      "name": "GS글로벌",
+      "sector": "유통",
+      "market": "KOSPI",
+      "price": 3275.0,
+      "high20": 3270.0,
+      "atr20": 146.0,
+      "gap_atr": 0.034,
+      "unit_shares": 3424,
+      "status": "진입가능"
+    },
+    "052900": {
+      "time": "09:13",
+      "name": "KX하이텍",
+      "sector": "화학",
+      "market": "KOSDAQ",
+      "price": 1323.0,
+      "high20": 1295.0,
+      "atr20": 66.0,
+      "gap_atr": 0.424,
+      "unit_shares": 7575,
+      "status": "진입가능"
     }
   }
 }
