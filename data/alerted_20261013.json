@@ -24,6 +24,42 @@
       "gap_atr": 0.298,
       "unit_shares": 124,
       "status": "진입가능"
+    },
+    "018670": {
+      "time": "09:23",
+      "name": "SK가스",
+      "sector": "유통",
+      "market": "KOSPI",
+      "price": 277500.0,
+      "high20": 275000.0,
+      "atr20": 10383.0,
+      "gap_atr": 0.241,
+      "unit_shares": 48,
+      "status": "진입가능"
+    },
+    "041960": {
+      "time": "09:23",
+      "name": "코미팜",
+      "sector": "제약",
+      "market": "KOSDAQ",
+      "price": 11580.0,
+      "high20": 11500.0,
+      "atr20": 523.0,
+      "gap_atr": 0.153,
+      "unit_shares": 956,
+      "status": "진입가능"
+    },
+    "255440": {
+      "time": "09:23",
+      "name": "야스",
+      "sector": "기계·장비",
+      "market": "KOSDAQ",
+      "price": 9240.0,
+      "high20": 9100.0,
+      "atr20": 471.0,
+      "gap_atr": 0.297,
+      "unit_shares": 1061,
+      "status": "진입가능"
     }
   }
 }
