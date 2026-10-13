@@ -106,6 +106,18 @@
       "gap_atr": 0.214,
       "unit_shares": 1340,
       "status": "진입가능"
+    },
+    "009450": {
+      "time": "14:33",
+      "name": "경동나비엔",
+      "sector": "전기전자",
+      "market": "KOSPI",
+      "price": 62700.0,
+      "high20": 62600.0,
+      "atr20": 1855.0,
+      "gap_atr": 0.054,
+      "unit_shares": 269,
+      "status": "진입가능"
     }
   }
 }
