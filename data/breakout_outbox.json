@@ -1,91 +1,9 @@
 {
   "version": 1,
-  "events": [
-    {
-      "id": "0a5e6d00bfc443dfb4abd3c3d7b32736",
-      "operation": "_set_outcome",
-      "args": [
-        "009970",
-        "자금부족",
-        "현금 부족(필요 1,408,000원 · 가용 705,209원)",
-        {
-          "__datetime__": "2026-10-13T13:24:20.204207+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    }
-  ],
-  "plans": [
-    {
-      "id": "a9b755012b7548409ac70ca1063bbcbd",
-      "owner": "38346172980:1",
-      "events": [
-        "0a5e6d00bfc443dfb4abd3c3d7b32736"
-      ],
-      "record": {
-        "account_type": "",
-        "account_key": "",
-        "order_side": "",
-        "order_qty": null,
-        "filled_qty": null,
-        "unverified_qty": null,
-        "execution_price": null,
-        "execution_state": "",
-        "execution_checked_at": null,
-        "event_id": "0922038a32be4f3aad45c7fa046c3e2e",
-        "order_no": "",
-        "order_day": null,
-        "key": "3f70fc3e-53fc-81a3-88c6-f6fcce079938",
-        "page_id": "3f70fc3e-53fc-81a3-88c6-f6fcce079938",
-        "name": "영원무역홀딩스",
-        "ticker": "009970",
-        "first_detected_at": {
-          "__datetime__": "2026-10-12T14:23:00+09:00"
-        },
-        "first_threshold": 174400.0,
-        "first_price": 174500.0,
-        "first_atr": 7367.0,
-        "status": "추적중",
-        "closed_reason": "",
-        "closed_at": null,
-        "outcome": "자금부족",
-        "outcome_reason": "현금 부족(필요 1,408,000원 · 가용 705,209원)",
-        "outcome_at": {
-          "__datetime__": "2026-10-13T13:24:20.204207+09:00"
-        },
-        "latest_close": 174100.0,
-        "latest_date": {
-          "__date__": "2026-10-12"
-        },
-        "latest_atr": 7304.0,
-        "latest_line": 175500.0,
-        "change_pct": -0.17,
-        "atr_mult": -0.04,
-        "dist_to_line": 1400.0,
-        "dist_to_line_atr": 0.19,
-        "level_state": "최초선아래",
-        "new_breakout": "미해당",
-        "refresh_state": "갱신됨",
-        "refresh_note": "",
-        "user_memo": ""
-      },
-      "page_id": "3f70fc3e-53fc-81a3-88c6-f6fcce079938",
-      "fields": {
-        "outcome": "자금부족",
-        "outcome_reason": "현금 부족(필요 1,408,000원 · 가용 705,209원)",
-        "outcome_at": {
-          "__datetime__": "2026-10-13T13:24:20.204207+09:00"
-        }
-      },
-      "state": "queued"
-    }
-  ],
+  "events": [],
+  "plans": [],
   "prepare_cursor": "30352817714a45a4831cd0d80ba7c617",
-  "deliver_cursor": "b4d5e79c23ff4374a77c87ca1b11bc9c",
+  "deliver_cursor": "a9b755012b7548409ac70ca1063bbcbd",
   "excluded_events": [
     {
       "event": {

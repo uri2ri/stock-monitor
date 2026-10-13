@@ -70,6 +70,18 @@
       "status": "진입가능",
       "price_10am": 8920.0,
       "time_10am": "10:03"
+    },
+    "009970": {
+      "time": "13:23",
+      "name": "영원무역홀딩스",
+      "sector": "금융",
+      "market": "KOSPI",
+      "price": 176000.0,
+      "high20": 175500.0,
+      "atr20": 7304.0,
+      "gap_atr": 0.068,
+      "unit_shares": 68,
+      "status": "진입가능"
     }
   }
 }
