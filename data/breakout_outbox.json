@@ -1,8 +1,287 @@
 {
   "version": 1,
-  "events": [],
-  "plans": [],
-  "prepare_cursor": "565743a0bbb1496e9c5b9d881ecff691",
+  "events": [
+    {
+      "id": "a44687ed12c041a1bc1194b42765ba25",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "041960",
+          "name": "코미팜",
+          "high20": 11500.0,
+          "price": 11580.0,
+          "atr20": 523.0
+        },
+        {
+          "__datetime__": "2026-10-13T09:23:38.232543+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "116a2c3b39474beeb734a53e608fe055",
+      "operation": "_set_outcome",
+      "args": [
+        "018670",
+        "미주문",
+        "가격 상한 초과(상한 150,000원)",
+        {
+          "__datetime__": "2026-10-13T09:24:05.005200+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "93b2ce508f1f42e0a71ad843112856df",
+      "operation": "_set_outcome",
+      "args": [
+        "041960",
+        "주문접수",
+        "주문 접수(주문번호 0000012043)",
+        {
+          "__datetime__": "2026-10-13T09:24:11.819316+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "0000012043",
+        "order_day": {
+          "__date__": "2026-10-13"
+        },
+        "identity": {
+          "order_qty": 114,
+          "account_type": "모의",
+          "account_key": "d534c8d981289493d2f84a1e888ebc32d53dfd1df60dcd620d6e4707f0cc4a87",
+          "order_side": "매수"
+        }
+      }
+    },
+    {
+      "id": "21618a8590f64494a3c34e3b8fc16ef8",
+      "operation": "_set_outcome",
+      "args": [
+        "255440",
+        "주문접수",
+        "주문 접수(주문번호 0000012056)",
+        {
+          "__datetime__": "2026-10-13T09:24:18.275927+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "0000012056",
+        "order_day": {
+          "__date__": "2026-10-13"
+        },
+        "identity": {
+          "order_qty": 127,
+          "account_type": "모의",
+          "account_key": "d534c8d981289493d2f84a1e888ebc32d53dfd1df60dcd620d6e4707f0cc4a87",
+          "order_side": "매수"
+        }
+      }
+    }
+  ],
+  "plans": [
+    {
+      "id": "3ee61bfe65bf4e239c5ca1d3b14bf9da",
+      "owner": "38326962892:1",
+      "events": [
+        "a44687ed12c041a1bc1194b42765ba25",
+        "93b2ce508f1f42e0a71ad843112856df"
+      ],
+      "record": {
+        "event_id": "a44687ed12c041a1bc1194b42765ba25",
+        "ticker": "041960",
+        "name": "코미팜",
+        "first_detected_at": {
+          "__datetime__": "2026-10-13T09:23:38.232543+09:00"
+        },
+        "first_threshold": 11500.0,
+        "first_price": 11580.0,
+        "first_atr": 523.0,
+        "status": "추적중",
+        "outcome": "주문접수",
+        "outcome_reason": "주문 접수(주문번호 0000012043)",
+        "outcome_at": {
+          "__datetime__": "2026-10-13T09:24:11.819316+09:00"
+        },
+        "order_no": "0000012043",
+        "order_day": {
+          "__date__": "2026-10-13"
+        },
+        "order_qty": 114,
+        "account_type": "모의",
+        "account_key": "d534c8d981289493d2f84a1e888ebc32d53dfd1df60dcd620d6e4707f0cc4a87",
+        "order_side": "매수"
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "a44687ed12c041a1bc1194b42765ba25",
+        "ticker": "041960",
+        "name": "코미팜",
+        "first_detected_at": {
+          "__datetime__": "2026-10-13T09:23:38.232543+09:00"
+        },
+        "first_threshold": 11500.0,
+        "first_price": 11580.0,
+        "first_atr": 523.0,
+        "status": "추적중",
+        "outcome": "주문접수",
+        "outcome_reason": "주문 접수(주문번호 0000012043)",
+        "outcome_at": {
+          "__datetime__": "2026-10-13T09:24:11.819316+09:00"
+        },
+        "order_no": "0000012043",
+        "order_day": {
+          "__date__": "2026-10-13"
+        },
+        "order_qty": 114,
+        "account_type": "모의",
+        "account_key": "d534c8d981289493d2f84a1e888ebc32d53dfd1df60dcd620d6e4707f0cc4a87",
+        "order_side": "매수"
+      },
+      "state": "queued"
+    },
+    {
+      "id": "b74c983447334a7f9e0541d4cae955ba",
+      "owner": "38326962892:1",
+      "events": [
+        "116a2c3b39474beeb734a53e608fe055"
+      ],
+      "record": {
+        "account_type": "",
+        "account_key": "",
+        "order_side": "",
+        "order_qty": null,
+        "filled_qty": null,
+        "unverified_qty": null,
+        "execution_price": null,
+        "execution_state": "",
+        "execution_checked_at": null,
+        "event_id": "6f409b96d42044a1a2a7bf97eb1fecc3",
+        "order_no": "",
+        "order_day": null,
+        "key": "3f20fc3e-53fc-815f-89cd-f1ae9299389e",
+        "page_id": "3f20fc3e-53fc-815f-89cd-f1ae9299389e",
+        "name": "SK가스",
+        "ticker": "018670",
+        "first_detected_at": {
+          "__datetime__": "2026-10-07T09:03:00+09:00"
+        },
+        "first_threshold": 262000.0,
+        "first_price": 263000.0,
+        "first_atr": 9861.0,
+        "status": "추적중",
+        "closed_reason": "",
+        "closed_at": null,
+        "outcome": "미주문",
+        "outcome_reason": "가격 상한 초과(상한 150,000원)",
+        "outcome_at": {
+          "__datetime__": "2026-10-13T09:24:05.005200+09:00"
+        },
+        "latest_close": 271500.0,
+        "latest_date": {
+          "__date__": "2026-10-12"
+        },
+        "latest_atr": 10383.0,
+        "latest_line": 275000.0,
+        "change_pct": 3.63,
+        "atr_mult": 0.96,
+        "dist_to_line": 3500.0,
+        "dist_to_line_atr": 0.34,
+        "level_state": "최초선위",
+        "new_breakout": "미해당",
+        "refresh_state": "갱신됨",
+        "refresh_note": "",
+        "user_memo": ""
+      },
+      "page_id": "3f20fc3e-53fc-815f-89cd-f1ae9299389e",
+      "fields": {
+        "outcome_reason": "가격 상한 초과(상한 150,000원)",
+        "outcome_at": {
+          "__datetime__": "2026-10-13T09:24:05.005200+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "fabfc43502564f2690e7d59f67e22c37",
+      "owner": "38326962892:1",
+      "events": [
+        "21618a8590f64494a3c34e3b8fc16ef8"
+      ],
+      "record": {
+        "account_type": "모의",
+        "account_key": "d534c8d981289493d2f84a1e888ebc32d53dfd1df60dcd620d6e4707f0cc4a87",
+        "order_side": "매수",
+        "order_qty": 127,
+        "filled_qty": null,
+        "unverified_qty": null,
+        "execution_price": null,
+        "execution_state": "",
+        "execution_checked_at": null,
+        "event_id": "23996b8ffef64f1a83374b870b3b45db",
+        "order_no": "0000012056",
+        "order_day": {
+          "__date__": "2026-10-13"
+        },
+        "key": "3eb0fc3e-53fc-8130-8382-d1f1d9736f18",
+        "page_id": "3eb0fc3e-53fc-8130-8382-d1f1d9736f18",
+        "name": "야스",
+        "ticker": "255440",
+        "first_detected_at": {
+          "__datetime__": "2026-09-30T10:53:00+09:00"
+        },
+        "first_threshold": 8200.0,
+        "first_price": 8220.0,
+        "first_atr": 462.0,
+        "status": "추적중",
+        "closed_reason": "",
+        "closed_at": null,
+        "outcome": "주문접수",
+        "outcome_reason": "주문 접수(주문번호 0000012056)",
+        "outcome_at": {
+          "__datetime__": "2026-10-13T09:24:18.275927+09:00"
+        },
+        "latest_close": 8860.0,
+        "latest_date": {
+          "__date__": "2026-10-12"
+        },
+        "latest_atr": 471.0,
+        "latest_line": 9100.0,
+        "change_pct": 8.05,
+        "atr_mult": 1.43,
+        "dist_to_line": 240.0,
+        "dist_to_line_atr": 0.51,
+        "level_state": "최초선위",
+        "new_breakout": "미해당",
+        "refresh_state": "갱신됨",
+        "refresh_note": "",
+        "user_memo": ""
+      },
+      "page_id": "3eb0fc3e-53fc-8130-8382-d1f1d9736f18",
+      "fields": {
+        "account_type": "모의",
+        "account_key": "d534c8d981289493d2f84a1e888ebc32d53dfd1df60dcd620d6e4707f0cc4a87",
+        "order_side": "매수",
+        "order_qty": 127,
+        "order_no": "0000012056",
+        "order_day": {
+          "__date__": "2026-10-13"
+        },
+        "outcome": "주문접수",
+        "outcome_reason": "주문 접수(주문번호 0000012056)",
+        "outcome_at": {
+          "__datetime__": "2026-10-13T09:24:18.275927+09:00"
+        }
+      },
+      "state": "queued"
+    }
+  ],
+  "prepare_cursor": "21618a8590f64494a3c34e3b8fc16ef8",
   "deliver_cursor": "308c2965912747b98f7e991acd48b49b",
   "excluded_events": [
     {
