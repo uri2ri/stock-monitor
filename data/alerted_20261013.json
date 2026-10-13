@@ -82,6 +82,18 @@
       "gap_atr": 0.068,
       "unit_shares": 68,
       "status": "진입가능"
+    },
+    "171090": {
+      "time": "14:13",
+      "name": "선익시스템",
+      "sector": "기계·장비",
+      "market": "KOSDAQ",
+      "price": 78600.0,
+      "high20": 78300.0,
+      "atr20": 4126.0,
+      "gap_atr": 0.073,
+      "unit_shares": 121,
+      "status": "진입가능"
     }
   }
 }
