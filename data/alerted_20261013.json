@@ -94,6 +94,18 @@
       "gap_atr": 0.073,
       "unit_shares": 121,
       "status": "진입가능"
+    },
+    "048910": {
+      "time": "14:23",
+      "name": "대원미디어",
+      "sector": "유통",
+      "market": "KOSDAQ",
+      "price": 8490.0,
+      "high20": 8410.0,
+      "atr20": 373.0,
+      "gap_atr": 0.214,
+      "unit_shares": 1340,
+      "status": "진입가능"
     }
   }
 }
