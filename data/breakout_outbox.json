@@ -1,91 +1,9 @@
 {
   "version": 1,
-  "events": [
-    {
-      "id": "dfc87013f4da4887951d11f688c62c44",
-      "operation": "_set_outcome",
-      "args": [
-        "018670",
-        "자금부족",
-        "현금 부족(필요 1,387,500원 · 가용 724,209원)",
-        {
-          "__datetime__": "2026-10-13T11:34:38.882797+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    }
-  ],
-  "plans": [
-    {
-      "id": "68752cec42fd465c9f827757e3adc295",
-      "owner": "38337409123:1",
-      "events": [
-        "dfc87013f4da4887951d11f688c62c44"
-      ],
-      "record": {
-        "account_type": "",
-        "account_key": "",
-        "order_side": "",
-        "order_qty": null,
-        "filled_qty": null,
-        "unverified_qty": null,
-        "execution_price": null,
-        "execution_state": "",
-        "execution_checked_at": null,
-        "event_id": "6f409b96d42044a1a2a7bf97eb1fecc3",
-        "order_no": "",
-        "order_day": null,
-        "key": "3f20fc3e-53fc-815f-89cd-f1ae9299389e",
-        "page_id": "3f20fc3e-53fc-815f-89cd-f1ae9299389e",
-        "name": "SK가스",
-        "ticker": "018670",
-        "first_detected_at": {
-          "__datetime__": "2026-10-07T09:03:00+09:00"
-        },
-        "first_threshold": 262000.0,
-        "first_price": 263000.0,
-        "first_atr": 9861.0,
-        "status": "추적중",
-        "closed_reason": "",
-        "closed_at": null,
-        "outcome": "자금부족",
-        "outcome_reason": "현금 부족(필요 1,387,500원 · 가용 724,209원)",
-        "outcome_at": {
-          "__datetime__": "2026-10-13T11:34:38.882797+09:00"
-        },
-        "latest_close": 271500.0,
-        "latest_date": {
-          "__date__": "2026-10-12"
-        },
-        "latest_atr": 10383.0,
-        "latest_line": 275000.0,
-        "change_pct": 3.63,
-        "atr_mult": 0.96,
-        "dist_to_line": 3500.0,
-        "dist_to_line_atr": 0.34,
-        "level_state": "최초선위",
-        "new_breakout": "미해당",
-        "refresh_state": "갱신됨",
-        "refresh_note": "",
-        "user_memo": ""
-      },
-      "page_id": "3f20fc3e-53fc-815f-89cd-f1ae9299389e",
-      "fields": {
-        "outcome": "자금부족",
-        "outcome_reason": "현금 부족(필요 1,387,500원 · 가용 724,209원)",
-        "outcome_at": {
-          "__datetime__": "2026-10-13T11:34:38.882797+09:00"
-        }
-      },
-      "state": "queued"
-    }
-  ],
+  "events": [],
+  "plans": [],
   "prepare_cursor": "dfc87013f4da4887951d11f688c62c44",
-  "deliver_cursor": "fabfc43502564f2690e7d59f67e22c37",
+  "deliver_cursor": "68752cec42fd465c9f827757e3adc295",
   "excluded_events": [
     {
       "event": {
