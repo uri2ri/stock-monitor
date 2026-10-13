@@ -1,8 +1,111 @@
 {
   "version": 1,
-  "events": [],
-  "plans": [],
-  "prepare_cursor": "42de13388e2e49a1bb1cc83c56c35780",
+  "events": [
+    {
+      "id": "53171e02fafc4cd0865cb4a2a7c4cde6",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "290650",
+          "name": "엘앤씨바이오",
+          "high20": 59800.0,
+          "price": 61000.0,
+          "atr20": 4029.0
+        },
+        {
+          "__datetime__": "2026-10-13T09:13:36.462134+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "565743a0bbb1496e9c5b9d881ecff691",
+      "operation": "_set_outcome",
+      "args": [
+        "290650",
+        "주문접수",
+        "주문 접수(주문번호 0000009382)",
+        {
+          "__datetime__": "2026-10-13T09:14:10.924112+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "0000009382",
+        "order_day": {
+          "__date__": "2026-10-13"
+        },
+        "identity": {
+          "order_qty": 14,
+          "account_type": "모의",
+          "account_key": "d534c8d981289493d2f84a1e888ebc32d53dfd1df60dcd620d6e4707f0cc4a87",
+          "order_side": "매수"
+        }
+      }
+    }
+  ],
+  "plans": [
+    {
+      "id": "308c2965912747b98f7e991acd48b49b",
+      "owner": "38326136543:1",
+      "events": [
+        "53171e02fafc4cd0865cb4a2a7c4cde6",
+        "565743a0bbb1496e9c5b9d881ecff691"
+      ],
+      "record": {
+        "event_id": "53171e02fafc4cd0865cb4a2a7c4cde6",
+        "ticker": "290650",
+        "name": "엘앤씨바이오",
+        "first_detected_at": {
+          "__datetime__": "2026-10-13T09:13:36.462134+09:00"
+        },
+        "first_threshold": 59800.0,
+        "first_price": 61000.0,
+        "first_atr": 4029.0,
+        "status": "추적중",
+        "outcome": "주문접수",
+        "outcome_reason": "주문 접수(주문번호 0000009382)",
+        "outcome_at": {
+          "__datetime__": "2026-10-13T09:14:10.924112+09:00"
+        },
+        "order_no": "0000009382",
+        "order_day": {
+          "__date__": "2026-10-13"
+        },
+        "order_qty": 14,
+        "account_type": "모의",
+        "account_key": "d534c8d981289493d2f84a1e888ebc32d53dfd1df60dcd620d6e4707f0cc4a87",
+        "order_side": "매수"
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "53171e02fafc4cd0865cb4a2a7c4cde6",
+        "ticker": "290650",
+        "name": "엘앤씨바이오",
+        "first_detected_at": {
+          "__datetime__": "2026-10-13T09:13:36.462134+09:00"
+        },
+        "first_threshold": 59800.0,
+        "first_price": 61000.0,
+        "first_atr": 4029.0,
+        "status": "추적중",
+        "outcome": "주문접수",
+        "outcome_reason": "주문 접수(주문번호 0000009382)",
+        "outcome_at": {
+          "__datetime__": "2026-10-13T09:14:10.924112+09:00"
+        },
+        "order_no": "0000009382",
+        "order_day": {
+          "__date__": "2026-10-13"
+        },
+        "order_qty": 14,
+        "account_type": "모의",
+        "account_key": "d534c8d981289493d2f84a1e888ebc32d53dfd1df60dcd620d6e4707f0cc4a87",
+        "order_side": "매수"
+      },
+      "state": "queued"
+    }
+  ],
+  "prepare_cursor": "565743a0bbb1496e9c5b9d881ecff691",
   "deliver_cursor": "66e7ad0ef9c34a9b87ca6eaf73d50739",
   "excluded_events": [
     {
