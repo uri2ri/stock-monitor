@@ -12,6 +12,18 @@
       "gap_atr": 0.931,
       "unit_shares": 4901,
       "status": "추격금지"
+    },
+    "290650": {
+      "time": "09:13",
+      "name": "엘앤씨바이오",
+      "sector": "제약",
+      "market": "KOSDAQ",
+      "price": 61000.0,
+      "high20": 59800.0,
+      "atr20": 4029.0,
+      "gap_atr": 0.298,
+      "unit_shares": 124,
+      "status": "진입가능"
     }
   }
 }
