@@ -2,7 +2,7 @@
   "version": 1,
   "events": [],
   "plans": [],
-  "prepare_cursor": "e13c626f246c4ec6aedc0262a19a9a03",
+  "prepare_cursor": "42de13388e2e49a1bb1cc83c56c35780",
   "deliver_cursor": "66e7ad0ef9c34a9b87ca6eaf73d50739",
   "excluded_events": [
     {
@@ -8929,6 +8929,48 @@
       },
       "reason": "held_without_active_track",
       "resolved_by": "38214744060:1"
+    },
+    {
+      "event": {
+        "id": "38696bc066794021b5e9b88c9abdb80f",
+        "operation": "record_breakout",
+        "args": [
+          {
+            "ticker": "000400",
+            "name": "롯데손해보험",
+            "high20": 2360.0,
+            "price": 2455.0,
+            "atr20": 102.0
+          },
+          {
+            "__datetime__": "2026-10-13T09:03:34.740127+09:00"
+          }
+        ],
+        "kwargs": {}
+      },
+      "reason": "held_without_active_track",
+      "resolved_by": "38325294564:1"
+    },
+    {
+      "event": {
+        "id": "42de13388e2e49a1bb1cc83c56c35780",
+        "operation": "_set_outcome",
+        "args": [
+          "000400",
+          "미주문",
+          "추격 구간(+0.93N) - 매수 대상 제외",
+          {
+            "__datetime__": "2026-10-13T09:03:34.740127+09:00"
+          }
+        ],
+        "kwargs": {
+          "order_no": "",
+          "order_day": null,
+          "identity": null
+        }
+      },
+      "reason": "held_without_active_track",
+      "resolved_by": "38325294564:1"
     }
   ]
 }
