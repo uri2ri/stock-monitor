@@ -286,6 +286,21 @@
       "gap_atr": 0.066,
       "unit_shares": 825,
       "status": "진입가능"
+    },
+    "005880": {
+      "time": "12:13",
+      "name": "대한해운",
+      "sector": "운송·창고",
+      "market": "KOSPI",
+      "price": 2170.0,
+      "high20": 2160.0,
+      "atr20": 80.0,
+      "gap_atr": 0.125,
+      "unit_shares": 6250,
+      "value_avg_20": 2848265729.0,
+      "value_avg_5": null,
+      "vol_active_days": null,
+      "status": "진입가능"
     }
   }
 }
