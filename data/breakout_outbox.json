@@ -1,88 +1,9 @@
 {
   "version": 1,
-  "events": [
-    {
-      "id": "45a9b26666d34b4d9f58dababbed2d2a",
-      "operation": "_set_outcome",
-      "args": [
-        "005880",
-        "자금부족",
-        "현금 부족(필요 1,675,240원 · 가용 705,209원)",
-        {
-          "__datetime__": "2026-10-14T14:24:09.532885+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    }
-  ],
-  "plans": [
-    {
-      "id": "b2a83ec32892475ba4fd57172c8914ac",
-      "owner": "38516333873:1",
-      "events": [
-        "45a9b26666d34b4d9f58dababbed2d2a"
-      ],
-      "record": {
-        "account_type": "",
-        "account_key": "",
-        "order_side": "",
-        "order_qty": null,
-        "filled_qty": null,
-        "unverified_qty": null,
-        "execution_price": null,
-        "execution_state": "",
-        "execution_checked_at": null,
-        "event_id": "abdfce4d50a848fcb7e809db262de5f1",
-        "order_no": "",
-        "order_day": null,
-        "key": "3f90fc3e-53fc-8171-b412-ca3b4b252466",
-        "page_id": "3f90fc3e-53fc-8171-b412-ca3b4b252466",
-        "name": "대한해운",
-        "ticker": "005880",
-        "first_detected_at": {
-          "__datetime__": "2026-10-14T12:13:00+09:00"
-        },
-        "first_threshold": 2160.0,
-        "first_price": 2170.0,
-        "first_atr": 80.0,
-        "status": "추적중",
-        "closed_reason": "",
-        "closed_at": null,
-        "outcome": "자금부족",
-        "outcome_reason": "현금 부족(필요 1,675,240원 · 가용 705,209원)",
-        "outcome_at": {
-          "__datetime__": "2026-10-14T14:24:09.532885+09:00"
-        },
-        "latest_close": null,
-        "latest_date": null,
-        "latest_atr": null,
-        "latest_line": null,
-        "change_pct": null,
-        "atr_mult": null,
-        "dist_to_line": null,
-        "dist_to_line_atr": null,
-        "level_state": "",
-        "new_breakout": "",
-        "refresh_state": "",
-        "refresh_note": "",
-        "user_memo": ""
-      },
-      "page_id": "3f90fc3e-53fc-8171-b412-ca3b4b252466",
-      "fields": {
-        "outcome_reason": "현금 부족(필요 1,675,240원 · 가용 705,209원)",
-        "outcome_at": {
-          "__datetime__": "2026-10-14T14:24:09.532885+09:00"
-        }
-      },
-      "state": "queued"
-    }
-  ],
+  "events": [],
+  "plans": [],
   "prepare_cursor": "45a9b26666d34b4d9f58dababbed2d2a",
-  "deliver_cursor": "3830e2bc2a4344eb93e96fc9b2f87094",
+  "deliver_cursor": "b2a83ec32892475ba4fd57172c8914ac",
   "excluded_events": [
     {
       "event": {
