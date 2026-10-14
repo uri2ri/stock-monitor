@@ -2,23 +2,6 @@
   "version": 1,
   "events": [
     {
-      "id": "cf48cb8c86064b30b9edcfa2ea78a051",
-      "operation": "record_breakout",
-      "args": [
-        {
-          "ticker": "131290",
-          "name": "티에스이",
-          "high20": 336000.0,
-          "price": 338500.0,
-          "atr20": 25341.0
-        },
-        {
-          "__datetime__": "2026-10-14T09:13:39.071411+09:00"
-        }
-      ],
-      "kwargs": {}
-    },
-    {
       "id": "02f1320e248a4867911fa1093576f85c",
       "operation": "record_breakout",
       "args": [
@@ -78,23 +61,6 @@
         "가격 상한 초과(상한 150,000원)",
         {
           "__datetime__": "2026-10-14T09:14:06.899074+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
-      "id": "bdcc267c4caa41bb889cabd2baf7834b",
-      "operation": "_set_outcome",
-      "args": [
-        "131290",
-        "미주문",
-        "가격 상한 초과(상한 150,000원)",
-        {
-          "__datetime__": "2026-10-14T09:14:07.088936+09:00"
         }
       ],
       "kwargs": {
@@ -191,50 +157,6 @@
   ],
   "plans": [
     {
-      "id": "4fd9d7f2e4874d2f9382ec3fc6db9e82",
-      "owner": "38488875101:1",
-      "events": [
-        "cf48cb8c86064b30b9edcfa2ea78a051",
-        "bdcc267c4caa41bb889cabd2baf7834b"
-      ],
-      "record": {
-        "event_id": "cf48cb8c86064b30b9edcfa2ea78a051",
-        "ticker": "131290",
-        "name": "티에스이",
-        "first_detected_at": {
-          "__datetime__": "2026-10-14T09:13:39.071411+09:00"
-        },
-        "first_threshold": 336000.0,
-        "first_price": 338500.0,
-        "first_atr": 25341.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "가격 상한 초과(상한 150,000원)",
-        "outcome_at": {
-          "__datetime__": "2026-10-14T09:14:07.088936+09:00"
-        }
-      },
-      "page_id": null,
-      "fields": {
-        "event_id": "cf48cb8c86064b30b9edcfa2ea78a051",
-        "ticker": "131290",
-        "name": "티에스이",
-        "first_detected_at": {
-          "__datetime__": "2026-10-14T09:13:39.071411+09:00"
-        },
-        "first_threshold": 336000.0,
-        "first_price": 338500.0,
-        "first_atr": 25341.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "가격 상한 초과(상한 150,000원)",
-        "outcome_at": {
-          "__datetime__": "2026-10-14T09:14:07.088936+09:00"
-        }
-      },
-      "state": "creating"
-    },
-    {
       "id": "074a2863d7194f03962e2a8a66e75e6c",
       "owner": "38488875101:1",
       "events": [
@@ -276,7 +198,7 @@
           "__datetime__": "2026-10-14T09:14:06.899074+09:00"
         }
       },
-      "state": "queued"
+      "state": "creating"
     },
     {
       "id": "c3a71782533c4eb7bad757c04903b57e",
@@ -712,7 +634,7 @@
     }
   ],
   "prepare_cursor": "f958ca3571fc4e14bd137d13879c0585",
-  "deliver_cursor": "4fd9d7f2e4874d2f9382ec3fc6db9e82",
+  "deliver_cursor": "074a2863d7194f03962e2a8a66e75e6c",
   "excluded_events": [
     {
       "event": {
