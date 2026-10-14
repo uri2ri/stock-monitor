@@ -2,23 +2,6 @@
   "version": 1,
   "events": [
     {
-      "id": "5f5c1f65e907477b942a2878d4782090",
-      "operation": "record_breakout",
-      "args": [
-        {
-          "ticker": "028670",
-          "name": "팬오션",
-          "high20": 6630.0,
-          "price": 6840.0,
-          "atr20": 324.0
-        },
-        {
-          "__datetime__": "2026-10-14T09:03:39.475105+09:00"
-        }
-      ],
-      "kwargs": {}
-    },
-    {
       "id": "b170f48516e54684984d30a266d0188c",
       "operation": "record_breakout",
       "args": [
@@ -87,23 +70,6 @@
       }
     },
     {
-      "id": "ee951b40186e405484e823810ae87272",
-      "operation": "_set_outcome",
-      "args": [
-        "028670",
-        "미주문",
-        "추격 구간(+0.65N) - 매수 대상 제외",
-        {
-          "__datetime__": "2026-10-14T09:03:39.475105+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
       "id": "14c1364554ca4ca4a73807d92fba445d",
       "operation": "_set_outcome",
       "args": [
@@ -157,50 +123,6 @@
   ],
   "plans": [
     {
-      "id": "1eea3f3a35cf43cfaffec88e55e42d1f",
-      "owner": "38487891701:1",
-      "events": [
-        "5f5c1f65e907477b942a2878d4782090",
-        "ee951b40186e405484e823810ae87272"
-      ],
-      "record": {
-        "event_id": "5f5c1f65e907477b942a2878d4782090",
-        "ticker": "028670",
-        "name": "팬오션",
-        "first_detected_at": {
-          "__datetime__": "2026-10-14T09:03:39.475105+09:00"
-        },
-        "first_threshold": 6630.0,
-        "first_price": 6840.0,
-        "first_atr": 324.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "추격 구간(+0.65N) - 매수 대상 제외",
-        "outcome_at": {
-          "__datetime__": "2026-10-14T09:03:39.475105+09:00"
-        }
-      },
-      "page_id": null,
-      "fields": {
-        "event_id": "5f5c1f65e907477b942a2878d4782090",
-        "ticker": "028670",
-        "name": "팬오션",
-        "first_detected_at": {
-          "__datetime__": "2026-10-14T09:03:39.475105+09:00"
-        },
-        "first_threshold": 6630.0,
-        "first_price": 6840.0,
-        "first_atr": 324.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "추격 구간(+0.65N) - 매수 대상 제외",
-        "outcome_at": {
-          "__datetime__": "2026-10-14T09:03:39.475105+09:00"
-        }
-      },
-      "state": "creating"
-    },
-    {
       "id": "29680340eee64586bb7f5a88c9ab8470",
       "owner": "38487891701:1",
       "events": [
@@ -242,7 +164,7 @@
           "__datetime__": "2026-10-14T09:03:39.475105+09:00"
         }
       },
-      "state": "queued"
+      "state": "creating"
     },
     {
       "id": "eeccadf2a22140748f83e0c5112ce936",
@@ -396,7 +318,7 @@
     }
   ],
   "prepare_cursor": "530d63b530534076a26d69db50dc5c70",
-  "deliver_cursor": "1eea3f3a35cf43cfaffec88e55e42d1f",
+  "deliver_cursor": "29680340eee64586bb7f5a88c9ab8470",
   "excluded_events": [
     {
       "event": {
