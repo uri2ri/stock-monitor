@@ -2,23 +2,6 @@
   "version": 1,
   "events": [
     {
-      "id": "43c81c64dee84e9bb24d7cdda5b76259",
-      "operation": "record_breakout",
-      "args": [
-        {
-          "ticker": "001120",
-          "name": "LX인터내셔널",
-          "high20": 44700.0,
-          "price": 45050.0,
-          "atr20": 1544.0
-        },
-        {
-          "__datetime__": "2026-10-14T09:03:39.475105+09:00"
-        }
-      ],
-      "kwargs": {}
-    },
-    {
       "id": "59e406e03c65434caac3df2f2b87e24e",
       "operation": "record_breakout",
       "args": [
@@ -53,23 +36,6 @@
       }
     },
     {
-      "id": "77c9831c7a744f75bce1d2841a873360",
-      "operation": "_set_outcome",
-      "args": [
-        "001120",
-        "미주문",
-        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        {
-          "__datetime__": "2026-10-14T09:03:49.697139+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
       "id": "159439ac808149c285479c7ed6e3c7e2",
       "operation": "_set_outcome",
       "args": [
@@ -88,50 +54,6 @@
     }
   ],
   "plans": [
-    {
-      "id": "eeccadf2a22140748f83e0c5112ce936",
-      "owner": "38487891701:1",
-      "events": [
-        "43c81c64dee84e9bb24d7cdda5b76259",
-        "77c9831c7a744f75bce1d2841a873360"
-      ],
-      "record": {
-        "event_id": "43c81c64dee84e9bb24d7cdda5b76259",
-        "ticker": "001120",
-        "name": "LX인터내셔널",
-        "first_detected_at": {
-          "__datetime__": "2026-10-14T09:03:39.475105+09:00"
-        },
-        "first_threshold": 44700.0,
-        "first_price": 45050.0,
-        "first_atr": 1544.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        "outcome_at": {
-          "__datetime__": "2026-10-14T09:03:49.697139+09:00"
-        }
-      },
-      "page_id": null,
-      "fields": {
-        "event_id": "43c81c64dee84e9bb24d7cdda5b76259",
-        "ticker": "001120",
-        "name": "LX인터내셔널",
-        "first_detected_at": {
-          "__datetime__": "2026-10-14T09:03:39.475105+09:00"
-        },
-        "first_threshold": 44700.0,
-        "first_price": 45050.0,
-        "first_atr": 1544.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        "outcome_at": {
-          "__datetime__": "2026-10-14T09:03:49.697139+09:00"
-        }
-      },
-      "state": "creating"
-    },
     {
       "id": "6c0c950c9cc04a61a80f4566f415bc8a",
       "owner": "38487891701:1",
@@ -174,7 +96,7 @@
           "__datetime__": "2026-10-14T09:03:49.720572+09:00"
         }
       },
-      "state": "queued"
+      "state": "creating"
     },
     {
       "id": "9bddc0a6f9704646be42f61f927f9aed",
@@ -240,7 +162,7 @@
     }
   ],
   "prepare_cursor": "530d63b530534076a26d69db50dc5c70",
-  "deliver_cursor": "eeccadf2a22140748f83e0c5112ce936",
+  "deliver_cursor": "6c0c950c9cc04a61a80f4566f415bc8a",
   "excluded_events": [
     {
       "event": {
