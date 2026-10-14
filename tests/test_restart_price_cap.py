@@ -15,5 +15,6 @@ def test_latest_quote_price_cap(monkeypatch, fresh, allowed):
     monkeypatch.setattr(k, '_notify_failure', Mock())
     monkeypatch.setattr(k, 'get_price_quote', lambda *a: {'price': fresh, 'market_warned': False})
     candidate = dict(ticker='000001', name='test', price=150000,
-                     high20=149900, atr20=5000, gap_atr=0.02, sector='test')
+                     high20=149900, atr20=5000, gap_atr=0.02, sector='test',
+                     value_avg_20=1_000_000_000.0)
     assert bool(k.select_buy_candidates('dummy', [candidate])) == allowed

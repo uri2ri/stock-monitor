@@ -72,6 +72,13 @@ VOL_AVG_DAYS = 20        # 거래량배수 계산에 쓰는 평균일수 (당일
 # 실데이터 더 쌓이면 조정한다.
 SCAN_ATR_PCT_MIN = 3.0
 
+# ── 자동매수 유동성 기준 ────────────────────────────────────
+# 감시(야간 스캔 기록·장중 워치리스트)와 자동매수 허용을 분리한다.
+# 스캔은 scan_all.WATCH_MIN_TRADING_VALUE(3억)까지 기록해 돌파를 관찰하고,
+# 실제 자동 신규매수는 20일 평균 거래대금이 이 값 이상인 종목만 한다.
+# 매수 기준 완화 여부는 3~5억 구간 돌파 추적 데이터를 보고 따로 정한다.
+BUY_MIN_TRADING_VALUE = 500_000_000   # 20일 평균 거래대금 5억
+
 
 # ── 딥링크 ──────────────────────────────────────────────────
 
@@ -661,6 +668,32 @@ def calc_vol_mult(hist: pd.DataFrame, avg_days: int = VOL_AVG_DAYS) -> Optional[
 def calc_atr_pct(atr: float, price: float) -> float:
     """ATR을 현재가 대비 %로. 원화 ATR은 종목 간 비교가 안 되므로 쓴다."""
     return atr / price * 100 if price > 0 else 0.0
+
+
+def valid_trading_value(value) -> Optional[float]:
+    """거래대금 값(스캔 CSV·후보 dict에서 온 것)을 float로. 무효면 None.
+
+    None·NaN·inf·숫자 아님·0 이하는 전부 무효다 - 구버전 CSV나 알림
+    이력(alerted)에는 칼럼 자체가 없을 수 있다.
+    """
+    if value is None:
+        return None
+    try:
+        v = float(value)
+    except (TypeError, ValueError):
+        return None
+    return v if math.isfinite(v) and v > 0 else None
+
+
+def is_buy_liquid(value_avg_20, min_value: float = BUY_MIN_TRADING_VALUE) -> bool:
+    """20일 평균 거래대금이 자동매수 기준 이상인가. 값을 모르면 False(fail-closed).
+
+    kis_client.select_buy_candidates(매수 게이트)와 intraday_watch.build_messages
+    (관찰·매수보류 알림 분리)가 같은 판정을 쓴다 - 두 곳이 갈라지면 "매수
+    가능"으로 알린 종목이 게이트에서 조용히 빠지는 일이 생긴다.
+    """
+    v = valid_trading_value(value_avg_20)
+    return v is not None and v >= min_value
 
 
 def breakout_verdict(gap_atr: float, chase_mult: float = CHASE_ATR_MULT) -> str:

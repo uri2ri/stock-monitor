@@ -28,7 +28,7 @@ def _candidate(ticker: str, sector: str, price: float, high20: float) -> dict:
     return {
         "ticker": ticker, "name": ticker, "price": price, "atr20": 500.0,
         "gap_atr": (price - high20) / 500.0, "sector": sector,
-        "market": "KOSPI", "high20": high20,
+        "market": "KOSPI", "high20": high20, "value_avg_20": 1_000_000_000.0,
     }
 
 

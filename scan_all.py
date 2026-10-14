@@ -47,8 +47,15 @@ LATEST_PATH = DATA_DIR / "scan_latest.csv"
 # 둘 다 종가 21행이 최소치다 (= 상장 20거래일 미만이면 제외).
 MIN_ROWS = core.HIGH_PERIOD + 1
 
-MIN_TRADING_VALUE = 500_000_000    # 20일 평균 거래대금 5억
+# 기록(= 감시) 하한. 자동매수 기준(core.BUY_MIN_TRADING_VALUE, 5억)보다
+# 낮게 잡아 3~5억 구간의 돌파도 워치리스트·관찰 알림·돌파 추적에 남긴다.
+# 이 구간 종목은 kis_client.select_buy_candidates의 유동성 게이트에서
+# 매수만 제외된다 - 감시 대상과 자동매수 허용 대상을 분리한 것이다.
+WATCH_MIN_TRADING_VALUE = 300_000_000    # 20일 평균 거래대금 3억
 TRADING_VALUE_DAYS = 20
+# 최근 거래대금 활성도: 최근 VALUE_RECENT_DAYS일 평균(value_avg_5)과,
+# 그중 일 거래대금이 20일 평균을 넘은 날 수(vol_active_days).
+VALUE_RECENT_DAYS = 5
 
 # 캐시 보충은 예외 경로다. 오래 끌지 않고 포기한 뒤 그날은 건너뛴다.
 BACKFILL_BUDGET_SEC = 10 * 60
@@ -57,8 +64,12 @@ SCAN_COLUMNS = [
     "scan_date", "ticker", "name", "market", "sector", "close",
     "atr20", "atr_pct", "high20", "high20_next", "low10",
     "gap", "gap_atr", "dist_to_break", "dist_atr", "vol_mult",
-    "unit_shares", "value_avg_20", "status",
+    "unit_shares", "value_avg_20", "value_avg_5", "vol_active_days", "status",
 ]
+
+# 나중에 추가된 칼럼. 이전에 저장된 CSV(scan_latest·일별 스냅샷)에는 없으므로
+# load_scan()이 NaN으로 채워 읽는다 - 쓰는 쪽은 결측을 "모름"으로 다룬다.
+LATE_COLUMNS = ("value_avg_5", "vol_active_days")
 
 STATUS_BREAKOUT = "돌파"
 STATUS_NEAR = "임박"
@@ -191,7 +202,13 @@ def scan_row(
     gap = close - high20
 
     window = hist.tail(TRADING_VALUE_DAYS)
-    value_avg = float((window["종가"] * window["거래량"]).mean())
+    daily_value = window["종가"] * window["거래량"]
+    value_avg = float(daily_value.mean())
+    # 최근 며칠의 거래대금이 20일 평균보다 살아 있는가 - 20일 평균이
+    # 매수 기준(5억)에 못 미치는 관찰 종목을 볼 때 참고하는 값이다.
+    recent_value = daily_value.tail(VALUE_RECENT_DAYS)
+    value_avg_5 = float(recent_value.mean())
+    vol_active_days = int((recent_value > value_avg).sum())
 
     # 거래량배수 – 오늘의 돌파(screener.py)와 같은 core.calc_vol_mult()를
     # 쓴다. 데이터가 모자라 못 내면 None (표에서는 빈 값으로 둔다).
@@ -216,6 +233,8 @@ def scan_row(
         "vol_mult": round(vol_mult, 2) if vol_mult is not None else None,
         "unit_shares": core.calc_position(atr, capital).unit_shares,
         "value_avg_20": round(value_avg),
+        "value_avg_5": round(value_avg_5),
+        "vol_active_days": vol_active_days,
         "status": STATUS_BREAKOUT if sig.breakout else STATUS_NEAR,
     }
 
@@ -256,9 +275,10 @@ def scan(
 
     # 2차: 거래정지·상장일수·유동성. 스크리너보다 문턱이 낮다 —
     # 여기서는 돌파 후보를 고르는 게 아니라 판까지 전부 기록하는 게 목적이다.
+    # 하한은 감시 기준(3억)이다. 자동매수 기준(5억)은 kis_client가 따로 본다.
     pf = screener.prefilter_liquidity(
         hist_all, pf_meta.tickers, days,
-        min_value=MIN_TRADING_VALUE,
+        min_value=WATCH_MIN_TRADING_VALUE,
         min_days=MIN_ROWS,
     )
     logger.info("2차 필터(유동성): %d종목 → %d종목 (%s)",
@@ -328,11 +348,17 @@ def save_scan(frame: pd.DataFrame, day: str) -> tuple[Path, Path]:
 
 
 def load_scan() -> Optional[pd.DataFrame]:
-    """scan_latest.csv. 없으면 None. (스트림릿·장중 스크립트 공용)"""
+    """scan_latest.csv. 없으면 None. (스트림릿·장중 스크립트 공용)
+
+    LATE_COLUMNS가 없는 구버전 파일도 그대로 읽는다 - 빠진 칼럼은 NaN.
+    """
     if not LATEST_PATH.exists():
         return None
     frame = pd.read_csv(LATEST_PATH, dtype={"ticker": str, "scan_date": str})
     frame["ticker"] = frame["ticker"].str.zfill(6)
+    for col in LATE_COLUMNS:
+        if col not in frame.columns:
+            frame[col] = float("nan")
     return frame
 
 

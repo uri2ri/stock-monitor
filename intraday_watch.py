@@ -75,6 +75,10 @@ MAX_MESSAGES = 5           # 통 자체가 이보다 많아지면 "외 N종목"�
 STATUS_ENTER = "진입가능"
 STATUS_CHASE = "추격금지"
 
+# 진입가능이지만 20일 평균 거래대금이 자동매수 기준(core.BUY_MIN_TRADING_VALUE)
+# 미만인 종목 - 매수하지 않고 관찰만 한다는 별도 알림 머리말.
+WATCH_ONLY_TAG = "[관찰·매수보류]"
+
 
 def alerted_path(day: str) -> Path:
     return DATA_DIR / f"alerted_{day}.json"
@@ -347,6 +351,12 @@ def _retry_candidates(alerted: dict[str, dict], today: date) -> list[dict]:
     for ticker, rec in alerted.items():
         if rec.get("status") != STATUS_ENTER:
             continue  # 추격금지였던 종목은 애초에 사려던 게 아니었다
+        if not core.is_buy_liquid(rec.get("value_avg_20")):
+            # 유동성 미달(또는 값이 없는 구버전 이력)은 첫 회차에 매수 게이트가
+            # 이미 사유를 남겼다. 거래대금은 야간 스캔 값이라 장중에 바뀌지
+            # 않으므로 10분마다 같은 거절을 반복하지 않는다.
+            logger.debug("[%s] 유동성 미달 - 재시도 대상 아님", ticker)
+            continue
         try:
             already = notion_repo.has_order_today(
                 ticker, today, side=notion_repo.SIDE_BUY,
@@ -368,6 +378,9 @@ def _retry_candidates(alerted: dict[str, dict], today: date) -> list[dict]:
             "atr20": rec.get("atr20"),
             "gap_atr": rec.get("gap_atr", 0.0),
             "unit_shares": rec.get("unit_shares", 0),
+            "value_avg_20": rec.get("value_avg_20"),
+            "value_avg_5": rec.get("value_avg_5"),
+            "vol_active_days": rec.get("vol_active_days"),
             "status": STATUS_ENTER,
         })
     return retries
@@ -459,6 +472,15 @@ def judge(row: pd.Series, price: float) -> Optional[dict]:
 
     atr = float(row["atr20"])
     gap_atr = (price - high20) / atr if atr > 0 else 0.0
+    # 유동성 수치는 매수 게이트(kis_client)와 관찰 알림이 쓴다. 구버전 CSV라
+    # 없거나 무효면 None으로 넘긴다 - 매수 게이트가 fail-closed로 막는다.
+    active_days = row.get("vol_active_days")
+    try:
+        active_days = (int(active_days)
+                       if active_days is not None and math.isfinite(float(active_days))
+                       else None)
+    except (TypeError, ValueError):
+        active_days = None
     return {
         "ticker": str(row["ticker"]),
         "name": str(row["name"]),
@@ -470,6 +492,9 @@ def judge(row: pd.Series, price: float) -> Optional[dict]:
         "atr20": atr,
         "gap_atr": gap_atr,
         "unit_shares": int(row["unit_shares"]),
+        "value_avg_20": core.valid_trading_value(row.get("value_avg_20")),
+        "value_avg_5": core.valid_trading_value(row.get("value_avg_5")),
+        "vol_active_days": active_days,
         "status": (STATUS_ENTER if gap_atr <= core.CHASE_ATR_MULT
                    else STATUS_CHASE),
     }
@@ -503,10 +528,55 @@ def _unit_suffix(hit: dict, corr: Optional[dict]) -> str:
     return suffix
 
 
+def _eok(value) -> str:
+    """거래대금(원)을 'x.x억'으로. 값이 없으면 '?억'."""
+    v = core.valid_trading_value(value)
+    return f"{v / 1e8:.1f}억" if v is not None else "?억"
+
+
+def build_watch_only_message(hits: list[dict]) -> Optional[str]:
+    """진입가능이지만 유동성 미달(자동매수 제외)인 종목을 **한 통**으로 묶는다.
+
+    "[관찰·매수보류] 종목명 돌파 · 20일 x.x억 / 5일 y.y억 (활성 n/5일)"
+    형식이고, 두 번째 종목부터는 머리말 없이 줄만 잇는다. 200자를 넘기면
+    뒤쪽을 "외 N종목"으로 접는다 - 진입가능 알림을 밀어내지 않도록 이
+    알림은 회차당 한 통을 넘기지 않는다.
+    """
+    if not hits:
+        return None
+    lines = []
+    for h in core.sort_by_gap(hits):
+        n = h.get("vol_active_days")
+        active = f"{int(n)}" if n is not None else "?"
+        lines.append(
+            f"{h['name']} 돌파 · 20일 {_eok(h.get('value_avg_20'))} / "
+            f"5일 {_eok(h.get('value_avg_5'))} "
+            f"(활성 {active}/{scan_all.VALUE_RECENT_DAYS}일)"
+        )
+
+    def _render(shown: list[str], hidden: int) -> str:
+        body = [f"{WATCH_ONLY_TAG} {shown[0]}"] + shown[1:]
+        if hidden:
+            body.append(f"외 {hidden}종목")
+        return "\n".join(body)
+
+    for keep in range(len(lines), 0, -1):
+        msg = _render(lines[:keep], len(lines) - keep)
+        if len(msg) <= kakao.MAX_TEXT_LEN:
+            return msg
+    # 첫 줄 하나도 못 넣을 만큼 긴 종목명 - 그대로 보내고 잘림은 kakao에 맡긴다.
+    return _render(lines[:1], len(lines) - 1)
+
+
 def build_messages(
     hits: list[dict], now: datetime, corr: Optional[dict] = None,
 ) -> list[str]:
     """진입가능 종목만 한 줄씩. 200자를 넘기지 않게 여러 통으로 나눈다.
+
+    진입가능이라도 20일 평균 거래대금이 자동매수 기준(core.is_buy_liquid)에
+    못 미치면 [돌파] 알림에 넣지 않는다 - 자동매수 게이트에서 빠질 종목을
+    "살 수 있다"는 알림과 섞지 않기 위해서다. 그 종목들은 맨 뒤에
+    [관찰·매수보류] 한 통으로 따로 묶는다(build_watch_only_message).
 
     추격금지는 넣지 않는다 — 어차피 사지 않을 종목이라 알림으로서
     행동을 유발하지 않고, 진짜 신호를 밀어낸다. CSV와 스트림릿에는
@@ -523,8 +593,11 @@ def build_messages(
     링크 없이 기존과 같은 줄로 나간다.
     """
     enterable = [h for h in hits if h["status"] == STATUS_ENTER]
+    watch_only = [h for h in enterable if not core.is_buy_liquid(h.get("value_avg_20"))]
+    enterable = [h for h in enterable if core.is_buy_liquid(h.get("value_avg_20"))]
+    watch_msg = build_watch_only_message(watch_only)
     if not enterable:
-        return []
+        return [watch_msg] if watch_msg else []
 
     enterable = core.sort_by_gap(enterable)
     header = f"[돌파]{now.strftime('%H:%M')}"
@@ -565,6 +638,8 @@ def build_messages(
             messages[-1] += f"\n{tail}"
         else:
             messages.append(f"{header}\n{tail}")
+    if watch_msg:
+        messages.append(watch_msg)
     return messages
 
 
@@ -772,6 +847,9 @@ def _run(dry_run: bool = False) -> int:
                 "atr20": h["atr20"],
                 "gap_atr": round(h["gap_atr"], 3),
                 "unit_shares": h["unit_shares"],
+                "value_avg_20": h.get("value_avg_20"),
+                "value_avg_5": h.get("value_avg_5"),
+                "vol_active_days": h.get("vol_active_days"),
                 "status": h["status"],
             }
         path = save_alerted(day, alerted)

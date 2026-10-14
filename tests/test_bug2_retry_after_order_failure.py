@@ -40,6 +40,7 @@ def test_retry_candidates_included_when_no_order_recorded():
             "status": intraday_watch.STATUS_ENTER, "name": "삼성전자",
             "sector": "전기전자", "market": "KOSPI", "price": 10_400.0,
             "high20": 10_300.0, "atr20": 500.0, "gap_atr": 0.2, "unit_shares": 10,
+            "value_avg_20": 1_000_000_000.0,
         }
     }
     with mock.patch.object(notion_repo, "has_order_today", return_value=False) as m:

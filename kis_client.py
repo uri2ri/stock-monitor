@@ -2307,7 +2307,8 @@ def _track_no_entry_all(candidates: list[dict], reason: str,
 def select_buy_candidates(access_token: str, candidates: list[dict]) -> list[dict]:
     """매수 후보를 자금 게이트로 거른다. 실제 주문은 걸지 않는다 (호출자 몫).
 
-    candidates 원소: {"ticker","name","price","atr20","gap_atr","sector"}
+    candidates 원소: {"ticker","name","price","atr20","gap_atr","sector",
+                     "value_avg_20"}
         (intraday_watch.py의 judge() 결과 dict와 같은 모양)
 
     상관군 캡의 기준(현재 보유 유닛)은 항상 이 함수 안에서 구한다
@@ -2317,7 +2318,8 @@ def select_buy_candidates(access_token: str, candidates: list[dict]) -> list[dic
     터틀외) 보유를 섞는 게 아니다 - 자동매매 소관만 본다는 원칙은 그대로다.
 
     순서: 갭 오름차순 정렬 → 이미 보유 중인지 확인 → 가격 상한 →
-          유닛금액 비율(핵심 게이트) → 상관군 캡 → 가용현금 → 일일 주문 상한.
+          유동성(20일 평균 거래대금) → 유닛금액 비율(핵심 게이트) →
+          상관군 캡 → 가용현금 → 일일 주문 상한.
     막힌 종목은 사유별로 기존 카톡 알림 경로로 통지하고 다음 순위로 넘어간다.
     한 번의 호출 안에서 여러 종목이 선정되면, 그만큼 유닛·현금 여력을
     누적해서 소모한다 (같은 상관군 후보를 연달아 다 뽑아버리는 일이 없게).
@@ -2465,6 +2467,21 @@ def select_buy_candidates(access_token: str, candidates: list[dict]) -> list[dic
             logger.info("[%s] 가격 상한 초과", name)
             rejections.append(("가격 상한 초과", name))
             _track_no_entry(c, f"가격 상한 초과(상한 {MAX_STOCK_PRICE:,.0f}원)")
+            continue
+
+        # 3-1. 유동성 - 20일 평균 거래대금이 자동매수 기준(5억) 미만이면 제외.
+        #    야간 스캔은 감시 기준(3억)까지 기록하므로 3~5억 종목도 여기까지
+        #    올 수 있다 - 그 종목은 관찰 알림만 받고 매수하지 않는다.
+        #    값이 없거나 무효면(구버전 알림 이력 등) fail-closed로 제외한다.
+        #    가격 상한처럼 조회 없는 산술 게이트다.
+        if not core.is_buy_liquid(c.get("value_avg_20")):
+            value_20 = core.valid_trading_value(c.get("value_avg_20"))
+            shown = f"{value_20 / 1e8:.1f}억" if value_20 is not None else "확인불가"
+            logger.info("[%s] 유동성 미달(20일 %s)", name, shown)
+            rejections.append(("유동성 미달", name))
+            _track_no_entry(
+                c, f"유동성 미달(20일 {shown} < "
+                   f"{core.BUY_MIN_TRADING_VALUE / 1e8:.0f}억)")
             continue
 
         # 4. 유닛금액 과다 - 핵심 게이트. 유닛주수는 스캔 시점 값을 재사용하지

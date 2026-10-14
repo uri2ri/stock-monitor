@@ -30,6 +30,7 @@ def _candidate(price: float = 10_400.0) -> dict:
         "ticker": "005930", "name": "삼성전자", "price": price,
         "atr20": 500.0, "gap_atr": (price - 10_300.0) / 500.0,
         "sector": "전기전자", "market": "KOSPI", "high20": 10_300.0,
+        "value_avg_20": 1_000_000_000.0,
     }
 
 
