@@ -1,8 +1,243 @@
 {
   "version": 1,
-  "events": [],
-  "plans": [],
-  "prepare_cursor": "771b5c1fc5cb46a595efd68a85d5a770",
+  "events": [
+    {
+      "id": "9ffcfb43fe414cc0862824cab7b5f608",
+      "operation": "_set_outcome",
+      "args": [
+        "489460",
+        "자금부족",
+        "현금 부족(필요 1,272,150원 · 가용 705,209원)",
+        {
+          "__datetime__": "2026-10-14T09:54:16.065165+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "906fd45503554e64ae0c57f65a88b484",
+      "operation": "_set_outcome",
+      "args": [
+        "111770",
+        "자금부족",
+        "현금 부족(필요 1,558,200원 · 가용 705,209원)",
+        {
+          "__datetime__": "2026-10-14T09:54:17.336019+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "a7bff154ef324a74b0b81d3206d15745",
+      "operation": "_set_outcome",
+      "args": [
+        "373220",
+        "미주문",
+        "가격 상한 초과(상한 150,000원)",
+        {
+          "__datetime__": "2026-10-14T09:54:19.978929+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    }
+  ],
+  "plans": [
+    {
+      "id": "4251cb23c160457e999e4a8d56754823",
+      "owner": "38492654599:1",
+      "events": [
+        "9ffcfb43fe414cc0862824cab7b5f608"
+      ],
+      "record": {
+        "account_type": "",
+        "account_key": "",
+        "order_side": "",
+        "order_qty": null,
+        "filled_qty": null,
+        "unverified_qty": null,
+        "execution_price": null,
+        "execution_state": "",
+        "execution_checked_at": null,
+        "event_id": "59e406e03c65434caac3df2f2b87e24e",
+        "order_no": "",
+        "order_day": null,
+        "key": "3f90fc3e-53fc-81a4-8772-cdece0a847e7",
+        "page_id": "3f90fc3e-53fc-81a4-8772-cdece0a847e7",
+        "name": "바이오비쥬",
+        "ticker": "489460",
+        "first_detected_at": {
+          "__datetime__": "2026-10-14T09:03:00+09:00"
+        },
+        "first_threshold": 12820.0,
+        "first_price": 12850.0,
+        "first_atr": 635.0,
+        "status": "추적중",
+        "closed_reason": "",
+        "closed_at": null,
+        "outcome": "자금부족",
+        "outcome_reason": "현금 부족(필요 1,272,150원 · 가용 705,209원)",
+        "outcome_at": {
+          "__datetime__": "2026-10-14T09:54:16.065165+09:00"
+        },
+        "latest_close": null,
+        "latest_date": null,
+        "latest_atr": null,
+        "latest_line": null,
+        "change_pct": null,
+        "atr_mult": null,
+        "dist_to_line": null,
+        "dist_to_line_atr": null,
+        "level_state": "",
+        "new_breakout": "",
+        "refresh_state": "",
+        "refresh_note": "",
+        "user_memo": ""
+      },
+      "page_id": "3f90fc3e-53fc-81a4-8772-cdece0a847e7",
+      "fields": {
+        "outcome_reason": "현금 부족(필요 1,272,150원 · 가용 705,209원)",
+        "outcome_at": {
+          "__datetime__": "2026-10-14T09:54:16.065165+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "2da8b7aecafd42b3b026f4863eaa1d36",
+      "owner": "38492654599:1",
+      "events": [
+        "906fd45503554e64ae0c57f65a88b484"
+      ],
+      "record": {
+        "account_type": "",
+        "account_key": "",
+        "order_side": "",
+        "order_qty": null,
+        "filled_qty": null,
+        "unverified_qty": null,
+        "execution_price": null,
+        "execution_state": "",
+        "execution_checked_at": null,
+        "event_id": "687e1106940e43c0879440b1bb883a12",
+        "order_no": "",
+        "order_day": null,
+        "key": "3f90fc3e-53fc-81d7-9507-d35118a3a910",
+        "page_id": "3f90fc3e-53fc-81d7-9507-d35118a3a910",
+        "name": "영원무역",
+        "ticker": "111770",
+        "first_detected_at": {
+          "__datetime__": "2026-10-14T09:03:00+09:00"
+        },
+        "first_threshold": 73800.0,
+        "first_price": 74200.0,
+        "first_atr": 2979.0,
+        "status": "추적중",
+        "closed_reason": "",
+        "closed_at": null,
+        "outcome": "자금부족",
+        "outcome_reason": "현금 부족(필요 1,558,200원 · 가용 705,209원)",
+        "outcome_at": {
+          "__datetime__": "2026-10-14T09:54:17.336019+09:00"
+        },
+        "latest_close": null,
+        "latest_date": null,
+        "latest_atr": null,
+        "latest_line": null,
+        "change_pct": null,
+        "atr_mult": null,
+        "dist_to_line": null,
+        "dist_to_line_atr": null,
+        "level_state": "",
+        "new_breakout": "",
+        "refresh_state": "",
+        "refresh_note": "",
+        "user_memo": ""
+      },
+      "page_id": "3f90fc3e-53fc-81d7-9507-d35118a3a910",
+      "fields": {
+        "outcome_reason": "현금 부족(필요 1,558,200원 · 가용 705,209원)",
+        "outcome_at": {
+          "__datetime__": "2026-10-14T09:54:17.336019+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "cac9cb6e56564d3a88dc955b5311e626",
+      "owner": "38492654599:1",
+      "events": [
+        "a7bff154ef324a74b0b81d3206d15745"
+      ],
+      "record": {
+        "account_type": "",
+        "account_key": "",
+        "order_side": "",
+        "order_qty": null,
+        "filled_qty": null,
+        "unverified_qty": null,
+        "execution_price": null,
+        "execution_state": "",
+        "execution_checked_at": null,
+        "event_id": "b55c07a5d766482eb19fe4d63494bdd7",
+        "order_no": "",
+        "order_day": null,
+        "key": "3f10fc3e-53fc-8199-a0ae-d06a04f04fbf",
+        "page_id": "3f10fc3e-53fc-8199-a0ae-d06a04f04fbf",
+        "name": "LG에너지솔루션",
+        "ticker": "373220",
+        "first_detected_at": {
+          "__datetime__": "2026-10-06T10:13:00+09:00"
+        },
+        "first_threshold": 376000.0,
+        "first_price": 377500.0,
+        "first_atr": 15643.0,
+        "status": "추적중",
+        "closed_reason": "",
+        "closed_at": null,
+        "outcome": "미주문",
+        "outcome_reason": "가격 상한 초과(상한 150,000원)",
+        "outcome_at": {
+          "__datetime__": "2026-10-14T09:54:19.978929+09:00"
+        },
+        "latest_close": 410000.0,
+        "latest_date": {
+          "__date__": "2026-10-13"
+        },
+        "latest_atr": 18124.0,
+        "latest_line": 423000.0,
+        "change_pct": 9.04,
+        "atr_mult": 2.17,
+        "dist_to_line": 13000.0,
+        "dist_to_line_atr": 0.72,
+        "level_state": "최초선위",
+        "new_breakout": "미해당",
+        "refresh_state": "갱신됨",
+        "refresh_note": "",
+        "user_memo": ""
+      },
+      "page_id": "3f10fc3e-53fc-8199-a0ae-d06a04f04fbf",
+      "fields": {
+        "outcome_reason": "가격 상한 초과(상한 150,000원)",
+        "outcome_at": {
+          "__datetime__": "2026-10-14T09:54:19.978929+09:00"
+        }
+      },
+      "state": "queued"
+    }
+  ],
+  "prepare_cursor": "23a1523d36354a1480cd2ae9dc54ebc8",
   "deliver_cursor": "241d71b73b284984a06501dfdb0e46de",
   "excluded_events": [
     {
