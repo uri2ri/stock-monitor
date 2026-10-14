@@ -2,23 +2,6 @@
   "version": 1,
   "events": [
     {
-      "id": "a50c5630e40247839a519e48c428d783",
-      "operation": "record_breakout",
-      "args": [
-        {
-          "ticker": "0017J0",
-          "name": "세미티에스",
-          "high20": 3660.0,
-          "price": 3700.0,
-          "atr20": 271.0
-        },
-        {
-          "__datetime__": "2026-10-14T10:13:43.685868+09:00"
-        }
-      ],
-      "kwargs": {}
-    },
-    {
       "id": "0a8238358d284be082ade25d3ac1a0ee",
       "operation": "record_breakout",
       "args": [
@@ -53,23 +36,6 @@
       }
     },
     {
-      "id": "7a4816e90dbb4b65ba981c9415276c90",
-      "operation": "_set_outcome",
-      "args": [
-        "0017J0",
-        "자금부족",
-        "현금 부족(필요 839,900원 · 가용 705,209원)",
-        {
-          "__datetime__": "2026-10-14T10:14:26.756089+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
       "id": "74bd7ee9fc4c47f59cea7bdfa274fba0",
       "operation": "_set_outcome",
       "args": [
@@ -88,50 +54,6 @@
     }
   ],
   "plans": [
-    {
-      "id": "0c92cd647db144169a96d5dd929ad54e",
-      "owner": "38494493354:1",
-      "events": [
-        "a50c5630e40247839a519e48c428d783",
-        "7a4816e90dbb4b65ba981c9415276c90"
-      ],
-      "record": {
-        "event_id": "a50c5630e40247839a519e48c428d783",
-        "ticker": "0017J0",
-        "name": "세미티에스",
-        "first_detected_at": {
-          "__datetime__": "2026-10-14T10:13:43.685868+09:00"
-        },
-        "first_threshold": 3660.0,
-        "first_price": 3700.0,
-        "first_atr": 271.0,
-        "status": "추적중",
-        "outcome": "자금부족",
-        "outcome_reason": "현금 부족(필요 839,900원 · 가용 705,209원)",
-        "outcome_at": {
-          "__datetime__": "2026-10-14T10:14:26.756089+09:00"
-        }
-      },
-      "page_id": null,
-      "fields": {
-        "event_id": "a50c5630e40247839a519e48c428d783",
-        "ticker": "0017J0",
-        "name": "세미티에스",
-        "first_detected_at": {
-          "__datetime__": "2026-10-14T10:13:43.685868+09:00"
-        },
-        "first_threshold": 3660.0,
-        "first_price": 3700.0,
-        "first_atr": 271.0,
-        "status": "추적중",
-        "outcome": "자금부족",
-        "outcome_reason": "현금 부족(필요 839,900원 · 가용 705,209원)",
-        "outcome_at": {
-          "__datetime__": "2026-10-14T10:14:26.756089+09:00"
-        }
-      },
-      "state": "creating"
-    },
     {
       "id": "3b8201056c244c85a8efda0e58767f76",
       "owner": "38494493354:1",
@@ -174,7 +96,7 @@
           "__datetime__": "2026-10-14T10:14:30.295235+09:00"
         }
       },
-      "state": "queued"
+      "state": "creating"
     },
     {
       "id": "4d9b57314f1348289e68d45b8632ca6e",
@@ -238,7 +160,7 @@
     }
   ],
   "prepare_cursor": "acfc4d65d28b43dcb7110d47d9b7f83e",
-  "deliver_cursor": "0c92cd647db144169a96d5dd929ad54e",
+  "deliver_cursor": "3b8201056c244c85a8efda0e58767f76",
   "excluded_events": [
     {
       "event": {
