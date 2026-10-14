@@ -2,23 +2,6 @@
   "version": 1,
   "events": [
     {
-      "id": "687e1106940e43c0879440b1bb883a12",
-      "operation": "record_breakout",
-      "args": [
-        {
-          "ticker": "111770",
-          "name": "영원무역",
-          "high20": 73800.0,
-          "price": 74200.0,
-          "atr20": 2979.0
-        },
-        {
-          "__datetime__": "2026-10-14T09:03:39.475105+09:00"
-        }
-      ],
-      "kwargs": {}
-    },
-    {
       "id": "5f5c1f65e907477b942a2878d4782090",
       "operation": "record_breakout",
       "args": [
@@ -138,23 +121,6 @@
       }
     },
     {
-      "id": "16d83ba8c4ef4b4ea99d67314af45e5f",
-      "operation": "_set_outcome",
-      "args": [
-        "111770",
-        "미주문",
-        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        {
-          "__datetime__": "2026-10-14T09:03:49.685386+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
       "id": "77c9831c7a744f75bce1d2841a873360",
       "operation": "_set_outcome",
       "args": [
@@ -190,50 +156,6 @@
     }
   ],
   "plans": [
-    {
-      "id": "0d237efa9e054ff8b89bc0b8e05a8f4f",
-      "owner": "38487891701:1",
-      "events": [
-        "687e1106940e43c0879440b1bb883a12",
-        "16d83ba8c4ef4b4ea99d67314af45e5f"
-      ],
-      "record": {
-        "event_id": "687e1106940e43c0879440b1bb883a12",
-        "ticker": "111770",
-        "name": "영원무역",
-        "first_detected_at": {
-          "__datetime__": "2026-10-14T09:03:39.475105+09:00"
-        },
-        "first_threshold": 73800.0,
-        "first_price": 74200.0,
-        "first_atr": 2979.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        "outcome_at": {
-          "__datetime__": "2026-10-14T09:03:49.685386+09:00"
-        }
-      },
-      "page_id": null,
-      "fields": {
-        "event_id": "687e1106940e43c0879440b1bb883a12",
-        "ticker": "111770",
-        "name": "영원무역",
-        "first_detected_at": {
-          "__datetime__": "2026-10-14T09:03:39.475105+09:00"
-        },
-        "first_threshold": 73800.0,
-        "first_price": 74200.0,
-        "first_atr": 2979.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        "outcome_at": {
-          "__datetime__": "2026-10-14T09:03:49.685386+09:00"
-        }
-      },
-      "state": "creating"
-    },
     {
       "id": "1eea3f3a35cf43cfaffec88e55e42d1f",
       "owner": "38487891701:1",
@@ -276,7 +198,7 @@
           "__datetime__": "2026-10-14T09:03:39.475105+09:00"
         }
       },
-      "state": "queued"
+      "state": "creating"
     },
     {
       "id": "29680340eee64586bb7f5a88c9ab8470",
@@ -474,7 +396,7 @@
     }
   ],
   "prepare_cursor": "530d63b530534076a26d69db50dc5c70",
-  "deliver_cursor": "0d237efa9e054ff8b89bc0b8e05a8f4f",
+  "deliver_cursor": "1eea3f3a35cf43cfaffec88e55e42d1f",
   "excluded_events": [
     {
       "event": {
