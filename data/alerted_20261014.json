@@ -274,6 +274,18 @@
       "gap_atr": 0.154,
       "unit_shares": 1543,
       "status": "진입가능"
+    },
+    "234690": {
+      "time": "11:13",
+      "name": "녹십자웰빙",
+      "sector": "제약",
+      "market": "KOSDAQ",
+      "price": 11410.0,
+      "high20": 11370.0,
+      "atr20": 606.0,
+      "gap_atr": 0.066,
+      "unit_shares": 825,
+      "status": "진입가능"
     }
   }
 }
