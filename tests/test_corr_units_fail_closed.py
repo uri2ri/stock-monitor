@@ -63,7 +63,7 @@ def _break_notion(monkeypatch):
 def _candidate(ticker="000001", sector="전기전자"):
     return {"ticker": ticker, "name": f"종목{ticker}", "sector": sector,
             "price": 10_000.0, "atr20": 500.0, "high20": 9_900.0,
-            "gap_atr": 0.2, "market": "KOSPI"}
+            "gap_atr": 0.2, "market": "KOSPI", "value_avg_20": 1_000_000_000.0}
 
 
 # ── 집계 함수 자체 ──────────────────────────────────────────

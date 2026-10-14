@@ -57,7 +57,7 @@ def env(monkeypatch):
 def _candidate(ticker="000999", sector="전기전자"):
     return {"ticker": ticker, "name": "반도체후보", "sector": sector,
             "price": 10_000.0, "atr20": 500.0, "high20": 9_900.0,
-            "gap_atr": 0.2, "market": "KOSDAQ"}
+            "gap_atr": 0.2, "market": "KOSDAQ", "value_avg_20": 1_000_000_000.0}
 
 
 # ── 집계 ────────────────────────────────────────────────────

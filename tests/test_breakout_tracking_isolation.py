@@ -81,7 +81,7 @@ def _candidate(ticker: str, sector: str = "전기전자", price: float = 10_000.
                high20: float = 9_900.0) -> dict:
     return {"ticker": ticker, "name": ticker, "price": price, "atr20": 500.0,
             "gap_atr": (price - high20) / 500.0, "sector": sector,
-            "market": "KOSPI", "high20": high20}
+            "market": "KOSPI", "high20": high20, "value_avg_20": 1_000_000_000.0}
 
 
 def _wire_gates(monkeypatch, cash: float, *, corr=None, success_today: int = 0):

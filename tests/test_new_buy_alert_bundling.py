@@ -33,7 +33,7 @@ def _candidate(ticker, sector="전기전자", *, price=10_000.0, atr=500.0,
     return {
         "ticker": ticker, "name": name or f"종목{ticker}", "sector": sector,
         "price": price, "atr20": atr, "high20": high20, "gap_atr": 0.2,
-        "market": "KOSPI",
+        "market": "KOSPI", "value_avg_20": 1_000_000_000.0,
     }
 
 

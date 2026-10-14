@@ -87,6 +87,7 @@ def test_alert_history_does_not_gate_order_retry_only_notion_does(tmp_path, monk
             "status": intraday_watch.STATUS_ENTER, "name": "삼성전자",
             "sector": "전기전자", "market": "KOSPI", "price": 10_400.0,
             "high20": 10_300.0, "atr20": 500.0, "gap_atr": 0.2, "unit_shares": 10,
+            "value_avg_20": 1_000_000_000.0,
         }
     }
     intraday_watch.save_alerted(day, alerted)
