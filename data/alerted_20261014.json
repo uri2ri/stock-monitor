@@ -1,0 +1,113 @@
+{
+  "date": "20261014",
+  "alerted": {
+    "033780": {
+      "time": "09:03",
+      "name": "KT&G",
+      "sector": "음식료·담배",
+      "market": "KOSPI",
+      "price": 181700.0,
+      "high20": 181500.0,
+      "atr20": 4338.0,
+      "gap_atr": 0.046,
+      "unit_shares": 115,
+      "status": "진입가능"
+    },
+    "111770": {
+      "time": "09:03",
+      "name": "영원무역",
+      "sector": "유통",
+      "market": "KOSPI",
+      "price": 74200.0,
+      "high20": 73800.0,
+      "atr20": 2979.0,
+      "gap_atr": 0.134,
+      "unit_shares": 167,
+      "status": "진입가능"
+    },
+    "000240": {
+      "time": "09:03",
+      "name": "한국앤컴퍼니",
+      "sector": "금융",
+      "market": "KOSPI",
+      "price": 27300.0,
+      "high20": 26750.0,
+      "atr20": 855.0,
+      "gap_atr": 0.643,
+      "unit_shares": 584,
+      "status": "추격금지"
+    },
+    "028670": {
+      "time": "09:03",
+      "name": "팬오션",
+      "sector": "운송·창고",
+      "market": "KOSPI",
+      "price": 6840.0,
+      "high20": 6630.0,
+      "atr20": 324.0,
+      "gap_atr": 0.648,
+      "unit_shares": 1543,
+      "status": "추격금지"
+    },
+    "011200": {
+      "time": "09:03",
+      "name": "HMM",
+      "sector": "운송·창고",
+      "market": "KOSPI",
+      "price": 23400.0,
+      "high20": 22350.0,
+      "atr20": 726.0,
+      "gap_atr": 1.446,
+      "unit_shares": 688,
+      "status": "추격금지"
+    },
+    "001120": {
+      "time": "09:03",
+      "name": "LX인터내셔널",
+      "sector": "유통",
+      "market": "KOSPI",
+      "price": 45050.0,
+      "high20": 44700.0,
+      "atr20": 1544.0,
+      "gap_atr": 0.227,
+      "unit_shares": 323,
+      "status": "진입가능"
+    },
+    "396300": {
+      "time": "09:03",
+      "name": "HT로보틱스",
+      "sector": "금속",
+      "market": "KOSDAQ",
+      "price": 6730.0,
+      "high20": 6580.0,
+      "atr20": 496.0,
+      "gap_atr": 0.302,
+      "unit_shares": 1008,
+      "status": "진입가능"
+    },
+    "489460": {
+      "time": "09:03",
+      "name": "바이오비쥬",
+      "sector": "화학",
+      "market": "KOSDAQ",
+      "price": 12850.0,
+      "high20": 12820.0,
+      "atr20": 635.0,
+      "gap_atr": 0.047,
+      "unit_shares": 787,
+      "status": "진입가능"
+    },
+    "097950": {
+      "time": "09:03",
+      "name": "CJ제일제당",
+      "sector": "음식료·담배",
+      "market": "KOSPI",
+      "price": 186500.0,
+      "high20": 185700.0,
+      "atr20": 4109.0,
+      "gap_atr": 0.195,
+      "unit_shares": 121,
+      "status": "진입가능"
+    }
+  }
+}
