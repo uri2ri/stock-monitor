@@ -1,8 +1,87 @@
 {
   "version": 1,
-  "events": [],
-  "plans": [],
-  "prepare_cursor": "85f0ac2d24de4cd9b0a9065f15487c46",
+  "events": [
+    {
+      "id": "d5061415d2e1431ebf438fa95a69abe3",
+      "operation": "_set_outcome",
+      "args": [
+        "000080",
+        "미주문",
+        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        {
+          "__datetime__": "2026-10-15T15:23:34.565590+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    }
+  ],
+  "plans": [
+    {
+      "id": "eb12854a2f604a12b5b08d1b8c908f22",
+      "owner": "38692076332:1",
+      "events": [
+        "d5061415d2e1431ebf438fa95a69abe3"
+      ],
+      "record": {
+        "account_type": "",
+        "account_key": "",
+        "order_side": "",
+        "order_qty": null,
+        "filled_qty": null,
+        "unverified_qty": null,
+        "execution_price": null,
+        "execution_state": "",
+        "execution_checked_at": null,
+        "event_id": "f4b245076a194fd5bc3370e0dcb66902",
+        "order_no": "",
+        "order_day": null,
+        "key": "3fa0fc3e-53fc-816a-bb69-ea87574b97d1",
+        "page_id": "3fa0fc3e-53fc-816a-bb69-ea87574b97d1",
+        "name": "하이트진로",
+        "ticker": "000080",
+        "first_detected_at": {
+          "__datetime__": "2026-10-15T13:33:00+09:00"
+        },
+        "first_threshold": 15420.0,
+        "first_price": 15470.0,
+        "first_atr": 311.0,
+        "status": "추적중",
+        "closed_reason": "",
+        "closed_at": null,
+        "outcome": "미주문",
+        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        "outcome_at": {
+          "__datetime__": "2026-10-15T15:23:34.565590+09:00"
+        },
+        "latest_close": null,
+        "latest_date": null,
+        "latest_atr": null,
+        "latest_line": null,
+        "change_pct": null,
+        "atr_mult": null,
+        "dist_to_line": null,
+        "dist_to_line_atr": null,
+        "level_state": "",
+        "new_breakout": "",
+        "refresh_state": "",
+        "refresh_note": "",
+        "user_memo": ""
+      },
+      "page_id": "3fa0fc3e-53fc-816a-bb69-ea87574b97d1",
+      "fields": {
+        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        "outcome_at": {
+          "__datetime__": "2026-10-15T15:23:34.565590+09:00"
+        }
+      },
+      "state": "queued"
+    }
+  ],
+  "prepare_cursor": "d5061415d2e1431ebf438fa95a69abe3",
   "deliver_cursor": "ed7c9c76bb7743b48c821f4b3f190eae",
   "excluded_events": [
     {
