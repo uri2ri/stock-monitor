@@ -86,6 +86,10 @@ CLI:
     python backtest.py --liquidity-entry-study --period dev --mode intraday
     python backtest.py --liquidity-entry-study --ticker 171090 --period dev --mode intraday
 
+    # 분석: 진입일 지수 상태별 성적 (매매 규칙 불변, 태깅만)
+    python index_state.py --fetch                       # data/index_ohlcv_*.csv 수집
+    python backtest.py --portfolio --capital-mode fixed --market KOSPI --index-state
+
 [자본 모드]
 dev 기준선이 2020년 상반기에 계좌 파산 후 3년 반을 현금부족으로 거의 못 거래해서,
 파라미터를 바꿔도 "전략이 개선됐는지"와 "초반 운으로 파산을 면했는지"가 안 갈렸다.
@@ -111,6 +115,7 @@ from typing import Optional
 import pandas as pd
 
 import core
+import index_state
 import screener
 
 logging.basicConfig(level=logging.WARNING, format="%(levelname)s %(name)s: %(message)s",
@@ -914,15 +919,40 @@ class PortfolioTrade:
     exit_reason: str
     entry_gap_atr: float = 0.0              # 1유닛 진입 신호일의 gap_atr (진단용)
     exit_verdict: str = ""                  # "손절"|"추세청산"|"본전하한" (core.evaluate_holding 판정 그대로)
+    # 1유닛 진입 단위 손익 - 피라미딩 추가분을 뺀 첫 유닛만의 매수원가·매도대금
+    # (청산 체결가 × 1유닛 주수). 지수 상태 분석에서 "진입 자체가 좋았는가"를
+    # 피라미딩 효과와 분리해서 보려는 값이다.
+    unit1_invested: float = 0.0
+    unit1_proceeds: float = 0.0
+    # 진입일 지수 상태 태그(index_state.state_asof, 진입일 전날까지 데이터만).
+    # 분석용이며 매매 판단에는 쓰지 않는다. 시장을 모르면 None.
+    idx_market: Optional[str] = None
+    idx_asof: Optional[date] = None
+    idx_turtle: Optional[str] = None
+    idx_channel_pos: Optional[float] = None
+    idx_channel_bucket: Optional[str] = None
+    idx_above_sma60: Optional[str] = None
+    idx_ret20: Optional[float] = None
+    idx_ret20_bucket: Optional[str] = None
 
     @property
     def net_pnl(self) -> float:
         return self.proceeds - self.total_invested
 
     @property
+    def risk_1r(self) -> float:
+        return self.unit_shares * 2 * self.entry_atr
+
+    @property
     def r_multiple(self) -> float:
-        risk_1r = self.unit_shares * 2 * self.entry_atr
-        return self.net_pnl / risk_1r if risk_1r else float("nan")
+        return self.net_pnl / self.risk_1r if self.risk_1r else float("nan")
+
+    @property
+    def unit1_r(self) -> float:
+        """첫 유닛만의 R배수 (피라미딩 제외)."""
+        if not self.risk_1r:
+            return float("nan")
+        return (self.unit1_proceeds - self.unit1_invested) / self.risk_1r
 
 
 # ── 다종목 core.fetch_ohlcv 바꿔치기 ─────────────────────────
@@ -1130,6 +1160,7 @@ def run_portfolio_backtest(tickers: list[str], start: date, end: date,
                 fill = op * (1 - SLIPPAGE)
                 proceeds = fill * pos.total_shares * (1 - COST_RATE)
                 cash += proceeds
+                first = pos.units[0]
                 trades.append(PortfolioTrade(
                     ticker=ticker, entry_date=pos.entry_date, exit_date=today,
                     final_units=pos.num_units, total_shares=pos.total_shares,
@@ -1137,6 +1168,8 @@ def run_portfolio_backtest(tickers: list[str], start: date, end: date,
                     entry_atr=pos.entry_atr, unit_shares=pos.unit_shares,
                     exit_reason=reason, entry_gap_atr=pos.entry_gap_atr,
                     exit_verdict=pos.exit_verdict,
+                    unit1_invested=first.buy_price * first.shares * (1 + COST_RATE),
+                    unit1_proceeds=fill * first.shares * (1 - COST_RATE),
                 ))
                 if ticker == DEBUG_TICKER:
                     print(f"[DEBUG {ticker}] {today} 청산 체결 fill={fill:.1f} "
@@ -1367,6 +1400,8 @@ def run_portfolio_backtest(tickers: list[str], start: date, end: date,
         MAX_UNIT_RATIO = original_max_unit_ratio
         MAX_DAILY_ENTRIES = original_max_daily_entries
 
+    tag_trades_with_index_state(trades)
+
     open_positions_value = 0.0
     for ticker, pos in positions.items():
         df_all = _ALL_DFS[ticker]
@@ -1381,6 +1416,128 @@ def run_portfolio_backtest(tickers: list[str], start: date, end: date,
         "final_cash": cash, "open_positions_value": open_positions_value,
         "final_value": cash + open_positions_value, "open_positions": positions,
     }
+
+
+# ── 진입일 지수 상태 태깅 (분석 전용 - 매매 규칙 불변) ─────────────
+
+def tag_trades_with_index_state(trades: list[PortfolioTrade],
+                                index_dfs: Optional[dict[str, pd.DataFrame]] = None,
+                                ticker_market: Optional[dict[str, str]] = None) -> int:
+    """거래마다 진입일 지수 상태 태그를 채운다. 채운 건수를 돌려준다.
+
+    태그는 index_state.state_asof가 진입일(1유닛 체결일) **전날까지**의
+    지수 일봉으로만 계산한다 - close 모드에서 그 전날은 돌파 신호일이다.
+    매매 경로가 다 끝난 뒤에 붙이므로 체결·게이트 판단에는 영향이 없다.
+    지수 파일(data/index_ohlcv_*.csv)이 없으면 경고만 남기고 건너뛴다.
+    """
+    if not trades:
+        return 0
+    if index_dfs is None:
+        try:
+            index_dfs = index_state.load_all_index_ohlcv()
+        except FileNotFoundError as e:
+            logger.warning("지수 상태 태깅 생략: %s", e)
+            return 0
+    if ticker_market is None:
+        tm = pd.read_csv(TICKER_MARKET_PATH, dtype={"티커": str})
+        ticker_market = dict(zip(tm["티커"], tm["시장"]))
+    tagged = 0
+    for t in trades:
+        tags = index_state.tag_for(ticker_market, index_dfs, t.ticker, t.entry_date)
+        for k, v in tags.items():
+            setattr(t, k, v)
+        if t.idx_market is not None:
+            tagged += 1
+    if tagged < len(trades):
+        logger.warning("지수 상태 태그 없음 %d건 (시장 미상)", len(trades) - tagged)
+    return tagged
+
+
+INDEX_TAG_DIMENSIONS = (
+    ("a) 지수 터틀 상태", "idx_turtle",
+     (index_state.TURTLE_HIGH, index_state.TURTLE_MID, index_state.TURTLE_LOW)),
+    ("b) 20일 채널 위치", "idx_channel_bucket", index_state.CHANNEL_BUCKETS),
+    ("c) 60일선", "idx_above_sma60", (index_state.SMA_ABOVE, index_state.SMA_BELOW)),
+    ("d) 직전 20일 수익률", "idx_ret20_bucket", index_state.RET_BUCKETS),
+)
+
+R_BASES = (("포지션(피라미딩 포함)", "r_multiple"), ("1유닛 진입", "unit1_r"))
+
+TOP_EXCLUDED = 3
+
+
+def r_bucket_stats(rs: list[float]) -> dict:
+    """R 목록(진입일 순) 하나의 성적표. 손실 = R < 0."""
+    n = len(rs)
+    if n == 0:
+        return {"거래수": 0}
+    wins = [r for r in rs if r > 0]
+    losses = [r for r in rs if r < 0]
+    gross_loss = -sum(losses)
+    max_streak = streak = 0
+    for r in rs:
+        streak = streak + 1 if r < 0 else 0
+        max_streak = max(max_streak, streak)
+    trimmed = sorted(rs, reverse=True)[TOP_EXCLUDED:]
+    return {
+        "거래수": n,
+        "승률%": len(wins) / n * 100,
+        "평균R": sum(rs) / n,
+        "중앙R": float(pd.Series(rs).median()),
+        "합계R": sum(rs),
+        "최대R": max(rs),
+        "5R이상": sum(1 for r in rs if r >= 5),
+        "PF": (sum(wins) / gross_loss) if gross_loss > 0 else float("inf"),
+        "최대연속손실": max_streak,
+        f"상위{TOP_EXCLUDED}제외평균R": (sum(trimmed) / len(trimmed)) if trimmed else float("nan"),
+    }
+
+
+def index_state_breakdown(trades: list[PortfolioTrade]) -> pd.DataFrame:
+    """태그 구간별 × (포지션 R / 1유닛 R) 성적표. 구간 안 순서는 진입일 순."""
+    ordered = sorted(trades, key=lambda t: (t.entry_date, t.exit_date, t.ticker))
+    rows = []
+    for basis_name, attr in R_BASES:
+        rows.append({"태그": "전체", "구간": "전체", "단위": basis_name,
+                     **r_bucket_stats([getattr(t, attr) for t in ordered])})
+        for dim_name, field, buckets in INDEX_TAG_DIMENSIONS:
+            for b in buckets:
+                grp = [getattr(t, attr) for t in ordered if getattr(t, field) == b]
+                rows.append({"태그": dim_name, "구간": b, "단위": basis_name,
+                             **r_bucket_stats(grp)})
+            missing = [getattr(t, attr) for t in ordered if getattr(t, field) is None]
+            if missing:
+                rows.append({"태그": dim_name, "구간": "(태그없음)", "단위": basis_name,
+                             **r_bucket_stats(missing)})
+    return pd.DataFrame(rows)
+
+
+def print_index_state_breakdown(table: pd.DataFrame) -> None:
+    def fmt(v, spec):
+        if v is None or (isinstance(v, float) and pd.isna(v)):
+            return "-"
+        if isinstance(v, float) and v == float("inf"):
+            return "inf"
+        return format(v, spec)
+
+    top_col = f"상위{TOP_EXCLUDED}제외평균R"
+    header = (f"{'구간':<12}{'거래':>6}{'승률%':>7}{'평균R':>7}{'중앙R':>7}{'합계R':>9}"
+              f"{'최대R':>7}{'5R+':>5}{'PF':>6}{'연패':>5}{'top3제외':>9}")
+    for basis_name, _ in R_BASES:
+        sub = table[table["단위"] == basis_name]
+        print(f"\n=== 진입일 지수 상태별 성적 · {basis_name} R ===")
+        for dim in ["전체"] + [d for d, _, _ in INDEX_TAG_DIMENSIONS]:
+            print(f"\n[{dim}]")
+            print(header)
+            for _, r in sub[sub["태그"] == dim].iterrows():
+                if r["거래수"] == 0:
+                    print(f"{r['구간']:<12}{0:>6}")
+                    continue
+                print(f"{r['구간']:<12}{int(r['거래수']):>6}{fmt(r['승률%'], '.1f'):>7}"
+                      f"{fmt(r['평균R'], '.2f'):>7}{fmt(r['중앙R'], '.2f'):>7}"
+                      f"{fmt(r['합계R'], '.1f'):>9}{fmt(r['최대R'], '.1f'):>7}"
+                      f"{int(r['5R이상']):>5}{fmt(r['PF'], '.2f'):>6}"
+                      f"{int(r['최대연속손실']):>5}{fmt(r[top_col], '.2f'):>9}")
 
 
 def compute_portfolio_metrics(trades: list[PortfolioTrade],
@@ -1448,7 +1605,8 @@ def print_portfolio_report(result: dict, start: date, end: date,
                             capital_mode: str = "compound",
                             unit_caps: Optional[tuple[int, int, int]] = None,
                             breakout_period: Optional[int] = None,
-                            market: str = "ALL") -> dict:
+                            market: str = "ALL",
+                            index_state_report: bool = False) -> dict:
     trades = result["trades"]
     metrics = compute_portfolio_metrics(trades, result["equity_curve"], starting_capital)
 
@@ -1528,6 +1686,11 @@ def print_portfolio_report(result: dict, start: date, end: date,
         "진입시ATR": t.entry_atr, "1유닛주수": t.unit_shares,
         "순손익": t.net_pnl, "R배수": t.r_multiple, "청산사유": t.exit_reason,
         "청산유형": t.exit_verdict, "진입시gap_atr": t.entry_gap_atr,
+        "1유닛R배수": t.unit1_r,
+        "지수": t.idx_market, "지수기준일": t.idx_asof, "지수터틀상태": t.idx_turtle,
+        "지수채널위치": t.idx_channel_pos, "지수채널구간": t.idx_channel_bucket,
+        "지수60일선": t.idx_above_sma60, "지수20일수익률": t.idx_ret20,
+        "지수20일수익률구간": t.idx_ret20_bucket,
     } for t in trades]
     pd.DataFrame(rows).to_csv(out_csv, index=False, encoding="utf-8-sig")
     print(f"\n거래 단위 상세 저장: {out_csv} ({len(rows)}행)")
@@ -1536,6 +1699,15 @@ def print_portfolio_report(result: dict, start: date, end: date,
     eq_rows = [{"날짜": d, "계좌평가액": v} for d, v in result["equity_curve"]]
     pd.DataFrame(eq_rows).to_csv(eq_csv, index=False, encoding="utf-8-sig")
     print(f"일별 계좌평가액 저장: {eq_csv} ({len(eq_rows)}행)")
+
+    if index_state_report:
+        table = index_state_breakdown(trades)
+        print_index_state_breakdown(table)
+        print(f"\n※ 청산된 거래만 집계한다(미청산 {len(result['open_positions'])}종목 제외). "
+              f"태그는 진입일 전날까지의 지수 일봉 기준 - 분석용이며 매매 규칙에 쓰지 않는다.")
+        idx_csv = out_csv.with_name(out_csv.stem + "_index_state.csv")
+        table.to_csv(idx_csv, index=False, encoding="utf-8-sig")
+        print(f"지수 상태별 성적 저장: {idx_csv} ({len(table)}행)")
 
     return metrics
 
@@ -1616,6 +1788,11 @@ def main() -> int:
                         help="--portfolio 전용: 유니버스를 이 시장으로 제한한다 "
                              "(data/ticker_market.csv 기준, KOSDAQ에는 KOSDAQ GLOBAL 포함). "
                              "기본 ALL")
+    parser.add_argument("--index-state", action="store_true",
+                        help="--portfolio 전용(분석): 거래를 진입일 지수 상태(지수 신고가/신저가, "
+                             "20일 채널 위치, 60일선, 직전 20일 수익률 - 진입일 전날 종가 기준)로 "
+                             "나눠 성적표를 출력·저장한다. 매매 규칙은 바뀌지 않는다 "
+                             "(data/index_ohlcv_*.csv 필요: python index_state.py --fetch)")
     parser.add_argument("--kospi200", action="store_true",
                         help="--portfolio 전용: 신규 진입을 진입일 시점 코스피200 편입 "
                              "종목으로 제한 (data/kospi200_history.csv 반기별 스냅샷, "
@@ -1738,7 +1915,8 @@ def main() -> int:
         market_desc = "코스피200(시점별)" if args.kospi200 else args.market
         metrics = print_portfolio_report(result, start, end, starting_capital, out_csv,
                                          capital_mode=capital_mode, unit_caps=unit_caps,
-                                         breakout_period=args.breakout_period, market=market_desc)
+                                         breakout_period=args.breakout_period, market=market_desc,
+                                         index_state_report=args.index_state)
         _log_holdout_if_needed("portfolio", {
             "거래수": metrics["거래수"], "승률": round(metrics["승률"], 2),
             "평균R": round(metrics["평균R"], 3), "총손익": round(metrics["총손익"]),
