@@ -82,6 +82,10 @@ CLI:
     python backtest.py --portfolio --period holdout     # 검증 (compound 기본 + 경고 + 이력)
     python backtest.py --portfolio --period full        # 전체 기준선 스냅샷
 
+    # 3~5억 최초 돌파 뒤 늦은 진입 연구 (backtest_liquidity_study.py)
+    python backtest.py --liquidity-entry-study --period dev --mode intraday
+    python backtest.py --liquidity-entry-study --ticker 171090 --period dev --mode intraday
+
 [자본 모드]
 dev 기준선이 2020년 상반기에 계좌 파산 후 3년 반을 현금부족으로 거의 못 거래해서,
 파라미터를 바꿔도 "전략이 개선됐는지"와 "초반 운으로 파산을 면했는지"가 안 갈렸다.
@@ -1538,8 +1542,11 @@ def print_portfolio_report(result: dict, start: date, end: date,
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="백테스트 (1단계: 단일 종목 / 2단계: 모드 비교)")
-    parser.add_argument("--ticker", default=DEFAULT_TICKER,
-                        help="단일 종목 (기본 삼성전자). --tickers와 같이 쓰면 무시됨")
+    # 기본값을 None으로 두고 단일 종목 경로에서 DEFAULT_TICKER로 채운다 - 그래야
+    # --liquidity-entry-study가 "--ticker를 줬는가"를 구분할 수 있다(동작은 같다).
+    parser.add_argument("--ticker", default=None,
+                        help="단일 종목 (기본 삼성전자). --tickers와 같이 쓰면 무시됨. "
+                             "--liquidity-entry-study에서는 그 종목만 분석")
     parser.add_argument("--tickers", default=None,
                         help="쉼표로 구분한 복수 종목 (예: 006660,078930)")
     parser.add_argument("--period", choices=("dev", "holdout", "full"), default="dev",
@@ -1613,6 +1620,12 @@ def main() -> int:
                         help="--portfolio 전용: 신규 진입을 진입일 시점 코스피200 편입 "
                              "종목으로 제한 (data/kospi200_history.csv 반기별 스냅샷, "
                              "시점별이라 생존편향 없음). 보유 종목 피라미딩은 계속 허용")
+    parser.add_argument("--liquidity-entry-study", action="store_true",
+                        help="3~5억 구간 최초 돌파 뒤 늦은 진입 연구 (baseline / "
+                             "skip_lowliq_first_breakout / late_entry_guard 비교). "
+                             "backtest_liquidity_study.py 참고. --period full은 막는다")
+    parser.add_argument("--mode", choices=("intraday", "close"), default="intraday",
+                        help="--liquidity-entry-study 전용 진입 모드 (기본 intraday)")
     args = parser.parse_args()
 
     # ── 구간 설정: --period가 [start, end] 기본 범위를 정하고, 이후 모든
@@ -1626,6 +1639,10 @@ def main() -> int:
             f"--start/--end({start}~{end})가 --period {args.period} 범위"
             f"({period_lo}~{period_hi}) 밖입니다."
         )
+    if args.liquidity_entry_study and args.period == "full":
+        # full은 holdout 구간을 포함한다 - 이 연구로 holdout을 들여다보려면
+        # --period holdout으로 명시적으로 실행해 경고·이력이 남게 한다.
+        raise SystemExit("--liquidity-entry-study는 --period dev(기본) 또는 holdout만 받습니다.")
     if args.period == "holdout":
         print(HOLDOUT_BANNER)
 
@@ -1676,6 +1693,11 @@ def main() -> int:
             else:
                 out.append(int(p))
         return tuple(out)  # type: ignore[return-value]
+
+    if args.liquidity_entry_study:
+        import backtest_liquidity_study as study
+        return study.run_cli(args, start, end, bt_module=sys.modules[__name__],
+                             log_holdout=_log_holdout_if_needed)
 
     if args.portfolio:
         full = _load_full_raw()
@@ -1739,7 +1761,7 @@ def main() -> int:
         return 0
 
     risk = core.RISK_PER_TRADE if args.risk is None else args.risk
-    tickers = args.tickers.split(",") if args.tickers else [args.ticker]
+    tickers = args.tickers.split(",") if args.tickers else [args.ticker or DEFAULT_TICKER]
 
     print(f"=== 백테스트: {', '.join(tickers)} | {start} ~ {end} ===")
     print(f"슬리피지 {SLIPPAGE*100:.1f}% · 매매비용 {COST_RATE*100:.2f}% · "
