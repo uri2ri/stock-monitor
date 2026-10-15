@@ -1,6 +1,6 @@
 {
- "built_on": "2026-10-07",
- "as_of": "20261007",
+ "built_on": "2026-10-15",
+ "as_of": "20261015",
  "source": "KRX 전종목 시세",
  "note": "폴백(종목별 개별 조회) 경로가 쓰는 종목 목록입니다. build_universe.py로 자동 갱신하거나, 아래 stocks 배열에 {\"ticker\": \"005930\", \"name\": \"삼성전자\", \"market\": \"KOSPI\"} 형식으로 직접 채워도 됩니다. name은 비워도 되고, 그때는 통과 종목에 한해 조회로 채웁니다. 신규 상장은 120거래일 미만이라 어차피 필터에서 빠지므로 목록이 며칠 낡아도 됩니다.",
  "stocks": [
@@ -1712,11 +1712,6 @@
   {
    "ticker": "060480",
    "name": "국일신동",
-   "market": "KOSDAQ"
-  },
-  {
-   "ticker": "078130",
-   "name": "국일제지",
    "market": "KOSDAQ"
   },
   {
@@ -3890,6 +3885,11 @@
    "market": "KOSDAQ"
   },
   {
+   "ticker": "179880",
+   "name": "멜콘",
+   "market": "KOSDAQ"
+  },
+  {
    "ticker": "072770",
    "name": "멤레이비티",
    "market": "KOSDAQ"
@@ -4390,11 +4390,6 @@
    "market": "KOSPI"
   },
   {
-   "ticker": "005030",
-   "name": "부산주공",
-   "market": "KOSPI"
-  },
-  {
    "ticker": "008470",
    "name": "부스타",
    "market": "KOSDAQ"
@@ -4612,6 +4607,11 @@
   {
    "ticker": "065450",
    "name": "빅텍",
+   "market": "KOSDAQ"
+  },
+  {
+   "ticker": "210120",
+   "name": "빅텐츠",
    "market": "KOSDAQ"
   },
   {
@@ -6925,6 +6925,11 @@
    "market": "KOSDAQ"
   },
   {
+   "ticker": "078130",
+   "name": "에스엠국일",
+   "market": "KOSDAQ"
+  },
+  {
    "ticker": "010580",
    "name": "에스엠벡셀",
    "market": "KOSPI"
@@ -7447,6 +7452,11 @@
   {
    "ticker": "348370",
    "name": "엔켐",
+   "market": "KOSDAQ"
+  },
+  {
+   "ticker": "134580",
+   "name": "엔키AX",
    "market": "KOSDAQ"
   },
   {
@@ -9765,6 +9775,11 @@
    "market": "KOSPI"
   },
   {
+   "ticker": "250030",
+   "name": "진코스텍",
+   "market": "KOSDAQ"
+  },
+  {
    "ticker": "002780",
    "name": "진흥기업",
    "market": "KOSPI"
@@ -9902,11 +9917,6 @@
   {
    "ticker": "198080",
    "name": "캐프",
-   "market": "KOSDAQ"
-  },
-  {
-   "ticker": "210120",
-   "name": "캔버스엔",
    "market": "KOSDAQ"
   },
   {
@@ -10607,11 +10617,6 @@
   {
    "ticker": "065130",
    "name": "탑엔지니어링",
-   "market": "KOSDAQ"
-  },
-  {
-   "ticker": "134580",
-   "name": "탑코미디어",
    "market": "KOSDAQ"
   },
   {
@@ -12177,11 +12182,6 @@
   {
    "ticker": "18064K",
    "name": "한진칼우",
-   "market": "KOSPI"
-  },
-  {
-   "ticker": "005110",
-   "name": "한창",
    "market": "KOSPI"
   },
   {
