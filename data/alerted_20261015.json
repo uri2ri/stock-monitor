@@ -51,6 +51,21 @@
       "status": "추격금지",
       "price_10am": 379.0,
       "time_10am": "10:03"
+    },
+    "000080": {
+      "time": "13:33",
+      "name": "하이트진로",
+      "sector": "음식료·담배",
+      "market": "KOSPI",
+      "price": 15470.0,
+      "high20": 15420.0,
+      "atr20": 311.0,
+      "gap_atr": 0.161,
+      "unit_shares": 1607,
+      "value_avg_20": 1137346597.0,
+      "value_avg_5": 1332954528.0,
+      "vol_active_days": 3,
+      "status": "진입가능"
     }
   }
 }
