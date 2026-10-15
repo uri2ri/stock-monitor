@@ -1,0 +1,20 @@
+{
+  "date": "20261015",
+  "alerted": {
+    "012750": {
+      "time": "09:03",
+      "name": "에스원",
+      "sector": "일반서비스",
+      "market": "KOSPI",
+      "price": 96000.0,
+      "high20": 88200.0,
+      "atr20": 2889.0,
+      "gap_atr": 2.7,
+      "unit_shares": 173,
+      "value_avg_20": 5560829580.0,
+      "value_avg_5": 7509295020.0,
+      "vol_active_days": 3,
+      "status": "추격금지"
+    }
+  }
+}
