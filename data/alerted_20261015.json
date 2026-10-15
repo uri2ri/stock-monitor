@@ -15,6 +15,36 @@
       "value_avg_5": 7509295020.0,
       "vol_active_days": 3,
       "status": "추격금지"
+    },
+    "012030": {
+      "time": "09:13",
+      "name": "DB",
+      "sector": "IT 서비스",
+      "market": "KOSPI",
+      "price": 2415.0,
+      "high20": 2360.0,
+      "atr20": 115.0,
+      "gap_atr": 0.478,
+      "unit_shares": 4347,
+      "value_avg_20": 2588856633.0,
+      "value_avg_5": 4239685975.0,
+      "vol_active_days": 3,
+      "status": "진입가능"
+    },
+    "015260": {
+      "time": "09:13",
+      "name": "에이엔피",
+      "sector": "전기전자",
+      "market": "KOSPI",
+      "price": 369.0,
+      "high20": 315.0,
+      "atr20": 43.0,
+      "gap_atr": 1.256,
+      "unit_shares": 11627,
+      "value_avg_20": 662692985.0,
+      "value_avg_5": 2095185416.0,
+      "vol_active_days": 5,
+      "status": "추격금지"
     }
   }
 }
