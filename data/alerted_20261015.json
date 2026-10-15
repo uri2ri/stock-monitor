@@ -14,7 +14,9 @@
       "value_avg_20": 5560829580.0,
       "value_avg_5": 7509295020.0,
       "vol_active_days": 3,
-      "status": "추격금지"
+      "status": "추격금지",
+      "price_10am": 95800.0,
+      "time_10am": "10:03"
     },
     "012030": {
       "time": "09:13",
@@ -29,7 +31,9 @@
       "value_avg_20": 2588856633.0,
       "value_avg_5": 4239685975.0,
       "vol_active_days": 3,
-      "status": "진입가능"
+      "status": "진입가능",
+      "price_10am": 2385.0,
+      "time_10am": "10:03"
     },
     "015260": {
       "time": "09:13",
@@ -44,7 +48,9 @@
       "value_avg_20": 662692985.0,
       "value_avg_5": 2095185416.0,
       "vol_active_days": 5,
-      "status": "추격금지"
+      "status": "추격금지",
+      "price_10am": 379.0,
+      "time_10am": "10:03"
     }
   }
 }
