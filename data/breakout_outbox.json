@@ -2,23 +2,6 @@
   "version": 1,
   "events": [
     {
-      "id": "9b86d63b52114e16830d7d84101df3a6",
-      "operation": "record_breakout",
-      "args": [
-        {
-          "ticker": "036460",
-          "name": "한국가스공사",
-          "high20": 37050.0,
-          "price": 37150.0,
-          "atr20": 965.0
-        },
-        {
-          "__datetime__": "2026-10-16T09:13:43.143870+09:00"
-        }
-      ],
-      "kwargs": {}
-    },
-    {
       "id": "d452637d01164c0aaec54b48f0db4324",
       "operation": "record_breakout",
       "args": [
@@ -138,30 +121,6 @@
       }
     },
     {
-      "id": "3450f2e2988b46c8ab370d84b9832883",
-      "operation": "_set_outcome",
-      "args": [
-        "036460",
-        "주문접수",
-        "주문 접수(주문번호 0000007051)",
-        {
-          "__datetime__": "2026-10-16T09:14:23.672349+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "0000007051",
-        "order_day": {
-          "__date__": "2026-10-16"
-        },
-        "identity": {
-          "order_qty": 58,
-          "account_type": "모의",
-          "account_key": "d534c8d981289493d2f84a1e888ebc32d53dfd1df60dcd620d6e4707f0cc4a87",
-          "order_side": "매수"
-        }
-      }
-    },
-    {
       "id": "b303f5c7d80d4675822ecaad950aaf62",
       "operation": "_set_outcome",
       "args": [
@@ -187,66 +146,6 @@
     }
   ],
   "plans": [
-    {
-      "id": "8894b463042f44ffb4633d89c5c6cfe5",
-      "owner": "38828207552:1",
-      "events": [
-        "9b86d63b52114e16830d7d84101df3a6",
-        "3450f2e2988b46c8ab370d84b9832883"
-      ],
-      "record": {
-        "event_id": "9b86d63b52114e16830d7d84101df3a6",
-        "ticker": "036460",
-        "name": "한국가스공사",
-        "first_detected_at": {
-          "__datetime__": "2026-10-16T09:13:43.143870+09:00"
-        },
-        "first_threshold": 37050.0,
-        "first_price": 37150.0,
-        "first_atr": 965.0,
-        "status": "추적중",
-        "outcome": "주문접수",
-        "outcome_reason": "주문 접수(주문번호 0000007051)",
-        "outcome_at": {
-          "__datetime__": "2026-10-16T09:14:23.672349+09:00"
-        },
-        "order_no": "0000007051",
-        "order_day": {
-          "__date__": "2026-10-16"
-        },
-        "order_qty": 58,
-        "account_type": "모의",
-        "account_key": "d534c8d981289493d2f84a1e888ebc32d53dfd1df60dcd620d6e4707f0cc4a87",
-        "order_side": "매수"
-      },
-      "page_id": null,
-      "fields": {
-        "event_id": "9b86d63b52114e16830d7d84101df3a6",
-        "ticker": "036460",
-        "name": "한국가스공사",
-        "first_detected_at": {
-          "__datetime__": "2026-10-16T09:13:43.143870+09:00"
-        },
-        "first_threshold": 37050.0,
-        "first_price": 37150.0,
-        "first_atr": 965.0,
-        "status": "추적중",
-        "outcome": "주문접수",
-        "outcome_reason": "주문 접수(주문번호 0000007051)",
-        "outcome_at": {
-          "__datetime__": "2026-10-16T09:14:23.672349+09:00"
-        },
-        "order_no": "0000007051",
-        "order_day": {
-          "__date__": "2026-10-16"
-        },
-        "order_qty": 58,
-        "account_type": "모의",
-        "account_key": "d534c8d981289493d2f84a1e888ebc32d53dfd1df60dcd620d6e4707f0cc4a87",
-        "order_side": "매수"
-      },
-      "state": "creating"
-    },
     {
       "id": "a94c7fd41e944e62b20271e06ba2614b",
       "owner": "38828207552:1",
@@ -289,7 +188,7 @@
           "__datetime__": "2026-10-16T09:14:18.307116+09:00"
         }
       },
-      "state": "queued"
+      "state": "creating"
     },
     {
       "id": "4c51ffe59c974935b73c79127a025bdf",
@@ -595,7 +494,7 @@
     }
   ],
   "prepare_cursor": "b303f5c7d80d4675822ecaad950aaf62",
-  "deliver_cursor": "8894b463042f44ffb4633d89c5c6cfe5",
+  "deliver_cursor": "a94c7fd41e944e62b20271e06ba2614b",
   "excluded_events": [
     {
       "event": {
