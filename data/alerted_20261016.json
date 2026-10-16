@@ -1,0 +1,50 @@
+{
+  "date": "20261016",
+  "alerted": {
+    "138040": {
+      "time": "09:03",
+      "name": "메리츠금융지주",
+      "sector": "금융",
+      "market": "KOSPI",
+      "price": 133900.0,
+      "high20": 133800.0,
+      "atr20": 4774.0,
+      "gap_atr": 0.021,
+      "unit_shares": 104,
+      "value_avg_20": 24474662605.0,
+      "value_avg_5": 31203524660.0,
+      "vol_active_days": 4,
+      "status": "진입가능"
+    },
+    "002350": {
+      "time": "09:03",
+      "name": "넥센타이어",
+      "sector": "화학",
+      "market": "KOSPI",
+      "price": 5900.0,
+      "high20": 5890.0,
+      "atr20": 180.0,
+      "gap_atr": 0.056,
+      "unit_shares": 2777,
+      "value_avg_20": 565249643.0,
+      "value_avg_5": 692447580.0,
+      "vol_active_days": 3,
+      "status": "진입가능"
+    },
+    "068270": {
+      "time": "09:03",
+      "name": "셀트리온",
+      "sector": "제약",
+      "market": "KOSPI",
+      "price": 188200.0,
+      "high20": 186800.0,
+      "atr20": 5161.0,
+      "gap_atr": 0.271,
+      "unit_shares": 96,
+      "value_avg_20": 69399319130.0,
+      "value_avg_5": 95054986600.0,
+      "vol_active_days": 5,
+      "status": "진입가능"
+    }
+  }
+}
