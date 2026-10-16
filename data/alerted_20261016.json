@@ -135,6 +135,21 @@
       "value_avg_5": 2780060220.0,
       "vol_active_days": 2,
       "status": "진입가능"
+    },
+    "111770": {
+      "time": "09:23",
+      "name": "영원무역",
+      "sector": "유통",
+      "market": "KOSPI",
+      "price": 75900.0,
+      "high20": 75700.0,
+      "atr20": 2929.0,
+      "gap_atr": 0.068,
+      "unit_shares": 170,
+      "value_avg_20": 4824115810.0,
+      "value_avg_5": 7350768760.0,
+      "vol_active_days": 5,
+      "status": "진입가능"
     }
   }
 }
