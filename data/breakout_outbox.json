@@ -2,23 +2,6 @@
   "version": 1,
   "events": [
     {
-      "id": "d6a6996e5ce2496e91e98123c63dda6d",
-      "operation": "record_breakout",
-      "args": [
-        {
-          "ticker": "138040",
-          "name": "메리츠금융지주",
-          "high20": 133800.0,
-          "price": 133900.0,
-          "atr20": 4774.0
-        },
-        {
-          "__datetime__": "2026-10-16T09:03:32.158793+09:00"
-        }
-      ],
-      "kwargs": {}
-    },
-    {
       "id": "94e378bac4b3449f944b713963f7d6f9",
       "operation": "record_breakout",
       "args": [
@@ -51,23 +34,6 @@
         }
       ],
       "kwargs": {}
-    },
-    {
-      "id": "00c18719f3a04648a33e5e6f0441455c",
-      "operation": "_set_outcome",
-      "args": [
-        "138040",
-        "미주문",
-        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        {
-          "__datetime__": "2026-10-16T09:03:39.145241+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
     },
     {
       "id": "098d3fc5ed46403085d3a438d2eca95a",
@@ -105,50 +71,6 @@
     }
   ],
   "plans": [
-    {
-      "id": "9b3db9de79ed485ea6883783acd19be4",
-      "owner": "38827208619:1",
-      "events": [
-        "d6a6996e5ce2496e91e98123c63dda6d",
-        "00c18719f3a04648a33e5e6f0441455c"
-      ],
-      "record": {
-        "event_id": "d6a6996e5ce2496e91e98123c63dda6d",
-        "ticker": "138040",
-        "name": "메리츠금융지주",
-        "first_detected_at": {
-          "__datetime__": "2026-10-16T09:03:32.158793+09:00"
-        },
-        "first_threshold": 133800.0,
-        "first_price": 133900.0,
-        "first_atr": 4774.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        "outcome_at": {
-          "__datetime__": "2026-10-16T09:03:39.145241+09:00"
-        }
-      },
-      "page_id": null,
-      "fields": {
-        "event_id": "d6a6996e5ce2496e91e98123c63dda6d",
-        "ticker": "138040",
-        "name": "메리츠금융지주",
-        "first_detected_at": {
-          "__datetime__": "2026-10-16T09:03:32.158793+09:00"
-        },
-        "first_threshold": 133800.0,
-        "first_price": 133900.0,
-        "first_atr": 4774.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        "outcome_at": {
-          "__datetime__": "2026-10-16T09:03:39.145241+09:00"
-        }
-      },
-      "state": "creating"
-    },
     {
       "id": "a482489fd760473796b160349d6a8d3f",
       "owner": "38827208619:1",
@@ -191,7 +113,7 @@
           "__datetime__": "2026-10-16T09:03:39.154594+09:00"
         }
       },
-      "state": "queued"
+      "state": "creating"
     },
     {
       "id": "b07f416ae73a4e1192dea23c5908290b",
@@ -239,7 +161,7 @@
     }
   ],
   "prepare_cursor": "48c6f9bdaeed429b9587bef069f37175",
-  "deliver_cursor": "9b3db9de79ed485ea6883783acd19be4",
+  "deliver_cursor": "a482489fd760473796b160349d6a8d3f",
   "excluded_events": [
     {
       "event": {
