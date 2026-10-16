@@ -2,23 +2,6 @@
   "version": 1,
   "events": [
     {
-      "id": "d452637d01164c0aaec54b48f0db4324",
-      "operation": "record_breakout",
-      "args": [
-        {
-          "ticker": "030190",
-          "name": "NICE평가정보",
-          "high20": 17050.0,
-          "price": 17190.0,
-          "atr20": 511.0
-        },
-        {
-          "__datetime__": "2026-10-16T09:13:43.143870+09:00"
-        }
-      ],
-      "kwargs": {}
-    },
-    {
       "id": "ea641dcbeabb475b8f80d13375b3db7c",
       "operation": "record_breakout",
       "args": [
@@ -87,23 +70,6 @@
       }
     },
     {
-      "id": "1b1345e60364439e8f44dc0a630ae3b0",
-      "operation": "_set_outcome",
-      "args": [
-        "030190",
-        "자금부족",
-        "현금 부족(필요 1,890,900원 · 가용 627,422원)",
-        {
-          "__datetime__": "2026-10-16T09:14:18.307116+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
       "id": "e220ebbbcfdb4328a5095473d685b8cf",
       "operation": "_set_outcome",
       "args": [
@@ -146,50 +112,6 @@
     }
   ],
   "plans": [
-    {
-      "id": "a94c7fd41e944e62b20271e06ba2614b",
-      "owner": "38828207552:1",
-      "events": [
-        "d452637d01164c0aaec54b48f0db4324",
-        "1b1345e60364439e8f44dc0a630ae3b0"
-      ],
-      "record": {
-        "event_id": "d452637d01164c0aaec54b48f0db4324",
-        "ticker": "030190",
-        "name": "NICE평가정보",
-        "first_detected_at": {
-          "__datetime__": "2026-10-16T09:13:43.143870+09:00"
-        },
-        "first_threshold": 17050.0,
-        "first_price": 17190.0,
-        "first_atr": 511.0,
-        "status": "추적중",
-        "outcome": "자금부족",
-        "outcome_reason": "현금 부족(필요 1,890,900원 · 가용 627,422원)",
-        "outcome_at": {
-          "__datetime__": "2026-10-16T09:14:18.307116+09:00"
-        }
-      },
-      "page_id": null,
-      "fields": {
-        "event_id": "d452637d01164c0aaec54b48f0db4324",
-        "ticker": "030190",
-        "name": "NICE평가정보",
-        "first_detected_at": {
-          "__datetime__": "2026-10-16T09:13:43.143870+09:00"
-        },
-        "first_threshold": 17050.0,
-        "first_price": 17190.0,
-        "first_atr": 511.0,
-        "status": "추적중",
-        "outcome": "자금부족",
-        "outcome_reason": "현금 부족(필요 1,890,900원 · 가용 627,422원)",
-        "outcome_at": {
-          "__datetime__": "2026-10-16T09:14:18.307116+09:00"
-        }
-      },
-      "state": "creating"
-    },
     {
       "id": "4c51ffe59c974935b73c79127a025bdf",
       "owner": "38828207552:1",
@@ -248,7 +170,7 @@
         "account_key": "d534c8d981289493d2f84a1e888ebc32d53dfd1df60dcd620d6e4707f0cc4a87",
         "order_side": "매수"
       },
-      "state": "queued"
+      "state": "creating"
     },
     {
       "id": "054a7a4524904d0b94df1c88ae42a905",
@@ -494,7 +416,7 @@
     }
   ],
   "prepare_cursor": "b303f5c7d80d4675822ecaad950aaf62",
-  "deliver_cursor": "a94c7fd41e944e62b20271e06ba2614b",
+  "deliver_cursor": "4c51ffe59c974935b73c79127a025bdf",
   "excluded_events": [
     {
       "event": {
