@@ -202,6 +202,36 @@
       "value_avg_5": 8483686430.0,
       "vol_active_days": 3,
       "status": "진입가능"
+    },
+    "214330": {
+      "time": "10:13",
+      "name": "금호에이치티",
+      "sector": "운송장비·부품",
+      "market": "KOSPI",
+      "price": 8100.0,
+      "high20": 7870.0,
+      "atr20": 456.0,
+      "gap_atr": 0.504,
+      "unit_shares": 1096,
+      "value_avg_20": 430408367.0,
+      "value_avg_5": 876281566.0,
+      "vol_active_days": 4,
+      "status": "추격금지"
+    },
+    "235980": {
+      "time": "10:13",
+      "name": "메드팩토",
+      "sector": "일반서비스",
+      "market": "KOSDAQ",
+      "price": 3190.0,
+      "high20": 3180.0,
+      "atr20": 198.0,
+      "gap_atr": 0.051,
+      "unit_shares": 2525,
+      "value_avg_20": 337815421.0,
+      "value_avg_5": 316392202.0,
+      "vol_active_days": 1,
+      "status": "진입가능"
     }
   }
 }
