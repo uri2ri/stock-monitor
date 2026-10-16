@@ -14,7 +14,9 @@
       "value_avg_20": 24474662605.0,
       "value_avg_5": 31203524660.0,
       "vol_active_days": 4,
-      "status": "진입가능"
+      "status": "진입가능",
+      "price_10am": 132500.0,
+      "time_10am": "10:03"
     },
     "002350": {
       "time": "09:03",
@@ -29,7 +31,9 @@
       "value_avg_20": 565249643.0,
       "value_avg_5": 692447580.0,
       "vol_active_days": 3,
-      "status": "진입가능"
+      "status": "진입가능",
+      "price_10am": 5880.0,
+      "time_10am": "10:03"
     },
     "068270": {
       "time": "09:03",
@@ -44,7 +48,9 @@
       "value_avg_20": 69399319130.0,
       "value_avg_5": 95054986600.0,
       "vol_active_days": 5,
-      "status": "진입가능"
+      "status": "진입가능",
+      "price_10am": 192400.0,
+      "time_10am": "10:03"
     },
     "030000": {
       "time": "09:13",
@@ -59,7 +65,9 @@
       "value_avg_20": 9016448334.0,
       "value_avg_5": 8756311936.0,
       "vol_active_days": 2,
-      "status": "진입가능"
+      "status": "진입가능",
+      "price_10am": 19710.0,
+      "time_10am": "10:03"
     },
     "011090": {
       "time": "09:13",
@@ -74,7 +82,9 @@
       "value_avg_20": 347346365.0,
       "value_avg_5": 320371462.0,
       "vol_active_days": 2,
-      "status": "진입가능"
+      "status": "진입가능",
+      "price_10am": 1982.0,
+      "time_10am": "10:03"
     },
     "005300": {
       "time": "09:13",
@@ -89,7 +99,9 @@
       "value_avg_20": 1243143000.0,
       "value_avg_5": 1533146020.0,
       "vol_active_days": 3,
-      "status": "진입가능"
+      "status": "진입가능",
+      "price_10am": 98200.0,
+      "time_10am": "10:03"
     },
     "036460": {
       "time": "09:13",
@@ -104,7 +116,9 @@
       "value_avg_20": 4918798208.0,
       "value_avg_5": 5224578590.0,
       "vol_active_days": 3,
-      "status": "진입가능"
+      "status": "진입가능",
+      "price_10am": 36950.0,
+      "time_10am": "10:03"
     },
     "030190": {
       "time": "09:13",
@@ -119,7 +133,9 @@
       "value_avg_20": 957098672.0,
       "value_avg_5": 996378278.0,
       "vol_active_days": 3,
-      "status": "진입가능"
+      "status": "진입가능",
+      "price_10am": 17200.0,
+      "time_10am": "10:03"
     },
     "005180": {
       "time": "09:13",
@@ -134,7 +150,9 @@
       "value_avg_20": 3329258525.0,
       "value_avg_5": 2780060220.0,
       "vol_active_days": 2,
-      "status": "진입가능"
+      "status": "진입가능",
+      "price_10am": 91900.0,
+      "time_10am": "10:03"
     },
     "111770": {
       "time": "09:23",
@@ -149,7 +167,9 @@
       "value_avg_20": 4824115810.0,
       "value_avg_5": 7350768760.0,
       "vol_active_days": 5,
-      "status": "진입가능"
+      "status": "진입가능",
+      "price_10am": 74900.0,
+      "time_10am": "10:03"
     },
     "082800": {
       "time": "09:33",
@@ -163,6 +183,23 @@
       "unit_shares": 2857,
       "value_avg_20": 418458535.0,
       "value_avg_5": 478955949.0,
+      "vol_active_days": 3,
+      "status": "진입가능",
+      "price_10am": 3115.0,
+      "time_10am": "10:03"
+    },
+    "009470": {
+      "time": "10:03",
+      "name": "삼화전기",
+      "sector": "전기전자",
+      "market": "KOSPI",
+      "price": 30500.0,
+      "high20": 30300.0,
+      "atr20": 1659.0,
+      "gap_atr": 0.121,
+      "unit_shares": 301,
+      "value_avg_20": 3404465395.0,
+      "value_avg_5": 8483686430.0,
       "vol_active_days": 3,
       "status": "진입가능"
     }
