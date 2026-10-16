@@ -150,6 +150,21 @@
       "value_avg_5": 7350768760.0,
       "vol_active_days": 5,
       "status": "진입가능"
+    },
+    "082800": {
+      "time": "09:33",
+      "name": "비보존 제약",
+      "sector": "제약",
+      "market": "KOSDAQ",
+      "price": 3125.0,
+      "high20": 3105.0,
+      "atr20": 175.0,
+      "gap_atr": 0.114,
+      "unit_shares": 2857,
+      "value_avg_20": 418458535.0,
+      "value_avg_5": 478955949.0,
+      "vol_active_days": 3,
+      "status": "진입가능"
     }
   }
 }
