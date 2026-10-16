@@ -247,6 +247,21 @@
       "value_avg_5": 21144933240.0,
       "vol_active_days": 4,
       "status": "진입가능"
+    },
+    "137310": {
+      "time": "12:13",
+      "name": "에스디바이오센서",
+      "sector": "의료·정밀기기",
+      "market": "KOSPI",
+      "price": 6890.0,
+      "high20": 6880.0,
+      "atr20": 257.0,
+      "gap_atr": 0.039,
+      "unit_shares": 1945,
+      "value_avg_20": 837526252.0,
+      "value_avg_5": 987818468.0,
+      "vol_active_days": 3,
+      "status": "진입가능"
     }
   }
 }
