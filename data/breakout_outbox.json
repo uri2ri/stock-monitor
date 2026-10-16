@@ -2,23 +2,6 @@
   "version": 1,
   "events": [
     {
-      "id": "89c65a83940b4ee3abc2bcfb9eed8dc4",
-      "operation": "record_breakout",
-      "args": [
-        {
-          "ticker": "005300",
-          "name": "롯데칠성",
-          "high20": 97700.0,
-          "price": 98200.0,
-          "atr20": 1967.0
-        },
-        {
-          "__datetime__": "2026-10-16T09:13:43.143870+09:00"
-        }
-      ],
-      "kwargs": {}
-    },
-    {
       "id": "9b86d63b52114e16830d7d84101df3a6",
       "operation": "record_breakout",
       "args": [
@@ -95,23 +78,6 @@
         "주문 직전 재검증 - 돌파 유지 안 됨(최신가 5,840)",
         {
           "__datetime__": "2026-10-16T09:14:15.730826+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
-      "id": "c0b9fad9520a4c0989d7db11ec5f347f",
-      "operation": "_set_outcome",
-      "args": [
-        "005300",
-        "미주문",
-        "유닛금액 과다(계좌 24.3%)",
-        {
-          "__datetime__": "2026-10-16T09:14:17.770986+09:00"
         }
       ],
       "kwargs": {
@@ -222,50 +188,6 @@
   ],
   "plans": [
     {
-      "id": "2a2968bf7762420385e3f80b8d3a9f8c",
-      "owner": "38828207552:1",
-      "events": [
-        "89c65a83940b4ee3abc2bcfb9eed8dc4",
-        "c0b9fad9520a4c0989d7db11ec5f347f"
-      ],
-      "record": {
-        "event_id": "89c65a83940b4ee3abc2bcfb9eed8dc4",
-        "ticker": "005300",
-        "name": "롯데칠성",
-        "first_detected_at": {
-          "__datetime__": "2026-10-16T09:13:43.143870+09:00"
-        },
-        "first_threshold": 97700.0,
-        "first_price": 98200.0,
-        "first_atr": 1967.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "유닛금액 과다(계좌 24.3%)",
-        "outcome_at": {
-          "__datetime__": "2026-10-16T09:14:17.770986+09:00"
-        }
-      },
-      "page_id": null,
-      "fields": {
-        "event_id": "89c65a83940b4ee3abc2bcfb9eed8dc4",
-        "ticker": "005300",
-        "name": "롯데칠성",
-        "first_detected_at": {
-          "__datetime__": "2026-10-16T09:13:43.143870+09:00"
-        },
-        "first_threshold": 97700.0,
-        "first_price": 98200.0,
-        "first_atr": 1967.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "유닛금액 과다(계좌 24.3%)",
-        "outcome_at": {
-          "__datetime__": "2026-10-16T09:14:17.770986+09:00"
-        }
-      },
-      "state": "creating"
-    },
-    {
       "id": "8894b463042f44ffb4633d89c5c6cfe5",
       "owner": "38828207552:1",
       "events": [
@@ -323,7 +245,7 @@
         "account_key": "d534c8d981289493d2f84a1e888ebc32d53dfd1df60dcd620d6e4707f0cc4a87",
         "order_side": "매수"
       },
-      "state": "queued"
+      "state": "creating"
     },
     {
       "id": "a94c7fd41e944e62b20271e06ba2614b",
@@ -673,7 +595,7 @@
     }
   ],
   "prepare_cursor": "b303f5c7d80d4675822ecaad950aaf62",
-  "deliver_cursor": "2a2968bf7762420385e3f80b8d3a9f8c",
+  "deliver_cursor": "8894b463042f44ffb4633d89c5c6cfe5",
   "excluded_events": [
     {
       "event": {
