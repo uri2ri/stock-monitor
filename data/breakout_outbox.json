@@ -1,8 +1,165 @@
 {
   "version": 1,
-  "events": [],
-  "plans": [],
-  "prepare_cursor": "77873fd560f34bf3ad01f240ac25146e",
+  "events": [
+    {
+      "id": "ec6555d947024e739f652cfc1c5a2b10",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "039610",
+          "name": "화성밸브",
+          "high20": 7900.0,
+          "price": 8490.0,
+          "atr20": 579.0
+        },
+        {
+          "__datetime__": "2026-10-19T09:33:28.708136+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "2e8dffe4e9d246faa98d7fbaedcf2dcb",
+      "operation": "_set_outcome",
+      "args": [
+        "039610",
+        "미주문",
+        "추격 구간(+1.02N) - 매수 대상 제외",
+        {
+          "__datetime__": "2026-10-19T09:33:28.708136+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "d356488931d9449992013177344342fc",
+      "operation": "_set_outcome",
+      "args": [
+        "051160",
+        "자금부족",
+        "현금 부족(필요 945,750원 · 가용 122,991원)",
+        {
+          "__datetime__": "2026-10-19T09:33:51.533429+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    }
+  ],
+  "plans": [
+    {
+      "id": "b31384dc312041e9bc69e2ab83d88f6e",
+      "owner": "39181275111:1",
+      "events": [
+        "ec6555d947024e739f652cfc1c5a2b10",
+        "2e8dffe4e9d246faa98d7fbaedcf2dcb"
+      ],
+      "record": {
+        "event_id": "ec6555d947024e739f652cfc1c5a2b10",
+        "ticker": "039610",
+        "name": "화성밸브",
+        "first_detected_at": {
+          "__datetime__": "2026-10-19T09:33:28.708136+09:00"
+        },
+        "first_threshold": 7900.0,
+        "first_price": 8490.0,
+        "first_atr": 579.0,
+        "status": "추적중",
+        "outcome": "미주문",
+        "outcome_reason": "추격 구간(+1.02N) - 매수 대상 제외",
+        "outcome_at": {
+          "__datetime__": "2026-10-19T09:33:28.708136+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "ec6555d947024e739f652cfc1c5a2b10",
+        "ticker": "039610",
+        "name": "화성밸브",
+        "first_detected_at": {
+          "__datetime__": "2026-10-19T09:33:28.708136+09:00"
+        },
+        "first_threshold": 7900.0,
+        "first_price": 8490.0,
+        "first_atr": 579.0,
+        "status": "추적중",
+        "outcome": "미주문",
+        "outcome_reason": "추격 구간(+1.02N) - 매수 대상 제외",
+        "outcome_at": {
+          "__datetime__": "2026-10-19T09:33:28.708136+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "57eecdccf0b9410584ab855acb5bbf21",
+      "owner": "39181275111:1",
+      "events": [
+        "d356488931d9449992013177344342fc"
+      ],
+      "record": {
+        "account_type": "",
+        "account_key": "",
+        "order_side": "",
+        "order_qty": null,
+        "filled_qty": null,
+        "unverified_qty": null,
+        "execution_price": null,
+        "execution_state": "",
+        "execution_checked_at": null,
+        "event_id": "0fd51a20f89143369c5f6ef44ab576d4",
+        "order_no": "",
+        "order_day": null,
+        "key": "3fe0fc3e-53fc-81a7-982f-cf19f79d4453",
+        "page_id": "3fe0fc3e-53fc-81a7-982f-cf19f79d4453",
+        "name": "지어소프트",
+        "ticker": "051160",
+        "first_detected_at": {
+          "__datetime__": "2026-10-19T09:23:00+09:00"
+        },
+        "first_threshold": 14340.0,
+        "first_price": 14550.0,
+        "first_atr": 863.0,
+        "status": "추적중",
+        "closed_reason": "",
+        "closed_at": null,
+        "outcome": "자금부족",
+        "outcome_reason": "현금 부족(필요 945,750원 · 가용 122,991원)",
+        "outcome_at": {
+          "__datetime__": "2026-10-19T09:33:51.533429+09:00"
+        },
+        "latest_close": null,
+        "latest_date": null,
+        "latest_atr": null,
+        "latest_line": null,
+        "change_pct": null,
+        "atr_mult": null,
+        "dist_to_line": null,
+        "dist_to_line_atr": null,
+        "level_state": "",
+        "new_breakout": "",
+        "refresh_state": "",
+        "refresh_note": "",
+        "user_memo": ""
+      },
+      "page_id": "3fe0fc3e-53fc-81a7-982f-cf19f79d4453",
+      "fields": {
+        "outcome_reason": "현금 부족(필요 945,750원 · 가용 122,991원)",
+        "outcome_at": {
+          "__datetime__": "2026-10-19T09:33:51.533429+09:00"
+        }
+      },
+      "state": "queued"
+    }
+  ],
+  "prepare_cursor": "d356488931d9449992013177344342fc",
   "deliver_cursor": "51ea7605fcb948e39e265aaa0be55aba",
   "excluded_events": [
     {
