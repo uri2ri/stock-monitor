@@ -192,6 +192,36 @@
       "value_avg_5": 422304680.0,
       "vol_active_days": 3,
       "status": "진입가능"
+    },
+    "137310": {
+      "time": "13:23",
+      "name": "에스디바이오센서",
+      "sector": "의료·정밀기기",
+      "market": "KOSPI",
+      "price": 6910.0,
+      "high20": 6900.0,
+      "atr20": 258.0,
+      "gap_atr": 0.039,
+      "unit_shares": 1937,
+      "value_avg_20": 861607880.0,
+      "value_avg_5": 969686610.0,
+      "vol_active_days": 3,
+      "status": "진입가능"
+    },
+    "352820": {
+      "time": "13:23",
+      "name": "하이브",
+      "sector": "오락·문화",
+      "market": "KOSPI",
+      "price": 184800.0,
+      "high20": 184500.0,
+      "atr20": 8355.0,
+      "gap_atr": 0.036,
+      "unit_shares": 59,
+      "value_avg_20": 39057597300.0,
+      "value_avg_5": 57352693420.0,
+      "vol_active_days": 5,
+      "status": "진입가능"
     }
   }
 }
