@@ -2,23 +2,6 @@
   "version": 1,
   "events": [
     {
-      "id": "fdd967908dd14302abbffb5d358191d6",
-      "operation": "record_breakout",
-      "args": [
-        {
-          "ticker": "453340",
-          "name": "현대그린푸드",
-          "high20": 19800.0,
-          "price": 19870.0,
-          "atr20": 651.0
-        },
-        {
-          "__datetime__": "2026-10-19T09:23:39.234774+09:00"
-        }
-      ],
-      "kwargs": {}
-    },
-    {
       "id": "0fd51a20f89143369c5f6ef44ab576d4",
       "operation": "record_breakout",
       "args": [
@@ -51,93 +34,9 @@
         "order_day": null,
         "identity": null
       }
-    },
-    {
-      "id": "77873fd560f34bf3ad01f240ac25146e",
-      "operation": "_set_outcome",
-      "args": [
-        "453340",
-        "주문접수",
-        "주문 접수(주문번호 0000011801)",
-        {
-          "__datetime__": "2026-10-19T09:24:18.298773+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "0000011801",
-        "order_day": {
-          "__date__": "2026-10-19"
-        },
-        "identity": {
-          "order_qty": 86,
-          "account_type": "모의",
-          "account_key": "d534c8d981289493d2f84a1e888ebc32d53dfd1df60dcd620d6e4707f0cc4a87",
-          "order_side": "매수"
-        }
-      }
     }
   ],
   "plans": [
-    {
-      "id": "daf4140938884ea0ae940bab104be01a",
-      "owner": "39180524996:1",
-      "events": [
-        "fdd967908dd14302abbffb5d358191d6",
-        "77873fd560f34bf3ad01f240ac25146e"
-      ],
-      "record": {
-        "event_id": "fdd967908dd14302abbffb5d358191d6",
-        "ticker": "453340",
-        "name": "현대그린푸드",
-        "first_detected_at": {
-          "__datetime__": "2026-10-19T09:23:39.234774+09:00"
-        },
-        "first_threshold": 19800.0,
-        "first_price": 19870.0,
-        "first_atr": 651.0,
-        "status": "추적중",
-        "outcome": "주문접수",
-        "outcome_reason": "주문 접수(주문번호 0000011801)",
-        "outcome_at": {
-          "__datetime__": "2026-10-19T09:24:18.298773+09:00"
-        },
-        "order_no": "0000011801",
-        "order_day": {
-          "__date__": "2026-10-19"
-        },
-        "order_qty": 86,
-        "account_type": "모의",
-        "account_key": "d534c8d981289493d2f84a1e888ebc32d53dfd1df60dcd620d6e4707f0cc4a87",
-        "order_side": "매수"
-      },
-      "page_id": null,
-      "fields": {
-        "event_id": "fdd967908dd14302abbffb5d358191d6",
-        "ticker": "453340",
-        "name": "현대그린푸드",
-        "first_detected_at": {
-          "__datetime__": "2026-10-19T09:23:39.234774+09:00"
-        },
-        "first_threshold": 19800.0,
-        "first_price": 19870.0,
-        "first_atr": 651.0,
-        "status": "추적중",
-        "outcome": "주문접수",
-        "outcome_reason": "주문 접수(주문번호 0000011801)",
-        "outcome_at": {
-          "__datetime__": "2026-10-19T09:24:18.298773+09:00"
-        },
-        "order_no": "0000011801",
-        "order_day": {
-          "__date__": "2026-10-19"
-        },
-        "order_qty": 86,
-        "account_type": "모의",
-        "account_key": "d534c8d981289493d2f84a1e888ebc32d53dfd1df60dcd620d6e4707f0cc4a87",
-        "order_side": "매수"
-      },
-      "state": "creating"
-    },
     {
       "id": "51ea7605fcb948e39e265aaa0be55aba",
       "owner": "39180524996:1",
@@ -180,11 +79,11 @@
           "__datetime__": "2026-10-19T09:24:13.245310+09:00"
         }
       },
-      "state": "queued"
+      "state": "creating"
     }
   ],
   "prepare_cursor": "77873fd560f34bf3ad01f240ac25146e",
-  "deliver_cursor": "daf4140938884ea0ae940bab104be01a",
+  "deliver_cursor": "51ea7605fcb948e39e265aaa0be55aba",
   "excluded_events": [
     {
       "event": {
