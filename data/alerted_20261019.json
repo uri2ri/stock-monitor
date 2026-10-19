@@ -222,6 +222,21 @@
       "value_avg_5": 57352693420.0,
       "vol_active_days": 5,
       "status": "진입가능"
+    },
+    "030000": {
+      "time": "13:53",
+      "name": "제일기획",
+      "sector": "일반서비스",
+      "market": "KOSPI",
+      "price": 19830.0,
+      "high20": 19800.0,
+      "atr20": 394.0,
+      "gap_atr": 0.076,
+      "unit_shares": 1269,
+      "value_avg_20": 9116433132.0,
+      "value_avg_5": 8584078556.0,
+      "vol_active_days": 2,
+      "status": "진입가능"
     }
   }
 }
