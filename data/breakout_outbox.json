@@ -2,23 +2,6 @@
   "version": 1,
   "events": [
     {
-      "id": "48c86e549d364350b417a6fb95da95ef",
-      "operation": "record_breakout",
-      "args": [
-        {
-          "ticker": "089230",
-          "name": "THE E&M",
-          "high20": 2470.0,
-          "price": 2475.0,
-          "atr20": 227.0
-        },
-        {
-          "__datetime__": "2026-10-19T10:13:34.400736+09:00"
-        }
-      ],
-      "kwargs": {}
-    },
-    {
       "id": "4798fc3b04104096a2683bcfcf57a3c7",
       "operation": "record_breakout",
       "args": [
@@ -34,23 +17,6 @@
         }
       ],
       "kwargs": {}
-    },
-    {
-      "id": "f98a0bc1b0164f7bbbb2e4a3a804e03c",
-      "operation": "_set_outcome",
-      "args": [
-        "089230",
-        "자금부족",
-        "현금 부족(필요 608,850원 · 가용 122,991원)",
-        {
-          "__datetime__": "2026-10-19T10:14:09.612731+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
     },
     {
       "id": "16c96cbaa0784222ac19be638124f2d6",
@@ -71,50 +37,6 @@
     }
   ],
   "plans": [
-    {
-      "id": "3f72955a9a9f4594824fc06e08749889",
-      "owner": "39184330916:1",
-      "events": [
-        "48c86e549d364350b417a6fb95da95ef",
-        "f98a0bc1b0164f7bbbb2e4a3a804e03c"
-      ],
-      "record": {
-        "event_id": "48c86e549d364350b417a6fb95da95ef",
-        "ticker": "089230",
-        "name": "THE E&M",
-        "first_detected_at": {
-          "__datetime__": "2026-10-19T10:13:34.400736+09:00"
-        },
-        "first_threshold": 2470.0,
-        "first_price": 2475.0,
-        "first_atr": 227.0,
-        "status": "추적중",
-        "outcome": "자금부족",
-        "outcome_reason": "현금 부족(필요 608,850원 · 가용 122,991원)",
-        "outcome_at": {
-          "__datetime__": "2026-10-19T10:14:09.612731+09:00"
-        }
-      },
-      "page_id": null,
-      "fields": {
-        "event_id": "48c86e549d364350b417a6fb95da95ef",
-        "ticker": "089230",
-        "name": "THE E&M",
-        "first_detected_at": {
-          "__datetime__": "2026-10-19T10:13:34.400736+09:00"
-        },
-        "first_threshold": 2470.0,
-        "first_price": 2475.0,
-        "first_atr": 227.0,
-        "status": "추적중",
-        "outcome": "자금부족",
-        "outcome_reason": "현금 부족(필요 608,850원 · 가용 122,991원)",
-        "outcome_at": {
-          "__datetime__": "2026-10-19T10:14:09.612731+09:00"
-        }
-      },
-      "state": "creating"
-    },
     {
       "id": "2c68b004dee24b8cb91c88af9ce9459c",
       "owner": "39184330916:1",
@@ -157,11 +79,11 @@
           "__datetime__": "2026-10-19T10:14:09.627699+09:00"
         }
       },
-      "state": "queued"
+      "state": "creating"
     }
   ],
   "prepare_cursor": "dfc8cefb388a47f18f4d9224606641eb",
-  "deliver_cursor": "3f72955a9a9f4594824fc06e08749889",
+  "deliver_cursor": "2c68b004dee24b8cb91c88af9ce9459c",
   "excluded_events": [
     {
       "event": {
