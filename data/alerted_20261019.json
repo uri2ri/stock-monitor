@@ -252,6 +252,21 @@
       "value_avg_5": 353500091.0,
       "vol_active_days": 2,
       "status": "진입가능"
+    },
+    "161390": {
+      "time": "14:23",
+      "name": "한국타이어앤테크놀로지",
+      "sector": "화학",
+      "market": "KOSPI",
+      "price": 63900.0,
+      "high20": 63700.0,
+      "atr20": 2466.0,
+      "gap_atr": 0.081,
+      "unit_shares": 202,
+      "value_avg_20": 16505174525.0,
+      "value_avg_5": 20807067660.0,
+      "vol_active_days": 4,
+      "status": "진입가능"
     }
   }
 }
