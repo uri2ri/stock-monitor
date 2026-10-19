@@ -1,8 +1,320 @@
 {
   "version": 1,
-  "events": [],
-  "plans": [],
-  "prepare_cursor": "d551f8047c174a3fbd46b56d954a3bf9",
+  "events": [
+    {
+      "id": "639fdbe1c7ae481ab5cf844bfcc0c192",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "185750",
+          "name": "종근당",
+          "high20": 67500.0,
+          "price": 67600.0,
+          "atr20": 1798.0
+        },
+        {
+          "__datetime__": "2026-10-19T13:13:35.500049+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "92c2ff9453444a499cdf56e38f134621",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "002840",
+          "name": "미원상사",
+          "high20": 142300.0,
+          "price": 142400.0,
+          "atr20": 4884.0
+        },
+        {
+          "__datetime__": "2026-10-19T13:13:35.500049+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "1243034e50744f3c86d346df952122a1",
+      "operation": "_set_outcome",
+      "args": [
+        "002840",
+        "자금부족",
+        "현금 부족(필요 1,566,400원 · 가용 122,991원)",
+        {
+          "__datetime__": "2026-10-19T13:14:28.091314+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "501a15c1387c48849955839dab62d656",
+      "operation": "_set_outcome",
+      "args": [
+        "089230",
+        "자금부족",
+        "현금 부족(필요 613,800원 · 가용 122,991원)",
+        {
+          "__datetime__": "2026-10-19T13:14:28.099970+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "7023faa81ef64245b303ce9a148d847d",
+      "operation": "_set_outcome",
+      "args": [
+        "008350",
+        "자금부족",
+        "현금 부족(필요 1,609,839원 · 가용 122,991원)",
+        {
+          "__datetime__": "2026-10-19T13:14:28.107820+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "fbe0ec81450e46bf8ced11e45d1e9cf2",
+      "operation": "_set_outcome",
+      "args": [
+        "185750",
+        "자금부족",
+        "현금 부족(필요 2,095,600원 · 가용 122,991원)",
+        {
+          "__datetime__": "2026-10-19T13:14:28.115852+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    }
+  ],
+  "plans": [
+    {
+      "id": "67137c4a80334b72bc72d0f5752de74b",
+      "owner": "39198350403:1",
+      "events": [
+        "639fdbe1c7ae481ab5cf844bfcc0c192",
+        "fbe0ec81450e46bf8ced11e45d1e9cf2"
+      ],
+      "record": {
+        "event_id": "639fdbe1c7ae481ab5cf844bfcc0c192",
+        "ticker": "185750",
+        "name": "종근당",
+        "first_detected_at": {
+          "__datetime__": "2026-10-19T13:13:35.500049+09:00"
+        },
+        "first_threshold": 67500.0,
+        "first_price": 67600.0,
+        "first_atr": 1798.0,
+        "status": "추적중",
+        "outcome": "자금부족",
+        "outcome_reason": "현금 부족(필요 2,095,600원 · 가용 122,991원)",
+        "outcome_at": {
+          "__datetime__": "2026-10-19T13:14:28.115852+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "639fdbe1c7ae481ab5cf844bfcc0c192",
+        "ticker": "185750",
+        "name": "종근당",
+        "first_detected_at": {
+          "__datetime__": "2026-10-19T13:13:35.500049+09:00"
+        },
+        "first_threshold": 67500.0,
+        "first_price": 67600.0,
+        "first_atr": 1798.0,
+        "status": "추적중",
+        "outcome": "자금부족",
+        "outcome_reason": "현금 부족(필요 2,095,600원 · 가용 122,991원)",
+        "outcome_at": {
+          "__datetime__": "2026-10-19T13:14:28.115852+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "7219edbdfc4047d6806fc89b9554e77d",
+      "owner": "39198350403:1",
+      "events": [
+        "92c2ff9453444a499cdf56e38f134621",
+        "1243034e50744f3c86d346df952122a1"
+      ],
+      "record": {
+        "event_id": "92c2ff9453444a499cdf56e38f134621",
+        "ticker": "002840",
+        "name": "미원상사",
+        "first_detected_at": {
+          "__datetime__": "2026-10-19T13:13:35.500049+09:00"
+        },
+        "first_threshold": 142300.0,
+        "first_price": 142400.0,
+        "first_atr": 4884.0,
+        "status": "추적중",
+        "outcome": "자금부족",
+        "outcome_reason": "현금 부족(필요 1,566,400원 · 가용 122,991원)",
+        "outcome_at": {
+          "__datetime__": "2026-10-19T13:14:28.091314+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "92c2ff9453444a499cdf56e38f134621",
+        "ticker": "002840",
+        "name": "미원상사",
+        "first_detected_at": {
+          "__datetime__": "2026-10-19T13:13:35.500049+09:00"
+        },
+        "first_threshold": 142300.0,
+        "first_price": 142400.0,
+        "first_atr": 4884.0,
+        "status": "추적중",
+        "outcome": "자금부족",
+        "outcome_reason": "현금 부족(필요 1,566,400원 · 가용 122,991원)",
+        "outcome_at": {
+          "__datetime__": "2026-10-19T13:14:28.091314+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "145541e83aa0492e86d4779ac5db000c",
+      "owner": "39198350403:1",
+      "events": [
+        "501a15c1387c48849955839dab62d656"
+      ],
+      "record": {
+        "account_type": "",
+        "account_key": "",
+        "order_side": "",
+        "order_qty": null,
+        "filled_qty": null,
+        "unverified_qty": null,
+        "execution_price": null,
+        "execution_state": "",
+        "execution_checked_at": null,
+        "event_id": "48c86e549d364350b417a6fb95da95ef",
+        "order_no": "",
+        "order_day": null,
+        "key": "3fe0fc3e-53fc-81bd-a645-fdb5f88278cb",
+        "page_id": "3fe0fc3e-53fc-81bd-a645-fdb5f88278cb",
+        "name": "THE E&M",
+        "ticker": "089230",
+        "first_detected_at": {
+          "__datetime__": "2026-10-19T10:13:00+09:00"
+        },
+        "first_threshold": 2470.0,
+        "first_price": 2475.0,
+        "first_atr": 227.0,
+        "status": "추적중",
+        "closed_reason": "",
+        "closed_at": null,
+        "outcome": "자금부족",
+        "outcome_reason": "현금 부족(필요 613,800원 · 가용 122,991원)",
+        "outcome_at": {
+          "__datetime__": "2026-10-19T13:14:28.099970+09:00"
+        },
+        "latest_close": null,
+        "latest_date": null,
+        "latest_atr": null,
+        "latest_line": null,
+        "change_pct": null,
+        "atr_mult": null,
+        "dist_to_line": null,
+        "dist_to_line_atr": null,
+        "level_state": "",
+        "new_breakout": "",
+        "refresh_state": "",
+        "refresh_note": "",
+        "user_memo": ""
+      },
+      "page_id": "3fe0fc3e-53fc-81bd-a645-fdb5f88278cb",
+      "fields": {
+        "outcome_reason": "현금 부족(필요 613,800원 · 가용 122,991원)",
+        "outcome_at": {
+          "__datetime__": "2026-10-19T13:14:28.099970+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "a54a507034f54be9b91bc753461e6c30",
+      "owner": "39198350403:1",
+      "events": [
+        "7023faa81ef64245b303ce9a148d847d"
+      ],
+      "record": {
+        "account_type": "",
+        "account_key": "",
+        "order_side": "",
+        "order_qty": null,
+        "filled_qty": null,
+        "unverified_qty": null,
+        "execution_price": null,
+        "execution_state": "",
+        "execution_checked_at": null,
+        "event_id": "852e0524a97444baa81b7c9b93271749",
+        "order_no": "",
+        "order_day": null,
+        "key": "3fe0fc3e-53fc-8181-a7be-cd673ffe0303",
+        "page_id": "3fe0fc3e-53fc-8181-a7be-cd673ffe0303",
+        "name": "남선알미늄",
+        "ticker": "008350",
+        "first_detected_at": {
+          "__datetime__": "2026-10-19T10:13:00+09:00"
+        },
+        "first_threshold": 1110.0,
+        "first_price": 1111.0,
+        "first_atr": 39.0,
+        "status": "추적중",
+        "closed_reason": "",
+        "closed_at": null,
+        "outcome": "자금부족",
+        "outcome_reason": "현금 부족(필요 1,609,839원 · 가용 122,991원)",
+        "outcome_at": {
+          "__datetime__": "2026-10-19T13:14:28.107820+09:00"
+        },
+        "latest_close": null,
+        "latest_date": null,
+        "latest_atr": null,
+        "latest_line": null,
+        "change_pct": null,
+        "atr_mult": null,
+        "dist_to_line": null,
+        "dist_to_line_atr": null,
+        "level_state": "",
+        "new_breakout": "",
+        "refresh_state": "",
+        "refresh_note": "",
+        "user_memo": ""
+      },
+      "page_id": "3fe0fc3e-53fc-8181-a7be-cd673ffe0303",
+      "fields": {
+        "outcome_reason": "현금 부족(필요 1,609,839원 · 가용 122,991원)",
+        "outcome_at": {
+          "__datetime__": "2026-10-19T13:14:28.107820+09:00"
+        }
+      },
+      "state": "queued"
+    }
+  ],
+  "prepare_cursor": "2caf9589099b4f71980dcf1845059459",
   "deliver_cursor": "8c4f0bedcfac46299c0d0bbf2368679a",
   "excluded_events": [
     {
