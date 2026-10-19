@@ -102,6 +102,51 @@
       "status": "추격금지",
       "price_10am": 8480.0,
       "time_10am": "10:03"
+    },
+    "008350": {
+      "time": "10:13",
+      "name": "남선알미늄",
+      "sector": "금속",
+      "market": "KOSPI",
+      "price": 1111.0,
+      "high20": 1110.0,
+      "atr20": 39.0,
+      "gap_atr": 0.026,
+      "unit_shares": 12820,
+      "value_avg_20": 850967275.0,
+      "value_avg_5": 1347653943.0,
+      "vol_active_days": 3,
+      "status": "진입가능"
+    },
+    "089230": {
+      "time": "10:13",
+      "name": "THE E&M",
+      "sector": "IT 서비스",
+      "market": "KOSDAQ",
+      "price": 2475.0,
+      "high20": 2470.0,
+      "atr20": 227.0,
+      "gap_atr": 0.022,
+      "unit_shares": 2202,
+      "value_avg_20": 787016418.0,
+      "value_avg_5": 975933572.0,
+      "vol_active_days": 4,
+      "status": "진입가능"
+    },
+    "328130": {
+      "time": "10:13",
+      "name": "루닛",
+      "sector": "IT 서비스",
+      "market": "KOSDAQ",
+      "price": 12550.0,
+      "high20": 12490.0,
+      "atr20": 853.0,
+      "gap_atr": 0.07,
+      "unit_shares": 586,
+      "value_avg_20": 12056325655.0,
+      "value_avg_5": 11730141766.0,
+      "vol_active_days": 2,
+      "status": "진입가능"
     }
   }
 }
