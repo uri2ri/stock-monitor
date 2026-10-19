@@ -147,6 +147,21 @@
       "value_avg_5": 11730141766.0,
       "vol_active_days": 2,
       "status": "진입가능"
+    },
+    "014820": {
+      "time": "12:23",
+      "name": "동원시스템즈",
+      "sector": "화학",
+      "market": "KOSPI",
+      "price": 22400.0,
+      "high20": 22350.0,
+      "atr20": 760.0,
+      "gap_atr": 0.066,
+      "unit_shares": 657,
+      "value_avg_20": 506518330.0,
+      "value_avg_5": 628000970.0,
+      "vol_active_days": 4,
+      "status": "진입가능"
     }
   }
 }
