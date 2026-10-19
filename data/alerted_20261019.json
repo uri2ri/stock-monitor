@@ -282,6 +282,36 @@
       "value_avg_5": 934996522.0,
       "vol_active_days": 4,
       "status": "진입가능"
+    },
+    "002350": {
+      "time": "14:43",
+      "name": "넥센타이어",
+      "sector": "화학",
+      "market": "KOSPI",
+      "price": 5990.0,
+      "high20": 5970.0,
+      "atr20": 183.0,
+      "gap_atr": 0.109,
+      "unit_shares": 2732,
+      "value_avg_20": 574597873.0,
+      "value_avg_5": 647028306.0,
+      "vol_active_days": 3,
+      "status": "진입가능"
+    },
+    "086900": {
+      "time": "14:43",
+      "name": "메디톡스",
+      "sector": "제약",
+      "market": "KOSDAQ",
+      "price": 69900.0,
+      "high20": 69800.0,
+      "atr20": 2514.0,
+      "gap_atr": 0.04,
+      "unit_shares": 198,
+      "value_avg_20": 1034055045.0,
+      "value_avg_5": 1386217620.0,
+      "vol_active_days": 5,
+      "status": "진입가능"
     }
   }
 }
