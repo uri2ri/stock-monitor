@@ -1,0 +1,20 @@
+{
+  "date": "20261019",
+  "alerted": {
+    "473980": {
+      "time": "09:03",
+      "name": "노머스",
+      "sector": "오락·문화",
+      "market": "KOSDAQ",
+      "price": 12680.0,
+      "high20": 11510.0,
+      "atr20": 631.0,
+      "gap_atr": 1.854,
+      "unit_shares": 792,
+      "value_avg_20": 315611842.0,
+      "value_avg_5": 430285218.0,
+      "vol_active_days": 3,
+      "status": "추격금지"
+    }
+  }
+}
