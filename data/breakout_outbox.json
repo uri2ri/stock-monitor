@@ -1,8 +1,87 @@
 {
   "version": 1,
-  "events": [],
-  "plans": [],
-  "prepare_cursor": "0f6039f3c0864acab3141d273e579343",
+  "events": [
+    {
+      "id": "6f18f982f3004f44a52f316960dbcd61",
+      "operation": "_set_outcome",
+      "args": [
+        "008350",
+        "자금부족",
+        "현금 부족(필요 1,600,951원 · 가용 122,991원)",
+        {
+          "__datetime__": "2026-10-19T11:23:58.208576+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    }
+  ],
+  "plans": [
+    {
+      "id": "9dcf57f6ad3d47dd8516c17bfb1514b2",
+      "owner": "39189698008:1",
+      "events": [
+        "6f18f982f3004f44a52f316960dbcd61"
+      ],
+      "record": {
+        "account_type": "",
+        "account_key": "",
+        "order_side": "",
+        "order_qty": null,
+        "filled_qty": null,
+        "unverified_qty": null,
+        "execution_price": null,
+        "execution_state": "",
+        "execution_checked_at": null,
+        "event_id": "852e0524a97444baa81b7c9b93271749",
+        "order_no": "",
+        "order_day": null,
+        "key": "3fe0fc3e-53fc-8181-a7be-cd673ffe0303",
+        "page_id": "3fe0fc3e-53fc-8181-a7be-cd673ffe0303",
+        "name": "남선알미늄",
+        "ticker": "008350",
+        "first_detected_at": {
+          "__datetime__": "2026-10-19T10:13:00+09:00"
+        },
+        "first_threshold": 1110.0,
+        "first_price": 1111.0,
+        "first_atr": 39.0,
+        "status": "추적중",
+        "closed_reason": "",
+        "closed_at": null,
+        "outcome": "자금부족",
+        "outcome_reason": "현금 부족(필요 1,600,951원 · 가용 122,991원)",
+        "outcome_at": {
+          "__datetime__": "2026-10-19T11:23:58.208576+09:00"
+        },
+        "latest_close": null,
+        "latest_date": null,
+        "latest_atr": null,
+        "latest_line": null,
+        "change_pct": null,
+        "atr_mult": null,
+        "dist_to_line": null,
+        "dist_to_line_atr": null,
+        "level_state": "",
+        "new_breakout": "",
+        "refresh_state": "",
+        "refresh_note": "",
+        "user_memo": ""
+      },
+      "page_id": "3fe0fc3e-53fc-8181-a7be-cd673ffe0303",
+      "fields": {
+        "outcome_reason": "현금 부족(필요 1,600,951원 · 가용 122,991원)",
+        "outcome_at": {
+          "__datetime__": "2026-10-19T11:23:58.208576+09:00"
+        }
+      },
+      "state": "queued"
+    }
+  ],
+  "prepare_cursor": "5a89057e9bf240a1a11f795e42441269",
   "deliver_cursor": "f485b550b0e942ddbb3b92f26cd5b5ce",
   "excluded_events": [
     {
