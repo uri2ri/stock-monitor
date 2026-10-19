@@ -237,6 +237,21 @@
       "value_avg_5": 8584078556.0,
       "vol_active_days": 2,
       "status": "진입가능"
+    },
+    "235980": {
+      "time": "14:13",
+      "name": "메드팩토",
+      "sector": "일반서비스",
+      "market": "KOSDAQ",
+      "price": 3250.0,
+      "high20": 3205.0,
+      "atr20": 201.0,
+      "gap_atr": 0.224,
+      "unit_shares": 2487,
+      "value_avg_20": 353474830.0,
+      "value_avg_5": 353500091.0,
+      "vol_active_days": 2,
+      "status": "진입가능"
     }
   }
 }
