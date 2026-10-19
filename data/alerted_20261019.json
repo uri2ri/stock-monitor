@@ -267,6 +267,21 @@
       "value_avg_5": 20807067660.0,
       "vol_active_days": 4,
       "status": "진입가능"
+    },
+    "031430": {
+      "time": "14:33",
+      "name": "신세계인터내셔날",
+      "sector": "유통",
+      "market": "KOSPI",
+      "price": 11330.0,
+      "high20": 11280.0,
+      "atr20": 381.0,
+      "gap_atr": 0.131,
+      "unit_shares": 1312,
+      "value_avg_20": 746234948.0,
+      "value_avg_5": 934996522.0,
+      "vol_active_days": 4,
+      "status": "진입가능"
     }
   }
 }
