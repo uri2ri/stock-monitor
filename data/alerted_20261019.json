@@ -75,6 +75,21 @@
       "value_avg_5": 1225074872.0,
       "vol_active_days": 0,
       "status": "진입가능"
+    },
+    "039610": {
+      "time": "09:33",
+      "name": "화성밸브",
+      "sector": "기계·장비",
+      "market": "KOSDAQ",
+      "price": 8490.0,
+      "high20": 7900.0,
+      "atr20": 579.0,
+      "gap_atr": 1.019,
+      "unit_shares": 863,
+      "value_avg_20": 5240602330.0,
+      "value_avg_5": 15170009994.0,
+      "vol_active_days": 3,
+      "status": "추격금지"
     }
   }
 }
