@@ -2,23 +2,6 @@
   "version": 1,
   "events": [
     {
-      "id": "852e0524a97444baa81b7c9b93271749",
-      "operation": "record_breakout",
-      "args": [
-        {
-          "ticker": "008350",
-          "name": "남선알미늄",
-          "high20": 1110.0,
-          "price": 1111.0,
-          "atr20": 39.0
-        },
-        {
-          "__datetime__": "2026-10-19T10:13:34.400736+09:00"
-        }
-      ],
-      "kwargs": {}
-    },
-    {
       "id": "48c86e549d364350b417a6fb95da95ef",
       "operation": "record_breakout",
       "args": [
@@ -70,23 +53,6 @@
       }
     },
     {
-      "id": "6c0ee94ae4584ecf9ab7d8bf0b8c9822",
-      "operation": "_set_outcome",
-      "args": [
-        "008350",
-        "자금부족",
-        "현금 부족(필요 1,596,507원 · 가용 122,991원)",
-        {
-          "__datetime__": "2026-10-19T10:14:09.620665+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
       "id": "16c96cbaa0784222ac19be638124f2d6",
       "operation": "_set_outcome",
       "args": [
@@ -105,50 +71,6 @@
     }
   ],
   "plans": [
-    {
-      "id": "b940700b006743498acc21c346b8203e",
-      "owner": "39184330916:1",
-      "events": [
-        "852e0524a97444baa81b7c9b93271749",
-        "6c0ee94ae4584ecf9ab7d8bf0b8c9822"
-      ],
-      "record": {
-        "event_id": "852e0524a97444baa81b7c9b93271749",
-        "ticker": "008350",
-        "name": "남선알미늄",
-        "first_detected_at": {
-          "__datetime__": "2026-10-19T10:13:34.400736+09:00"
-        },
-        "first_threshold": 1110.0,
-        "first_price": 1111.0,
-        "first_atr": 39.0,
-        "status": "추적중",
-        "outcome": "자금부족",
-        "outcome_reason": "현금 부족(필요 1,596,507원 · 가용 122,991원)",
-        "outcome_at": {
-          "__datetime__": "2026-10-19T10:14:09.620665+09:00"
-        }
-      },
-      "page_id": null,
-      "fields": {
-        "event_id": "852e0524a97444baa81b7c9b93271749",
-        "ticker": "008350",
-        "name": "남선알미늄",
-        "first_detected_at": {
-          "__datetime__": "2026-10-19T10:13:34.400736+09:00"
-        },
-        "first_threshold": 1110.0,
-        "first_price": 1111.0,
-        "first_atr": 39.0,
-        "status": "추적중",
-        "outcome": "자금부족",
-        "outcome_reason": "현금 부족(필요 1,596,507원 · 가용 122,991원)",
-        "outcome_at": {
-          "__datetime__": "2026-10-19T10:14:09.620665+09:00"
-        }
-      },
-      "state": "creating"
-    },
     {
       "id": "3f72955a9a9f4594824fc06e08749889",
       "owner": "39184330916:1",
@@ -191,7 +113,7 @@
           "__datetime__": "2026-10-19T10:14:09.612731+09:00"
         }
       },
-      "state": "queued"
+      "state": "creating"
     },
     {
       "id": "2c68b004dee24b8cb91c88af9ce9459c",
@@ -239,7 +161,7 @@
     }
   ],
   "prepare_cursor": "dfc8cefb388a47f18f4d9224606641eb",
-  "deliver_cursor": "b940700b006743498acc21c346b8203e",
+  "deliver_cursor": "3f72955a9a9f4594824fc06e08749889",
   "excluded_events": [
     {
       "event": {
