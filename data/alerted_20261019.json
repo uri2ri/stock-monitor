@@ -162,6 +162,36 @@
       "value_avg_5": 628000970.0,
       "vol_active_days": 4,
       "status": "진입가능"
+    },
+    "185750": {
+      "time": "13:13",
+      "name": "종근당",
+      "sector": "제약",
+      "market": "KOSPI",
+      "price": 67600.0,
+      "high20": 67500.0,
+      "atr20": 1798.0,
+      "gap_atr": 0.056,
+      "unit_shares": 278,
+      "value_avg_20": 1268701035.0,
+      "value_avg_5": 1710261740.0,
+      "vol_active_days": 3,
+      "status": "진입가능"
+    },
+    "002840": {
+      "time": "13:13",
+      "name": "미원상사",
+      "sector": "화학",
+      "market": "KOSPI",
+      "price": 142400.0,
+      "high20": 142300.0,
+      "atr20": 4884.0,
+      "gap_atr": 0.02,
+      "unit_shares": 102,
+      "value_avg_20": 318268395.0,
+      "value_avg_5": 422304680.0,
+      "vol_active_days": 3,
+      "status": "진입가능"
     }
   }
 }
