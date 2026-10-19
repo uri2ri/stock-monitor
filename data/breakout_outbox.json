@@ -1,8 +1,345 @@
 {
   "version": 1,
-  "events": [],
-  "plans": [],
-  "prepare_cursor": "bcd730fd6514470796681251d568012e",
+  "events": [
+    {
+      "id": "43d081f14ace4bc5ba3084257bcda4be",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "055490",
+          "name": "테이팩스",
+          "high20": 19260.0,
+          "price": 19300.0,
+          "atr20": 880.0
+        },
+        {
+          "__datetime__": "2026-10-19T09:23:39.234774+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "51bc78c0280d42a1a169f45042f9ffbd",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "000100",
+          "name": "유한양행",
+          "high20": 82100.0,
+          "price": 83600.0,
+          "atr20": 2844.0
+        },
+        {
+          "__datetime__": "2026-10-19T09:23:39.234774+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "fdd967908dd14302abbffb5d358191d6",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "453340",
+          "name": "현대그린푸드",
+          "high20": 19800.0,
+          "price": 19870.0,
+          "atr20": 651.0
+        },
+        {
+          "__datetime__": "2026-10-19T09:23:39.234774+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "0fd51a20f89143369c5f6ef44ab576d4",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "051160",
+          "name": "지어소프트",
+          "high20": 14340.0,
+          "price": 14550.0,
+          "atr20": 863.0
+        },
+        {
+          "__datetime__": "2026-10-19T09:23:39.234774+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "270e88427c9e4570843563bb9aea6457",
+      "operation": "_set_outcome",
+      "args": [
+        "000100",
+        "미주문",
+        "추격 구간(+0.53N) - 매수 대상 제외",
+        {
+          "__datetime__": "2026-10-19T09:23:39.234774+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "db216da75499444fa836bc7a2358ec6b",
+      "operation": "_set_outcome",
+      "args": [
+        "055490",
+        "미주문",
+        "유동성 미달(20일 4.7억 < 5억)",
+        {
+          "__datetime__": "2026-10-19T09:24:12.065105+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "193dc14d84ff4d03ad40309c9589f063",
+      "operation": "_set_outcome",
+      "args": [
+        "051160",
+        "자금부족",
+        "현금 부족(필요 931,200원 · 가용 119,437원)",
+        {
+          "__datetime__": "2026-10-19T09:24:13.245310+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "77873fd560f34bf3ad01f240ac25146e",
+      "operation": "_set_outcome",
+      "args": [
+        "453340",
+        "주문접수",
+        "주문 접수(주문번호 0000011801)",
+        {
+          "__datetime__": "2026-10-19T09:24:18.298773+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "0000011801",
+        "order_day": {
+          "__date__": "2026-10-19"
+        },
+        "identity": {
+          "order_qty": 86,
+          "account_type": "모의",
+          "account_key": "d534c8d981289493d2f84a1e888ebc32d53dfd1df60dcd620d6e4707f0cc4a87",
+          "order_side": "매수"
+        }
+      }
+    }
+  ],
+  "plans": [
+    {
+      "id": "2af2736e12934f5999651895bd2391e3",
+      "owner": "39180524996:1",
+      "events": [
+        "43d081f14ace4bc5ba3084257bcda4be",
+        "db216da75499444fa836bc7a2358ec6b"
+      ],
+      "record": {
+        "event_id": "43d081f14ace4bc5ba3084257bcda4be",
+        "ticker": "055490",
+        "name": "테이팩스",
+        "first_detected_at": {
+          "__datetime__": "2026-10-19T09:23:39.234774+09:00"
+        },
+        "first_threshold": 19260.0,
+        "first_price": 19300.0,
+        "first_atr": 880.0,
+        "status": "추적중",
+        "outcome": "미주문",
+        "outcome_reason": "유동성 미달(20일 4.7억 < 5억)",
+        "outcome_at": {
+          "__datetime__": "2026-10-19T09:24:12.065105+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "43d081f14ace4bc5ba3084257bcda4be",
+        "ticker": "055490",
+        "name": "테이팩스",
+        "first_detected_at": {
+          "__datetime__": "2026-10-19T09:23:39.234774+09:00"
+        },
+        "first_threshold": 19260.0,
+        "first_price": 19300.0,
+        "first_atr": 880.0,
+        "status": "추적중",
+        "outcome": "미주문",
+        "outcome_reason": "유동성 미달(20일 4.7억 < 5억)",
+        "outcome_at": {
+          "__datetime__": "2026-10-19T09:24:12.065105+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "b2934d0524c1492ebfefa9626081b0ab",
+      "owner": "39180524996:1",
+      "events": [
+        "51bc78c0280d42a1a169f45042f9ffbd",
+        "270e88427c9e4570843563bb9aea6457"
+      ],
+      "record": {
+        "event_id": "51bc78c0280d42a1a169f45042f9ffbd",
+        "ticker": "000100",
+        "name": "유한양행",
+        "first_detected_at": {
+          "__datetime__": "2026-10-19T09:23:39.234774+09:00"
+        },
+        "first_threshold": 82100.0,
+        "first_price": 83600.0,
+        "first_atr": 2844.0,
+        "status": "추적중",
+        "outcome": "미주문",
+        "outcome_reason": "추격 구간(+0.53N) - 매수 대상 제외",
+        "outcome_at": {
+          "__datetime__": "2026-10-19T09:23:39.234774+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "51bc78c0280d42a1a169f45042f9ffbd",
+        "ticker": "000100",
+        "name": "유한양행",
+        "first_detected_at": {
+          "__datetime__": "2026-10-19T09:23:39.234774+09:00"
+        },
+        "first_threshold": 82100.0,
+        "first_price": 83600.0,
+        "first_atr": 2844.0,
+        "status": "추적중",
+        "outcome": "미주문",
+        "outcome_reason": "추격 구간(+0.53N) - 매수 대상 제외",
+        "outcome_at": {
+          "__datetime__": "2026-10-19T09:23:39.234774+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "daf4140938884ea0ae940bab104be01a",
+      "owner": "39180524996:1",
+      "events": [
+        "fdd967908dd14302abbffb5d358191d6",
+        "77873fd560f34bf3ad01f240ac25146e"
+      ],
+      "record": {
+        "event_id": "fdd967908dd14302abbffb5d358191d6",
+        "ticker": "453340",
+        "name": "현대그린푸드",
+        "first_detected_at": {
+          "__datetime__": "2026-10-19T09:23:39.234774+09:00"
+        },
+        "first_threshold": 19800.0,
+        "first_price": 19870.0,
+        "first_atr": 651.0,
+        "status": "추적중",
+        "outcome": "주문접수",
+        "outcome_reason": "주문 접수(주문번호 0000011801)",
+        "outcome_at": {
+          "__datetime__": "2026-10-19T09:24:18.298773+09:00"
+        },
+        "order_no": "0000011801",
+        "order_day": {
+          "__date__": "2026-10-19"
+        },
+        "order_qty": 86,
+        "account_type": "모의",
+        "account_key": "d534c8d981289493d2f84a1e888ebc32d53dfd1df60dcd620d6e4707f0cc4a87",
+        "order_side": "매수"
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "fdd967908dd14302abbffb5d358191d6",
+        "ticker": "453340",
+        "name": "현대그린푸드",
+        "first_detected_at": {
+          "__datetime__": "2026-10-19T09:23:39.234774+09:00"
+        },
+        "first_threshold": 19800.0,
+        "first_price": 19870.0,
+        "first_atr": 651.0,
+        "status": "추적중",
+        "outcome": "주문접수",
+        "outcome_reason": "주문 접수(주문번호 0000011801)",
+        "outcome_at": {
+          "__datetime__": "2026-10-19T09:24:18.298773+09:00"
+        },
+        "order_no": "0000011801",
+        "order_day": {
+          "__date__": "2026-10-19"
+        },
+        "order_qty": 86,
+        "account_type": "모의",
+        "account_key": "d534c8d981289493d2f84a1e888ebc32d53dfd1df60dcd620d6e4707f0cc4a87",
+        "order_side": "매수"
+      },
+      "state": "queued"
+    },
+    {
+      "id": "51ea7605fcb948e39e265aaa0be55aba",
+      "owner": "39180524996:1",
+      "events": [
+        "0fd51a20f89143369c5f6ef44ab576d4",
+        "193dc14d84ff4d03ad40309c9589f063"
+      ],
+      "record": {
+        "event_id": "0fd51a20f89143369c5f6ef44ab576d4",
+        "ticker": "051160",
+        "name": "지어소프트",
+        "first_detected_at": {
+          "__datetime__": "2026-10-19T09:23:39.234774+09:00"
+        },
+        "first_threshold": 14340.0,
+        "first_price": 14550.0,
+        "first_atr": 863.0,
+        "status": "추적중",
+        "outcome": "자금부족",
+        "outcome_reason": "현금 부족(필요 931,200원 · 가용 119,437원)",
+        "outcome_at": {
+          "__datetime__": "2026-10-19T09:24:13.245310+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "0fd51a20f89143369c5f6ef44ab576d4",
+        "ticker": "051160",
+        "name": "지어소프트",
+        "first_detected_at": {
+          "__datetime__": "2026-10-19T09:23:39.234774+09:00"
+        },
+        "first_threshold": 14340.0,
+        "first_price": 14550.0,
+        "first_atr": 863.0,
+        "status": "추적중",
+        "outcome": "자금부족",
+        "outcome_reason": "현금 부족(필요 931,200원 · 가용 119,437원)",
+        "outcome_at": {
+          "__datetime__": "2026-10-19T09:24:13.245310+09:00"
+        }
+      },
+      "state": "queued"
+    }
+  ],
+  "prepare_cursor": "77873fd560f34bf3ad01f240ac25146e",
   "deliver_cursor": "96b89cd97f6c4ce0b7b707ed7b47b9e1",
   "excluded_events": [
     {
