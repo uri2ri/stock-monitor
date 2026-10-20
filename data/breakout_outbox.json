@@ -1,8 +1,167 @@
 {
   "version": 1,
-  "events": [],
-  "plans": [],
-  "prepare_cursor": "d44ebc1de8a548a2a71c4dfc76ac6465",
+  "events": [
+    {
+      "id": "886d434babee4f7ba83db1c34f4c8f36",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "226400",
+          "name": "오스테오닉",
+          "high20": 4355.0,
+          "price": 4360.0,
+          "atr20": 184.0
+        },
+        {
+          "__datetime__": "2026-10-20T09:43:43.209108+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "c1b153b0c61b47d1abd267d9c055b357",
+      "operation": "_set_outcome",
+      "args": [
+        "226400",
+        "자금부족",
+        "현금 부족(필요 1,321,080원 · 가용 122,991원)",
+        {
+          "__datetime__": "2026-10-20T09:44:12.427884+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "4cb0f0aefe7a430a864169ae38c49712",
+      "operation": "_set_outcome",
+      "args": [
+        "129920",
+        "자금부족",
+        "현금 부족(필요 736,250원 · 가용 122,991원)",
+        {
+          "__datetime__": "2026-10-20T09:44:12.438026+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    }
+  ],
+  "plans": [
+    {
+      "id": "3a6e42644eb14ddbbccdeadece3a34bc",
+      "owner": "39349286818:1",
+      "events": [
+        "886d434babee4f7ba83db1c34f4c8f36",
+        "c1b153b0c61b47d1abd267d9c055b357"
+      ],
+      "record": {
+        "event_id": "886d434babee4f7ba83db1c34f4c8f36",
+        "ticker": "226400",
+        "name": "오스테오닉",
+        "first_detected_at": {
+          "__datetime__": "2026-10-20T09:43:43.209108+09:00"
+        },
+        "first_threshold": 4355.0,
+        "first_price": 4360.0,
+        "first_atr": 184.0,
+        "status": "추적중",
+        "outcome": "자금부족",
+        "outcome_reason": "현금 부족(필요 1,321,080원 · 가용 122,991원)",
+        "outcome_at": {
+          "__datetime__": "2026-10-20T09:44:12.427884+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "886d434babee4f7ba83db1c34f4c8f36",
+        "ticker": "226400",
+        "name": "오스테오닉",
+        "first_detected_at": {
+          "__datetime__": "2026-10-20T09:43:43.209108+09:00"
+        },
+        "first_threshold": 4355.0,
+        "first_price": 4360.0,
+        "first_atr": 184.0,
+        "status": "추적중",
+        "outcome": "자금부족",
+        "outcome_reason": "현금 부족(필요 1,321,080원 · 가용 122,991원)",
+        "outcome_at": {
+          "__datetime__": "2026-10-20T09:44:12.427884+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "bfb5605c0c31480c96231e2dae4ca832",
+      "owner": "39349286818:1",
+      "events": [
+        "4cb0f0aefe7a430a864169ae38c49712"
+      ],
+      "record": {
+        "account_type": "",
+        "account_key": "",
+        "order_side": "",
+        "order_qty": null,
+        "filled_qty": null,
+        "unverified_qty": null,
+        "execution_price": null,
+        "execution_state": "",
+        "execution_checked_at": null,
+        "event_id": "c15f7f2161e8447aa7c95f2b9a971229",
+        "order_no": "",
+        "order_day": null,
+        "key": "3ea0fc3e-53fc-814d-acad-d46e4a1d8e34",
+        "page_id": "3ea0fc3e-53fc-814d-acad-d46e4a1d8e34",
+        "name": "대성하이텍",
+        "ticker": "129920",
+        "first_detected_at": {
+          "__datetime__": "2026-09-29T11:33:00+09:00"
+        },
+        "first_threshold": 6520.0,
+        "first_price": 6600.0,
+        "first_atr": 539.0,
+        "status": "추적중",
+        "closed_reason": "",
+        "closed_at": null,
+        "outcome": "자금부족",
+        "outcome_reason": "현금 부족(필요 736,250원 · 가용 122,991원)",
+        "outcome_at": {
+          "__datetime__": "2026-10-20T09:44:12.438026+09:00"
+        },
+        "latest_close": 7600.0,
+        "latest_date": {
+          "__date__": "2026-10-19"
+        },
+        "latest_atr": 582.0,
+        "latest_line": 7730.0,
+        "change_pct": 16.56,
+        "atr_mult": 2.0,
+        "dist_to_line": 130.0,
+        "dist_to_line_atr": 0.22,
+        "level_state": "최초선위",
+        "new_breakout": "미해당",
+        "refresh_state": "갱신됨",
+        "refresh_note": "",
+        "user_memo": ""
+      },
+      "page_id": "3ea0fc3e-53fc-814d-acad-d46e4a1d8e34",
+      "fields": {
+        "outcome_reason": "현금 부족(필요 736,250원 · 가용 122,991원)",
+        "outcome_at": {
+          "__datetime__": "2026-10-20T09:44:12.438026+09:00"
+        }
+      },
+      "state": "queued"
+    }
+  ],
+  "prepare_cursor": "16e31d3c18d44557bb77a1a81ddb3fa3",
   "deliver_cursor": "1fb175b4d1c9416282bb20b4b3cc9356",
   "excluded_events": [
     {
