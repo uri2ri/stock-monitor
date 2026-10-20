@@ -230,6 +230,21 @@
       "value_avg_5": 18181084066.0,
       "vol_active_days": 1,
       "status": "진입가능"
+    },
+    "107640": {
+      "time": "14:43",
+      "name": "한중엔시에스",
+      "sector": "전기전자",
+      "market": "KOSDAQ",
+      "price": 50100.0,
+      "high20": 49300.0,
+      "atr20": 3271.0,
+      "gap_atr": 0.245,
+      "unit_shares": 152,
+      "value_avg_20": 5989164970.0,
+      "value_avg_5": 9193943610.0,
+      "vol_active_days": 3,
+      "status": "진입가능"
     }
   }
 }
