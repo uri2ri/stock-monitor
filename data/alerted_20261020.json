@@ -120,6 +120,21 @@
       "value_avg_5": 1409193200.0,
       "vol_active_days": 4,
       "status": "진입가능"
+    },
+    "226400": {
+      "time": "09:43",
+      "name": "오스테오닉",
+      "sector": "의료·정밀기기",
+      "market": "KOSDAQ",
+      "price": 4360.0,
+      "high20": 4355.0,
+      "atr20": 184.0,
+      "gap_atr": 0.027,
+      "unit_shares": 2717,
+      "value_avg_20": 485203650.0,
+      "value_avg_5": 350420387.0,
+      "vol_active_days": 1,
+      "status": "진입가능"
     }
   }
 }
