@@ -170,6 +170,21 @@
       "status": "진입가능",
       "price_10am": 43600.0,
       "time_10am": "10:03"
+    },
+    "330590": {
+      "time": "10:43",
+      "name": "롯데리츠",
+      "sector": "부동산",
+      "market": "KOSPI",
+      "price": 4205.0,
+      "high20": 4195.0,
+      "atr20": 124.0,
+      "gap_atr": 0.081,
+      "unit_shares": 4032,
+      "value_avg_20": 662349482.0,
+      "value_avg_5": 691578347.0,
+      "vol_active_days": 3,
+      "status": "진입가능"
     }
   }
 }
