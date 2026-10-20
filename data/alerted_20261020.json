@@ -105,6 +105,21 @@
       "value_avg_5": 2389479580.0,
       "vol_active_days": 2,
       "status": "진입가능"
+    },
+    "007310": {
+      "time": "09:13",
+      "name": "오뚜기",
+      "sector": "음식료·담배",
+      "market": "KOSPI",
+      "price": 329000.0,
+      "high20": 328500.0,
+      "atr20": 8797.0,
+      "gap_atr": 0.057,
+      "unit_shares": 56,
+      "value_avg_20": 1130096025.0,
+      "value_avg_5": 1409193200.0,
+      "vol_active_days": 4,
+      "status": "진입가능"
     }
   }
 }
