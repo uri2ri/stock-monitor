@@ -215,6 +215,21 @@
       "value_avg_5": 189787803.0,
       "vol_active_days": 0,
       "status": "진입가능"
+    },
+    "005160": {
+      "time": "12:03",
+      "name": "동국산업",
+      "sector": "금속",
+      "market": "KOSDAQ",
+      "price": 5000.0,
+      "high20": 4930.0,
+      "atr20": 400.0,
+      "gap_atr": 0.175,
+      "unit_shares": 1250,
+      "value_avg_20": 21823736614.0,
+      "value_avg_5": 18181084066.0,
+      "vol_active_days": 1,
+      "status": "진입가능"
     }
   }
 }
