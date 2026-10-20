@@ -2,23 +2,6 @@
   "version": 1,
   "events": [
     {
-      "id": "11bda4693aa84415ab85c42ecac3b71b",
-      "operation": "record_breakout",
-      "args": [
-        {
-          "ticker": "006280",
-          "name": "녹십자",
-          "high20": 131000.0,
-          "price": 132100.0,
-          "atr20": 4525.0
-        },
-        {
-          "__datetime__": "2026-10-20T09:03:48.235500+09:00"
-        }
-      ],
-      "kwargs": {}
-    },
-    {
       "id": "01f8a53b06994280b59c735734098f45",
       "operation": "record_breakout",
       "args": [
@@ -87,23 +70,6 @@
       }
     },
     {
-      "id": "50b741007d0749baa5018537e71209d8",
-      "operation": "_set_outcome",
-      "args": [
-        "006280",
-        "미주문",
-        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        {
-          "__datetime__": "2026-10-20T09:03:57.518347+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
       "id": "067a3b6ab06642c18915097e7d2a189d",
       "operation": "_set_outcome",
       "args": [
@@ -157,50 +123,6 @@
   ],
   "plans": [
     {
-      "id": "e6c99a921dfc42c88cb2cfa11c0d8d32",
-      "owner": "39345292343:1",
-      "events": [
-        "11bda4693aa84415ab85c42ecac3b71b",
-        "50b741007d0749baa5018537e71209d8"
-      ],
-      "record": {
-        "event_id": "11bda4693aa84415ab85c42ecac3b71b",
-        "ticker": "006280",
-        "name": "녹십자",
-        "first_detected_at": {
-          "__datetime__": "2026-10-20T09:03:48.235500+09:00"
-        },
-        "first_threshold": 131000.0,
-        "first_price": 132100.0,
-        "first_atr": 4525.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        "outcome_at": {
-          "__datetime__": "2026-10-20T09:03:57.518347+09:00"
-        }
-      },
-      "page_id": null,
-      "fields": {
-        "event_id": "11bda4693aa84415ab85c42ecac3b71b",
-        "ticker": "006280",
-        "name": "녹십자",
-        "first_detected_at": {
-          "__datetime__": "2026-10-20T09:03:48.235500+09:00"
-        },
-        "first_threshold": 131000.0,
-        "first_price": 132100.0,
-        "first_atr": 4525.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        "outcome_at": {
-          "__datetime__": "2026-10-20T09:03:57.518347+09:00"
-        }
-      },
-      "state": "creating"
-    },
-    {
       "id": "27d832f209894d7b8a352816b81b37a6",
       "owner": "39345292343:1",
       "events": [
@@ -242,7 +164,7 @@
           "__datetime__": "2026-10-20T09:03:48.235500+09:00"
         }
       },
-      "state": "queued"
+      "state": "creating"
     },
     {
       "id": "ff30a05b4afc47d4bd46f9e5facb9810",
@@ -477,7 +399,7 @@
     }
   ],
   "prepare_cursor": "50b476d73b3b4ff9b959d1025462a679",
-  "deliver_cursor": "e6c99a921dfc42c88cb2cfa11c0d8d32",
+  "deliver_cursor": "27d832f209894d7b8a352816b81b37a6",
   "excluded_events": [
     {
       "event": {
