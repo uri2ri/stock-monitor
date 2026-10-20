@@ -200,6 +200,21 @@
       "value_avg_5": 458603174.0,
       "vol_active_days": 3,
       "status": "진입가능"
+    },
+    "002360": {
+      "time": "11:53",
+      "name": "SH에너지화학",
+      "sector": "화학",
+      "market": "KOSPI",
+      "price": 3915.0,
+      "high20": 3900.0,
+      "atr20": 273.0,
+      "gap_atr": 0.055,
+      "unit_shares": 1831,
+      "value_avg_20": 711128060.0,
+      "value_avg_5": 189787803.0,
+      "vol_active_days": 0,
+      "status": "진입가능"
     }
   }
 }
