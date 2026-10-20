@@ -135,6 +135,21 @@
       "value_avg_5": 350420387.0,
       "vol_active_days": 1,
       "status": "진입가능"
+    },
+    "031210": {
+      "time": "09:53",
+      "name": "서울보증보험",
+      "sector": "보험",
+      "market": "KOSPI",
+      "price": 43700.0,
+      "high20": 43500.0,
+      "atr20": 1293.0,
+      "gap_atr": 0.155,
+      "unit_shares": 386,
+      "value_avg_20": 1869717562.0,
+      "value_avg_5": 1898575860.0,
+      "vol_active_days": 3,
+      "status": "진입가능"
     }
   }
 }
