@@ -1,8 +1,168 @@
 {
   "version": 1,
-  "events": [],
-  "plans": [],
-  "prepare_cursor": "de9928fee9dd409d83c03de97032762e",
+  "events": [
+    {
+      "id": "30451cdbc798487eb3b9bcc347fd2d09",
+      "operation": "_set_outcome",
+      "args": [
+        "002360",
+        "자금부족",
+        "현금 부족(필요 802,575원 · 가용 122,991원)",
+        {
+          "__datetime__": "2026-10-20T15:04:29.078087+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "f8d704b7840e45069eb41c1bcfd0390b",
+      "operation": "_set_outcome",
+      "args": [
+        "330590",
+        "자금부족",
+        "현금 부족(필요 1,900,660원 · 가용 122,991원)",
+        {
+          "__datetime__": "2026-10-20T15:04:29.103441+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    }
+  ],
+  "plans": [
+    {
+      "id": "852878534d5443a0812ee90665acef9c",
+      "owner": "39378179413:1",
+      "events": [
+        "30451cdbc798487eb3b9bcc347fd2d09"
+      ],
+      "record": {
+        "account_type": "",
+        "account_key": "",
+        "order_side": "",
+        "order_qty": null,
+        "filled_qty": null,
+        "unverified_qty": null,
+        "execution_price": null,
+        "execution_state": "",
+        "execution_checked_at": null,
+        "event_id": "935dbad12a6048c8b9441629334875d3",
+        "order_no": "",
+        "order_day": null,
+        "key": "3eb0fc3e-53fc-8165-b1c3-f57692c14c19",
+        "page_id": "3eb0fc3e-53fc-8165-b1c3-f57692c14c19",
+        "name": "SH에너지화학",
+        "ticker": "002360",
+        "first_detected_at": {
+          "__datetime__": "2026-09-30T11:13:00+09:00"
+        },
+        "first_threshold": 3385.0,
+        "first_price": 3440.0,
+        "first_atr": 241.0,
+        "status": "추적중",
+        "closed_reason": "",
+        "closed_at": null,
+        "outcome": "자금부족",
+        "outcome_reason": "현금 부족(필요 802,575원 · 가용 122,991원)",
+        "outcome_at": {
+          "__datetime__": "2026-10-20T15:04:29.078087+09:00"
+        },
+        "latest_close": 3800.0,
+        "latest_date": {
+          "__date__": "2026-10-19"
+        },
+        "latest_atr": 273.0,
+        "latest_line": 3900.0,
+        "change_pct": 12.26,
+        "atr_mult": 1.72,
+        "dist_to_line": 100.0,
+        "dist_to_line_atr": 0.37,
+        "level_state": "최초선위",
+        "new_breakout": "미해당",
+        "refresh_state": "갱신됨",
+        "refresh_note": "",
+        "user_memo": ""
+      },
+      "page_id": "3eb0fc3e-53fc-8165-b1c3-f57692c14c19",
+      "fields": {
+        "outcome_reason": "현금 부족(필요 802,575원 · 가용 122,991원)",
+        "outcome_at": {
+          "__datetime__": "2026-10-20T15:04:29.078087+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "bc002a188be64960a698f877433194fe",
+      "owner": "39378179413:1",
+      "events": [
+        "f8d704b7840e45069eb41c1bcfd0390b"
+      ],
+      "record": {
+        "account_type": "",
+        "account_key": "",
+        "order_side": "",
+        "order_qty": null,
+        "filled_qty": null,
+        "unverified_qty": null,
+        "execution_price": null,
+        "execution_state": "",
+        "execution_checked_at": null,
+        "event_id": "13de86db96314eda8c8d656ea1250524",
+        "order_no": "",
+        "order_day": null,
+        "key": "3e40fc3e-53fc-8197-83e1-f12f767969a4",
+        "page_id": "3e40fc3e-53fc-8197-83e1-f12f767969a4",
+        "name": "롯데리츠",
+        "ticker": "330590",
+        "first_detected_at": {
+          "__datetime__": "2026-09-23T15:13:00+09:00"
+        },
+        "first_threshold": 4090.0,
+        "first_price": 4100.0,
+        "first_atr": 126.0,
+        "status": "추적중",
+        "closed_reason": "",
+        "closed_at": null,
+        "outcome": "자금부족",
+        "outcome_reason": "현금 부족(필요 1,900,660원 · 가용 122,991원)",
+        "outcome_at": {
+          "__datetime__": "2026-10-20T15:04:29.103441+09:00"
+        },
+        "latest_close": 4195.0,
+        "latest_date": {
+          "__date__": "2026-10-19"
+        },
+        "latest_atr": 124.0,
+        "latest_line": 4195.0,
+        "change_pct": 2.57,
+        "atr_mult": 0.83,
+        "dist_to_line": 0.0,
+        "dist_to_line_atr": 0.0,
+        "level_state": "최초선위",
+        "new_breakout": "미해당",
+        "refresh_state": "갱신됨",
+        "refresh_note": "",
+        "user_memo": ""
+      },
+      "page_id": "3e40fc3e-53fc-8197-83e1-f12f767969a4",
+      "fields": {
+        "outcome_reason": "현금 부족(필요 1,900,660원 · 가용 122,991원)",
+        "outcome_at": {
+          "__datetime__": "2026-10-20T15:04:29.103441+09:00"
+        }
+      },
+      "state": "queued"
+    }
+  ],
+  "prepare_cursor": "e12bd053b7734573bf7e36315bddccd4",
   "deliver_cursor": "6d31e741b97e463db73df03128e9fbdb",
   "excluded_events": [
     {
