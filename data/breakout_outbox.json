@@ -1,8 +1,89 @@
 {
   "version": 1,
-  "events": [],
-  "plans": [],
-  "prepare_cursor": "6c9514dab7bc42938d6f583a205665d8",
+  "events": [
+    {
+      "id": "829515584822496baf14fe3790c17377",
+      "operation": "_set_outcome",
+      "args": [
+        "129920",
+        "자금부족",
+        "현금 부족(필요 736,250원 · 가용 122,991원)",
+        {
+          "__datetime__": "2026-10-20T12:34:19.609590+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    }
+  ],
+  "plans": [
+    {
+      "id": "99e88edef35b4dbf8e221ecf4f016ce2",
+      "owner": "39364882349:1",
+      "events": [
+        "829515584822496baf14fe3790c17377"
+      ],
+      "record": {
+        "account_type": "",
+        "account_key": "",
+        "order_side": "",
+        "order_qty": null,
+        "filled_qty": null,
+        "unverified_qty": null,
+        "execution_price": null,
+        "execution_state": "",
+        "execution_checked_at": null,
+        "event_id": "c15f7f2161e8447aa7c95f2b9a971229",
+        "order_no": "",
+        "order_day": null,
+        "key": "3ea0fc3e-53fc-814d-acad-d46e4a1d8e34",
+        "page_id": "3ea0fc3e-53fc-814d-acad-d46e4a1d8e34",
+        "name": "대성하이텍",
+        "ticker": "129920",
+        "first_detected_at": {
+          "__datetime__": "2026-09-29T11:33:00+09:00"
+        },
+        "first_threshold": 6520.0,
+        "first_price": 6600.0,
+        "first_atr": 539.0,
+        "status": "추적중",
+        "closed_reason": "",
+        "closed_at": null,
+        "outcome": "자금부족",
+        "outcome_reason": "현금 부족(필요 736,250원 · 가용 122,991원)",
+        "outcome_at": {
+          "__datetime__": "2026-10-20T12:34:19.609590+09:00"
+        },
+        "latest_close": 7600.0,
+        "latest_date": {
+          "__date__": "2026-10-19"
+        },
+        "latest_atr": 582.0,
+        "latest_line": 7730.0,
+        "change_pct": 16.56,
+        "atr_mult": 2.0,
+        "dist_to_line": 130.0,
+        "dist_to_line_atr": 0.22,
+        "level_state": "최초선위",
+        "new_breakout": "미해당",
+        "refresh_state": "갱신됨",
+        "refresh_note": "",
+        "user_memo": ""
+      },
+      "page_id": "3ea0fc3e-53fc-814d-acad-d46e4a1d8e34",
+      "fields": {
+        "outcome_reason": "현금 부족(필요 736,250원 · 가용 122,991원)",
+        "outcome_at": {
+          "__datetime__": "2026-10-20T12:34:19.609590+09:00"
+        }
+      },
+      "state": "queued"
+    }
+  ],
+  "prepare_cursor": "3700647500234f39ba4b90f96a741791",
   "deliver_cursor": "d388fb9c433f46b988f49482a4744a86",
   "excluded_events": [
     {
