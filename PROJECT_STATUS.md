@@ -1,5 +1,41 @@
 # PROJECT STATUS
 
+## 진입일 지수 상태 태깅 (분석 전용, 매매 규칙 불변) - 2026-10-15
+
+- **무엇**: backtest.py --portfolio 거래 로그에 진입일 전날 기준 지수 상태 태그
+  (지수 신고가/신저가/중간, 20일 채널 위치, 60일선, 직전 20일 수익률)와 1유닛 R을
+  추가하고 `--index-state`로 구간별 성적표를 낸다. 지수 일봉은 `index_state.py --fetch`
+  (네이버, 로그인 불필요)로 `data/index_ohlcv_*.csv`에 저장. 기존 index_regime_*.csv는 그대로.
+- **결과(dev, fixed)**: 상세는 [INDEX_STATE_STUDY.md](INDEX_STATE_STUDY.md). 세 실행에서 방향이
+  일관된 건 60일선 위 > 아래(1유닛 R 0.1~0.3R 차)뿐. "지수 신고가" 진입은 중간보다 나은 적
+  없음. 나머지는 시장마다 갈리고 대박 1~2건에 좌우됨. **규칙 변경 없음** - 진입 제한 도입은
+  별도 결정.
+- **한계**: 이 환경엔 KRX 자격증명이 없어 업종당 유닛 캡(6)이 빠진 채 실행됐다(과거 업종 맵
+  생성 불가). 정본은 로컬에서 같은 명령으로 재실행 필요. holdout 미실행.
+- **검증**: `tests/test_index_state_no_lookahead.py` 21건 - 진입일·이후 지수를 극단값으로
+  바꿔도 태그 불변, 기준일 < 진입일, 백테스트 거래 로그 태그 = 직접 계산값.
+
+## 3~5억 최초 돌파 뒤 늦은 진입 연구 (백테스트 전용) - 2026-10-15
+
+- **목적**: 3~5억에서 첫 20일 돌파를 놓친 추세를 나중에 5억 이상이 됐을 때 다시
+  사는 것(현 구조)이 실제로 나쁜지 검증. **라이브 코드는 바꾸지 않았다**
+  (core·kis_client·intraday_watch·scan_all·screener 무변경, 감시 3억/매수 5억 그대로).
+- **도구**: `backtest_liquidity_study.py` + `python backtest.py --liquidity-entry-study
+  [--ticker T] [--mode intraday|close]`. 전략 `strategy_baseline` /
+  `strategy_skip_lowliq_first_breakout` / `strategy_late_entry_guard`
+  (late gap ≤ `core.CHASE_ATR_MULT`). "같은 추세" = 최초 돌파부터 종가 ≤ 직전 10일
+  저가(터틀 추세청산과 같은 비교)까지. 설계 근거는 모듈 docstring.
+  `--period full`은 막았고 holdout은 명시적으로 줄 때만 돈다(배너·이력 기록 기존과 동일).
+- **dev 결과(2019-09~2023-08, 2,270종목, 종목별 독립·고정 유닛)**: 3~5억 최초 돌파 사이클
+  intraday 4,371건 / close 2,403건. baseline 진입의 89% / 98%가 최초 돌파선 +0.5 ATR보다
+  늦었지만, 늦은 진입군 평균 R이 이내 진입군보다 나쁘지 않았다(intraday -0.36±0.16 vs
+  -0.44±0.36, close +0.06±0.42 vs -1.64±0.32(13건)). skip·guard는 intraday에서 평균 R
+  +0.008, close에서 -0.02 - 모드에 따라 부호가 바뀌는 표준오차 이내 차이.
+  **결론: dev에서는 늦은 진입 문제가 반복적으로 성과를 깎는다는 근거가 없다.
+  규칙 변경 근거 없음.** holdout은 돌리지 않았다.
+- **171090(선익시스템)**: 2026-10-02는 dev 범위 밖. 참고로 라이브 스캔
+  (`scan_20261002`)의 `value_avg_20`은 31.3억이라 3~5억 사례가 아니다.
+
 ## 감시 대상(3억)과 자동매수 허용 대상(5억) 분리 - 2026-10-14
 
 - **결정**: 야간 스캔의 기록(= 감시) 하한을 20일 평균 거래대금 5억 → **3억**
