@@ -1,8 +1,168 @@
 {
   "version": 1,
-  "events": [],
-  "plans": [],
-  "prepare_cursor": "e12bd053b7734573bf7e36315bddccd4",
+  "events": [
+    {
+      "id": "756257feb95e472cbcad1ef85e7168fa",
+      "operation": "_set_outcome",
+      "args": [
+        "330590",
+        "자금부족",
+        "현금 부족(필요 1,896,455원 · 가용 122,991원)",
+        {
+          "__datetime__": "2026-10-20T15:14:16.512304+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "d61527f7e9a543fa9b89e473661b8895",
+      "operation": "_set_outcome",
+      "args": [
+        "000080",
+        "자금부족",
+        "현금 부족(필요 2,569,600원 · 가용 122,991원)",
+        {
+          "__datetime__": "2026-10-20T15:14:16.546245+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    }
+  ],
+  "plans": [
+    {
+      "id": "75078d6642a1499295c04cfb945cf104",
+      "owner": "39379112568:1",
+      "events": [
+        "756257feb95e472cbcad1ef85e7168fa"
+      ],
+      "record": {
+        "account_type": "",
+        "account_key": "",
+        "order_side": "",
+        "order_qty": null,
+        "filled_qty": null,
+        "unverified_qty": null,
+        "execution_price": null,
+        "execution_state": "",
+        "execution_checked_at": null,
+        "event_id": "13de86db96314eda8c8d656ea1250524",
+        "order_no": "",
+        "order_day": null,
+        "key": "3e40fc3e-53fc-8197-83e1-f12f767969a4",
+        "page_id": "3e40fc3e-53fc-8197-83e1-f12f767969a4",
+        "name": "롯데리츠",
+        "ticker": "330590",
+        "first_detected_at": {
+          "__datetime__": "2026-09-23T15:13:00+09:00"
+        },
+        "first_threshold": 4090.0,
+        "first_price": 4100.0,
+        "first_atr": 126.0,
+        "status": "추적중",
+        "closed_reason": "",
+        "closed_at": null,
+        "outcome": "자금부족",
+        "outcome_reason": "현금 부족(필요 1,896,455원 · 가용 122,991원)",
+        "outcome_at": {
+          "__datetime__": "2026-10-20T15:14:16.512304+09:00"
+        },
+        "latest_close": 4195.0,
+        "latest_date": {
+          "__date__": "2026-10-19"
+        },
+        "latest_atr": 124.0,
+        "latest_line": 4195.0,
+        "change_pct": 2.57,
+        "atr_mult": 0.83,
+        "dist_to_line": 0.0,
+        "dist_to_line_atr": 0.0,
+        "level_state": "최초선위",
+        "new_breakout": "미해당",
+        "refresh_state": "갱신됨",
+        "refresh_note": "",
+        "user_memo": ""
+      },
+      "page_id": "3e40fc3e-53fc-8197-83e1-f12f767969a4",
+      "fields": {
+        "outcome_reason": "현금 부족(필요 1,896,455원 · 가용 122,991원)",
+        "outcome_at": {
+          "__datetime__": "2026-10-20T15:14:16.512304+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "287c8a65f7654a20ade15e0f9983b28b",
+      "owner": "39379112568:1",
+      "events": [
+        "d61527f7e9a543fa9b89e473661b8895"
+      ],
+      "record": {
+        "account_type": "",
+        "account_key": "",
+        "order_side": "",
+        "order_qty": null,
+        "filled_qty": null,
+        "unverified_qty": null,
+        "execution_price": null,
+        "execution_state": "",
+        "execution_checked_at": null,
+        "event_id": "f4b245076a194fd5bc3370e0dcb66902",
+        "order_no": "",
+        "order_day": null,
+        "key": "3fa0fc3e-53fc-816a-bb69-ea87574b97d1",
+        "page_id": "3fa0fc3e-53fc-816a-bb69-ea87574b97d1",
+        "name": "하이트진로",
+        "ticker": "000080",
+        "first_detected_at": {
+          "__datetime__": "2026-10-15T13:33:00+09:00"
+        },
+        "first_threshold": 15420.0,
+        "first_price": 15470.0,
+        "first_atr": 311.0,
+        "status": "추적중",
+        "closed_reason": "",
+        "closed_at": null,
+        "outcome": "자금부족",
+        "outcome_reason": "현금 부족(필요 2,569,600원 · 가용 122,991원)",
+        "outcome_at": {
+          "__datetime__": "2026-10-20T15:14:16.546245+09:00"
+        },
+        "latest_close": 15980.0,
+        "latest_date": {
+          "__date__": "2026-10-19"
+        },
+        "latest_atr": 348.0,
+        "latest_line": 15980.0,
+        "change_pct": 3.63,
+        "atr_mult": 1.8,
+        "dist_to_line": 0.0,
+        "dist_to_line_atr": 0.0,
+        "level_state": "최초선위",
+        "new_breakout": "미해당",
+        "refresh_state": "갱신됨",
+        "refresh_note": "",
+        "user_memo": ""
+      },
+      "page_id": "3fa0fc3e-53fc-816a-bb69-ea87574b97d1",
+      "fields": {
+        "outcome_reason": "현금 부족(필요 2,569,600원 · 가용 122,991원)",
+        "outcome_at": {
+          "__datetime__": "2026-10-20T15:14:16.546245+09:00"
+        }
+      },
+      "state": "queued"
+    }
+  ],
+  "prepare_cursor": "c142157f571c40d5adcd75b8466ce653",
   "deliver_cursor": "bc002a188be64960a698f877433194fe",
   "excluded_events": [
     {
