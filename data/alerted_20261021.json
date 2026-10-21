@@ -115,6 +115,21 @@
       "value_avg_5": 60402794920.0,
       "vol_active_days": 4,
       "status": "진입가능"
+    },
+    "215200": {
+      "time": "10:53",
+      "name": "메가스터디교육",
+      "sector": "일반서비스",
+      "market": "KOSDAQ",
+      "price": 40850.0,
+      "high20": 39750.0,
+      "atr20": 1289.0,
+      "gap_atr": 0.853,
+      "unit_shares": 387,
+      "value_avg_20": 1447382972.0,
+      "value_avg_5": 1280900440.0,
+      "vol_active_days": 2,
+      "status": "추격금지"
     }
   }
 }
