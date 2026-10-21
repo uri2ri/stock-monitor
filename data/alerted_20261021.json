@@ -30,6 +30,51 @@
       "value_avg_5": 1275743396.0,
       "vol_active_days": 3,
       "status": "진입가능"
+    },
+    "107640": {
+      "time": "09:13",
+      "name": "한중엔시에스",
+      "sector": "전기전자",
+      "market": "KOSDAQ",
+      "price": 51200.0,
+      "high20": 50600.0,
+      "atr20": 3295.0,
+      "gap_atr": 0.182,
+      "unit_shares": 151,
+      "value_avg_20": 6106808975.0,
+      "value_avg_5": 10502807910.0,
+      "vol_active_days": 4,
+      "status": "진입가능"
+    },
+    "020150": {
+      "time": "09:13",
+      "name": "롯데에너지머티리얼즈",
+      "sector": "전기전자",
+      "market": "KOSPI",
+      "price": 59400.0,
+      "high20": 59200.0,
+      "atr20": 4315.0,
+      "gap_atr": 0.046,
+      "unit_shares": 115,
+      "value_avg_20": 23442634265.0,
+      "value_avg_5": 32172072160.0,
+      "vol_active_days": 4,
+      "status": "진입가능"
+    },
+    "425040": {
+      "time": "09:13",
+      "name": "티이엠씨",
+      "sector": "화학",
+      "market": "KOSDAQ",
+      "price": 16770.0,
+      "high20": 15850.0,
+      "atr20": 938.0,
+      "gap_atr": 0.981,
+      "unit_shares": 533,
+      "value_avg_20": 19140994032.0,
+      "value_avg_5": 12510201266.0,
+      "vol_active_days": 0,
+      "status": "추격금지"
     }
   }
 }
