@@ -1,8 +1,90 @@
 {
   "version": 1,
-  "events": [],
-  "plans": [],
-  "prepare_cursor": "ea96fced0676439892597183a82f2e91",
+  "events": [
+    {
+      "id": "442930e30dfd4c9b9d1b6f7914f7cb41",
+      "operation": "_set_outcome",
+      "args": [
+        "033780",
+        "자금부족",
+        "현금 부족(필요 2,156,000원 · 가용 588,903원)",
+        {
+          "__datetime__": "2026-10-21T10:44:28.599832+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    }
+  ],
+  "plans": [
+    {
+      "id": "ff479d6c870447a4b9f67891faedfab9",
+      "owner": "39528926948:1",
+      "events": [
+        "442930e30dfd4c9b9d1b6f7914f7cb41"
+      ],
+      "record": {
+        "account_type": "",
+        "account_key": "",
+        "order_side": "",
+        "order_qty": null,
+        "filled_qty": null,
+        "unverified_qty": null,
+        "execution_price": null,
+        "execution_state": "",
+        "execution_checked_at": null,
+        "event_id": "6928fa523e144a0ab633b7a6fef8a96e",
+        "order_no": "",
+        "order_day": null,
+        "key": "3f30fc3e-53fc-81d5-865a-fb75446526b8",
+        "page_id": "3f30fc3e-53fc-81d5-865a-fb75446526b8",
+        "name": "KT&G",
+        "ticker": "033780",
+        "first_detected_at": {
+          "__datetime__": "2026-10-08T09:03:00+09:00"
+        },
+        "first_threshold": 179800.0,
+        "first_price": 179900.0,
+        "first_atr": 4415.0,
+        "status": "추적중",
+        "closed_reason": "",
+        "closed_at": null,
+        "outcome": "자금부족",
+        "outcome_reason": "현금 부족(필요 2,156,000원 · 가용 588,903원)",
+        "outcome_at": {
+          "__datetime__": "2026-10-21T10:44:28.599832+09:00"
+        },
+        "latest_close": 194000.0,
+        "latest_date": {
+          "__date__": "2026-10-20"
+        },
+        "latest_atr": 4778.0,
+        "latest_line": 195500.0,
+        "change_pct": 7.9,
+        "atr_mult": 3.22,
+        "dist_to_line": 1500.0,
+        "dist_to_line_atr": 0.31,
+        "level_state": "최초선위",
+        "new_breakout": "미해당",
+        "refresh_state": "갱신됨",
+        "refresh_note": "",
+        "user_memo": ""
+      },
+      "page_id": "3f30fc3e-53fc-81d5-865a-fb75446526b8",
+      "fields": {
+        "outcome": "자금부족",
+        "outcome_reason": "현금 부족(필요 2,156,000원 · 가용 588,903원)",
+        "outcome_at": {
+          "__datetime__": "2026-10-21T10:44:28.599832+09:00"
+        }
+      },
+      "state": "queued"
+    }
+  ],
+  "prepare_cursor": "c5655df4feb3455190a1182ac896b623",
   "deliver_cursor": "72a59556d9c849ebaf60afc40f2c162f",
   "excluded_events": [
     {
