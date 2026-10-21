@@ -100,6 +100,21 @@
       "value_avg_5": 2099067492.0,
       "vol_active_days": 5,
       "status": "진입가능"
+    },
+    "033780": {
+      "time": "10:43",
+      "name": "KT&G",
+      "sector": "음식료·담배",
+      "market": "KOSPI",
+      "price": 196000.0,
+      "high20": 195500.0,
+      "atr20": 4778.0,
+      "gap_atr": 0.105,
+      "unit_shares": 104,
+      "value_avg_20": 45394683025.0,
+      "value_avg_5": 60402794920.0,
+      "vol_active_days": 4,
+      "status": "진입가능"
     }
   }
 }
