@@ -85,6 +85,21 @@
       "status": "추격금지",
       "price_10am": 16020.0,
       "time_10am": "10:03"
+    },
+    "323350": {
+      "time": "10:23",
+      "name": "다원넥스뷰",
+      "sector": "기계·장비",
+      "market": "KOSDAQ",
+      "price": 12860.0,
+      "high20": 12470.0,
+      "atr20": 1097.0,
+      "gap_atr": 0.356,
+      "unit_shares": 455,
+      "value_avg_20": 1689597110.0,
+      "value_avg_5": 2099067492.0,
+      "vol_active_days": 5,
+      "status": "진입가능"
     }
   }
 }
