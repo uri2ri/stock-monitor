@@ -1,88 +1,9 @@
 {
   "version": 1,
-  "events": [
-    {
-      "id": "080d08163d6641e589845ca4049914ec",
-      "operation": "_set_outcome",
-      "args": [
-        "095660",
-        "자금부족",
-        "현금 부족(필요 1,859,220원 · 가용 588,903원)",
-        {
-          "__datetime__": "2026-10-21T13:44:35.635306+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    }
-  ],
-  "plans": [
-    {
-      "id": "88c3891b2e0d46839ad5a9728f52d1a0",
-      "owner": "39545561426:1",
-      "events": [
-        "080d08163d6641e589845ca4049914ec"
-      ],
-      "record": {
-        "account_type": "",
-        "account_key": "",
-        "order_side": "",
-        "order_qty": null,
-        "filled_qty": null,
-        "unverified_qty": null,
-        "execution_price": null,
-        "execution_state": "",
-        "execution_checked_at": null,
-        "event_id": "d1d1606fa82440769fc3f272120aed09",
-        "order_no": "",
-        "order_day": null,
-        "key": "4000fc3e-53fc-8126-8312-ef7785b6ecd1",
-        "page_id": "4000fc3e-53fc-8126-8312-ef7785b6ecd1",
-        "name": "네오위즈",
-        "ticker": "095660",
-        "first_detected_at": {
-          "__datetime__": "2026-10-21T09:03:00+09:00"
-        },
-        "first_threshold": 18640.0,
-        "first_price": 18780.0,
-        "first_atr": 563.0,
-        "status": "추적중",
-        "closed_reason": "",
-        "closed_at": null,
-        "outcome": "자금부족",
-        "outcome_reason": "현금 부족(필요 1,859,220원 · 가용 588,903원)",
-        "outcome_at": {
-          "__datetime__": "2026-10-21T13:44:35.635306+09:00"
-        },
-        "latest_close": null,
-        "latest_date": null,
-        "latest_atr": null,
-        "latest_line": null,
-        "change_pct": null,
-        "atr_mult": null,
-        "dist_to_line": null,
-        "dist_to_line_atr": null,
-        "level_state": "",
-        "new_breakout": "",
-        "refresh_state": "",
-        "refresh_note": "",
-        "user_memo": ""
-      },
-      "page_id": "4000fc3e-53fc-8126-8312-ef7785b6ecd1",
-      "fields": {
-        "outcome_reason": "현금 부족(필요 1,859,220원 · 가용 588,903원)",
-        "outcome_at": {
-          "__datetime__": "2026-10-21T13:44:35.635306+09:00"
-        }
-      },
-      "state": "queued"
-    }
-  ],
+  "events": [],
+  "plans": [],
   "prepare_cursor": "777838032d6a428b8aec4e6074740f56",
-  "deliver_cursor": "7c659810a3bd4b1fa1574fd3b66ec3dc",
+  "deliver_cursor": "88c3891b2e0d46839ad5a9728f52d1a0",
   "excluded_events": [
     {
       "event": {
