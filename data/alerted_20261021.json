@@ -130,6 +130,21 @@
       "value_avg_5": 1280900440.0,
       "vol_active_days": 2,
       "status": "추격금지"
+    },
+    "060720": {
+      "time": "12:53",
+      "name": "KH바텍",
+      "sector": "전기전자",
+      "market": "KOSDAQ",
+      "price": 11810.0,
+      "high20": 11790.0,
+      "atr20": 537.0,
+      "gap_atr": 0.037,
+      "unit_shares": 931,
+      "value_avg_20": 1081787188.0,
+      "value_avg_5": 1393005538.0,
+      "vol_active_days": 3,
+      "status": "진입가능"
     }
   }
 }
