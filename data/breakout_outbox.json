@@ -1,8 +1,89 @@
 {
   "version": 1,
-  "events": [],
-  "plans": [],
-  "prepare_cursor": "c5655df4feb3455190a1182ac896b623",
+  "events": [
+    {
+      "id": "0abaaf3a540a4981811cf9e559cc0c41",
+      "operation": "_set_outcome",
+      "args": [
+        "215200",
+        "미주문",
+        "추격 구간(+0.85N) - 매수 대상 제외",
+        {
+          "__datetime__": "2026-10-21T10:53:37.020783+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    }
+  ],
+  "plans": [
+    {
+      "id": "ebfabf9f2f1143618103b1fc060be1d6",
+      "owner": "39529857711:1",
+      "events": [
+        "0abaaf3a540a4981811cf9e559cc0c41"
+      ],
+      "record": {
+        "account_type": "",
+        "account_key": "",
+        "order_side": "",
+        "order_qty": null,
+        "filled_qty": null,
+        "unverified_qty": null,
+        "execution_price": null,
+        "execution_state": "",
+        "execution_checked_at": null,
+        "event_id": "555a40aa878f4560b0de5542f593d54d",
+        "order_no": "",
+        "order_day": null,
+        "key": "3e40fc3e-53fc-8129-a427-e27c29560abb",
+        "page_id": "3e40fc3e-53fc-8129-a427-e27c29560abb",
+        "name": "메가스터디교육",
+        "ticker": "215200",
+        "first_detected_at": {
+          "__datetime__": "2026-09-23T10:43:00+09:00"
+        },
+        "first_threshold": 36750.0,
+        "first_price": 36800.0,
+        "first_atr": 1109.0,
+        "status": "추적중",
+        "closed_reason": "",
+        "closed_at": null,
+        "outcome": "미주문",
+        "outcome_reason": "추격 구간(+0.85N) - 매수 대상 제외",
+        "outcome_at": {
+          "__datetime__": "2026-10-21T10:53:37.020783+09:00"
+        },
+        "latest_close": 39500.0,
+        "latest_date": {
+          "__date__": "2026-10-20"
+        },
+        "latest_atr": 1289.0,
+        "latest_line": 39750.0,
+        "change_pct": 7.48,
+        "atr_mult": 2.48,
+        "dist_to_line": 250.0,
+        "dist_to_line_atr": 0.19,
+        "level_state": "최초선위",
+        "new_breakout": "미해당",
+        "refresh_state": "갱신됨",
+        "refresh_note": "",
+        "user_memo": ""
+      },
+      "page_id": "3e40fc3e-53fc-8129-a427-e27c29560abb",
+      "fields": {
+        "outcome_reason": "추격 구간(+0.85N) - 매수 대상 제외",
+        "outcome_at": {
+          "__datetime__": "2026-10-21T10:53:37.020783+09:00"
+        }
+      },
+      "state": "queued"
+    }
+  ],
+  "prepare_cursor": "f597963c821a4c94a3fa2558af7d18dc",
   "deliver_cursor": "ff479d6c870447a4b9f67891faedfab9",
   "excluded_events": [
     {
