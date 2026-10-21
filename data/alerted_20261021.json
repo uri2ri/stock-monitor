@@ -1,0 +1,35 @@
+{
+  "date": "20261021",
+  "alerted": {
+    "095660": {
+      "time": "09:03",
+      "name": "네오위즈",
+      "sector": "IT 서비스",
+      "market": "KOSDAQ",
+      "price": 18780.0,
+      "high20": 18640.0,
+      "atr20": 563.0,
+      "gap_atr": 0.249,
+      "unit_shares": 888,
+      "value_avg_20": 781537478.0,
+      "value_avg_5": 1104630824.0,
+      "vol_active_days": 5,
+      "status": "진입가능"
+    },
+    "048910": {
+      "time": "09:03",
+      "name": "대원미디어",
+      "sector": "유통",
+      "market": "KOSDAQ",
+      "price": 9310.0,
+      "high20": 9280.0,
+      "atr20": 451.0,
+      "gap_atr": 0.067,
+      "unit_shares": 1108,
+      "value_avg_20": 981607644.0,
+      "value_avg_5": 1275743396.0,
+      "vol_active_days": 3,
+      "status": "진입가능"
+    }
+  }
+}
