@@ -145,6 +145,21 @@
       "value_avg_5": 1393005538.0,
       "vol_active_days": 3,
       "status": "진입가능"
+    },
+    "207940": {
+      "time": "13:23",
+      "name": "삼성바이오로직스",
+      "sector": "제약",
+      "market": "KOSPI",
+      "price": 1445000.0,
+      "high20": 1441000.0,
+      "atr20": 58563.0,
+      "gap_atr": 0.068,
+      "unit_shares": 8,
+      "value_avg_20": 89758166400.0,
+      "value_avg_5": 159828850600.0,
+      "vol_active_days": 4,
+      "status": "진입가능"
     }
   }
 }
