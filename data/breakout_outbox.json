@@ -1,88 +1,9 @@
 {
   "version": 1,
-  "events": [
-    {
-      "id": "0282114b3ae74b15997fbc9ce879d62e",
-      "operation": "_set_outcome",
-      "args": [
-        "001780",
-        "자금부족",
-        "현금 부족(필요 1,405,323원 · 가용 588,903원)",
-        {
-          "__datetime__": "2026-10-22T13:34:34.734462+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    }
-  ],
-  "plans": [
-    {
-      "id": "b579233ea7ac41f1bb9ce0363aec77ca",
-      "owner": "39722999953:1",
-      "events": [
-        "0282114b3ae74b15997fbc9ce879d62e"
-      ],
-      "record": {
-        "account_type": "",
-        "account_key": "",
-        "order_side": "",
-        "order_qty": null,
-        "filled_qty": null,
-        "unverified_qty": null,
-        "execution_price": null,
-        "execution_state": "",
-        "execution_checked_at": null,
-        "event_id": "0fdd2b9d39e340f394c0fea9166f5f17",
-        "order_no": "",
-        "order_day": null,
-        "key": "4010fc3e-53fc-81b6-bb10-cc93461cbd30",
-        "page_id": "4010fc3e-53fc-81b6-bb10-cc93461cbd30",
-        "name": "알루코",
-        "ticker": "001780",
-        "first_detected_at": {
-          "__datetime__": "2026-10-22T10:03:00+09:00"
-        },
-        "first_threshold": 1955.0,
-        "first_price": 1971.0,
-        "first_atr": 77.0,
-        "status": "추적중",
-        "closed_reason": "",
-        "closed_at": null,
-        "outcome": "자금부족",
-        "outcome_reason": "현금 부족(필요 1,405,323원 · 가용 588,903원)",
-        "outcome_at": {
-          "__datetime__": "2026-10-22T13:34:34.734462+09:00"
-        },
-        "latest_close": null,
-        "latest_date": null,
-        "latest_atr": null,
-        "latest_line": null,
-        "change_pct": null,
-        "atr_mult": null,
-        "dist_to_line": null,
-        "dist_to_line_atr": null,
-        "level_state": "",
-        "new_breakout": "",
-        "refresh_state": "",
-        "refresh_note": "",
-        "user_memo": ""
-      },
-      "page_id": "4010fc3e-53fc-81b6-bb10-cc93461cbd30",
-      "fields": {
-        "outcome_reason": "현금 부족(필요 1,405,323원 · 가용 588,903원)",
-        "outcome_at": {
-          "__datetime__": "2026-10-22T13:34:34.734462+09:00"
-        }
-      },
-      "state": "queued"
-    }
-  ],
+  "events": [],
+  "plans": [],
   "prepare_cursor": "0a68e2309a394319a4da2704fff383e4",
-  "deliver_cursor": "31d946d5fc494bc7be6a19d68f9a99dd",
+  "deliver_cursor": "b579233ea7ac41f1bb9ce0363aec77ca",
   "excluded_events": [
     {
       "event": {
