@@ -1,0 +1,80 @@
+{
+  "date": "20261022",
+  "alerted": {
+    "003010": {
+      "time": "09:03",
+      "name": "혜인",
+      "sector": "유통",
+      "market": "KOSPI",
+      "price": 12150.0,
+      "high20": 10890.0,
+      "atr20": 984.0,
+      "gap_atr": 1.28,
+      "unit_shares": 508,
+      "value_avg_20": 4660182795.0,
+      "value_avg_5": 7322730970.0,
+      "vol_active_days": 1,
+      "status": "추격금지"
+    },
+    "0220W0": {
+      "time": "09:03",
+      "name": "한화머시너리앤서비스홀딩스",
+      "sector": "금융",
+      "market": "KOSPI",
+      "price": 7740.0,
+      "high20": 7710.0,
+      "atr20": 466.0,
+      "gap_atr": 0.064,
+      "unit_shares": 1072,
+      "value_avg_20": 16260441092.0,
+      "value_avg_5": 9740548552.0,
+      "vol_active_days": 1,
+      "status": "진입가능"
+    },
+    "261780": {
+      "time": "09:03",
+      "name": "아리바이오랩",
+      "sector": "일반서비스",
+      "market": "KOSDAQ",
+      "price": 4235.0,
+      "high20": 4225.0,
+      "atr20": 330.0,
+      "gap_atr": 0.03,
+      "unit_shares": 1515,
+      "value_avg_20": 3006047900.0,
+      "value_avg_5": 1867334542.0,
+      "vol_active_days": 0,
+      "status": "진입가능"
+    },
+    "126340": {
+      "time": "09:03",
+      "name": "비나텍",
+      "sector": "전기전자",
+      "market": "KOSDAQ",
+      "price": 106900.0,
+      "high20": 100200.0,
+      "atr20": 7888.0,
+      "gap_atr": 0.849,
+      "unit_shares": 63,
+      "value_avg_20": 14503005780.0,
+      "value_avg_5": 19327066220.0,
+      "vol_active_days": 2,
+      "status": "추격금지"
+    },
+    "138360": {
+      "time": "09:03",
+      "name": "앤로보틱스",
+      "sector": "기계·장비",
+      "market": "KOSDAQ",
+      "price": 1783.0,
+      "high20": 1773.0,
+      "atr20": 125.0,
+      "gap_atr": 0.08,
+      "unit_shares": 4000,
+      "value_avg_20": 5659938394.0,
+      "value_avg_5": 19132903844.0,
+      "vol_active_days": 2,
+      "status": "진입가능"
+    }
+  }
+}
