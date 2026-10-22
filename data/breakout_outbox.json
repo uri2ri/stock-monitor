@@ -2,23 +2,6 @@
   "version": 1,
   "events": [
     {
-      "id": "ee5e8921bf094cc4ae9880751fcaca20",
-      "operation": "record_breakout",
-      "args": [
-        {
-          "ticker": "003010",
-          "name": "혜인",
-          "high20": 10890.0,
-          "price": 12150.0,
-          "atr20": 984.0
-        },
-        {
-          "__datetime__": "2026-10-22T09:03:40.225471+09:00"
-        }
-      ],
-      "kwargs": {}
-    },
-    {
       "id": "157c02d8c74f493cb3c9f3fd17fa5607",
       "operation": "record_breakout",
       "args": [
@@ -68,23 +51,6 @@
         }
       ],
       "kwargs": {}
-    },
-    {
-      "id": "694b13d419bf4af08aca8a36d135f47b",
-      "operation": "_set_outcome",
-      "args": [
-        "003010",
-        "미주문",
-        "추격 구간(+1.28N) - 매수 대상 제외",
-        {
-          "__datetime__": "2026-10-22T09:03:40.225471+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
     },
     {
       "id": "f08720efe03b4874aec5c8625984320e",
@@ -157,50 +123,6 @@
   ],
   "plans": [
     {
-      "id": "d6e85c0df2a845e7a1607b7cd2191d00",
-      "owner": "39697285346:1",
-      "events": [
-        "ee5e8921bf094cc4ae9880751fcaca20",
-        "694b13d419bf4af08aca8a36d135f47b"
-      ],
-      "record": {
-        "event_id": "ee5e8921bf094cc4ae9880751fcaca20",
-        "ticker": "003010",
-        "name": "혜인",
-        "first_detected_at": {
-          "__datetime__": "2026-10-22T09:03:40.225471+09:00"
-        },
-        "first_threshold": 10890.0,
-        "first_price": 12150.0,
-        "first_atr": 984.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "추격 구간(+1.28N) - 매수 대상 제외",
-        "outcome_at": {
-          "__datetime__": "2026-10-22T09:03:40.225471+09:00"
-        }
-      },
-      "page_id": null,
-      "fields": {
-        "event_id": "ee5e8921bf094cc4ae9880751fcaca20",
-        "ticker": "003010",
-        "name": "혜인",
-        "first_detected_at": {
-          "__datetime__": "2026-10-22T09:03:40.225471+09:00"
-        },
-        "first_threshold": 10890.0,
-        "first_price": 12150.0,
-        "first_atr": 984.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "추격 구간(+1.28N) - 매수 대상 제외",
-        "outcome_at": {
-          "__datetime__": "2026-10-22T09:03:40.225471+09:00"
-        }
-      },
-      "state": "creating"
-    },
-    {
       "id": "57c66f0148d243f4ab9bc5f4ecd4c10b",
       "owner": "39697285346:1",
       "events": [
@@ -242,7 +164,7 @@
           "__datetime__": "2026-10-22T09:03:47.941879+09:00"
         }
       },
-      "state": "queued"
+      "state": "creating"
     },
     {
       "id": "459b67e26edb4516bba3007d797fb133",
@@ -396,7 +318,7 @@
     }
   ],
   "prepare_cursor": "5cd7de9f9d7e4027bb0bf9a03b2c43f6",
-  "deliver_cursor": "d6e85c0df2a845e7a1607b7cd2191d00",
+  "deliver_cursor": "57c66f0148d243f4ab9bc5f4ecd4c10b",
   "excluded_events": [
     {
       "event": {
