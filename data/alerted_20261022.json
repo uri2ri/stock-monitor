@@ -134,6 +134,36 @@
       "value_avg_5": 1878358044.0,
       "vol_active_days": 1,
       "status": "진입가능"
+    },
+    "030190": {
+      "time": "10:13",
+      "name": "NICE평가정보",
+      "sector": "IT 서비스",
+      "market": "KOSPI",
+      "price": 17360.0,
+      "high20": 17340.0,
+      "atr20": 511.0,
+      "gap_atr": 0.039,
+      "unit_shares": 978,
+      "value_avg_20": 985180715.0,
+      "value_avg_5": 1097980302.0,
+      "vol_active_days": 4,
+      "status": "진입가능"
+    },
+    "008350": {
+      "time": "10:13",
+      "name": "남선알미늄",
+      "sector": "금속",
+      "market": "KOSPI",
+      "price": 1175.0,
+      "high20": 1174.0,
+      "atr20": 40.0,
+      "gap_atr": 0.025,
+      "unit_shares": 12500,
+      "value_avg_20": 861033379.0,
+      "value_avg_5": 1338442032.0,
+      "vol_active_days": 3,
+      "status": "진입가능"
     }
   }
 }
