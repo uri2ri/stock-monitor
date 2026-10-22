@@ -2,23 +2,6 @@
   "version": 1,
   "events": [
     {
-      "id": "157c02d8c74f493cb3c9f3fd17fa5607",
-      "operation": "record_breakout",
-      "args": [
-        {
-          "ticker": "0220W0",
-          "name": "한화머시너리앤서비스홀딩스",
-          "high20": 7710.0,
-          "price": 7740.0,
-          "atr20": 466.0
-        },
-        {
-          "__datetime__": "2026-10-22T09:03:40.225471+09:00"
-        }
-      ],
-      "kwargs": {}
-    },
-    {
       "id": "b1dc8dabc2fb418f86a828c39e227062",
       "operation": "record_breakout",
       "args": [
@@ -70,23 +53,6 @@
       }
     },
     {
-      "id": "f605ee8b8493436cb2b2f38dfd789e04",
-      "operation": "_set_outcome",
-      "args": [
-        "0220W0",
-        "미주문",
-        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        {
-          "__datetime__": "2026-10-22T09:03:47.941879+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
       "id": "365319bfa725411581908922ae7ae969",
       "operation": "_set_outcome",
       "args": [
@@ -122,50 +88,6 @@
     }
   ],
   "plans": [
-    {
-      "id": "57c66f0148d243f4ab9bc5f4ecd4c10b",
-      "owner": "39697285346:1",
-      "events": [
-        "157c02d8c74f493cb3c9f3fd17fa5607",
-        "f605ee8b8493436cb2b2f38dfd789e04"
-      ],
-      "record": {
-        "event_id": "157c02d8c74f493cb3c9f3fd17fa5607",
-        "ticker": "0220W0",
-        "name": "한화머시너리앤서비스홀딩스",
-        "first_detected_at": {
-          "__datetime__": "2026-10-22T09:03:40.225471+09:00"
-        },
-        "first_threshold": 7710.0,
-        "first_price": 7740.0,
-        "first_atr": 466.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        "outcome_at": {
-          "__datetime__": "2026-10-22T09:03:47.941879+09:00"
-        }
-      },
-      "page_id": null,
-      "fields": {
-        "event_id": "157c02d8c74f493cb3c9f3fd17fa5607",
-        "ticker": "0220W0",
-        "name": "한화머시너리앤서비스홀딩스",
-        "first_detected_at": {
-          "__datetime__": "2026-10-22T09:03:40.225471+09:00"
-        },
-        "first_threshold": 7710.0,
-        "first_price": 7740.0,
-        "first_atr": 466.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        "outcome_at": {
-          "__datetime__": "2026-10-22T09:03:47.941879+09:00"
-        }
-      },
-      "state": "creating"
-    },
     {
       "id": "459b67e26edb4516bba3007d797fb133",
       "owner": "39697285346:1",
@@ -208,7 +130,7 @@
           "__datetime__": "2026-10-22T09:03:47.955310+09:00"
         }
       },
-      "state": "queued"
+      "state": "creating"
     },
     {
       "id": "52ec0188d11a47a5b62e79ceadc29988",
@@ -318,7 +240,7 @@
     }
   ],
   "prepare_cursor": "5cd7de9f9d7e4027bb0bf9a03b2c43f6",
-  "deliver_cursor": "57c66f0148d243f4ab9bc5f4ecd4c10b",
+  "deliver_cursor": "459b67e26edb4516bba3007d797fb133",
   "excluded_events": [
     {
       "event": {
