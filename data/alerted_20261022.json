@@ -90,6 +90,21 @@
       "value_avg_5": 13183053440.0,
       "vol_active_days": 2,
       "status": "진입가능"
+    },
+    "077500": {
+      "time": "09:33",
+      "name": "유니퀘스트",
+      "sector": "유통",
+      "market": "KOSPI",
+      "price": 10940.0,
+      "high20": 10850.0,
+      "atr20": 699.0,
+      "gap_atr": 0.129,
+      "unit_shares": 715,
+      "value_avg_20": 4178921200.0,
+      "value_avg_5": 4173581012.0,
+      "vol_active_days": 2,
+      "status": "진입가능"
     }
   }
 }
