@@ -2,23 +2,6 @@
   "version": 1,
   "events": [
     {
-      "id": "89bba88900a04c42892dfd6fc87f90df",
-      "operation": "record_breakout",
-      "args": [
-        {
-          "ticker": "078520",
-          "name": "에이블씨엔씨",
-          "high20": 12350.0,
-          "price": 12490.0,
-          "atr20": 602.0
-        },
-        {
-          "__datetime__": "2026-10-22T10:34:15.841700+09:00"
-        }
-      ],
-      "kwargs": {}
-    },
-    {
       "id": "3f16b0af4fca489b9e5f2d777a506bf1",
       "operation": "record_breakout",
       "args": [
@@ -68,70 +51,9 @@
         "order_day": null,
         "identity": null
       }
-    },
-    {
-      "id": "03d9799c932349ec861309fe06de84a5",
-      "operation": "_set_outcome",
-      "args": [
-        "078520",
-        "자금부족",
-        "현금 부족(필요 1,149,080원 · 가용 588,903원)",
-        {
-          "__datetime__": "2026-10-22T10:34:51.911718+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
     }
   ],
   "plans": [
-    {
-      "id": "0a742bc4697f44818af9fed1c9603b94",
-      "owner": "39706329987:1",
-      "events": [
-        "89bba88900a04c42892dfd6fc87f90df",
-        "03d9799c932349ec861309fe06de84a5"
-      ],
-      "record": {
-        "event_id": "89bba88900a04c42892dfd6fc87f90df",
-        "ticker": "078520",
-        "name": "에이블씨엔씨",
-        "first_detected_at": {
-          "__datetime__": "2026-10-22T10:34:15.841700+09:00"
-        },
-        "first_threshold": 12350.0,
-        "first_price": 12490.0,
-        "first_atr": 602.0,
-        "status": "추적중",
-        "outcome": "자금부족",
-        "outcome_reason": "현금 부족(필요 1,149,080원 · 가용 588,903원)",
-        "outcome_at": {
-          "__datetime__": "2026-10-22T10:34:51.911718+09:00"
-        }
-      },
-      "page_id": null,
-      "fields": {
-        "event_id": "89bba88900a04c42892dfd6fc87f90df",
-        "ticker": "078520",
-        "name": "에이블씨엔씨",
-        "first_detected_at": {
-          "__datetime__": "2026-10-22T10:34:15.841700+09:00"
-        },
-        "first_threshold": 12350.0,
-        "first_price": 12490.0,
-        "first_atr": 602.0,
-        "status": "추적중",
-        "outcome": "자금부족",
-        "outcome_reason": "현금 부족(필요 1,149,080원 · 가용 588,903원)",
-        "outcome_at": {
-          "__datetime__": "2026-10-22T10:34:51.911718+09:00"
-        }
-      },
-      "state": "creating"
-    },
     {
       "id": "3c24d2f1ae7e4356982ca84d21fd3a89",
       "owner": "39706329987:1",
@@ -174,7 +96,7 @@
           "__datetime__": "2026-10-22T10:34:51.835543+09:00"
         }
       },
-      "state": "queued"
+      "state": "creating"
     },
     {
       "id": "71eb7cc68b44412dbe8865aea92ffae0",
@@ -240,7 +162,7 @@
     }
   ],
   "prepare_cursor": "e4a07f8fa1f941daaf2378fabc790b40",
-  "deliver_cursor": "0a742bc4697f44818af9fed1c9603b94",
+  "deliver_cursor": "3c24d2f1ae7e4356982ca84d21fd3a89",
   "excluded_events": [
     {
       "event": {
