@@ -75,6 +75,21 @@
       "value_avg_5": 19132903844.0,
       "vol_active_days": 2,
       "status": "진입가능"
+    },
+    "354320": {
+      "time": "09:13",
+      "name": "알멕",
+      "sector": "금속",
+      "market": "KOSDAQ",
+      "price": 67300.0,
+      "high20": 64800.0,
+      "atr20": 5512.0,
+      "gap_atr": 0.454,
+      "unit_shares": 90,
+      "value_avg_20": 10180618752.0,
+      "value_avg_5": 13183053440.0,
+      "vol_active_days": 2,
+      "status": "진입가능"
     }
   }
 }
