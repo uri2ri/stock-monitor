@@ -2,23 +2,6 @@
   "version": 1,
   "events": [
     {
-      "id": "b1dc8dabc2fb418f86a828c39e227062",
-      "operation": "record_breakout",
-      "args": [
-        {
-          "ticker": "261780",
-          "name": "아리바이오랩",
-          "high20": 4225.0,
-          "price": 4235.0,
-          "atr20": 330.0
-        },
-        {
-          "__datetime__": "2026-10-22T09:03:40.225471+09:00"
-        }
-      ],
-      "kwargs": {}
-    },
-    {
       "id": "d6bff18cd2d64b2ea01aa2be836e5426",
       "operation": "record_breakout",
       "args": [
@@ -53,23 +36,6 @@
       }
     },
     {
-      "id": "365319bfa725411581908922ae7ae969",
-      "operation": "_set_outcome",
-      "args": [
-        "261780",
-        "미주문",
-        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        {
-          "__datetime__": "2026-10-22T09:03:47.955310+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    },
-    {
       "id": "5cd7de9f9d7e4027bb0bf9a03b2c43f6",
       "operation": "_set_outcome",
       "args": [
@@ -88,50 +54,6 @@
     }
   ],
   "plans": [
-    {
-      "id": "459b67e26edb4516bba3007d797fb133",
-      "owner": "39697285346:1",
-      "events": [
-        "b1dc8dabc2fb418f86a828c39e227062",
-        "365319bfa725411581908922ae7ae969"
-      ],
-      "record": {
-        "event_id": "b1dc8dabc2fb418f86a828c39e227062",
-        "ticker": "261780",
-        "name": "아리바이오랩",
-        "first_detected_at": {
-          "__datetime__": "2026-10-22T09:03:40.225471+09:00"
-        },
-        "first_threshold": 4225.0,
-        "first_price": 4235.0,
-        "first_atr": 330.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        "outcome_at": {
-          "__datetime__": "2026-10-22T09:03:47.955310+09:00"
-        }
-      },
-      "page_id": null,
-      "fields": {
-        "event_id": "b1dc8dabc2fb418f86a828c39e227062",
-        "ticker": "261780",
-        "name": "아리바이오랩",
-        "first_detected_at": {
-          "__datetime__": "2026-10-22T09:03:40.225471+09:00"
-        },
-        "first_threshold": 4225.0,
-        "first_price": 4235.0,
-        "first_atr": 330.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        "outcome_at": {
-          "__datetime__": "2026-10-22T09:03:47.955310+09:00"
-        }
-      },
-      "state": "creating"
-    },
     {
       "id": "52ec0188d11a47a5b62e79ceadc29988",
       "owner": "39697285346:1",
@@ -174,7 +96,7 @@
           "__datetime__": "2026-10-22T09:03:47.966666+09:00"
         }
       },
-      "state": "queued"
+      "state": "creating"
     },
     {
       "id": "8bafd003e00549f79f0369689135ad84",
@@ -240,7 +162,7 @@
     }
   ],
   "prepare_cursor": "5cd7de9f9d7e4027bb0bf9a03b2c43f6",
-  "deliver_cursor": "459b67e26edb4516bba3007d797fb133",
+  "deliver_cursor": "52ec0188d11a47a5b62e79ceadc29988",
   "excluded_events": [
     {
       "event": {
