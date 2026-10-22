@@ -14,7 +14,9 @@
       "value_avg_20": 4660182795.0,
       "value_avg_5": 7322730970.0,
       "vol_active_days": 1,
-      "status": "추격금지"
+      "status": "추격금지",
+      "price_10am": 12080.0,
+      "time_10am": "10:03"
     },
     "0220W0": {
       "time": "09:03",
@@ -29,7 +31,9 @@
       "value_avg_20": 16260441092.0,
       "value_avg_5": 9740548552.0,
       "vol_active_days": 1,
-      "status": "진입가능"
+      "status": "진입가능",
+      "price_10am": 7680.0,
+      "time_10am": "10:03"
     },
     "261780": {
       "time": "09:03",
@@ -44,7 +48,9 @@
       "value_avg_20": 3006047900.0,
       "value_avg_5": 1867334542.0,
       "vol_active_days": 0,
-      "status": "진입가능"
+      "status": "진입가능",
+      "price_10am": 4105.0,
+      "time_10am": "10:03"
     },
     "126340": {
       "time": "09:03",
@@ -59,7 +65,9 @@
       "value_avg_20": 14503005780.0,
       "value_avg_5": 19327066220.0,
       "vol_active_days": 2,
-      "status": "추격금지"
+      "status": "추격금지",
+      "price_10am": 114900.0,
+      "time_10am": "10:03"
     },
     "138360": {
       "time": "09:03",
@@ -74,7 +82,9 @@
       "value_avg_20": 5659938394.0,
       "value_avg_5": 19132903844.0,
       "vol_active_days": 2,
-      "status": "진입가능"
+      "status": "진입가능",
+      "price_10am": 1651.0,
+      "time_10am": "10:03"
     },
     "354320": {
       "time": "09:13",
@@ -89,7 +99,9 @@
       "value_avg_20": 10180618752.0,
       "value_avg_5": 13183053440.0,
       "vol_active_days": 2,
-      "status": "진입가능"
+      "status": "진입가능",
+      "price_10am": 75300.0,
+      "time_10am": "10:03"
     },
     "077500": {
       "time": "09:33",
@@ -104,6 +116,23 @@
       "value_avg_20": 4178921200.0,
       "value_avg_5": 4173581012.0,
       "vol_active_days": 2,
+      "status": "진입가능",
+      "price_10am": 11910.0,
+      "time_10am": "10:03"
+    },
+    "001780": {
+      "time": "10:03",
+      "name": "알루코",
+      "sector": "금속",
+      "market": "KOSPI",
+      "price": 1971.0,
+      "high20": 1955.0,
+      "atr20": 77.0,
+      "gap_atr": 0.208,
+      "unit_shares": 6493,
+      "value_avg_20": 2262914599.0,
+      "value_avg_5": 1878358044.0,
+      "vol_active_days": 1,
       "status": "진입가능"
     }
   }
