@@ -164,6 +164,36 @@
       "value_avg_5": 1338442032.0,
       "vol_active_days": 3,
       "status": "진입가능"
+    },
+    "078520": {
+      "time": "10:34",
+      "name": "에이블씨엔씨",
+      "sector": "화학",
+      "market": "KOSPI",
+      "price": 12490.0,
+      "high20": 12350.0,
+      "atr20": 602.0,
+      "gap_atr": 0.233,
+      "unit_shares": 830,
+      "value_avg_20": 1042321313.0,
+      "value_avg_5": 1280227400.0,
+      "vol_active_days": 1,
+      "status": "진입가능"
+    },
+    "456160": {
+      "time": "10:34",
+      "name": "지투지바이오",
+      "sector": "제약",
+      "market": "KOSDAQ",
+      "price": 45200.0,
+      "high20": 45150.0,
+      "atr20": 3726.0,
+      "gap_atr": 0.013,
+      "unit_shares": 134,
+      "value_avg_20": 11119827542.0,
+      "value_avg_5": 18641547730.0,
+      "vol_active_days": 2,
+      "status": "진입가능"
     }
   }
 }
