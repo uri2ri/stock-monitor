@@ -30,6 +30,21 @@
       "value_avg_5": 14846253850.0,
       "vol_active_days": 4,
       "status": "진입가능"
+    },
+    "051630": {
+      "time": "12:03",
+      "name": "진양화학",
+      "sector": "화학",
+      "market": "KOSPI",
+      "price": 1935.0,
+      "high20": 1929.0,
+      "atr20": 153.0,
+      "gap_atr": 0.039,
+      "unit_shares": 3267,
+      "value_avg_20": 629535339.0,
+      "value_avg_5": 502613715.0,
+      "vol_active_days": 2,
+      "status": "진입가능"
     }
   }
 }
