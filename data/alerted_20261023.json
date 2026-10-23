@@ -45,6 +45,21 @@
       "value_avg_5": 502613715.0,
       "vol_active_days": 2,
       "status": "진입가능"
+    },
+    "484120": {
+      "time": "13:13",
+      "name": "도우인시스",
+      "sector": "전기전자",
+      "market": "KOSDAQ",
+      "price": 26250.0,
+      "high20": 25800.0,
+      "atr20": 1933.0,
+      "gap_atr": 0.233,
+      "unit_shares": 258,
+      "value_avg_20": 1920890718.0,
+      "value_avg_5": 2829871600.0,
+      "vol_active_days": 3,
+      "status": "진입가능"
     }
   }
 }
