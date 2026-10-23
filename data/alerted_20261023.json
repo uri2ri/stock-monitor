@@ -75,6 +75,21 @@
       "value_avg_5": 1043949230.0,
       "vol_active_days": 3,
       "status": "진입가능"
+    },
+    "220100": {
+      "time": "15:03",
+      "name": "퓨쳐켐",
+      "sector": "제약",
+      "market": "KOSDAQ",
+      "price": 7880.0,
+      "high20": 7420.0,
+      "atr20": 513.0,
+      "gap_atr": 0.897,
+      "unit_shares": 974,
+      "value_avg_20": 647640404.0,
+      "value_avg_5": 432900430.0,
+      "vol_active_days": 0,
+      "status": "추격금지"
     }
   }
 }
