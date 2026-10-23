@@ -60,6 +60,21 @@
       "value_avg_5": 2829871600.0,
       "vol_active_days": 3,
       "status": "진입가능"
+    },
+    "395400": {
+      "time": "14:53",
+      "name": "SK리츠",
+      "sector": "부동산",
+      "market": "KOSPI",
+      "price": 5420.0,
+      "high20": 5400.0,
+      "atr20": 142.0,
+      "gap_atr": 0.141,
+      "unit_shares": 3521,
+      "value_avg_20": 1074124525.0,
+      "value_avg_5": 1043949230.0,
+      "vol_active_days": 3,
+      "status": "진입가능"
     }
   }
 }
