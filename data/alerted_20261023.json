@@ -15,6 +15,21 @@
       "value_avg_5": 14720500210.0,
       "vol_active_days": 3,
       "status": "진입가능"
+    },
+    "441270": {
+      "time": "11:43",
+      "name": "파인엠텍",
+      "sector": "전기전자",
+      "market": "KOSDAQ",
+      "price": 10360.0,
+      "high20": 10260.0,
+      "atr20": 701.0,
+      "gap_atr": 0.143,
+      "unit_shares": 713,
+      "value_avg_20": 8433528690.0,
+      "value_avg_5": 14846253850.0,
+      "vol_active_days": 4,
+      "status": "진입가능"
     }
   }
 }
