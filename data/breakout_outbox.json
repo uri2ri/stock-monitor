@@ -1,88 +1,9 @@
 {
   "version": 1,
-  "events": [
-    {
-      "id": "d244a29fb27244d8b3454b555a529d43",
-      "operation": "_set_outcome",
-      "args": [
-        "051630",
-        "자금부족",
-        "현금 부족(필요 673,380원 · 가용 540,769원)",
-        {
-          "__datetime__": "2026-10-23T12:14:01.998901+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    }
-  ],
-  "plans": [
-    {
-      "id": "301ae5f7cc6b43c09f956649185c9b6a",
-      "owner": "39893813864:1",
-      "events": [
-        "d244a29fb27244d8b3454b555a529d43"
-      ],
-      "record": {
-        "account_type": "",
-        "account_key": "",
-        "order_side": "",
-        "order_qty": null,
-        "filled_qty": null,
-        "unverified_qty": null,
-        "execution_price": null,
-        "execution_state": "",
-        "execution_checked_at": null,
-        "event_id": "f8dc0dd810e848ddb07345083d3d6794",
-        "order_no": "",
-        "order_day": null,
-        "key": "4020fc3e-53fc-81bf-b22e-ee55cf669504",
-        "page_id": "4020fc3e-53fc-81bf-b22e-ee55cf669504",
-        "name": "진양화학",
-        "ticker": "051630",
-        "first_detected_at": {
-          "__datetime__": "2026-10-23T12:03:00+09:00"
-        },
-        "first_threshold": 1929.0,
-        "first_price": 1935.0,
-        "first_atr": 153.0,
-        "status": "추적중",
-        "closed_reason": "",
-        "closed_at": null,
-        "outcome": "자금부족",
-        "outcome_reason": "현금 부족(필요 673,380원 · 가용 540,769원)",
-        "outcome_at": {
-          "__datetime__": "2026-10-23T12:14:01.998901+09:00"
-        },
-        "latest_close": null,
-        "latest_date": null,
-        "latest_atr": null,
-        "latest_line": null,
-        "change_pct": null,
-        "atr_mult": null,
-        "dist_to_line": null,
-        "dist_to_line_atr": null,
-        "level_state": "",
-        "new_breakout": "",
-        "refresh_state": "",
-        "refresh_note": "",
-        "user_memo": ""
-      },
-      "page_id": "4020fc3e-53fc-81bf-b22e-ee55cf669504",
-      "fields": {
-        "outcome_reason": "현금 부족(필요 673,380원 · 가용 540,769원)",
-        "outcome_at": {
-          "__datetime__": "2026-10-23T12:14:01.998901+09:00"
-        }
-      },
-      "state": "queued"
-    }
-  ],
+  "events": [],
+  "plans": [],
   "prepare_cursor": "1d971d272c724060b2a3f9f410818fb3",
-  "deliver_cursor": "20849f5dd85f4b559580c2ff44a1f001",
+  "deliver_cursor": "301ae5f7cc6b43c09f956649185c9b6a",
   "excluded_events": [
     {
       "event": {
