@@ -1,8 +1,87 @@
 {
   "version": 1,
-  "events": [],
-  "plans": [],
-  "prepare_cursor": "ccb9c7245f20422cb9749cc54dac1382",
+  "events": [
+    {
+      "id": "06e095b835bc43c880917735257f3916",
+      "operation": "_set_outcome",
+      "args": [
+        "351320",
+        "자금부족",
+        "현금 부족(필요 575,660원 · 가용 187,487원)",
+        {
+          "__datetime__": "2026-10-26T12:24:06.924718+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    }
+  ],
+  "plans": [
+    {
+      "id": "de4df8b5529c402abb1a4c62a07ca4dc",
+      "owner": "40263806458:1",
+      "events": [
+        "06e095b835bc43c880917735257f3916"
+      ],
+      "record": {
+        "account_type": "",
+        "account_key": "",
+        "order_side": "",
+        "order_qty": null,
+        "filled_qty": null,
+        "unverified_qty": null,
+        "execution_price": null,
+        "execution_state": "",
+        "execution_checked_at": null,
+        "event_id": "ca520986451b480bbb755791cc00055a",
+        "order_no": "",
+        "order_day": null,
+        "key": "4050fc3e-53fc-81b4-a3d9-e77e9fc64511",
+        "page_id": "4050fc3e-53fc-81b4-a3d9-e77e9fc64511",
+        "name": "넥사다이내믹스",
+        "ticker": "351320",
+        "first_detected_at": {
+          "__datetime__": "2026-10-26T09:53:00+09:00"
+        },
+        "first_threshold": 5370.0,
+        "first_price": 5380.0,
+        "first_atr": 466.0,
+        "status": "추적중",
+        "closed_reason": "",
+        "closed_at": null,
+        "outcome": "자금부족",
+        "outcome_reason": "현금 부족(필요 575,660원 · 가용 187,487원)",
+        "outcome_at": {
+          "__datetime__": "2026-10-26T12:24:06.924718+09:00"
+        },
+        "latest_close": null,
+        "latest_date": null,
+        "latest_atr": null,
+        "latest_line": null,
+        "change_pct": null,
+        "atr_mult": null,
+        "dist_to_line": null,
+        "dist_to_line_atr": null,
+        "level_state": "",
+        "new_breakout": "",
+        "refresh_state": "",
+        "refresh_note": "",
+        "user_memo": ""
+      },
+      "page_id": "4050fc3e-53fc-81b4-a3d9-e77e9fc64511",
+      "fields": {
+        "outcome_reason": "현금 부족(필요 575,660원 · 가용 187,487원)",
+        "outcome_at": {
+          "__datetime__": "2026-10-26T12:24:06.924718+09:00"
+        }
+      },
+      "state": "queued"
+    }
+  ],
+  "prepare_cursor": "06e095b835bc43c880917735257f3916",
   "deliver_cursor": "bc126cb3e2dc426b995c5037b1889d6b",
   "excluded_events": [
     {
