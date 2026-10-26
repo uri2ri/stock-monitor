@@ -17,6 +17,21 @@
       "status": "진입가능",
       "price_10am": 5320.0,
       "time_10am": "10:03"
+    },
+    "253590": {
+      "time": "10:23",
+      "name": "네오셈",
+      "sector": "기계·장비",
+      "market": "KOSDAQ",
+      "price": 16820.0,
+      "high20": 16690.0,
+      "atr20": 1132.0,
+      "gap_atr": 0.115,
+      "unit_shares": 441,
+      "value_avg_20": 19468237878.0,
+      "value_avg_5": 23888662102.0,
+      "vol_active_days": 4,
+      "status": "진입가능"
     }
   }
 }
