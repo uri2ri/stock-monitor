@@ -1,8 +1,107 @@
 {
   "version": 1,
-  "events": [],
-  "plans": [],
-  "prepare_cursor": "fff55cc0594541dd94f73a24bde53969",
+  "events": [
+    {
+      "id": "3a6dcc359fe241fba80b10a4927367bd",
+      "operation": "_set_outcome",
+      "args": [
+        "253590",
+        "주문접수",
+        "주문 접수(주문번호 0000017262)",
+        {
+          "__datetime__": "2026-10-26T10:24:00.331210+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "0000017262",
+        "order_day": {
+          "__date__": "2026-10-26"
+        },
+        "identity": {
+          "order_qty": 44,
+          "account_type": "모의",
+          "account_key": "d534c8d981289493d2f84a1e888ebc32d53dfd1df60dcd620d6e4707f0cc4a87",
+          "order_side": "매수"
+        }
+      }
+    }
+  ],
+  "plans": [
+    {
+      "id": "1022ddf986ab4de98ec6820fbbc032af",
+      "owner": "40253945079:1",
+      "events": [
+        "3a6dcc359fe241fba80b10a4927367bd"
+      ],
+      "record": {
+        "account_type": "모의",
+        "account_key": "d534c8d981289493d2f84a1e888ebc32d53dfd1df60dcd620d6e4707f0cc4a87",
+        "order_side": "매수",
+        "order_qty": 44,
+        "filled_qty": null,
+        "unverified_qty": null,
+        "execution_price": null,
+        "execution_state": "",
+        "execution_checked_at": null,
+        "event_id": "ebc3c1a5c4f04e0199060da7fcc72472",
+        "order_no": "0000017262",
+        "order_day": {
+          "__date__": "2026-10-26"
+        },
+        "key": "3e20fc3e-53fc-8160-adb5-feb5d03cb42a",
+        "page_id": "3e20fc3e-53fc-8160-adb5-feb5d03cb42a",
+        "name": "네오셈",
+        "ticker": "253590",
+        "first_detected_at": {
+          "__datetime__": "2026-09-21T09:23:00+09:00"
+        },
+        "first_threshold": 12660.0,
+        "first_price": 12790.0,
+        "first_atr": 798.0,
+        "status": "추적중",
+        "closed_reason": "",
+        "closed_at": null,
+        "outcome": "주문접수",
+        "outcome_reason": "주문 접수(주문번호 0000017262)",
+        "outcome_at": {
+          "__datetime__": "2026-10-26T10:24:00.331210+09:00"
+        },
+        "latest_close": 16330.0,
+        "latest_date": {
+          "__date__": "2026-10-23"
+        },
+        "latest_atr": 1132.0,
+        "latest_line": 16690.0,
+        "change_pct": 28.99,
+        "atr_mult": 4.6,
+        "dist_to_line": 360.0,
+        "dist_to_line_atr": 0.32,
+        "level_state": "최초선위",
+        "new_breakout": "미해당",
+        "refresh_state": "갱신됨",
+        "refresh_note": "",
+        "user_memo": ""
+      },
+      "page_id": "3e20fc3e-53fc-8160-adb5-feb5d03cb42a",
+      "fields": {
+        "account_type": "모의",
+        "account_key": "d534c8d981289493d2f84a1e888ebc32d53dfd1df60dcd620d6e4707f0cc4a87",
+        "order_side": "매수",
+        "order_qty": 44,
+        "order_no": "0000017262",
+        "order_day": {
+          "__date__": "2026-10-26"
+        },
+        "outcome": "주문접수",
+        "outcome_reason": "주문 접수(주문번호 0000017262)",
+        "outcome_at": {
+          "__datetime__": "2026-10-26T10:24:00.331210+09:00"
+        }
+      },
+      "state": "queued"
+    }
+  ],
+  "prepare_cursor": "3a6dcc359fe241fba80b10a4927367bd",
   "deliver_cursor": "6d3fbc3d14fa4ad19c24ac09cc66ac0e",
   "excluded_events": [
     {
