@@ -1,0 +1,35 @@
+{
+  "date": "20261027",
+  "alerted": {
+    "026910": {
+      "time": "09:03",
+      "name": "광진실업",
+      "sector": "금속",
+      "market": "KOSDAQ",
+      "price": 3235.0,
+      "high20": 3180.0,
+      "atr20": 376.0,
+      "gap_atr": 0.146,
+      "unit_shares": 1329,
+      "value_avg_20": 619765570.0,
+      "value_avg_5": 310389824.0,
+      "vol_active_days": 0,
+      "status": "진입가능"
+    },
+    "028050": {
+      "time": "09:03",
+      "name": "삼성E&A",
+      "sector": "일반서비스",
+      "market": "KOSPI",
+      "price": 62800.0,
+      "high20": 61300.0,
+      "atr20": 3106.0,
+      "gap_atr": 0.483,
+      "unit_shares": 160,
+      "value_avg_20": 150046975608.0,
+      "value_avg_5": 390105159820.0,
+      "vol_active_days": 3,
+      "status": "진입가능"
+    }
+  }
+}
