@@ -60,6 +60,21 @@
       "value_avg_5": 12973395010.0,
       "vol_active_days": 3,
       "status": "진입가능"
+    },
+    "064400": {
+      "time": "09:23",
+      "name": "LG씨엔에스",
+      "sector": "IT 서비스",
+      "market": "KOSPI",
+      "price": 75100.0,
+      "high20": 75000.0,
+      "atr20": 3523.0,
+      "gap_atr": 0.028,
+      "unit_shares": 141,
+      "value_avg_20": 43618152495.0,
+      "value_avg_5": 65711137580.0,
+      "vol_active_days": 4,
+      "status": "진입가능"
     }
   }
 }
