@@ -160,7 +160,7 @@
         "account_key": "d534c8d981289493d2f84a1e888ebc32d53dfd1df60dcd620d6e4707f0cc4a87",
         "order_side": "매수"
       },
-      "state": "queued"
+      "state": "creating"
     },
     {
       "id": "acaec6b963fc4f5fbcb45618d2b54b11",
@@ -357,7 +357,7 @@
     }
   ],
   "prepare_cursor": "4edc2dbcea224de18cb2e84267250298",
-  "deliver_cursor": "ec22e2855e84457d9091f91ab2277ab6",
+  "deliver_cursor": "de0ba01e4a844551adac45219d0c0469",
   "excluded_events": [
     {
       "event": {
