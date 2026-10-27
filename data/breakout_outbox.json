@@ -1,88 +1,9 @@
 {
   "version": 1,
-  "events": [
-    {
-      "id": "4467ca69b8bf4ef58dea7307f01daae1",
-      "operation": "_set_outcome",
-      "args": [
-        "026910",
-        "자금부족",
-        "현금 부족(필요 449,665원 · 가용 363,776원)",
-        {
-          "__datetime__": "2026-10-27T11:34:08.975736+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    }
-  ],
-  "plans": [
-    {
-      "id": "290ac663abbc47e984b922562fc7bba7",
-      "owner": "40439075060:1",
-      "events": [
-        "4467ca69b8bf4ef58dea7307f01daae1"
-      ],
-      "record": {
-        "account_type": "",
-        "account_key": "",
-        "order_side": "",
-        "order_qty": null,
-        "filled_qty": null,
-        "unverified_qty": null,
-        "execution_price": null,
-        "execution_state": "",
-        "execution_checked_at": null,
-        "event_id": "4094cc1b1b834cf2a0e4c2e46403ff14",
-        "order_no": "",
-        "order_day": null,
-        "key": "4060fc3e-53fc-817a-8e19-f16b6e77f912",
-        "page_id": "4060fc3e-53fc-817a-8e19-f16b6e77f912",
-        "name": "광진실업",
-        "ticker": "026910",
-        "first_detected_at": {
-          "__datetime__": "2026-10-27T09:03:00+09:00"
-        },
-        "first_threshold": 3180.0,
-        "first_price": 3235.0,
-        "first_atr": 376.0,
-        "status": "추적중",
-        "closed_reason": "",
-        "closed_at": null,
-        "outcome": "자금부족",
-        "outcome_reason": "현금 부족(필요 449,665원 · 가용 363,776원)",
-        "outcome_at": {
-          "__datetime__": "2026-10-27T11:34:08.975736+09:00"
-        },
-        "latest_close": null,
-        "latest_date": null,
-        "latest_atr": null,
-        "latest_line": null,
-        "change_pct": null,
-        "atr_mult": null,
-        "dist_to_line": null,
-        "dist_to_line_atr": null,
-        "level_state": "",
-        "new_breakout": "",
-        "refresh_state": "",
-        "refresh_note": "",
-        "user_memo": ""
-      },
-      "page_id": "4060fc3e-53fc-817a-8e19-f16b6e77f912",
-      "fields": {
-        "outcome_reason": "현금 부족(필요 449,665원 · 가용 363,776원)",
-        "outcome_at": {
-          "__datetime__": "2026-10-27T11:34:08.975736+09:00"
-        }
-      },
-      "state": "queued"
-    }
-  ],
+  "events": [],
+  "plans": [],
   "prepare_cursor": "fedb2c24782846a0ac580a7ffc468767",
-  "deliver_cursor": "364d58d345d54f028daa0a5005283157",
+  "deliver_cursor": "290ac663abbc47e984b922562fc7bba7",
   "excluded_events": [
     {
       "event": {
