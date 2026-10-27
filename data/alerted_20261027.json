@@ -30,6 +30,36 @@
       "value_avg_5": 390105159820.0,
       "vol_active_days": 3,
       "status": "진입가능"
+    },
+    "011690": {
+      "time": "09:13",
+      "name": "와이투솔루션",
+      "sector": "전기전자",
+      "market": "KOSPI",
+      "price": 4110.0,
+      "high20": 4080.0,
+      "atr20": 267.0,
+      "gap_atr": 0.112,
+      "unit_shares": 1872,
+      "value_avg_20": 1103788808.0,
+      "value_avg_5": 1086205877.0,
+      "vol_active_days": 3,
+      "status": "진입가능"
+    },
+    "290550": {
+      "time": "09:13",
+      "name": "디케이티",
+      "sector": "전기전자",
+      "market": "KOSDAQ",
+      "price": 26400.0,
+      "high20": 26000.0,
+      "atr20": 1943.0,
+      "gap_atr": 0.206,
+      "unit_shares": 257,
+      "value_avg_20": 9051813698.0,
+      "value_avg_5": 12973395010.0,
+      "vol_active_days": 3,
+      "status": "진입가능"
     }
   }
 }
