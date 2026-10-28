@@ -75,6 +75,66 @@
       "value_avg_5": 258729530.0,
       "vol_active_days": 0,
       "status": "추격금지"
+    },
+    "080160": {
+      "time": "09:13",
+      "name": "모두투어",
+      "sector": "일반서비스",
+      "market": "KOSDAQ",
+      "price": 8670.0,
+      "high20": 8610.0,
+      "atr20": 379.0,
+      "gap_atr": 0.158,
+      "unit_shares": 1319,
+      "value_avg_20": 537383634.0,
+      "value_avg_5": 1003184066.0,
+      "vol_active_days": 5,
+      "status": "진입가능"
+    },
+    "055490": {
+      "time": "09:13",
+      "name": "테이팩스",
+      "sector": "화학",
+      "market": "KOSPI",
+      "price": 20900.0,
+      "high20": 20300.0,
+      "atr20": 1006.0,
+      "gap_atr": 0.596,
+      "unit_shares": 497,
+      "value_avg_20": 662607875.0,
+      "value_avg_5": 656502702.0,
+      "vol_active_days": 2,
+      "status": "추격금지"
+    },
+    "078350": {
+      "time": "09:13",
+      "name": "한양디지텍",
+      "sector": "전기전자",
+      "market": "KOSDAQ",
+      "price": 41650.0,
+      "high20": 40550.0,
+      "atr20": 3595.0,
+      "gap_atr": 0.306,
+      "unit_shares": 139,
+      "value_avg_20": 17051121925.0,
+      "value_avg_5": 18226905210.0,
+      "vol_active_days": 3,
+      "status": "진입가능"
+    },
+    "138360": {
+      "time": "09:13",
+      "name": "앤로보틱스",
+      "sector": "기계·장비",
+      "market": "KOSDAQ",
+      "price": 2400.0,
+      "high20": 2325.0,
+      "atr20": 169.0,
+      "gap_atr": 0.444,
+      "unit_shares": 2958,
+      "value_avg_20": 18013900729.0,
+      "value_avg_5": 62109598505.0,
+      "vol_active_days": 5,
+      "status": "진입가능"
     }
   }
 }
