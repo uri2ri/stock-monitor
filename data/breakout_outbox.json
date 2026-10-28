@@ -1,8 +1,88 @@
 {
   "version": 1,
-  "events": [],
-  "plans": [],
-  "prepare_cursor": "5c288349b1a440e6a3307a3304a4323c",
+  "events": [
+    {
+      "id": "22d7493337e74306b46ba42ce7b7ab37",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "241790",
+          "name": "티이엠씨씨엔에스",
+          "high20": 6780.0,
+          "price": 6790.0,
+          "atr20": 308.0
+        },
+        {
+          "__datetime__": "2026-10-28T13:43:29.349981+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "df5c4afd70184587803d803a38489b8a",
+      "operation": "_set_outcome",
+      "args": [
+        "241790",
+        "자금부족",
+        "현금 부족(필요 1,154,300원 · 가용 363,776원)",
+        {
+          "__datetime__": "2026-10-28T13:44:11.734590+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    }
+  ],
+  "plans": [
+    {
+      "id": "1df5ac0dfbb64a308864a80366698fc9",
+      "owner": "40633879682:1",
+      "events": [
+        "22d7493337e74306b46ba42ce7b7ab37",
+        "df5c4afd70184587803d803a38489b8a"
+      ],
+      "record": {
+        "event_id": "22d7493337e74306b46ba42ce7b7ab37",
+        "ticker": "241790",
+        "name": "티이엠씨씨엔에스",
+        "first_detected_at": {
+          "__datetime__": "2026-10-28T13:43:29.349981+09:00"
+        },
+        "first_threshold": 6780.0,
+        "first_price": 6790.0,
+        "first_atr": 308.0,
+        "status": "추적중",
+        "outcome": "자금부족",
+        "outcome_reason": "현금 부족(필요 1,154,300원 · 가용 363,776원)",
+        "outcome_at": {
+          "__datetime__": "2026-10-28T13:44:11.734590+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "22d7493337e74306b46ba42ce7b7ab37",
+        "ticker": "241790",
+        "name": "티이엠씨씨엔에스",
+        "first_detected_at": {
+          "__datetime__": "2026-10-28T13:43:29.349981+09:00"
+        },
+        "first_threshold": 6780.0,
+        "first_price": 6790.0,
+        "first_atr": 308.0,
+        "status": "추적중",
+        "outcome": "자금부족",
+        "outcome_reason": "현금 부족(필요 1,154,300원 · 가용 363,776원)",
+        "outcome_at": {
+          "__datetime__": "2026-10-28T13:44:11.734590+09:00"
+        }
+      },
+      "state": "queued"
+    }
+  ],
+  "prepare_cursor": "8383c08515a7459bba685161e3d39d9c",
   "deliver_cursor": "0f9ec72ab77f4e2bab0003b64f8407a7",
   "excluded_events": [
     {
