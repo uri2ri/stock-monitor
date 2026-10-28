@@ -1,8 +1,88 @@
 {
   "version": 1,
-  "events": [],
-  "plans": [],
-  "prepare_cursor": "27cc5b2b823040aebae88793ffd7b5b7",
+  "events": [
+    {
+      "id": "9c363add36804cf2bdbaac8693f754ff",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "294870",
+          "name": "IPARK현대산업개발",
+          "high20": 24100.0,
+          "price": 24250.0,
+          "atr20": 988.0
+        },
+        {
+          "__datetime__": "2026-10-28T10:23:40.887263+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "bb8f8ccc9582453c8382c0984c7b68a7",
+      "operation": "_set_outcome",
+      "args": [
+        "294870",
+        "자금부족",
+        "현금 부족(필요 1,285,250원 · 가용 363,776원)",
+        {
+          "__datetime__": "2026-10-28T10:24:19.064380+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    }
+  ],
+  "plans": [
+    {
+      "id": "ec56115e27fb470a8e50c4f355c2e0c2",
+      "owner": "40614708980:1",
+      "events": [
+        "9c363add36804cf2bdbaac8693f754ff",
+        "bb8f8ccc9582453c8382c0984c7b68a7"
+      ],
+      "record": {
+        "event_id": "9c363add36804cf2bdbaac8693f754ff",
+        "ticker": "294870",
+        "name": "IPARK현대산업개발",
+        "first_detected_at": {
+          "__datetime__": "2026-10-28T10:23:40.887263+09:00"
+        },
+        "first_threshold": 24100.0,
+        "first_price": 24250.0,
+        "first_atr": 988.0,
+        "status": "추적중",
+        "outcome": "자금부족",
+        "outcome_reason": "현금 부족(필요 1,285,250원 · 가용 363,776원)",
+        "outcome_at": {
+          "__datetime__": "2026-10-28T10:24:19.064380+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "9c363add36804cf2bdbaac8693f754ff",
+        "ticker": "294870",
+        "name": "IPARK현대산업개발",
+        "first_detected_at": {
+          "__datetime__": "2026-10-28T10:23:40.887263+09:00"
+        },
+        "first_threshold": 24100.0,
+        "first_price": 24250.0,
+        "first_atr": 988.0,
+        "status": "추적중",
+        "outcome": "자금부족",
+        "outcome_reason": "현금 부족(필요 1,285,250원 · 가용 363,776원)",
+        "outcome_at": {
+          "__datetime__": "2026-10-28T10:24:19.064380+09:00"
+        }
+      },
+      "state": "queued"
+    }
+  ],
+  "prepare_cursor": "4330601fa0be4250b1e11c6803fa0c2f",
   "deliver_cursor": "b4464a1b138844ea9b4bcf7ec933e990",
   "excluded_events": [
     {
