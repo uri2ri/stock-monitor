@@ -234,6 +234,21 @@
       "value_avg_5": 1139122794.0,
       "vol_active_days": 1,
       "status": "진입가능"
+    },
+    "064290": {
+      "time": "10:43",
+      "name": "인텍플러스",
+      "sector": "기계·장비",
+      "market": "KOSDAQ",
+      "price": 62800.0,
+      "high20": 62600.0,
+      "atr20": 5660.0,
+      "gap_atr": 0.035,
+      "unit_shares": 88,
+      "value_avg_20": 20578776135.0,
+      "value_avg_5": 17651183040.0,
+      "vol_active_days": 0,
+      "status": "진입가능"
     }
   }
 }
