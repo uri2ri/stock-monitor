@@ -150,6 +150,21 @@
       "value_avg_5": 12277210610.0,
       "vol_active_days": 2,
       "status": "진입가능"
+    },
+    "091580": {
+      "time": "09:33",
+      "name": "상신이디피",
+      "sector": "전기전자",
+      "market": "KOSDAQ",
+      "price": 27800.0,
+      "high20": 27700.0,
+      "atr20": 2109.0,
+      "gap_atr": 0.047,
+      "unit_shares": 237,
+      "value_avg_20": 10751727335.0,
+      "value_avg_5": 10855064920.0,
+      "vol_active_days": 3,
+      "status": "진입가능"
     }
   }
 }
