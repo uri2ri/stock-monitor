@@ -219,6 +219,21 @@
       "value_avg_5": 4079497410.0,
       "vol_active_days": 4,
       "status": "진입가능"
+    },
+    "489460": {
+      "time": "10:33",
+      "name": "바이오비쥬",
+      "sector": "화학",
+      "market": "KOSDAQ",
+      "price": 13320.0,
+      "high20": 13310.0,
+      "atr20": 745.0,
+      "gap_atr": 0.013,
+      "unit_shares": 671,
+      "value_avg_20": 1309883612.0,
+      "value_avg_5": 1139122794.0,
+      "vol_active_days": 1,
+      "status": "진입가능"
     }
   }
 }
