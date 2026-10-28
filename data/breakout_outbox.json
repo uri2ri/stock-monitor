@@ -1,8 +1,88 @@
 {
   "version": 1,
-  "events": [],
-  "plans": [],
-  "prepare_cursor": "acb4944fc17048d2a7619194e9194d76",
+  "events": [
+    {
+      "id": "6358d86994c244c08a13b6a654f7f5a7",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "417310",
+          "name": "코람코더원리츠",
+          "high20": 2410.0,
+          "price": 2425.0,
+          "atr20": 96.0
+        },
+        {
+          "__datetime__": "2026-10-28T15:33:42.008761+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "86667f84c5a2409e8074f37daf674604",
+      "operation": "_set_outcome",
+      "args": [
+        "417310",
+        "미주문",
+        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        {
+          "__datetime__": "2026-10-28T15:33:48.944863+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    }
+  ],
+  "plans": [
+    {
+      "id": "5df4983bd7ed4c1ca7d99850ff472ef6",
+      "owner": "40644536829:1",
+      "events": [
+        "6358d86994c244c08a13b6a654f7f5a7",
+        "86667f84c5a2409e8074f37daf674604"
+      ],
+      "record": {
+        "event_id": "6358d86994c244c08a13b6a654f7f5a7",
+        "ticker": "417310",
+        "name": "코람코더원리츠",
+        "first_detected_at": {
+          "__datetime__": "2026-10-28T15:33:42.008761+09:00"
+        },
+        "first_threshold": 2410.0,
+        "first_price": 2425.0,
+        "first_atr": 96.0,
+        "status": "추적중",
+        "outcome": "미주문",
+        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        "outcome_at": {
+          "__datetime__": "2026-10-28T15:33:48.944863+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "6358d86994c244c08a13b6a654f7f5a7",
+        "ticker": "417310",
+        "name": "코람코더원리츠",
+        "first_detected_at": {
+          "__datetime__": "2026-10-28T15:33:42.008761+09:00"
+        },
+        "first_threshold": 2410.0,
+        "first_price": 2425.0,
+        "first_atr": 96.0,
+        "status": "추적중",
+        "outcome": "미주문",
+        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        "outcome_at": {
+          "__datetime__": "2026-10-28T15:33:48.944863+09:00"
+        }
+      },
+      "state": "queued"
+    }
+  ],
+  "prepare_cursor": "c82649e064a04905b171465d7b546e16",
   "deliver_cursor": "96d7184386894fd287a4b6da2ec503cc",
   "excluded_events": [
     {
