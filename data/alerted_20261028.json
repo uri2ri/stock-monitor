@@ -294,6 +294,21 @@
       "value_avg_5": 63932846600.0,
       "vol_active_days": 4,
       "status": "진입가능"
+    },
+    "219130": {
+      "time": "15:03",
+      "name": "타이거일렉",
+      "sector": "전기전자",
+      "market": "KOSDAQ",
+      "price": 100700.0,
+      "high20": 100300.0,
+      "atr20": 8448.0,
+      "gap_atr": 0.047,
+      "unit_shares": 59,
+      "value_avg_20": 6510194130.0,
+      "value_avg_5": 7467807860.0,
+      "vol_active_days": 3,
+      "status": "진입가능"
     }
   }
 }
