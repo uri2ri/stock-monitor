@@ -1,0 +1,80 @@
+{
+  "date": "20261028",
+  "alerted": {
+    "144960": {
+      "time": "09:03",
+      "name": "뉴파워프라즈마",
+      "sector": "기계·장비",
+      "market": "KOSDAQ",
+      "price": 15750.0,
+      "high20": 14860.0,
+      "atr20": 1129.0,
+      "gap_atr": 0.788,
+      "unit_shares": 442,
+      "value_avg_20": 22490316965.0,
+      "value_avg_5": 29524091322.0,
+      "vol_active_days": 2,
+      "status": "추격금지"
+    },
+    "092870": {
+      "time": "09:03",
+      "name": "엑시콘",
+      "sector": "기계·장비",
+      "market": "KOSDAQ",
+      "price": 66300.0,
+      "high20": 59600.0,
+      "atr20": 5636.0,
+      "gap_atr": 1.189,
+      "unit_shares": 88,
+      "value_avg_20": 24848573475.0,
+      "value_avg_5": 19092395220.0,
+      "vol_active_days": 1,
+      "status": "추격금지"
+    },
+    "425420": {
+      "time": "09:03",
+      "name": "티에프이",
+      "sector": "전기전자",
+      "market": "KOSDAQ",
+      "price": 79400.0,
+      "high20": 77900.0,
+      "atr20": 5651.0,
+      "gap_atr": 0.265,
+      "unit_shares": 88,
+      "value_avg_20": 11685122240.0,
+      "value_avg_5": 15293119200.0,
+      "vol_active_days": 2,
+      "status": "진입가능"
+    },
+    "060720": {
+      "time": "09:03",
+      "name": "KH바텍",
+      "sector": "전기전자",
+      "market": "KOSDAQ",
+      "price": 11970.0,
+      "high20": 11940.0,
+      "atr20": 586.0,
+      "gap_atr": 0.051,
+      "unit_shares": 853,
+      "value_avg_20": 1255533032.0,
+      "value_avg_5": 1851833962.0,
+      "vol_active_days": 2,
+      "status": "진입가능"
+    },
+    "079940": {
+      "time": "09:03",
+      "name": "가비아",
+      "sector": "IT 서비스",
+      "market": "KOSDAQ",
+      "price": 50700.0,
+      "high20": 41550.0,
+      "atr20": 1530.0,
+      "gap_atr": 5.98,
+      "unit_shares": 326,
+      "value_avg_20": 567441838.0,
+      "value_avg_5": 258729530.0,
+      "vol_active_days": 0,
+      "status": "추격금지"
+    }
+  }
+}
