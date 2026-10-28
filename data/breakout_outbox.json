@@ -2,23 +2,6 @@
   "version": 1,
   "events": [
     {
-      "id": "84b638578a684623847daa97dce850e8",
-      "operation": "record_breakout",
-      "args": [
-        {
-          "ticker": "425420",
-          "name": "티에프이",
-          "high20": 77900.0,
-          "price": 79400.0,
-          "atr20": 5651.0
-        },
-        {
-          "__datetime__": "2026-10-28T09:03:44.650790+09:00"
-        }
-      ],
-      "kwargs": {}
-    },
-    {
       "id": "bee2ab82f24d44efa0740f30c719bb58",
       "operation": "record_breakout",
       "args": [
@@ -68,70 +51,9 @@
         "order_day": null,
         "identity": null
       }
-    },
-    {
-      "id": "970926f227524e6a9e8d8e51e0956390",
-      "operation": "_set_outcome",
-      "args": [
-        "425420",
-        "미주문",
-        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        {
-          "__datetime__": "2026-10-28T09:03:51.069659+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
     }
   ],
   "plans": [
-    {
-      "id": "b030a367554f4522a50fd091c069a2c8",
-      "owner": "40606221174:1",
-      "events": [
-        "84b638578a684623847daa97dce850e8",
-        "970926f227524e6a9e8d8e51e0956390"
-      ],
-      "record": {
-        "event_id": "84b638578a684623847daa97dce850e8",
-        "ticker": "425420",
-        "name": "티에프이",
-        "first_detected_at": {
-          "__datetime__": "2026-10-28T09:03:44.650790+09:00"
-        },
-        "first_threshold": 77900.0,
-        "first_price": 79400.0,
-        "first_atr": 5651.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        "outcome_at": {
-          "__datetime__": "2026-10-28T09:03:51.069659+09:00"
-        }
-      },
-      "page_id": null,
-      "fields": {
-        "event_id": "84b638578a684623847daa97dce850e8",
-        "ticker": "425420",
-        "name": "티에프이",
-        "first_detected_at": {
-          "__datetime__": "2026-10-28T09:03:44.650790+09:00"
-        },
-        "first_threshold": 77900.0,
-        "first_price": 79400.0,
-        "first_atr": 5651.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        "outcome_at": {
-          "__datetime__": "2026-10-28T09:03:51.069659+09:00"
-        }
-      },
-      "state": "creating"
-    },
     {
       "id": "ef9ff3a4af874229b9fe1b3f540fb02f",
       "owner": "40606221174:1",
@@ -174,7 +96,7 @@
           "__datetime__": "2026-10-28T09:03:44.650790+09:00"
         }
       },
-      "state": "queued"
+      "state": "creating"
     },
     {
       "id": "c92036d3899a482ea3a2676078f4af0e",
@@ -240,7 +162,7 @@
     }
   ],
   "prepare_cursor": "41f39315bd0147cc99fc57efb20a59f9",
-  "deliver_cursor": "b030a367554f4522a50fd091c069a2c8",
+  "deliver_cursor": "ef9ff3a4af874229b9fe1b3f540fb02f",
   "excluded_events": [
     {
       "event": {
