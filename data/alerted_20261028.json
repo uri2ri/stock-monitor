@@ -264,6 +264,21 @@
       "value_avg_5": 22167212360.0,
       "vol_active_days": 2,
       "status": "진입가능"
+    },
+    "241790": {
+      "time": "13:43",
+      "name": "티이엠씨씨엔에스",
+      "sector": "기계·장비",
+      "market": "KOSDAQ",
+      "price": 6790.0,
+      "high20": 6780.0,
+      "atr20": 308.0,
+      "gap_atr": 0.032,
+      "unit_shares": 1623,
+      "value_avg_20": 337155805.0,
+      "value_avg_5": 240496648.0,
+      "vol_active_days": 0,
+      "status": "진입가능"
     }
   }
 }
