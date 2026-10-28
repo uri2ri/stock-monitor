@@ -279,6 +279,21 @@
       "value_avg_5": 240496648.0,
       "vol_active_days": 0,
       "status": "진입가능"
+    },
+    "018260": {
+      "time": "14:03",
+      "name": "삼성에스디에스",
+      "sector": "IT 서비스",
+      "market": "KOSPI",
+      "price": 223500.0,
+      "high20": 223000.0,
+      "atr20": 10401.0,
+      "gap_atr": 0.048,
+      "unit_shares": 48,
+      "value_avg_20": 37501985430.0,
+      "value_avg_5": 63932846600.0,
+      "vol_active_days": 4,
+      "status": "진입가능"
     }
   }
 }
