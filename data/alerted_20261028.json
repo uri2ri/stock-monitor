@@ -204,6 +204,21 @@
       "status": "진입가능",
       "price_10am": 4230.0,
       "time_10am": "10:03"
+    },
+    "294870": {
+      "time": "10:23",
+      "name": "IPARK현대산업개발",
+      "sector": "건설",
+      "market": "KOSPI",
+      "price": 24250.0,
+      "high20": 24100.0,
+      "atr20": 988.0,
+      "gap_atr": 0.152,
+      "unit_shares": 506,
+      "value_avg_20": 2861232438.0,
+      "value_avg_5": 4079497410.0,
+      "vol_active_days": 4,
+      "status": "진입가능"
     }
   }
 }
