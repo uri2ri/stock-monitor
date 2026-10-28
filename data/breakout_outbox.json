@@ -1,91 +1,9 @@
 {
   "version": 1,
-  "events": [
-    {
-      "id": "3d6c8f75b63e42b480e66e6fcbb2b7e2",
-      "operation": "_set_outcome",
-      "args": [
-        "053800",
-        "자금부족",
-        "현금 부족(필요 769,600원 · 가용 363,776원)",
-        {
-          "__datetime__": "2026-10-28T10:54:14.838229+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    }
-  ],
-  "plans": [
-    {
-      "id": "ace5354d4a8a47b290f694985ac76f90",
-      "owner": "40617658328:1",
-      "events": [
-        "3d6c8f75b63e42b480e66e6fcbb2b7e2"
-      ],
-      "record": {
-        "account_type": "",
-        "account_key": "",
-        "order_side": "",
-        "order_qty": null,
-        "filled_qty": null,
-        "unverified_qty": null,
-        "execution_price": null,
-        "execution_state": "",
-        "execution_checked_at": null,
-        "event_id": "d20f6120f87d44478b910a50e40f43a7",
-        "order_no": "",
-        "order_day": null,
-        "key": "3e30fc3e-53fc-81fa-86d0-fb43d874bdfa",
-        "page_id": "3e30fc3e-53fc-81fa-86d0-fb43d874bdfa",
-        "name": "안랩",
-        "ticker": "053800",
-        "first_detected_at": {
-          "__datetime__": "2026-09-22T09:23:00+09:00"
-        },
-        "first_threshold": 69800.0,
-        "first_price": 70300.0,
-        "first_atr": 2379.0,
-        "status": "추적중",
-        "closed_reason": "",
-        "closed_at": null,
-        "outcome": "자금부족",
-        "outcome_reason": "현금 부족(필요 769,600원 · 가용 363,776원)",
-        "outcome_at": {
-          "__datetime__": "2026-10-28T10:54:14.838229+09:00"
-        },
-        "latest_close": 92700.0,
-        "latest_date": {
-          "__date__": "2026-10-27"
-        },
-        "latest_atr": 6206.0,
-        "latest_line": 94800.0,
-        "change_pct": 32.81,
-        "atr_mult": 9.63,
-        "dist_to_line": 2100.0,
-        "dist_to_line_atr": 0.34,
-        "level_state": "최초선위",
-        "new_breakout": "미해당",
-        "refresh_state": "갱신됨",
-        "refresh_note": "",
-        "user_memo": ""
-      },
-      "page_id": "3e30fc3e-53fc-81fa-86d0-fb43d874bdfa",
-      "fields": {
-        "outcome": "자금부족",
-        "outcome_reason": "현금 부족(필요 769,600원 · 가용 363,776원)",
-        "outcome_at": {
-          "__datetime__": "2026-10-28T10:54:14.838229+09:00"
-        }
-      },
-      "state": "queued"
-    }
-  ],
+  "events": [],
+  "plans": [],
   "prepare_cursor": "3009921d807d4931bf8a04c2483ef320",
-  "deliver_cursor": "207d9e068a8d47e583c257b49686ca58",
+  "deliver_cursor": "ace5354d4a8a47b290f694985ac76f90",
   "excluded_events": [
     {
       "event": {
