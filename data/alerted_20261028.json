@@ -309,6 +309,21 @@
       "value_avg_5": 7467807860.0,
       "vol_active_days": 3,
       "status": "진입가능"
+    },
+    "417310": {
+      "time": "15:33",
+      "name": "코람코더원리츠",
+      "sector": "부동산",
+      "market": "KOSPI",
+      "price": 2425.0,
+      "high20": 2410.0,
+      "atr20": 96.0,
+      "gap_atr": 0.156,
+      "unit_shares": 5208,
+      "value_avg_20": 406132944.0,
+      "value_avg_5": 794217459.0,
+      "vol_active_days": 2,
+      "status": "진입가능"
     }
   }
 }
