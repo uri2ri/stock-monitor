@@ -1,90 +1,9 @@
 {
   "version": 1,
-  "events": [
-    {
-      "id": "f309fc4f89014108aebd0875b1ad367f",
-      "operation": "_set_outcome",
-      "args": [
-        "030190",
-        "미주문",
-        "주문 직전 재검증 - 돌파 유지 안 됨(최신가 17,290)",
-        {
-          "__datetime__": "2026-10-29T10:47:09.834609+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    }
-  ],
-  "plans": [
-    {
-      "id": "de4e0607f1784180b19afd25ee0e59a6",
-      "owner": "40802083049:1",
-      "events": [
-        "f309fc4f89014108aebd0875b1ad367f"
-      ],
-      "record": {
-        "account_type": "",
-        "account_key": "",
-        "order_side": "",
-        "order_qty": null,
-        "filled_qty": null,
-        "unverified_qty": null,
-        "execution_price": null,
-        "execution_state": "",
-        "execution_checked_at": null,
-        "event_id": "d452637d01164c0aaec54b48f0db4324",
-        "order_no": "",
-        "order_day": null,
-        "key": "3fb0fc3e-53fc-81f1-a44e-e5c71d3c27ed",
-        "page_id": "3fb0fc3e-53fc-81f1-a44e-e5c71d3c27ed",
-        "name": "NICE평가정보",
-        "ticker": "030190",
-        "first_detected_at": {
-          "__datetime__": "2026-10-16T09:13:00+09:00"
-        },
-        "first_threshold": 17050.0,
-        "first_price": 17190.0,
-        "first_atr": 511.0,
-        "status": "추적중",
-        "closed_reason": "",
-        "closed_at": null,
-        "outcome": "미주문",
-        "outcome_reason": "주문 직전 재검증 - 돌파 유지 안 됨(최신가 17,290)",
-        "outcome_at": {
-          "__datetime__": "2026-10-29T10:47:09.834609+09:00"
-        },
-        "latest_close": 17240.0,
-        "latest_date": {
-          "__date__": "2026-10-28"
-        },
-        "latest_atr": 522.0,
-        "latest_line": 17490.0,
-        "change_pct": 1.11,
-        "atr_mult": 0.37,
-        "dist_to_line": 250.0,
-        "dist_to_line_atr": 0.48,
-        "level_state": "최초선위",
-        "new_breakout": "미해당",
-        "refresh_state": "갱신됨",
-        "refresh_note": "",
-        "user_memo": ""
-      },
-      "page_id": "3fb0fc3e-53fc-81f1-a44e-e5c71d3c27ed",
-      "fields": {
-        "outcome_reason": "주문 직전 재검증 - 돌파 유지 안 됨(최신가 17,290)",
-        "outcome_at": {
-          "__datetime__": "2026-10-29T10:47:09.834609+09:00"
-        }
-      },
-      "state": "queued"
-    }
-  ],
+  "events": [],
+  "plans": [],
   "prepare_cursor": "ded2380cf7944afba806107e0ccbbd56",
-  "deliver_cursor": "76692dcaeb5d491da8252c843e6c18ea",
+  "deliver_cursor": "de4e0607f1784180b19afd25ee0e59a6",
   "excluded_events": [
     {
       "event": {
