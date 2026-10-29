@@ -1,8 +1,166 @@
 {
   "version": 1,
-  "events": [],
-  "plans": [],
-  "prepare_cursor": "076ab69141b04f74aed1ebc9b872dc80",
+  "events": [
+    {
+      "id": "860b5f999b2b4be78dc4da80795f3248",
+      "operation": "_set_outcome",
+      "args": [
+        "030190",
+        "미주문",
+        "주문 직전 재검증 - 돌파 유지 안 됨(최신가 17,350)",
+        {
+          "__datetime__": "2026-10-29T10:34:02.579554+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "e2b09d6636af4892b096a1eaebce2cec",
+      "operation": "_set_outcome",
+      "args": [
+        "263750",
+        "미주문",
+        "주문 직전 재검증 - 돌파 유지 안 됨(최신가 34,450)",
+        {
+          "__datetime__": "2026-10-29T10:34:03.596119+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    }
+  ],
+  "plans": [
+    {
+      "id": "8e4cbfce73194207baea15222b627091",
+      "owner": "40801090646:1",
+      "events": [
+        "860b5f999b2b4be78dc4da80795f3248"
+      ],
+      "record": {
+        "account_type": "",
+        "account_key": "",
+        "order_side": "",
+        "order_qty": null,
+        "filled_qty": null,
+        "unverified_qty": null,
+        "execution_price": null,
+        "execution_state": "",
+        "execution_checked_at": null,
+        "event_id": "d452637d01164c0aaec54b48f0db4324",
+        "order_no": "",
+        "order_day": null,
+        "key": "3fb0fc3e-53fc-81f1-a44e-e5c71d3c27ed",
+        "page_id": "3fb0fc3e-53fc-81f1-a44e-e5c71d3c27ed",
+        "name": "NICE평가정보",
+        "ticker": "030190",
+        "first_detected_at": {
+          "__datetime__": "2026-10-16T09:13:00+09:00"
+        },
+        "first_threshold": 17050.0,
+        "first_price": 17190.0,
+        "first_atr": 511.0,
+        "status": "추적중",
+        "closed_reason": "",
+        "closed_at": null,
+        "outcome": "미주문",
+        "outcome_reason": "주문 직전 재검증 - 돌파 유지 안 됨(최신가 17,350)",
+        "outcome_at": {
+          "__datetime__": "2026-10-29T10:34:02.579554+09:00"
+        },
+        "latest_close": 17240.0,
+        "latest_date": {
+          "__date__": "2026-10-28"
+        },
+        "latest_atr": 522.0,
+        "latest_line": 17490.0,
+        "change_pct": 1.11,
+        "atr_mult": 0.37,
+        "dist_to_line": 250.0,
+        "dist_to_line_atr": 0.48,
+        "level_state": "최초선위",
+        "new_breakout": "미해당",
+        "refresh_state": "갱신됨",
+        "refresh_note": "",
+        "user_memo": ""
+      },
+      "page_id": "3fb0fc3e-53fc-81f1-a44e-e5c71d3c27ed",
+      "fields": {
+        "outcome_reason": "주문 직전 재검증 - 돌파 유지 안 됨(최신가 17,350)",
+        "outcome_at": {
+          "__datetime__": "2026-10-29T10:34:02.579554+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "76692dcaeb5d491da8252c843e6c18ea",
+      "owner": "40801090646:1",
+      "events": [
+        "e2b09d6636af4892b096a1eaebce2cec"
+      ],
+      "record": {
+        "account_type": "",
+        "account_key": "",
+        "order_side": "",
+        "order_qty": null,
+        "filled_qty": null,
+        "unverified_qty": null,
+        "execution_price": null,
+        "execution_state": "",
+        "execution_checked_at": null,
+        "event_id": "fa836af305d648f8bba502be92769d98",
+        "order_no": "",
+        "order_day": null,
+        "key": "4080fc3e-53fc-8165-8a1d-ddc755620097",
+        "page_id": "4080fc3e-53fc-8165-8a1d-ddc755620097",
+        "name": "펄어비스",
+        "ticker": "263750",
+        "first_detected_at": {
+          "__datetime__": "2026-10-29T09:13:00+09:00"
+        },
+        "first_threshold": 35100.0,
+        "first_price": 35250.0,
+        "first_atr": 1233.0,
+        "status": "추적중",
+        "closed_reason": "",
+        "closed_at": null,
+        "outcome": "미주문",
+        "outcome_reason": "주문 직전 재검증 - 돌파 유지 안 됨(최신가 34,450)",
+        "outcome_at": {
+          "__datetime__": "2026-10-29T10:34:03.596119+09:00"
+        },
+        "latest_close": null,
+        "latest_date": null,
+        "latest_atr": null,
+        "latest_line": null,
+        "change_pct": null,
+        "atr_mult": null,
+        "dist_to_line": null,
+        "dist_to_line_atr": null,
+        "level_state": "",
+        "new_breakout": "",
+        "refresh_state": "",
+        "refresh_note": "",
+        "user_memo": ""
+      },
+      "page_id": "4080fc3e-53fc-8165-8a1d-ddc755620097",
+      "fields": {
+        "outcome_reason": "주문 직전 재검증 - 돌파 유지 안 됨(최신가 34,450)",
+        "outcome_at": {
+          "__datetime__": "2026-10-29T10:34:03.596119+09:00"
+        }
+      },
+      "state": "queued"
+    }
+  ],
+  "prepare_cursor": "e2b09d6636af4892b096a1eaebce2cec",
   "deliver_cursor": "4da06b1e73184ea09716a760a0d7b593",
   "excluded_events": [
     {
