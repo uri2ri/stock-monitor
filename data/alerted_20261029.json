@@ -45,6 +45,21 @@
       "value_avg_5": 6463537080.0,
       "vol_active_days": 3,
       "status": "진입가능"
+    },
+    "468530": {
+      "time": "09:23",
+      "name": "프로티나",
+      "sector": "일반서비스",
+      "market": "KOSDAQ",
+      "price": 55200.0,
+      "high20": 55000.0,
+      "atr20": 5015.0,
+      "gap_atr": 0.04,
+      "unit_shares": 99,
+      "value_avg_20": 7902892215.0,
+      "value_avg_5": 7993296100.0,
+      "vol_active_days": 2,
+      "status": "진입가능"
     }
   }
 }
