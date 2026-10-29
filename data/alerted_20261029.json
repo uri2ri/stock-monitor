@@ -68,6 +68,21 @@
       "status": "진입가능",
       "price_10am": 53900.0,
       "time_10am": "10:03"
+    },
+    "0220W0": {
+      "time": "13:23",
+      "name": "한화머시너리앤서비스홀딩스",
+      "sector": "금융",
+      "market": "KOSPI",
+      "price": 7820.0,
+      "high20": 7810.0,
+      "atr20": 401.0,
+      "gap_atr": 0.025,
+      "unit_shares": 1246,
+      "value_avg_20": 16935214459.0,
+      "value_avg_5": 12681019128.0,
+      "vol_active_days": 1,
+      "status": "진입가능"
     }
   }
 }
