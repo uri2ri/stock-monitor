@@ -1,0 +1,20 @@
+{
+  "date": "20261029",
+  "alerted": {
+    "030190": {
+      "time": "09:03",
+      "name": "NICE평가정보",
+      "sector": "IT 서비스",
+      "market": "KOSPI",
+      "price": 17540.0,
+      "high20": 17490.0,
+      "atr20": 522.0,
+      "gap_atr": 0.096,
+      "unit_shares": 957,
+      "value_avg_20": 1229409200.0,
+      "value_avg_5": 1642446548.0,
+      "vol_active_days": 4,
+      "status": "진입가능"
+    }
+  }
+}
