@@ -2,23 +2,6 @@
   "version": 1,
   "events": [
     {
-      "id": "368fb80cec434db68c6668042e8cb1d0",
-      "operation": "record_breakout",
-      "args": [
-        {
-          "ticker": "03473K",
-          "name": "SK우",
-          "high20": 385500.0,
-          "price": 386000.0,
-          "atr20": 18374.0
-        },
-        {
-          "__datetime__": "2026-10-29T09:13:31.792420+09:00"
-        }
-      ],
-      "kwargs": {}
-    },
-    {
       "id": "fa836af305d648f8bba502be92769d98",
       "operation": "record_breakout",
       "args": [
@@ -34,23 +17,6 @@
         }
       ],
       "kwargs": {}
-    },
-    {
-      "id": "3870630d1bb44f79b7e347b26aa88026",
-      "operation": "_set_outcome",
-      "args": [
-        "03473K",
-        "자금부족",
-        "현금 부족(필요 772,000원 · 가용 363,776원)",
-        {
-          "__datetime__": "2026-10-29T09:14:11.582556+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
     },
     {
       "id": "de10770d97b74cdebce659aa59256e7b",
@@ -88,50 +54,6 @@
     }
   ],
   "plans": [
-    {
-      "id": "9dca75929e8a418ab1bc141ff3a47b05",
-      "owner": "40792582680:1",
-      "events": [
-        "368fb80cec434db68c6668042e8cb1d0",
-        "3870630d1bb44f79b7e347b26aa88026"
-      ],
-      "record": {
-        "event_id": "368fb80cec434db68c6668042e8cb1d0",
-        "ticker": "03473K",
-        "name": "SK우",
-        "first_detected_at": {
-          "__datetime__": "2026-10-29T09:13:31.792420+09:00"
-        },
-        "first_threshold": 385500.0,
-        "first_price": 386000.0,
-        "first_atr": 18374.0,
-        "status": "추적중",
-        "outcome": "자금부족",
-        "outcome_reason": "현금 부족(필요 772,000원 · 가용 363,776원)",
-        "outcome_at": {
-          "__datetime__": "2026-10-29T09:14:11.582556+09:00"
-        }
-      },
-      "page_id": null,
-      "fields": {
-        "event_id": "368fb80cec434db68c6668042e8cb1d0",
-        "ticker": "03473K",
-        "name": "SK우",
-        "first_detected_at": {
-          "__datetime__": "2026-10-29T09:13:31.792420+09:00"
-        },
-        "first_threshold": 385500.0,
-        "first_price": 386000.0,
-        "first_atr": 18374.0,
-        "status": "추적중",
-        "outcome": "자금부족",
-        "outcome_reason": "현금 부족(필요 772,000원 · 가용 363,776원)",
-        "outcome_at": {
-          "__datetime__": "2026-10-29T09:14:11.582556+09:00"
-        }
-      },
-      "state": "creating"
-    },
     {
       "id": "5c0c5587092c4cda8c25101eaa1c3dc5",
       "owner": "40792582680:1",
@@ -174,7 +96,7 @@
           "__datetime__": "2026-10-29T09:14:11.610190+09:00"
         }
       },
-      "state": "queued"
+      "state": "creating"
     },
     {
       "id": "2cdebc48ab4b4265a5eda052040024c3",
@@ -241,7 +163,7 @@
     }
   ],
   "prepare_cursor": "6bc2dc7ada8a4a3cb77ed84e47c77b39",
-  "deliver_cursor": "9dca75929e8a418ab1bc141ff3a47b05",
+  "deliver_cursor": "5c0c5587092c4cda8c25101eaa1c3dc5",
   "excluded_events": [
     {
       "event": {
