@@ -15,6 +15,36 @@
       "value_avg_5": 1642446548.0,
       "vol_active_days": 4,
       "status": "진입가능"
+    },
+    "03473K": {
+      "time": "09:13",
+      "name": "SK우",
+      "sector": "미분류",
+      "market": "KOSPI",
+      "price": 386000.0,
+      "high20": 385500.0,
+      "atr20": 18374.0,
+      "gap_atr": 0.027,
+      "unit_shares": 27,
+      "value_avg_20": 410909775.0,
+      "value_avg_5": 530271400.0,
+      "vol_active_days": 3,
+      "status": "진입가능"
+    },
+    "263750": {
+      "time": "09:13",
+      "name": "펄어비스",
+      "sector": "IT 서비스",
+      "market": "KOSDAQ",
+      "price": 35250.0,
+      "high20": 35100.0,
+      "atr20": 1233.0,
+      "gap_atr": 0.122,
+      "unit_shares": 405,
+      "value_avg_20": 6079932775.0,
+      "value_avg_5": 6463537080.0,
+      "vol_active_days": 3,
+      "status": "진입가능"
     }
   }
 }
