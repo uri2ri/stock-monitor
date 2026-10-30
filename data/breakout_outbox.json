@@ -1,88 +1,9 @@
 {
   "version": 1,
-  "events": [
-    {
-      "id": "25d8f6bd869d4392965b5a69a9d63c86",
-      "operation": "_set_outcome",
-      "args": [
-        "271560",
-        "자금부족",
-        "현금 부족(필요 1,608,600원 · 가용 1,380,918원)",
-        {
-          "__datetime__": "2026-10-30T11:14:20.110699+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    }
-  ],
-  "plans": [
-    {
-      "id": "2bdacc6fcd78492586cff2586df7c208",
-      "owner": "40990382263:1",
-      "events": [
-        "25d8f6bd869d4392965b5a69a9d63c86"
-      ],
-      "record": {
-        "account_type": "",
-        "account_key": "",
-        "order_side": "",
-        "order_qty": null,
-        "filled_qty": null,
-        "unverified_qty": null,
-        "execution_price": null,
-        "execution_state": "",
-        "execution_checked_at": null,
-        "event_id": "f8542fc71cdc48b79272690ffd440d0d",
-        "order_no": "",
-        "order_day": null,
-        "key": "4090fc3e-53fc-818e-90c4-c00b0ca2ecee",
-        "page_id": "4090fc3e-53fc-818e-90c4-c00b0ca2ecee",
-        "name": "오리온",
-        "ticker": "271560",
-        "first_detected_at": {
-          "__datetime__": "2026-10-30T10:03:00+09:00"
-        },
-        "first_threshold": 114800.0,
-        "first_price": 114900.0,
-        "first_atr": 3510.0,
-        "status": "추적중",
-        "closed_reason": "",
-        "closed_at": null,
-        "outcome": "자금부족",
-        "outcome_reason": "현금 부족(필요 1,608,600원 · 가용 1,380,918원)",
-        "outcome_at": {
-          "__datetime__": "2026-10-30T11:14:20.110699+09:00"
-        },
-        "latest_close": null,
-        "latest_date": null,
-        "latest_atr": null,
-        "latest_line": null,
-        "change_pct": null,
-        "atr_mult": null,
-        "dist_to_line": null,
-        "dist_to_line_atr": null,
-        "level_state": "",
-        "new_breakout": "",
-        "refresh_state": "",
-        "refresh_note": "",
-        "user_memo": ""
-      },
-      "page_id": "4090fc3e-53fc-818e-90c4-c00b0ca2ecee",
-      "fields": {
-        "outcome_reason": "현금 부족(필요 1,608,600원 · 가용 1,380,918원)",
-        "outcome_at": {
-          "__datetime__": "2026-10-30T11:14:20.110699+09:00"
-        }
-      },
-      "state": "queued"
-    }
-  ],
+  "events": [],
+  "plans": [],
   "prepare_cursor": "162d4bcf58a1463494d4bd4d298c36b3",
-  "deliver_cursor": "b2dea4221bb54df189766213df862e2a",
+  "deliver_cursor": "2bdacc6fcd78492586cff2586df7c208",
   "excluded_events": [
     {
       "event": {
