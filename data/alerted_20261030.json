@@ -15,6 +15,36 @@
       "value_avg_5": 9770968560.0,
       "vol_active_days": 3,
       "status": "진입가능"
+    },
+    "348030": {
+      "time": "09:33",
+      "name": "모비릭스",
+      "sector": "IT 서비스",
+      "market": "KOSDAQ",
+      "price": 4045.0,
+      "high20": 4035.0,
+      "atr20": 214.0,
+      "gap_atr": 0.047,
+      "unit_shares": 2336,
+      "value_avg_20": 313941364.0,
+      "value_avg_5": 190539686.0,
+      "vol_active_days": 1,
+      "status": "진입가능"
+    },
+    "326030": {
+      "time": "09:33",
+      "name": "SK바이오팜",
+      "sector": "일반서비스",
+      "market": "KOSPI",
+      "price": 78500.0,
+      "high20": 78300.0,
+      "atr20": 3099.0,
+      "gap_atr": 0.065,
+      "unit_shares": 161,
+      "value_avg_20": 8636673235.0,
+      "value_avg_5": 11821672180.0,
+      "vol_active_days": 4,
+      "status": "진입가능"
     }
   }
 }
