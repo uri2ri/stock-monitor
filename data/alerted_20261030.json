@@ -66,6 +66,21 @@
       "value_avg_5": 11116030980.0,
       "vol_active_days": 1,
       "status": "진입가능"
+    },
+    "053350": {
+      "time": "11:53",
+      "name": "이니텍",
+      "sector": "IT 서비스",
+      "market": "KOSDAQ",
+      "price": 5690.0,
+      "high20": 5660.0,
+      "atr20": 278.0,
+      "gap_atr": 0.108,
+      "unit_shares": 1798,
+      "value_avg_20": 445519152.0,
+      "value_avg_5": 609532534.0,
+      "vol_active_days": 3,
+      "status": "진입가능"
     }
   }
 }
