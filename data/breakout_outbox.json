@@ -1,8 +1,88 @@
 {
   "version": 1,
-  "events": [],
-  "plans": [],
-  "prepare_cursor": "6b7d825015c3429ca74caec7d31ab3dc",
+  "events": [
+    {
+      "id": "f8542fc71cdc48b79272690ffd440d0d",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "271560",
+          "name": "오리온",
+          "high20": 114800.0,
+          "price": 114900.0,
+          "atr20": 3510.0
+        },
+        {
+          "__datetime__": "2026-10-30T10:03:41.889418+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "102cf504f8ae427d9310acc16a32aa8d",
+      "operation": "_set_outcome",
+      "args": [
+        "271560",
+        "자금부족",
+        "현금 부족(필요 1,608,600원 · 가용 453,536원)",
+        {
+          "__datetime__": "2026-10-30T10:04:08.422734+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    }
+  ],
+  "plans": [
+    {
+      "id": "b2dea4221bb54df189766213df862e2a",
+      "owner": "40983477156:1",
+      "events": [
+        "f8542fc71cdc48b79272690ffd440d0d",
+        "102cf504f8ae427d9310acc16a32aa8d"
+      ],
+      "record": {
+        "event_id": "f8542fc71cdc48b79272690ffd440d0d",
+        "ticker": "271560",
+        "name": "오리온",
+        "first_detected_at": {
+          "__datetime__": "2026-10-30T10:03:41.889418+09:00"
+        },
+        "first_threshold": 114800.0,
+        "first_price": 114900.0,
+        "first_atr": 3510.0,
+        "status": "추적중",
+        "outcome": "자금부족",
+        "outcome_reason": "현금 부족(필요 1,608,600원 · 가용 453,536원)",
+        "outcome_at": {
+          "__datetime__": "2026-10-30T10:04:08.422734+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "f8542fc71cdc48b79272690ffd440d0d",
+        "ticker": "271560",
+        "name": "오리온",
+        "first_detected_at": {
+          "__datetime__": "2026-10-30T10:03:41.889418+09:00"
+        },
+        "first_threshold": 114800.0,
+        "first_price": 114900.0,
+        "first_atr": 3510.0,
+        "status": "추적중",
+        "outcome": "자금부족",
+        "outcome_reason": "현금 부족(필요 1,608,600원 · 가용 453,536원)",
+        "outcome_at": {
+          "__datetime__": "2026-10-30T10:04:08.422734+09:00"
+        }
+      },
+      "state": "queued"
+    }
+  ],
+  "prepare_cursor": "11f005f0a2624ba68030586f28546050",
   "deliver_cursor": "5aaf8b556e8a4423b1c02459a4f1e636",
   "excluded_events": [
     {
@@ -9160,6 +9240,48 @@
       },
       "reason": "held_without_active_track",
       "resolved_by": "40982453979:1"
+    },
+    {
+      "event": {
+        "id": "b905ace9919a491ea78489bcfa834f02",
+        "operation": "_set_outcome",
+        "args": [
+          "468530",
+          "자금부족",
+          "현금 부족(필요 561,000원 · 가용 453,536원)",
+          {
+            "__datetime__": "2026-10-30T10:04:08.408749+09:00"
+          }
+        ],
+        "kwargs": {
+          "order_no": "",
+          "order_day": null,
+          "identity": null
+        }
+      },
+      "reason": "held_without_active_track",
+      "resolved_by": "40983477156:1"
+    },
+    {
+      "event": {
+        "id": "11f005f0a2624ba68030586f28546050",
+        "operation": "_set_outcome",
+        "args": [
+          "326030",
+          "자금부족",
+          "현금 부족(필요 1,256,000원 · 가용 453,536원)",
+          {
+            "__datetime__": "2026-10-30T10:04:08.434955+09:00"
+          }
+        ],
+        "kwargs": {
+          "order_no": "",
+          "order_day": null,
+          "identity": null
+        }
+      },
+      "reason": "held_without_active_track",
+      "resolved_by": "40983477156:1"
     }
   ]
 }
