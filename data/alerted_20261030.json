@@ -14,7 +14,9 @@
       "value_avg_20": 8106797395.0,
       "value_avg_5": 9770968560.0,
       "vol_active_days": 3,
-      "status": "진입가능"
+      "status": "진입가능",
+      "price_10am": 52400.0,
+      "time_10am": "10:03"
     },
     "348030": {
       "time": "09:33",
@@ -29,7 +31,9 @@
       "value_avg_20": 313941364.0,
       "value_avg_5": 190539686.0,
       "vol_active_days": 1,
-      "status": "진입가능"
+      "status": "진입가능",
+      "price_10am": 4030.0,
+      "time_10am": "10:03"
     },
     "326030": {
       "time": "09:33",
@@ -44,6 +48,23 @@
       "value_avg_20": 8636673235.0,
       "value_avg_5": 11821672180.0,
       "vol_active_days": 4,
+      "status": "진입가능",
+      "price_10am": 77500.0,
+      "time_10am": "10:03"
+    },
+    "271560": {
+      "time": "10:03",
+      "name": "오리온",
+      "sector": "음식료·담배",
+      "market": "KOSPI",
+      "price": 114900.0,
+      "high20": 114800.0,
+      "atr20": 3510.0,
+      "gap_atr": 0.028,
+      "unit_shares": 142,
+      "value_avg_20": 10833601760.0,
+      "value_avg_5": 11116030980.0,
+      "vol_active_days": 1,
       "status": "진입가능"
     }
   }
