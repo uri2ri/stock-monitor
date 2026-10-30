@@ -2,7 +2,7 @@
   "version": 1,
   "events": [],
   "plans": [],
-  "prepare_cursor": "054afe44d07b418282976b2b84feb00c",
+  "prepare_cursor": "1344f423037f40999a262d0a1d3cdfe5",
   "deliver_cursor": "60a087f752c842d8845482f6c07c585b",
   "excluded_events": [
     {
@@ -8971,6 +8971,48 @@
       },
       "reason": "held_without_active_track",
       "resolved_by": "38325294564:1"
+    },
+    {
+      "event": {
+        "id": "598a69adc92a4c369f4736e25f3b6add",
+        "operation": "record_breakout",
+        "args": [
+          {
+            "ticker": "468530",
+            "name": "프로티나",
+            "high20": 56000.0,
+            "price": 56100.0,
+            "atr20": 5025.0
+          },
+          {
+            "__datetime__": "2026-10-30T09:03:33.223820+09:00"
+          }
+        ],
+        "kwargs": {}
+      },
+      "reason": "held_without_active_track",
+      "resolved_by": "40977168175:1"
+    },
+    {
+      "event": {
+        "id": "1344f423037f40999a262d0a1d3cdfe5",
+        "operation": "_set_outcome",
+        "args": [
+          "468530",
+          "미주문",
+          "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+          {
+            "__datetime__": "2026-10-30T09:03:40.161178+09:00"
+          }
+        ],
+        "kwargs": {
+          "order_no": "",
+          "order_day": null,
+          "identity": null
+        }
+      },
+      "reason": "held_without_active_track",
+      "resolved_by": "40977168175:1"
     }
   ]
 }
