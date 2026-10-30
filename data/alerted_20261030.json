@@ -81,6 +81,21 @@
       "value_avg_5": 609532534.0,
       "vol_active_days": 3,
       "status": "진입가능"
+    },
+    "276730": {
+      "time": "14:03",
+      "name": "한울앤제주",
+      "sector": "음식료·담배",
+      "market": "KOSDAQ",
+      "price": 1062.0,
+      "high20": 998.0,
+      "atr20": 355.0,
+      "gap_atr": 0.18,
+      "unit_shares": 1408,
+      "value_avg_20": 356109918.0,
+      "value_avg_5": 1206779323.0,
+      "vol_active_days": 2,
+      "status": "진입가능"
     }
   }
 }
