@@ -1,0 +1,20 @@
+{
+  "date": "20261030",
+  "alerted": {
+    "468530": {
+      "time": "09:03",
+      "name": "프로티나",
+      "sector": "일반서비스",
+      "market": "KOSDAQ",
+      "price": 56100.0,
+      "high20": 56000.0,
+      "atr20": 5025.0,
+      "gap_atr": 0.02,
+      "unit_shares": 99,
+      "value_avg_20": 8106797395.0,
+      "value_avg_5": 9770968560.0,
+      "vol_active_days": 3,
+      "status": "진입가능"
+    }
+  }
+}
