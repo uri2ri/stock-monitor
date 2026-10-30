@@ -1,8 +1,88 @@
 {
   "version": 1,
-  "events": [],
-  "plans": [],
-  "prepare_cursor": "f1a8bebe923c4351838c09babe4a4428",
+  "events": [
+    {
+      "id": "f8fa7de5b5784845a7b1c19abdc93875",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "348030",
+          "name": "모비릭스",
+          "high20": 4035.0,
+          "price": 4045.0,
+          "atr20": 214.0
+        },
+        {
+          "__datetime__": "2026-10-30T09:33:28.320466+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "4f718bfb688f47bc83a11726a63316a4",
+      "operation": "_set_outcome",
+      "args": [
+        "348030",
+        "자금부족",
+        "현금 부족(필요 966,755원 · 가용 453,536원)",
+        {
+          "__datetime__": "2026-10-30T09:33:57.046856+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    }
+  ],
+  "plans": [
+    {
+      "id": "5aaf8b556e8a4423b1c02459a4f1e636",
+      "owner": "40980385091:1",
+      "events": [
+        "f8fa7de5b5784845a7b1c19abdc93875",
+        "4f718bfb688f47bc83a11726a63316a4"
+      ],
+      "record": {
+        "event_id": "f8fa7de5b5784845a7b1c19abdc93875",
+        "ticker": "348030",
+        "name": "모비릭스",
+        "first_detected_at": {
+          "__datetime__": "2026-10-30T09:33:28.320466+09:00"
+        },
+        "first_threshold": 4035.0,
+        "first_price": 4045.0,
+        "first_atr": 214.0,
+        "status": "추적중",
+        "outcome": "자금부족",
+        "outcome_reason": "현금 부족(필요 966,755원 · 가용 453,536원)",
+        "outcome_at": {
+          "__datetime__": "2026-10-30T09:33:57.046856+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "f8fa7de5b5784845a7b1c19abdc93875",
+        "ticker": "348030",
+        "name": "모비릭스",
+        "first_detected_at": {
+          "__datetime__": "2026-10-30T09:33:28.320466+09:00"
+        },
+        "first_threshold": 4035.0,
+        "first_price": 4045.0,
+        "first_atr": 214.0,
+        "status": "추적중",
+        "outcome": "자금부족",
+        "outcome_reason": "현금 부족(필요 966,755원 · 가용 453,536원)",
+        "outcome_at": {
+          "__datetime__": "2026-10-30T09:33:57.046856+09:00"
+        }
+      },
+      "state": "queued"
+    }
+  ],
+  "prepare_cursor": "5bb34db9a1ec4dffa1912b58d41d6d1a",
   "deliver_cursor": "60a087f752c842d8845482f6c07c585b",
   "excluded_events": [
     {
@@ -9055,6 +9135,69 @@
       },
       "reason": "held_without_active_track",
       "resolved_by": "40979337167:1"
+    },
+    {
+      "event": {
+        "id": "8f9aef3952e54c5f8ce134aebb74efca",
+        "operation": "record_breakout",
+        "args": [
+          {
+            "ticker": "326030",
+            "name": "SK바이오팜",
+            "high20": 78300.0,
+            "price": 78500.0,
+            "atr20": 3099.0
+          },
+          {
+            "__datetime__": "2026-10-30T09:33:28.320466+09:00"
+          }
+        ],
+        "kwargs": {}
+      },
+      "reason": "held_without_active_track",
+      "resolved_by": "40980385091:1"
+    },
+    {
+      "event": {
+        "id": "fa19415fda024d21be2004f7501604f4",
+        "operation": "_set_outcome",
+        "args": [
+          "468530",
+          "자금부족",
+          "현금 부족(필요 561,000원 · 가용 453,536원)",
+          {
+            "__datetime__": "2026-10-30T09:33:57.018770+09:00"
+          }
+        ],
+        "kwargs": {
+          "order_no": "",
+          "order_day": null,
+          "identity": null
+        }
+      },
+      "reason": "held_without_active_track",
+      "resolved_by": "40980385091:1"
+    },
+    {
+      "event": {
+        "id": "5bb34db9a1ec4dffa1912b58d41d6d1a",
+        "operation": "_set_outcome",
+        "args": [
+          "326030",
+          "자금부족",
+          "현금 부족(필요 1,256,000원 · 가용 453,536원)",
+          {
+            "__datetime__": "2026-10-30T09:33:57.054320+09:00"
+          }
+        ],
+        "kwargs": {
+          "order_no": "",
+          "order_day": null,
+          "identity": null
+        }
+      },
+      "reason": "held_without_active_track",
+      "resolved_by": "40980385091:1"
     }
   ]
 }
