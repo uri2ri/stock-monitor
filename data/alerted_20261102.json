@@ -149,6 +149,21 @@
       "value_avg_5": 43875398440.0,
       "vol_active_days": 2,
       "status": "진입가능"
+    },
+    "079160": {
+      "time": "14:53",
+      "name": "CJ CGV",
+      "sector": "오락·문화",
+      "market": "KOSPI",
+      "price": 5200.0,
+      "high20": 5190.0,
+      "atr20": 178.0,
+      "gap_atr": 0.056,
+      "unit_shares": 2808,
+      "value_avg_20": 1514842313.0,
+      "value_avg_5": 1872192237.0,
+      "vol_active_days": 4,
+      "status": "진입가능"
     }
   }
 }
