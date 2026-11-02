@@ -1,0 +1,35 @@
+{
+  "date": "20261102",
+  "alerted": {
+    "184230": {
+      "time": "09:03",
+      "name": "SGA솔루션즈",
+      "sector": "IT 서비스",
+      "market": "KOSDAQ",
+      "price": 2755.0,
+      "high20": 2585.0,
+      "atr20": 176.0,
+      "gap_atr": 0.966,
+      "unit_shares": 2840,
+      "value_avg_20": 460759118.0,
+      "value_avg_5": 863497256.0,
+      "vol_active_days": 2,
+      "status": "추격금지"
+    },
+    "271560": {
+      "time": "09:03",
+      "name": "오리온",
+      "sector": "음식료·담배",
+      "market": "KOSPI",
+      "price": 116000.0,
+      "high20": 115200.0,
+      "atr20": 3500.0,
+      "gap_atr": 0.229,
+      "unit_shares": 142,
+      "value_avg_20": 10514430065.0,
+      "value_avg_5": 10456558460.0,
+      "vol_active_days": 2,
+      "status": "진입가능"
+    }
+  }
+}
