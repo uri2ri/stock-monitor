@@ -30,6 +30,66 @@
       "value_avg_5": 10456558460.0,
       "vol_active_days": 2,
       "status": "진입가능"
+    },
+    "036460": {
+      "time": "09:13",
+      "name": "한국가스공사",
+      "sector": "전기·가스",
+      "market": "KOSPI",
+      "price": 37400.0,
+      "high20": 37250.0,
+      "atr20": 947.0,
+      "gap_atr": 0.158,
+      "unit_shares": 527,
+      "value_avg_20": 4889260848.0,
+      "value_avg_5": 5454590940.0,
+      "vol_active_days": 4,
+      "status": "진입가능"
+    },
+    "033780": {
+      "time": "09:13",
+      "name": "KT&G",
+      "sector": "음식료·담배",
+      "market": "KOSPI",
+      "price": 197100.0,
+      "high20": 196800.0,
+      "atr20": 4684.0,
+      "gap_atr": 0.064,
+      "unit_shares": 106,
+      "value_avg_20": 48160068735.0,
+      "value_avg_5": 51666260120.0,
+      "vol_active_days": 3,
+      "status": "진입가능"
+    },
+    "053800": {
+      "time": "09:13",
+      "name": "안랩",
+      "sector": "IT 서비스",
+      "market": "KOSDAQ",
+      "price": 119500.0,
+      "high20": 119400.0,
+      "atr20": 8319.0,
+      "gap_atr": 0.012,
+      "unit_shares": 60,
+      "value_avg_20": 37291876750.0,
+      "value_avg_5": 77751979260.0,
+      "vol_active_days": 3,
+      "status": "진입가능"
+    },
+    "105740": {
+      "time": "09:13",
+      "name": "디케이락",
+      "sector": "기계·장비",
+      "market": "KOSDAQ",
+      "price": 13000.0,
+      "high20": 12790.0,
+      "atr20": 815.0,
+      "gap_atr": 0.258,
+      "unit_shares": 613,
+      "value_avg_20": 11129374225.0,
+      "value_avg_5": 10843304954.0,
+      "vol_active_days": 2,
+      "status": "진입가능"
     }
   }
 }
