@@ -90,6 +90,21 @@
       "value_avg_5": 10843304954.0,
       "vol_active_days": 2,
       "status": "진입가능"
+    },
+    "348030": {
+      "time": "09:33",
+      "name": "모비릭스",
+      "sector": "IT 서비스",
+      "market": "KOSDAQ",
+      "price": 4080.0,
+      "high20": 4075.0,
+      "atr20": 211.0,
+      "gap_atr": 0.024,
+      "unit_shares": 2369,
+      "value_avg_20": 325802900.0,
+      "value_avg_5": 216371392.0,
+      "vol_active_days": 1,
+      "status": "진입가능"
     }
   }
 }

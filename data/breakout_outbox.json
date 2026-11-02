@@ -1,90 +1,9 @@
 {
   "version": 1,
-  "events": [
-    {
-      "id": "4a7adbcd379e48aeb62aa50f083628ab",
-      "operation": "_set_outcome",
-      "args": [
-        "348030",
-        "자금부족",
-        "현금 부족(필요 975,120원 · 가용 572,948원)",
-        {
-          "__datetime__": "2026-11-02T09:34:10.056645+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    }
-  ],
-  "plans": [
-    {
-      "id": "503743f235b24ce796e7a7c37bb6aeb6",
-      "owner": "41367745157:1",
-      "events": [
-        "4a7adbcd379e48aeb62aa50f083628ab"
-      ],
-      "record": {
-        "account_type": "",
-        "account_key": "",
-        "order_side": "",
-        "order_qty": null,
-        "filled_qty": null,
-        "unverified_qty": null,
-        "execution_price": null,
-        "execution_state": "",
-        "execution_checked_at": null,
-        "event_id": "f8fa7de5b5784845a7b1c19abdc93875",
-        "order_no": "",
-        "order_day": null,
-        "key": "4090fc3e-53fc-81e9-8803-e09bb3b7c17b",
-        "page_id": "4090fc3e-53fc-81e9-8803-e09bb3b7c17b",
-        "name": "모비릭스",
-        "ticker": "348030",
-        "first_detected_at": {
-          "__datetime__": "2026-10-30T09:33:00+09:00"
-        },
-        "first_threshold": 4035.0,
-        "first_price": 4045.0,
-        "first_atr": 214.0,
-        "status": "추적중",
-        "closed_reason": "",
-        "closed_at": null,
-        "outcome": "자금부족",
-        "outcome_reason": "현금 부족(필요 975,120원 · 가용 572,948원)",
-        "outcome_at": {
-          "__datetime__": "2026-11-02T09:34:10.056645+09:00"
-        },
-        "latest_close": 4030.0,
-        "latest_date": {
-          "__date__": "2026-10-30"
-        },
-        "latest_atr": 211.0,
-        "latest_line": 4075.0,
-        "change_pct": -0.12,
-        "atr_mult": -0.02,
-        "dist_to_line": 45.0,
-        "dist_to_line_atr": 0.21,
-        "level_state": "최초선아래",
-        "new_breakout": "미해당",
-        "refresh_state": "갱신됨",
-        "refresh_note": "",
-        "user_memo": ""
-      },
-      "page_id": "4090fc3e-53fc-81e9-8803-e09bb3b7c17b",
-      "fields": {
-        "outcome_reason": "현금 부족(필요 975,120원 · 가용 572,948원)",
-        "outcome_at": {
-          "__datetime__": "2026-11-02T09:34:10.056645+09:00"
-        }
-      },
-      "state": "queued"
-    }
-  ],
+  "events": [],
+  "plans": [],
   "prepare_cursor": "5ff94d4408dc4c489dfa67924426b8ca",
-  "deliver_cursor": "5398a874476d416eb90b3195f6c9f8bc",
+  "deliver_cursor": "503743f235b24ce796e7a7c37bb6aeb6",
   "excluded_events": [
     {
       "event": {
