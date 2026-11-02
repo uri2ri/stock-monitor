@@ -119,6 +119,21 @@
       "status": "진입가능",
       "price_10am": 4090.0,
       "time_10am": "10:03"
+    },
+    "007070": {
+      "time": "10:13",
+      "name": "GS리테일",
+      "sector": "유통",
+      "market": "KOSPI",
+      "price": 22800.0,
+      "high20": 22750.0,
+      "atr20": 880.0,
+      "gap_atr": 0.057,
+      "unit_shares": 568,
+      "value_avg_20": 2649900758.0,
+      "value_avg_5": 2938815590.0,
+      "vol_active_days": 3,
+      "status": "진입가능"
     }
   }
 }
