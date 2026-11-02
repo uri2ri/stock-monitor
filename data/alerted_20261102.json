@@ -134,6 +134,21 @@
       "value_avg_5": 2938815590.0,
       "vol_active_days": 3,
       "status": "진입가능"
+    },
+    "489790": {
+      "time": "11:23",
+      "name": "한화비전",
+      "sector": "전기전자",
+      "market": "KOSPI",
+      "price": 53200.0,
+      "high20": 53000.0,
+      "atr20": 3163.0,
+      "gap_atr": 0.063,
+      "unit_shares": 158,
+      "value_avg_20": 17242899980.0,
+      "value_avg_5": 43875398440.0,
+      "vol_active_days": 2,
+      "status": "진입가능"
     }
   }
 }

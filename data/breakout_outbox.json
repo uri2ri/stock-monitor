@@ -1,91 +1,9 @@
 {
   "version": 1,
-  "events": [
-    {
-      "id": "0612729b6fcb49efbbe96d6ce68a1ffe",
-      "operation": "_set_outcome",
-      "args": [
-        "489790",
-        "자금부족",
-        "현금 부족(필요 798,000원 · 가용 572,948원)",
-        {
-          "__datetime__": "2026-11-02T11:24:04.847139+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    }
-  ],
-  "plans": [
-    {
-      "id": "2cd5a74ba2394d2e90d723a0b7744bac",
-      "owner": "41377428292:1",
-      "events": [
-        "0612729b6fcb49efbbe96d6ce68a1ffe"
-      ],
-      "record": {
-        "account_type": "",
-        "account_key": "",
-        "order_side": "",
-        "order_qty": null,
-        "filled_qty": null,
-        "unverified_qty": null,
-        "execution_price": null,
-        "execution_state": "",
-        "execution_checked_at": null,
-        "event_id": "b3ad4e3ff1a84b34bb18c6d06eb5c95b",
-        "order_no": "",
-        "order_day": null,
-        "key": "3ec0fc3e-53fc-81b1-94f2-c1a8dbbe8395",
-        "page_id": "3ec0fc3e-53fc-81b1-94f2-c1a8dbbe8395",
-        "name": "한화비전",
-        "ticker": "489790",
-        "first_detected_at": {
-          "__datetime__": "2026-10-01T12:53:00+09:00"
-        },
-        "first_threshold": 51100.0,
-        "first_price": 51600.0,
-        "first_atr": 2693.0,
-        "status": "추적중",
-        "closed_reason": "",
-        "closed_at": null,
-        "outcome": "자금부족",
-        "outcome_reason": "현금 부족(필요 798,000원 · 가용 572,948원)",
-        "outcome_at": {
-          "__datetime__": "2026-11-02T11:24:04.847139+09:00"
-        },
-        "latest_close": 51300.0,
-        "latest_date": {
-          "__date__": "2026-10-30"
-        },
-        "latest_atr": 3163.0,
-        "latest_line": 53000.0,
-        "change_pct": 0.39,
-        "atr_mult": 0.07,
-        "dist_to_line": 1700.0,
-        "dist_to_line_atr": 0.54,
-        "level_state": "최초선위",
-        "new_breakout": "미해당",
-        "refresh_state": "갱신됨",
-        "refresh_note": "",
-        "user_memo": ""
-      },
-      "page_id": "3ec0fc3e-53fc-81b1-94f2-c1a8dbbe8395",
-      "fields": {
-        "outcome": "자금부족",
-        "outcome_reason": "현금 부족(필요 798,000원 · 가용 572,948원)",
-        "outcome_at": {
-          "__datetime__": "2026-11-02T11:24:04.847139+09:00"
-        }
-      },
-      "state": "queued"
-    }
-  ],
+  "events": [],
+  "plans": [],
   "prepare_cursor": "486c208b086e4bf3a918f928d0946432",
-  "deliver_cursor": "835a749ebf35432eb60f902768bc468a",
+  "deliver_cursor": "2cd5a74ba2394d2e90d723a0b7744bac",
   "excluded_events": [
     {
       "event": {
