@@ -1,8 +1,88 @@
 {
   "version": 1,
-  "events": [],
-  "plans": [],
-  "prepare_cursor": "dde43618cd3b4a53b35e233536bc19ac",
+  "events": [
+    {
+      "id": "11e3c2eeb80144cb9d4e45965536498b",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "089860",
+          "name": "롯데렌탈",
+          "high20": 52900.0,
+          "price": 53000.0,
+          "atr20": 1838.0
+        },
+        {
+          "__datetime__": "2026-11-03T11:13:33.906719+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "6edb748f6e7d4c88ae98ed94ca2f2ca6",
+      "operation": "_set_outcome",
+      "args": [
+        "089860",
+        "자금부족",
+        "현금 부족(필요 1,431,000원 · 가용 1,023,436원)",
+        {
+          "__datetime__": "2026-11-03T11:13:58.887210+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    }
+  ],
+  "plans": [
+    {
+      "id": "c62edd76a3f74486b9625d47b8bb0bdf",
+      "owner": "41564717776:1",
+      "events": [
+        "11e3c2eeb80144cb9d4e45965536498b",
+        "6edb748f6e7d4c88ae98ed94ca2f2ca6"
+      ],
+      "record": {
+        "event_id": "11e3c2eeb80144cb9d4e45965536498b",
+        "ticker": "089860",
+        "name": "롯데렌탈",
+        "first_detected_at": {
+          "__datetime__": "2026-11-03T11:13:33.906719+09:00"
+        },
+        "first_threshold": 52900.0,
+        "first_price": 53000.0,
+        "first_atr": 1838.0,
+        "status": "추적중",
+        "outcome": "자금부족",
+        "outcome_reason": "현금 부족(필요 1,431,000원 · 가용 1,023,436원)",
+        "outcome_at": {
+          "__datetime__": "2026-11-03T11:13:58.887210+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "11e3c2eeb80144cb9d4e45965536498b",
+        "ticker": "089860",
+        "name": "롯데렌탈",
+        "first_detected_at": {
+          "__datetime__": "2026-11-03T11:13:33.906719+09:00"
+        },
+        "first_threshold": 52900.0,
+        "first_price": 53000.0,
+        "first_atr": 1838.0,
+        "status": "추적중",
+        "outcome": "자금부족",
+        "outcome_reason": "현금 부족(필요 1,431,000원 · 가용 1,023,436원)",
+        "outcome_at": {
+          "__datetime__": "2026-11-03T11:13:58.887210+09:00"
+        }
+      },
+      "state": "queued"
+    }
+  ],
+  "prepare_cursor": "8f9caecf0d4b424bae643be7b2d325d3",
   "deliver_cursor": "505391160e1f411c800e3dca6c6a49cd",
   "excluded_events": [
     {
@@ -11806,6 +11886,27 @@
       },
       "reason": "held_without_active_track",
       "resolved_by": "41563649511:1"
+    },
+    {
+      "event": {
+        "id": "8f9caecf0d4b424bae643be7b2d325d3",
+        "operation": "_set_outcome",
+        "args": [
+          "326030",
+          "자금부족",
+          "현금 부족(필요 1,276,800원 · 가용 1,023,436원)",
+          {
+            "__datetime__": "2026-11-03T11:13:58.934709+09:00"
+          }
+        ],
+        "kwargs": {
+          "order_no": "",
+          "order_day": null,
+          "identity": null
+        }
+      },
+      "reason": "held_without_active_track",
+      "resolved_by": "41564717776:1"
     }
   ]
 }
