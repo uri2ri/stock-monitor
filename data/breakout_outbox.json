@@ -1,8 +1,248 @@
 {
   "version": 1,
-  "events": [],
-  "plans": [],
-  "prepare_cursor": "9c485f8a04e8430495ec9a518f02cdf4",
+  "events": [
+    {
+      "id": "46fff055826e4807adc7b23fc3e0db1d",
+      "operation": "_set_outcome",
+      "args": [
+        "002350",
+        "미주문",
+        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        {
+          "__datetime__": "2026-11-03T15:23:43.777651+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "1c1020771fe54f2db33425501ea5ad83",
+      "operation": "_set_outcome",
+      "args": [
+        "089860",
+        "미주문",
+        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        {
+          "__datetime__": "2026-11-03T15:23:43.816872+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "c4422d0b1b6647abbbace740ce319a96",
+      "operation": "_set_outcome",
+      "args": [
+        "079160",
+        "미주문",
+        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        {
+          "__datetime__": "2026-11-03T15:23:43.832624+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    }
+  ],
+  "plans": [
+    {
+      "id": "b697d6e9d1954c6e9d090b231c4bc547",
+      "owner": "41589530527:1",
+      "events": [
+        "46fff055826e4807adc7b23fc3e0db1d"
+      ],
+      "record": {
+        "account_type": "",
+        "account_key": "",
+        "order_side": "",
+        "order_qty": null,
+        "filled_qty": null,
+        "unverified_qty": null,
+        "execution_price": null,
+        "execution_state": "",
+        "execution_checked_at": null,
+        "event_id": "94e378bac4b3449f944b713963f7d6f9",
+        "order_no": "",
+        "order_day": null,
+        "key": "3fb0fc3e-53fc-818a-9310-f3a31e3eb79c",
+        "page_id": "3fb0fc3e-53fc-818a-9310-f3a31e3eb79c",
+        "name": "넥센타이어",
+        "ticker": "002350",
+        "first_detected_at": {
+          "__datetime__": "2026-10-16T09:03:00+09:00"
+        },
+        "first_threshold": 5890.0,
+        "first_price": 5900.0,
+        "first_atr": 180.0,
+        "status": "추적중",
+        "closed_reason": "",
+        "closed_at": null,
+        "outcome": "미주문",
+        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        "outcome_at": {
+          "__datetime__": "2026-11-03T15:23:43.777651+09:00"
+        },
+        "latest_close": 5960.0,
+        "latest_date": {
+          "__date__": "2026-11-02"
+        },
+        "latest_atr": 193.0,
+        "latest_line": 6010.0,
+        "change_pct": 1.19,
+        "atr_mult": 0.39,
+        "dist_to_line": 50.0,
+        "dist_to_line_atr": 0.26,
+        "level_state": "최초선위",
+        "new_breakout": "미해당",
+        "refresh_state": "갱신됨",
+        "refresh_note": "",
+        "user_memo": ""
+      },
+      "page_id": "3fb0fc3e-53fc-818a-9310-f3a31e3eb79c",
+      "fields": {
+        "outcome": "미주문",
+        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        "outcome_at": {
+          "__datetime__": "2026-11-03T15:23:43.777651+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "466a92bd6f194153b352b856867add69",
+      "owner": "41589530527:1",
+      "events": [
+        "1c1020771fe54f2db33425501ea5ad83"
+      ],
+      "record": {
+        "account_type": "",
+        "account_key": "",
+        "order_side": "",
+        "order_qty": null,
+        "filled_qty": null,
+        "unverified_qty": null,
+        "execution_price": null,
+        "execution_state": "",
+        "execution_checked_at": null,
+        "event_id": "11e3c2eeb80144cb9d4e45965536498b",
+        "order_no": "",
+        "order_day": null,
+        "key": "40d0fc3e-53fc-8113-92ed-e51cd9c905ba",
+        "page_id": "40d0fc3e-53fc-8113-92ed-e51cd9c905ba",
+        "name": "롯데렌탈",
+        "ticker": "089860",
+        "first_detected_at": {
+          "__datetime__": "2026-11-03T11:13:00+09:00"
+        },
+        "first_threshold": 52900.0,
+        "first_price": 53000.0,
+        "first_atr": 1838.0,
+        "status": "추적중",
+        "closed_reason": "",
+        "closed_at": null,
+        "outcome": "미주문",
+        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        "outcome_at": {
+          "__datetime__": "2026-11-03T15:23:43.816872+09:00"
+        },
+        "latest_close": null,
+        "latest_date": null,
+        "latest_atr": null,
+        "latest_line": null,
+        "change_pct": null,
+        "atr_mult": null,
+        "dist_to_line": null,
+        "dist_to_line_atr": null,
+        "level_state": "",
+        "new_breakout": "",
+        "refresh_state": "",
+        "refresh_note": "",
+        "user_memo": ""
+      },
+      "page_id": "40d0fc3e-53fc-8113-92ed-e51cd9c905ba",
+      "fields": {
+        "outcome": "미주문",
+        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        "outcome_at": {
+          "__datetime__": "2026-11-03T15:23:43.816872+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "fcfb1838386e469882ee9738e4678788",
+      "owner": "41589530527:1",
+      "events": [
+        "c4422d0b1b6647abbbace740ce319a96"
+      ],
+      "record": {
+        "account_type": "",
+        "account_key": "",
+        "order_side": "",
+        "order_qty": null,
+        "filled_qty": null,
+        "unverified_qty": null,
+        "execution_price": null,
+        "execution_state": "",
+        "execution_checked_at": null,
+        "event_id": "3cafee1b51d64ebe937038daa8caf734",
+        "order_no": "",
+        "order_day": null,
+        "key": "40c0fc3e-53fc-81e2-8e5a-e7a367428c3d",
+        "page_id": "40c0fc3e-53fc-81e2-8e5a-e7a367428c3d",
+        "name": "CJ CGV",
+        "ticker": "079160",
+        "first_detected_at": {
+          "__datetime__": "2026-11-02T14:53:00+09:00"
+        },
+        "first_threshold": 5190.0,
+        "first_price": 5200.0,
+        "first_atr": 178.0,
+        "status": "추적중",
+        "closed_reason": "",
+        "closed_at": null,
+        "outcome": "미주문",
+        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        "outcome_at": {
+          "__datetime__": "2026-11-03T15:23:43.832624+09:00"
+        },
+        "latest_close": 5190.0,
+        "latest_date": {
+          "__date__": "2026-11-02"
+        },
+        "latest_atr": 179.0,
+        "latest_line": 5240.0,
+        "change_pct": 0.0,
+        "atr_mult": 0.0,
+        "dist_to_line": 50.0,
+        "dist_to_line_atr": 0.28,
+        "level_state": "최초선아래",
+        "new_breakout": "미해당",
+        "refresh_state": "갱신됨",
+        "refresh_note": "",
+        "user_memo": ""
+      },
+      "page_id": "40c0fc3e-53fc-81e2-8e5a-e7a367428c3d",
+      "fields": {
+        "outcome": "미주문",
+        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        "outcome_at": {
+          "__datetime__": "2026-11-03T15:23:43.832624+09:00"
+        }
+      },
+      "state": "queued"
+    }
+  ],
+  "prepare_cursor": "c4422d0b1b6647abbbace740ce319a96",
   "deliver_cursor": "0483a117280f4c1781b4f604be8c2b1c",
   "excluded_events": [
     {
@@ -12331,6 +12571,27 @@
       },
       "reason": "held_without_active_track",
       "resolved_by": "41588492364:1"
+    },
+    {
+      "event": {
+        "id": "cfc74c5c1e564b2a8a084dd978d40b2f",
+        "operation": "_set_outcome",
+        "args": [
+          "326030",
+          "미주문",
+          "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+          {
+            "__datetime__": "2026-11-03T15:23:43.800800+09:00"
+          }
+        ],
+        "kwargs": {
+          "order_no": "",
+          "order_day": null,
+          "identity": null
+        }
+      },
+      "reason": "held_without_active_track",
+      "resolved_by": "41589530527:1"
     }
   ]
 }
