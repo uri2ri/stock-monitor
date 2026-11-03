@@ -1,0 +1,20 @@
+{
+  "date": "20261103",
+  "alerted": {
+    "002350": {
+      "time": "09:03",
+      "name": "넥센타이어",
+      "sector": "화학",
+      "market": "KOSPI",
+      "price": 6060.0,
+      "high20": 6010.0,
+      "atr20": 193.0,
+      "gap_atr": 0.259,
+      "unit_shares": 2590,
+      "value_avg_20": 643829794.0,
+      "value_avg_5": 800185192.0,
+      "vol_active_days": 3,
+      "status": "진입가능"
+    }
+  }
+}
