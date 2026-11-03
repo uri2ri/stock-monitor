@@ -34,6 +34,21 @@
       "status": "진입가능",
       "price_10am": 80100.0,
       "time_10am": "10:03"
+    },
+    "006280": {
+      "time": "11:03",
+      "name": "녹십자",
+      "sector": "제약",
+      "market": "KOSPI",
+      "price": 138500.0,
+      "high20": 137500.0,
+      "atr20": 4636.0,
+      "gap_atr": 0.216,
+      "unit_shares": 107,
+      "value_avg_20": 2708046945.0,
+      "value_avg_5": 2568551680.0,
+      "vol_active_days": 2,
+      "status": "진입가능"
     }
   }
 }
