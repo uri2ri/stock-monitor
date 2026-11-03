@@ -1,8 +1,169 @@
 {
   "version": 1,
-  "events": [],
-  "plans": [],
-  "prepare_cursor": "cabf15eceb484f69b4b207d008b005ad",
+  "events": [
+    {
+      "id": "9caaddb6501b43fa8a9b9c456bdd7d62",
+      "operation": "_set_outcome",
+      "args": [
+        "079160",
+        "자금부족",
+        "현금 부족(필요 1,475,250원 · 가용 321,065원)",
+        {
+          "__datetime__": "2026-11-03T15:14:24.791527+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "3d3c5d33657f41bf876a65061e393997",
+      "operation": "_set_outcome",
+      "args": [
+        "002350",
+        "자금부족",
+        "현금 부족(필요 1,581,660원 · 가용 321,065원)",
+        {
+          "__datetime__": "2026-11-03T15:14:24.807145+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    }
+  ],
+  "plans": [
+    {
+      "id": "41b23e87f518438ea1ef4dbb5d5f6501",
+      "owner": "41588492364:1",
+      "events": [
+        "9caaddb6501b43fa8a9b9c456bdd7d62"
+      ],
+      "record": {
+        "account_type": "",
+        "account_key": "",
+        "order_side": "",
+        "order_qty": null,
+        "filled_qty": null,
+        "unverified_qty": null,
+        "execution_price": null,
+        "execution_state": "",
+        "execution_checked_at": null,
+        "event_id": "3cafee1b51d64ebe937038daa8caf734",
+        "order_no": "",
+        "order_day": null,
+        "key": "40c0fc3e-53fc-81e2-8e5a-e7a367428c3d",
+        "page_id": "40c0fc3e-53fc-81e2-8e5a-e7a367428c3d",
+        "name": "CJ CGV",
+        "ticker": "079160",
+        "first_detected_at": {
+          "__datetime__": "2026-11-02T14:53:00+09:00"
+        },
+        "first_threshold": 5190.0,
+        "first_price": 5200.0,
+        "first_atr": 178.0,
+        "status": "추적중",
+        "closed_reason": "",
+        "closed_at": null,
+        "outcome": "자금부족",
+        "outcome_reason": "현금 부족(필요 1,475,250원 · 가용 321,065원)",
+        "outcome_at": {
+          "__datetime__": "2026-11-03T15:14:24.791527+09:00"
+        },
+        "latest_close": 5190.0,
+        "latest_date": {
+          "__date__": "2026-11-02"
+        },
+        "latest_atr": 179.0,
+        "latest_line": 5240.0,
+        "change_pct": 0.0,
+        "atr_mult": 0.0,
+        "dist_to_line": 50.0,
+        "dist_to_line_atr": 0.28,
+        "level_state": "최초선아래",
+        "new_breakout": "미해당",
+        "refresh_state": "갱신됨",
+        "refresh_note": "",
+        "user_memo": ""
+      },
+      "page_id": "40c0fc3e-53fc-81e2-8e5a-e7a367428c3d",
+      "fields": {
+        "outcome": "자금부족",
+        "outcome_reason": "현금 부족(필요 1,475,250원 · 가용 321,065원)",
+        "outcome_at": {
+          "__datetime__": "2026-11-03T15:14:24.791527+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "0483a117280f4c1781b4f604be8c2b1c",
+      "owner": "41588492364:1",
+      "events": [
+        "3d3c5d33657f41bf876a65061e393997"
+      ],
+      "record": {
+        "account_type": "",
+        "account_key": "",
+        "order_side": "",
+        "order_qty": null,
+        "filled_qty": null,
+        "unverified_qty": null,
+        "execution_price": null,
+        "execution_state": "",
+        "execution_checked_at": null,
+        "event_id": "94e378bac4b3449f944b713963f7d6f9",
+        "order_no": "",
+        "order_day": null,
+        "key": "3fb0fc3e-53fc-818a-9310-f3a31e3eb79c",
+        "page_id": "3fb0fc3e-53fc-818a-9310-f3a31e3eb79c",
+        "name": "넥센타이어",
+        "ticker": "002350",
+        "first_detected_at": {
+          "__datetime__": "2026-10-16T09:03:00+09:00"
+        },
+        "first_threshold": 5890.0,
+        "first_price": 5900.0,
+        "first_atr": 180.0,
+        "status": "추적중",
+        "closed_reason": "",
+        "closed_at": null,
+        "outcome": "자금부족",
+        "outcome_reason": "현금 부족(필요 1,581,660원 · 가용 321,065원)",
+        "outcome_at": {
+          "__datetime__": "2026-11-03T15:14:24.807145+09:00"
+        },
+        "latest_close": 5960.0,
+        "latest_date": {
+          "__date__": "2026-11-02"
+        },
+        "latest_atr": 193.0,
+        "latest_line": 6010.0,
+        "change_pct": 1.19,
+        "atr_mult": 0.39,
+        "dist_to_line": 50.0,
+        "dist_to_line_atr": 0.26,
+        "level_state": "최초선위",
+        "new_breakout": "미해당",
+        "refresh_state": "갱신됨",
+        "refresh_note": "",
+        "user_memo": ""
+      },
+      "page_id": "3fb0fc3e-53fc-818a-9310-f3a31e3eb79c",
+      "fields": {
+        "outcome_reason": "현금 부족(필요 1,581,660원 · 가용 321,065원)",
+        "outcome_at": {
+          "__datetime__": "2026-11-03T15:14:24.807145+09:00"
+        }
+      },
+      "state": "queued"
+    }
+  ],
+  "prepare_cursor": "9c485f8a04e8430495ec9a518f02cdf4",
   "deliver_cursor": "374e37b618364978aa9d7a60a39d60eb",
   "excluded_events": [
     {
@@ -12310,6 +12471,27 @@
       },
       "reason": "held_without_active_track",
       "resolved_by": "41587455412:1"
+    },
+    {
+      "event": {
+        "id": "9c485f8a04e8430495ec9a518f02cdf4",
+        "operation": "_set_outcome",
+        "args": [
+          "326030",
+          "자금부족",
+          "현금 부족(필요 1,276,800원 · 가용 321,065원)",
+          {
+            "__datetime__": "2026-11-03T15:14:24.822909+09:00"
+          }
+        ],
+        "kwargs": {
+          "order_no": "",
+          "order_day": null,
+          "identity": null
+        }
+      },
+      "reason": "held_without_active_track",
+      "resolved_by": "41588492364:1"
     }
   ]
 }
