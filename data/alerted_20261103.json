@@ -49,6 +49,21 @@
       "value_avg_5": 2568551680.0,
       "vol_active_days": 2,
       "status": "진입가능"
+    },
+    "089860": {
+      "time": "11:13",
+      "name": "롯데렌탈",
+      "sector": "일반서비스",
+      "market": "KOSPI",
+      "price": 53000.0,
+      "high20": 52900.0,
+      "atr20": 1838.0,
+      "gap_atr": 0.054,
+      "unit_shares": 272,
+      "value_avg_20": 5979961740.0,
+      "value_avg_5": 6117998890.0,
+      "vol_active_days": 2,
+      "status": "진입가능"
     }
   }
 }
