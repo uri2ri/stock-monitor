@@ -15,6 +15,21 @@
       "value_avg_5": 800185192.0,
       "vol_active_days": 3,
       "status": "진입가능"
+    },
+    "326030": {
+      "time": "09:23",
+      "name": "SK바이오팜",
+      "sector": "일반서비스",
+      "market": "KOSPI",
+      "price": 79800.0,
+      "high20": 79000.0,
+      "atr20": 3035.0,
+      "gap_atr": 0.264,
+      "unit_shares": 164,
+      "value_avg_20": 8784082080.0,
+      "value_avg_5": 9778478820.0,
+      "vol_active_days": 2,
+      "status": "진입가능"
     }
   }
 }
