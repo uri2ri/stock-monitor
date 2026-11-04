@@ -1,0 +1,35 @@
+{
+  "date": "20261104",
+  "alerted": {
+    "007070": {
+      "time": "09:23",
+      "name": "GS리테일",
+      "sector": "유통",
+      "market": "KOSPI",
+      "price": 23100.0,
+      "high20": 23000.0,
+      "atr20": 852.0,
+      "gap_atr": 0.117,
+      "unit_shares": 586,
+      "value_avg_20": 2786297178.0,
+      "value_avg_5": 3364808060.0,
+      "vol_active_days": 4,
+      "status": "진입가능"
+    },
+    "282330": {
+      "time": "09:23",
+      "name": "BGF리테일",
+      "sector": "유통",
+      "market": "KOSPI",
+      "price": 145300.0,
+      "high20": 145000.0,
+      "atr20": 5849.0,
+      "gap_atr": 0.051,
+      "unit_shares": 85,
+      "value_avg_20": 6235103290.0,
+      "value_avg_5": 6886478960.0,
+      "vol_active_days": 1,
+      "status": "진입가능"
+    }
+  }
+}
