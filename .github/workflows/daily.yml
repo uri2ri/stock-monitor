@@ -39,6 +39,8 @@ jobs:
           NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
           NOTION_DB_ID: ${{ secrets.NOTION_DB_ID }}
           NOTION_FAVORITES_DB_ID: ${{ secrets.NOTION_FAVORITES_DB_ID }}
+          # 카카오 refresh_token 저장소(KIS 토큰 캐시 DB의 별도 행) - kakao.py
+          NOTION_TOKEN_CACHE_DB_ID: ${{ secrets.NOTION_TOKEN_CACHE_DB_ID }}
           KAKAO_REST_API_KEY: ${{ secrets.KAKAO_REST_API_KEY }}
           KAKAO_CLIENT_SECRET: ${{ secrets.KAKAO_CLIENT_SECRET }}
           KAKAO_REFRESH_TOKEN: ${{ secrets.KAKAO_REFRESH_TOKEN }}

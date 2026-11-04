@@ -37,6 +37,7 @@ from typing import Optional
 from zoneinfo import ZoneInfo
 
 import core
+import kakao
 import notion_repo
 from mailer import send_evening_mail
 
@@ -139,6 +140,8 @@ class EveningReport:
     ledger_signal_writes: list[dict] = field(default_factory=list)
     holding_signal_writes: list[dict] = field(default_factory=list)
     level_changes: list[LevelChange] = field(default_factory=list)
+    # kakao.today_failure_summary() - {"count","last_code"}, 못 읽으면 None
+    kakao_failures: Optional[dict] = None
 
 
 def _trading_days_between(df, start: date, end: date) -> int:
@@ -426,6 +429,9 @@ def build_report(today: date, dry_run: bool) -> EveningReport:
     # 움직인 종목만 남긴다 - 변동 없는 종목까지 나열하면 아침 리포트의
     # 전체 현황과 다를 게 없어져 이 섹션의 의미가 사라진다.
     report.level_changes = [c for c in report.level_changes if c.any_moved]
+
+    # 오늘 카톡 발송 실패 건수 (kakao.py가 실패 때마다 노션에 남긴 기록)
+    report.kakao_failures = kakao.today_failure_summary(today)
 
     return report
 

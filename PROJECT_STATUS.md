@@ -1,5 +1,32 @@
 # PROJECT STATUS
 
+## 카카오 refresh_token 자동 교체 대응 - 2026-11-05
+
+- **증상**: 매달 카톡이 끊겼다(2026-10-01, 2026-11-02). 카카오는 refresh_token
+  잔여 유효기간이 1개월 미만이면 갱신 응답에 새 refresh_token을 주고 기존 토큰을
+  즉시 만료시키는데(KOE322), kakao.py는 새 토큰을 경고 로그만 남기고 버렸다.
+- **저장소**: 새 DB 없이 기존 **KIS 토큰 캐시 DB에 별도 행**(레코드=`KAKAO_REFRESH_TOKEN`)을
+  쓴다. 칸 구성(토큰값·만료시각·갱신일시)이 같고, KIS 코드는 레코드 제목으로 조회하므로
+  섞이지 않는다. 같은 통합 토큰이 이미 이 DB에 쓰고 있어 권한 추가가 필요 없다.
+  `notion_repo.get/save_token_record`로 일반화했고 KIS 함수는 그대로 위임한다.
+- **동작**: 노션 저장값 → 없거나 조회 실패면 Secret. 응답에 refresh_token이 오면 즉시
+  노션에 저장(1회 재시도, 그래도 실패면 메일 경고). KOE322면 노션을 다시 읽어 값이
+  바뀌었으면 그 값으로, 그대로면 Secret으로 **1회만** 재시도한다(사람이 OAuth를 다시 받아
+  Secret만 바꾼 경우도 복구되고, 통한 Secret 값은 노션에 다시 쓴다). 토큰 값과 카카오
+  error_description은 로그·메일·예외 메시지 어디에도 남기지 않는다.
+- **실패 감지**: 카톡 발송이 실패하면 그날 첫 실패에만 메일 1통("카톡 발송 실패 - KOE322").
+  건수·메일 여부는 같은 DB의 레코드=`KAKAO_SEND_FAILURES` 행(토큰값 칸에 JSON)에 남기고,
+  저녁 감사 메일 5번 섹션에 "오늘 카톡 발송 실패 N건"으로 표시한다. 기록을 못 읽으면
+  억제 여부를 알 수 없어 보내되(fail-open), 한 실행 안에서는 한 통만.
+- **워크플로**: auto-trade에 GMAIL_* 추가, daily·evening·intraday(비활성)에
+  NOTION_TOKEN_CACHE_DB_ID 추가.
+- **배포 후 첫 실행**: 노션에 행이 없으므로 Secret으로 갱신하고 그 값을 노션에 채운다.
+  지금 Secret이 이미 만료됐다면(11-02 장애 이후 미교체) 한 번은 OAuth를 다시 받아 Secret
+  또는 노션 행에 넣어야 한다.
+- **덤**: `test_sector_map_intraday_readonly` 2건이 KST 자정~09시(UTC 날짜 ≠ KST 날짜)에
+  실패하던 것을 고쳤다 - 테스트가 `date.today()`(UTC), 코드가 `_today()`(KST)를 쓰고 있었다.
+- **검증**: `python -m pytest -q` → 512 passed (신규 21건, `tests/test_kakao_refresh_token_rotation.py`).
+
 ## 진입일 지수 상태 태깅 (분석 전용, 매매 규칙 불변) - 2026-10-15
 
 - **무엇**: backtest.py --portfolio 거래 로그에 진입일 전날 기준 지수 상태 태그
