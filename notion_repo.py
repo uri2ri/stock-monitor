@@ -1694,6 +1694,78 @@ def update_ledger_signal_date(page_id: str, signal_date: date) -> None:
 
 TOKEN_CACHE_RECORD = "KIS_TOKEN"
 
+# 같은 DB에 카카오 리프레시 토큰도 별도 행(레코드=KAKAO_REFRESH_TOKEN)으로
+# 둔다 - kakao.py 참고. 칸 구성(토큰값·만료시각·갱신일시)이 같아 새 DB를
+# 만들 필요가 없고, 레코드 제목으로 조회하므로 KIS 행과 섞이지 않는다.
+
+
+def _find_token_record(db_id: str, record: str) -> Optional[dict]:
+    url = f"{NOTION_BASE}/databases/{db_id}/query"
+    payload: dict[str, Any] = {
+        "filter": {"property": "레코드", "title": {"equals": record}},
+        "page_size": 1,
+    }
+    resp = requests.post(url, headers=_headers(), json=payload, timeout=30)
+    resp.raise_for_status()
+    results = resp.json().get("results", [])
+    return results[0] if results else None
+
+
+def get_token_record(record: str) -> Optional[tuple[str, Optional[datetime]]]:
+    """토큰 캐시 DB에서 레코드=record 행의 (토큰값, 만료시각)을 읽는다.
+
+    행이 없거나 토큰값이 비어 있으면 None. 만료시각 칸이 비어 있으면
+    (토큰값, None). 조회 실패는 그대로 raise - 폴백은 호출부 몫이다.
+    """
+    db_id = os.environ["NOTION_TOKEN_CACHE_DB_ID"]
+    page = _find_token_record(db_id, record)
+    if page is None:
+        return None
+    props = page.get("properties", {})
+    token = _text(props.get("토큰값", {}))
+    if not token:
+        return None
+    date_prop = (props.get("만료시각", {}) or {}).get("date")
+    expires_at = (datetime.fromisoformat(date_prop["start"])
+                  if date_prop and date_prop.get("start") else None)
+    return token, expires_at
+
+
+def save_token_record(record: str, token: str,
+                      expires_at: Optional[datetime] = None) -> None:
+    """레코드=record 행을 upsert한다 (항상 단일 행). 실패는 그대로 raise.
+
+    토큰값은 로그에 남기지 않는다(public 저장소의 Actions 로그) - page_id와
+    만료시각만 찍는다.
+    """
+    db_id = os.environ["NOTION_TOKEN_CACHE_DB_ID"]
+    now = datetime.now(_KST)
+    page = _find_token_record(db_id, record)
+
+    properties: dict[str, Any] = {
+        "토큰값": _rich_text(token),
+        "만료시각": {"date": {"start": expires_at.isoformat()} if expires_at else None},
+        "갱신일시": {"date": {"start": now.isoformat()}},
+    }
+    expiry = expires_at.isoformat() if expires_at else "-"
+
+    if page is not None:
+        page_id = page["id"]
+        resp = requests.patch(f"{NOTION_BASE}/pages/{page_id}", headers=_headers(),
+                              json={"properties": properties}, timeout=30)
+        resp.raise_for_status()
+        logger.info("토큰 캐시 갱신(%s): page_id=%s 만료=%s", record, page_id, expiry)
+    else:
+        properties["레코드"] = {"title": [{"type": "text", "text": {"content": record}}]}
+        resp = requests.post(
+            f"{NOTION_BASE}/pages", headers=_headers(),
+            json={"parent": {"database_id": db_id}, "properties": properties},
+            timeout=30,
+        )
+        resp.raise_for_status()
+        page_id = resp.json()["id"]
+        logger.info("토큰 캐시 최초 생성(%s): page_id=%s 만료=%s", record, page_id, expiry)
+
 
 def get_cached_token() -> Optional[tuple[str, datetime]]:
     """캐시된 KIS 접근토큰과 만료시각을 조회한다. 캐시 행이 없거나 값이
@@ -1702,24 +1774,10 @@ def get_cached_token() -> Optional[tuple[str, datetime]]:
     Returns:
         (토큰값, 만료시각) 튜플 또는 None
     """
-    db_id = os.environ["NOTION_TOKEN_CACHE_DB_ID"]
-    url = f"{NOTION_BASE}/databases/{db_id}/query"
-    payload: dict[str, Any] = {
-        "filter": {"property": "레코드", "title": {"equals": TOKEN_CACHE_RECORD}},
-        "page_size": 1,
-    }
-    resp = requests.post(url, headers=_headers(), json=payload, timeout=30)
-    resp.raise_for_status()
-    results = resp.json().get("results", [])
-    if not results:
+    found = get_token_record(TOKEN_CACHE_RECORD)
+    if found is None or found[1] is None:
         return None
-
-    props = results[0].get("properties", {})
-    token = _text(props.get("토큰값", {}))
-    date_prop = (props.get("만료시각", {}) or {}).get("date")
-    if not token or not date_prop or not date_prop.get("start"):
-        return None
-    return token, datetime.fromisoformat(date_prop["start"])
+    return found[0], found[1]
 
 
 def save_cached_token(token: str, expires_at: datetime) -> None:
@@ -1729,44 +1787,7 @@ def save_cached_token(token: str, expires_at: datetime) -> None:
     같이 기록한다 - 이 캐시를 마지막으로 쓴 시각을 사람이 확인할 수
     있도록.
     """
-    db_id = os.environ["NOTION_TOKEN_CACHE_DB_ID"]
-    now = datetime.now(_KST)
-
-    url = f"{NOTION_BASE}/databases/{db_id}/query"
-    payload: dict[str, Any] = {
-        "filter": {"property": "레코드", "title": {"equals": TOKEN_CACHE_RECORD}},
-        "page_size": 1,
-    }
-    resp = requests.post(url, headers=_headers(), json=payload, timeout=30)
-    resp.raise_for_status()
-    results = resp.json().get("results", [])
-
-    properties: dict[str, Any] = {
-        "토큰값": _rich_text(token),
-        "만료시각": {"date": {"start": expires_at.isoformat()}},
-        "갱신일시": {"date": {"start": now.isoformat()}},
-    }
-
-    if results:
-        page_id = results[0]["id"]
-        resp = requests.patch(f"{NOTION_BASE}/pages/{page_id}", headers=_headers(),
-                               json={"properties": properties}, timeout=30)
-        resp.raise_for_status()
-        logger.info("KIS 토큰 캐시 갱신: page_id=%s 만료=%s",
-                    page_id, expires_at.isoformat())
-    else:
-        properties["레코드"] = {
-            "title": [{"type": "text", "text": {"content": TOKEN_CACHE_RECORD}}]
-        }
-        resp = requests.post(
-            f"{NOTION_BASE}/pages", headers=_headers(),
-            json={"parent": {"database_id": db_id}, "properties": properties},
-            timeout=30,
-        )
-        resp.raise_for_status()
-        page_id = resp.json()["id"]
-        logger.info("KIS 토큰 캐시 최초 생성: page_id=%s 만료=%s",
-                    page_id, expires_at.isoformat())
+    save_token_record(TOKEN_CACHE_RECORD, token, expires_at)
 
 
 # ── 자동매매 정지/재개 제어 DB ───────────────────────────────

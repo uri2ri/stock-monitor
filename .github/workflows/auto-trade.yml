@@ -74,11 +74,16 @@ jobs:
           NOTION_DB_ID: ${{ secrets.NOTION_DB_ID }}
           # 전량 체결 확인 후 청산 일지 기록과 중복 확인에 사용
           NOTION_LEDGER_DB_ID: ${{ secrets.NOTION_LEDGER_DB_ID }}
-          # KIS 접근토큰 캐시 - 없어도 캐싱만 건너뛰고 거래는 그대로 진행된다
+          # KIS 접근토큰 캐시 + 카카오 refresh_token 저장소(kakao.py) - 없으면
+          # KIS는 캐싱만 건너뛰고, 카카오는 Secret 값으로 폴백한다
           NOTION_TOKEN_CACHE_DB_ID: ${{ secrets.NOTION_TOKEN_CACHE_DB_ID }}
           # 자동매매 정지/재개 스위치 - 신규 진입·추가매수 전용(자동매도는 무관).
           # 미설정이면 조회가 실패해 fail-closed로 매수가 막힌다.
           NOTION_AUTO_TRADE_CONTROL_DB_ID: ${{ secrets.NOTION_AUTO_TRADE_CONTROL_DB_ID }}
+          # 카톡이 막혔을 때의 보조 경로(카카오 토큰 저장 실패·그날 첫 발송 실패 메일)
+          GMAIL_ADDRESS: ${{ secrets.GMAIL_ADDRESS }}
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+          GMAIL_TO: ${{ secrets.GMAIL_TO }}
         run: python intraday_watch.py
 
       - name: Prepare durable observation plans (no external writes)
@@ -144,6 +149,10 @@ jobs:
           NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
           NOTION_ORDERS_DB_ID: ${{ secrets.NOTION_ORDERS_DB_ID }}
           NOTION_TOKEN_CACHE_DB_ID: ${{ secrets.NOTION_TOKEN_CACHE_DB_ID }}
+          # 카톡이 막혔을 때의 보조 경로(카카오 토큰 저장 실패·그날 첫 발송 실패 메일)
+          GMAIL_ADDRESS: ${{ secrets.GMAIL_ADDRESS }}
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+          GMAIL_TO: ${{ secrets.GMAIL_TO }}
         run: python kis_client.py
 
       # 잔고조회 API만 호출해 계좌평가액·예수금·보유종목을 그대로 찍는다.

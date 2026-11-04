@@ -48,7 +48,7 @@ def _write(path, built_on: date, mapping=None):
 
 def test_intraday_never_rebuilds_even_when_stale(cache, monkeypatch):
     """100일 된 캐시여도 재생성을 부르지 않는다."""
-    _write(cache["path"], date.today() - timedelta(days=100))
+    _write(cache["path"], kis_client._today() - timedelta(days=100))
     build = mock.Mock(side_effect=AssertionError("재생성을 시도했다"))
     monkeypatch.setattr(screener, "build_sector_map", build)
     load = mock.Mock(side_effect=AssertionError("load_sector_map을 탔다"))
@@ -60,7 +60,7 @@ def test_intraday_never_rebuilds_even_when_stale(cache, monkeypatch):
 
 
 def test_fresh_cache_is_returned_without_warning(cache, monkeypatch):
-    _write(cache["path"], date.today() - timedelta(days=3))
+    _write(cache["path"], kis_client._today() - timedelta(days=3))
     monkeypatch.setattr(screener, "build_sector_map",
                         mock.Mock(side_effect=AssertionError("재생성 시도")))
 
@@ -72,7 +72,7 @@ def test_fresh_cache_is_returned_without_warning(cache, monkeypatch):
 
 def test_stale_cache_warns_once_a_day(cache):
     age = kis_client.SECTOR_MAP_WARN_AGE_DAYS + 1
-    built = date.today() - timedelta(days=age)
+    built = kis_client._today() - timedelta(days=age)
     _write(cache["path"], built)
 
     mapping = kis_client._get_sector_map()
@@ -88,7 +88,7 @@ def test_stale_cache_warns_once_a_day(cache):
 def test_exactly_at_limit_does_not_warn(cache):
     """경계값에서 울리지 않는다 - off-by-one 방지."""
     _write(cache["path"],
-           date.today() - timedelta(days=kis_client.SECTOR_MAP_WARN_AGE_DAYS))
+           kis_client._today() - timedelta(days=kis_client.SECTOR_MAP_WARN_AGE_DAYS))
     kis_client._get_sector_map()
     assert cache["warned"] == []
 

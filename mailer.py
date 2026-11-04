@@ -913,6 +913,40 @@ def send_report_mail(
     return True
 
 
+def send_alert_mail(subject: str, body: str) -> bool:
+    """짧은 시스템 경고 메일(본문 텍스트만). 카톡이 막혔을 때의 보조 경로다.
+
+    Returns:
+        True  – 발송 완료
+        False – 환경변수 미설정으로 건너뜀
+
+    Raises:
+        smtplib.SMTPException 등 – 발송 실패 시 그대로 전파
+    """
+    sender = os.environ.get("GMAIL_ADDRESS", "").strip()
+    password = os.environ.get("GMAIL_APP_PASSWORD", "").strip()
+    if not sender or not password:
+        logger.warning("GMAIL_ADDRESS / GMAIL_APP_PASSWORD 미설정 – 경고 메일을 건너뜁니다.")
+        return False
+
+    to_raw = os.environ.get("GMAIL_TO", "").strip() or sender
+    recipients = [addr.strip() for addr in to_raw.split(",") if addr.strip()]
+
+    msg = EmailMessage()
+    msg["Subject"] = subject
+    msg["From"] = sender
+    msg["To"] = ", ".join(recipients)
+    msg.set_content(body)
+
+    with smtplib.SMTP(SMTP_HOST, SMTP_PORT, timeout=SMTP_TIMEOUT) as smtp:
+        smtp.starttls()
+        smtp.login(sender, password)
+        smtp.send_message(msg, from_addr=sender, to_addrs=recipients)
+
+    logger.info("경고 메일 발송 완료: %s", subject)
+    return True
+
+
 # ── 저녁 실행 감사 리포트 (evening_audit.py 전용) ───────────
 #
 # 아침 리포트(_build_html/_build_text)와 완전히 분리한다. 보유 현황
@@ -990,6 +1024,21 @@ def _build_level_change_text(changes: Sequence) -> list[str]:
     return lines
 
 
+def kakao_failure_line(report) -> str:
+    """'오늘 카톡 발송 실패 N건' 한 줄. 기록을 못 읽었으면(None) 그렇다고 적는다.
+
+    report.kakao_failures는 kakao.today_failure_summary() 결과다. 속성이 없는
+    report(구버전 호출부)는 확인 불가로 표시한다.
+    """
+    summary = getattr(report, "kakao_failures", None)
+    if summary is None:
+        return "오늘 카톡 발송 실패: 확인 불가 (노션 기록 조회 실패)"
+    count = int(summary.get("count", 0))
+    if count and summary.get("last_code"):
+        return f"오늘 카톡 발송 실패 {count}건 (마지막 사유 {summary['last_code']})"
+    return f"오늘 카톡 발송 실패 {count}건"
+
+
 def build_evening_text(report) -> str:
     today = report.today
     lines = [build_evening_subject(today, False), ""]
@@ -1053,6 +1102,10 @@ def build_evening_text(report) -> str:
     if report.dry_run:
         lines.append("")
         lines.append("   (dry-run: 위 내용은 실제로 쓰지 않았습니다 - 노션은 그대로입니다)")
+
+    lines.append("")
+    lines.append("5. 카톡 발송")
+    lines.append(f"   {kakao_failure_line(report)}")
 
     return "\n".join(lines)
 
@@ -1178,6 +1231,14 @@ def build_evening_html(report) -> str:
         if report.dry_run else ""
     )
 
+    kakao_summary = getattr(report, "kakao_failures", None)
+    kakao_bad = kakao_summary is None or int(kakao_summary.get("count", 0)) > 0
+    kakao_html = (
+        f'<div style="color:{C_STOP_TEXT if kakao_bad else C_MUTED};'
+        f'font-weight:{"bold" if kakao_bad else "normal"};">'
+        f"{html.escape(kakao_failure_line(report))}</div>"
+    )
+
     return f"""\
 <div style="font-family:-apple-system,'Apple SD Gothic Neo','Malgun Gothic',
 sans-serif;font-size:14px;color:#212529;line-height:1.5;">
@@ -1202,6 +1263,9 @@ sans-serif;font-size:14px;color:#212529;line-height:1.5;">
   <h3 style="margin:16px 0 6px;">4. 기록 반영</h3>
   {record_html}
   {dry_note}
+
+  <h3 style="margin:16px 0 6px;">5. 카톡 발송</h3>
+  {kakao_html}
 </div>"""
 
 

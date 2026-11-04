@@ -63,6 +63,13 @@ jobs:
           # 워치리스트 거리 상한 (×ATR). 없으면 1.0
           WATCH_THRESHOLD: ${{ vars.WATCH_THRESHOLD }}
           STREAMLIT_APP_URL: ${{ secrets.STREAMLIT_APP_URL }}
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+          # 카카오 refresh_token 저장소(KIS 토큰 캐시 DB의 별도 행) - kakao.py
+          NOTION_TOKEN_CACHE_DB_ID: ${{ secrets.NOTION_TOKEN_CACHE_DB_ID }}
+          # 카톡이 막혔을 때의 보조 경로(카카오 토큰 저장 실패·그날 첫 발송 실패 메일)
+          GMAIL_ADDRESS: ${{ secrets.GMAIL_ADDRESS }}
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+          GMAIL_TO: ${{ secrets.GMAIL_TO }}
         run: python intraday_watch.py
 
       # 알림 이력만 커밋한다. 다음 실행이 이 파일을 읽어 중복 발송을 막는다.

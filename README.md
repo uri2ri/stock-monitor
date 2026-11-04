@@ -40,6 +40,7 @@ GitHub Actions(`.github/workflows/daily.yml`)는 KST 평일 07:00에 자동 실�
 | --- | --- |
 | `NOTION_TOKEN` / `NOTION_DB_ID` | 노션 통합 토큰과 DB ID |
 | `KAKAO_REST_API_KEY` / `KAKAO_CLIENT_SECRET` / `KAKAO_REFRESH_TOKEN` | 카카오 로그인 앱 정보 |
+| `NOTION_TOKEN_CACHE_DB_ID` | KIS 토큰 캐시 DB. 카카오 refresh_token도 여기 별도 행(`KAKAO_REFRESH_TOKEN`)에 저장한다 - 카카오가 토큰을 교체하면 kakao.py가 바로 갱신하고, `KAKAO_REFRESH_TOKEN` Secret은 노션 값이 없거나 조회 실패일 때만 쓰는 폴백이다 |
 | `TOTAL_CAPITAL` | 총 운용자금 (원) |
 | `GMAIL_ADDRESS` / `GMAIL_APP_PASSWORD` / `GMAIL_TO` | 메일 발송 계정·앱 비밀번호·수신자 (없으면 발송 생략) |
 | `NOTION_BREAKOUT_TRACK_DB_ID` | 돌파 후 미진입 추적 DB. **비워두면 추적 기능 전체가 비활성**이고 워크플로는 실패하지 않는다 |
