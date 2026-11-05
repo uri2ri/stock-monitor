@@ -2,23 +2,6 @@
   "version": 1,
   "events": [
     {
-      "id": "eaaf1a8bb1fd4783b09334ffcdcd57e5",
-      "operation": "record_breakout",
-      "args": [
-        {
-          "ticker": "389260",
-          "name": "대명에너지",
-          "high20": 13950.0,
-          "price": 14400.0,
-          "atr20": 761.0
-        },
-        {
-          "__datetime__": "2026-11-05T09:03:39.573709+09:00"
-        }
-      ],
-      "kwargs": {}
-    },
-    {
       "id": "362ce3c13a5a45ff82fbf95cd8ea8e64",
       "operation": "record_breakout",
       "args": [
@@ -68,23 +51,6 @@
         }
       ],
       "kwargs": {}
-    },
-    {
-      "id": "2dce94f860a54d60967cfdf65a57de8d",
-      "operation": "_set_outcome",
-      "args": [
-        "389260",
-        "미주문",
-        "추격 구간(+0.59N) - 매수 대상 제외",
-        {
-          "__datetime__": "2026-11-05T09:03:39.573709+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
     },
     {
       "id": "ec319fac3d4a48e5a9e6e99803633871",
@@ -140,50 +106,6 @@
   ],
   "plans": [
     {
-      "id": "7dfaf5b1c3c146b8b3e85d196a4327a6",
-      "owner": "41938393718:1",
-      "events": [
-        "eaaf1a8bb1fd4783b09334ffcdcd57e5",
-        "2dce94f860a54d60967cfdf65a57de8d"
-      ],
-      "record": {
-        "event_id": "eaaf1a8bb1fd4783b09334ffcdcd57e5",
-        "ticker": "389260",
-        "name": "대명에너지",
-        "first_detected_at": {
-          "__datetime__": "2026-11-05T09:03:39.573709+09:00"
-        },
-        "first_threshold": 13950.0,
-        "first_price": 14400.0,
-        "first_atr": 761.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "추격 구간(+0.59N) - 매수 대상 제외",
-        "outcome_at": {
-          "__datetime__": "2026-11-05T09:03:39.573709+09:00"
-        }
-      },
-      "page_id": null,
-      "fields": {
-        "event_id": "eaaf1a8bb1fd4783b09334ffcdcd57e5",
-        "ticker": "389260",
-        "name": "대명에너지",
-        "first_detected_at": {
-          "__datetime__": "2026-11-05T09:03:39.573709+09:00"
-        },
-        "first_threshold": 13950.0,
-        "first_price": 14400.0,
-        "first_atr": 761.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "추격 구간(+0.59N) - 매수 대상 제외",
-        "outcome_at": {
-          "__datetime__": "2026-11-05T09:03:39.573709+09:00"
-        }
-      },
-      "state": "creating"
-    },
-    {
       "id": "6d573d1dff7a4c6f9ef286d7e389b6ea",
       "owner": "41938393718:1",
       "events": [
@@ -225,7 +147,7 @@
           "__datetime__": "2026-11-05T09:03:50.871947+09:00"
         }
       },
-      "state": "queued"
+      "state": "creating"
     },
     {
       "id": "3e77bce4f0af4b6c8ae1f6340290168f",
@@ -317,7 +239,7 @@
     }
   ],
   "prepare_cursor": "7d28f9d3de4e4344b22884428281b842",
-  "deliver_cursor": "7dfaf5b1c3c146b8b3e85d196a4327a6",
+  "deliver_cursor": "6d573d1dff7a4c6f9ef286d7e389b6ea",
   "excluded_events": [
     {
       "event": {
