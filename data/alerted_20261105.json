@@ -90,6 +90,36 @@
       "value_avg_5": 19613717742.0,
       "vol_active_days": 2,
       "status": "진입가능"
+    },
+    "005300": {
+      "time": "09:13",
+      "name": "롯데칠성",
+      "sector": "음식료·담배",
+      "market": "KOSPI",
+      "price": 106900.0,
+      "high20": 105500.0,
+      "atr20": 2379.0,
+      "gap_atr": 0.588,
+      "unit_shares": 210,
+      "value_avg_20": 1531529845.0,
+      "value_avg_5": 2235867080.0,
+      "vol_active_days": 3,
+      "status": "추격금지"
+    },
+    "138040": {
+      "time": "09:13",
+      "name": "메리츠금융지주",
+      "sector": "금융",
+      "market": "KOSPI",
+      "price": 137000.0,
+      "high20": 136700.0,
+      "atr20": 4844.0,
+      "gap_atr": 0.062,
+      "unit_shares": 103,
+      "value_avg_20": 28103177670.0,
+      "value_avg_5": 28354283340.0,
+      "vol_active_days": 3,
+      "status": "진입가능"
     }
   }
 }
