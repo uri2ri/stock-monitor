@@ -1,8 +1,87 @@
 {
   "version": 1,
-  "events": [],
-  "plans": [],
-  "prepare_cursor": "c0332484b8a745d3ab0996f766ecdf23",
+  "events": [
+    {
+      "id": "cf19d5cfbceb42ffb618911cb7b9e463",
+      "operation": "_set_outcome",
+      "args": [
+        "035250",
+        "자금부족",
+        "현금 부족(필요 2,784,780원 · 가용 1,017,080원)",
+        {
+          "__datetime__": "2026-11-05T10:24:11.244949+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    }
+  ],
+  "plans": [
+    {
+      "id": "6f98f92ac48b4994a0543c27b668e5f8",
+      "owner": "41948144911:1",
+      "events": [
+        "cf19d5cfbceb42ffb618911cb7b9e463"
+      ],
+      "record": {
+        "account_type": "",
+        "account_key": "",
+        "order_side": "",
+        "order_qty": null,
+        "filled_qty": null,
+        "unverified_qty": null,
+        "execution_price": null,
+        "execution_state": "",
+        "execution_checked_at": null,
+        "event_id": "7ddf030f4db548ac832b4dd7eea5f406",
+        "order_no": "",
+        "order_day": null,
+        "key": "40f0fc3e-53fc-812d-a775-c26f44f24d3c",
+        "page_id": "40f0fc3e-53fc-812d-a775-c26f44f24d3c",
+        "name": "강원랜드",
+        "ticker": "035250",
+        "first_detected_at": {
+          "__datetime__": "2026-11-05T09:33:00+09:00"
+        },
+        "first_threshold": 14560.0,
+        "first_price": 14580.0,
+        "first_atr": 268.0,
+        "status": "추적중",
+        "closed_reason": "",
+        "closed_at": null,
+        "outcome": "자금부족",
+        "outcome_reason": "현금 부족(필요 2,784,780원 · 가용 1,017,080원)",
+        "outcome_at": {
+          "__datetime__": "2026-11-05T10:24:11.244949+09:00"
+        },
+        "latest_close": null,
+        "latest_date": null,
+        "latest_atr": null,
+        "latest_line": null,
+        "change_pct": null,
+        "atr_mult": null,
+        "dist_to_line": null,
+        "dist_to_line_atr": null,
+        "level_state": "",
+        "new_breakout": "",
+        "refresh_state": "",
+        "refresh_note": "",
+        "user_memo": ""
+      },
+      "page_id": "40f0fc3e-53fc-812d-a775-c26f44f24d3c",
+      "fields": {
+        "outcome_reason": "현금 부족(필요 2,784,780원 · 가용 1,017,080원)",
+        "outcome_at": {
+          "__datetime__": "2026-11-05T10:24:11.244949+09:00"
+        }
+      },
+      "state": "queued"
+    }
+  ],
+  "prepare_cursor": "7beca36fb44343cabe64c5774cb00234",
   "deliver_cursor": "5c849554faf3406ba2ac5d6a5ee7f694",
   "excluded_events": [
     {
