@@ -1,8 +1,322 @@
 {
   "version": 1,
-  "events": [],
-  "plans": [],
-  "prepare_cursor": "457f9c9af2e144059b47edab0f1213a6",
+  "events": [
+    {
+      "id": "eaaf1a8bb1fd4783b09334ffcdcd57e5",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "389260",
+          "name": "대명에너지",
+          "high20": 13950.0,
+          "price": 14400.0,
+          "atr20": 761.0
+        },
+        {
+          "__datetime__": "2026-11-05T09:03:39.573709+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "362ce3c13a5a45ff82fbf95cd8ea8e64",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "003090",
+          "name": "대웅",
+          "high20": 16180.0,
+          "price": 16310.0,
+          "atr20": 586.0
+        },
+        {
+          "__datetime__": "2026-11-05T09:03:39.573709+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "080e94375f96486bad8653d9a1228b06",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "092730",
+          "name": "네오팜",
+          "high20": 24350.0,
+          "price": 24700.0,
+          "atr20": 1171.0
+        },
+        {
+          "__datetime__": "2026-11-05T09:03:39.573709+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "38f65874ab3f450589e9b414d8578f0e",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "032640",
+          "name": "LG유플러스",
+          "high20": 15950.0,
+          "price": 16090.0,
+          "atr20": 493.0
+        },
+        {
+          "__datetime__": "2026-11-05T09:03:39.573709+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "2dce94f860a54d60967cfdf65a57de8d",
+      "operation": "_set_outcome",
+      "args": [
+        "389260",
+        "미주문",
+        "추격 구간(+0.59N) - 매수 대상 제외",
+        {
+          "__datetime__": "2026-11-05T09:03:39.573709+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "ec319fac3d4a48e5a9e6e99803633871",
+      "operation": "_set_outcome",
+      "args": [
+        "003090",
+        "미주문",
+        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        {
+          "__datetime__": "2026-11-05T09:03:50.871947+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "666fcc4e20d9452997a836166ea32920",
+      "operation": "_set_outcome",
+      "args": [
+        "092730",
+        "미주문",
+        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        {
+          "__datetime__": "2026-11-05T09:03:50.889183+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "7d28f9d3de4e4344b22884428281b842",
+      "operation": "_set_outcome",
+      "args": [
+        "032640",
+        "미주문",
+        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        {
+          "__datetime__": "2026-11-05T09:03:50.912628+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    }
+  ],
+  "plans": [
+    {
+      "id": "7dfaf5b1c3c146b8b3e85d196a4327a6",
+      "owner": "41938393718:1",
+      "events": [
+        "eaaf1a8bb1fd4783b09334ffcdcd57e5",
+        "2dce94f860a54d60967cfdf65a57de8d"
+      ],
+      "record": {
+        "event_id": "eaaf1a8bb1fd4783b09334ffcdcd57e5",
+        "ticker": "389260",
+        "name": "대명에너지",
+        "first_detected_at": {
+          "__datetime__": "2026-11-05T09:03:39.573709+09:00"
+        },
+        "first_threshold": 13950.0,
+        "first_price": 14400.0,
+        "first_atr": 761.0,
+        "status": "추적중",
+        "outcome": "미주문",
+        "outcome_reason": "추격 구간(+0.59N) - 매수 대상 제외",
+        "outcome_at": {
+          "__datetime__": "2026-11-05T09:03:39.573709+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "eaaf1a8bb1fd4783b09334ffcdcd57e5",
+        "ticker": "389260",
+        "name": "대명에너지",
+        "first_detected_at": {
+          "__datetime__": "2026-11-05T09:03:39.573709+09:00"
+        },
+        "first_threshold": 13950.0,
+        "first_price": 14400.0,
+        "first_atr": 761.0,
+        "status": "추적중",
+        "outcome": "미주문",
+        "outcome_reason": "추격 구간(+0.59N) - 매수 대상 제외",
+        "outcome_at": {
+          "__datetime__": "2026-11-05T09:03:39.573709+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "6d573d1dff7a4c6f9ef286d7e389b6ea",
+      "owner": "41938393718:1",
+      "events": [
+        "362ce3c13a5a45ff82fbf95cd8ea8e64",
+        "ec319fac3d4a48e5a9e6e99803633871"
+      ],
+      "record": {
+        "event_id": "362ce3c13a5a45ff82fbf95cd8ea8e64",
+        "ticker": "003090",
+        "name": "대웅",
+        "first_detected_at": {
+          "__datetime__": "2026-11-05T09:03:39.573709+09:00"
+        },
+        "first_threshold": 16180.0,
+        "first_price": 16310.0,
+        "first_atr": 586.0,
+        "status": "추적중",
+        "outcome": "미주문",
+        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        "outcome_at": {
+          "__datetime__": "2026-11-05T09:03:50.871947+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "362ce3c13a5a45ff82fbf95cd8ea8e64",
+        "ticker": "003090",
+        "name": "대웅",
+        "first_detected_at": {
+          "__datetime__": "2026-11-05T09:03:39.573709+09:00"
+        },
+        "first_threshold": 16180.0,
+        "first_price": 16310.0,
+        "first_atr": 586.0,
+        "status": "추적중",
+        "outcome": "미주문",
+        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        "outcome_at": {
+          "__datetime__": "2026-11-05T09:03:50.871947+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "3e77bce4f0af4b6c8ae1f6340290168f",
+      "owner": "41938393718:1",
+      "events": [
+        "080e94375f96486bad8653d9a1228b06",
+        "666fcc4e20d9452997a836166ea32920"
+      ],
+      "record": {
+        "event_id": "080e94375f96486bad8653d9a1228b06",
+        "ticker": "092730",
+        "name": "네오팜",
+        "first_detected_at": {
+          "__datetime__": "2026-11-05T09:03:39.573709+09:00"
+        },
+        "first_threshold": 24350.0,
+        "first_price": 24700.0,
+        "first_atr": 1171.0,
+        "status": "추적중",
+        "outcome": "미주문",
+        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        "outcome_at": {
+          "__datetime__": "2026-11-05T09:03:50.889183+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "080e94375f96486bad8653d9a1228b06",
+        "ticker": "092730",
+        "name": "네오팜",
+        "first_detected_at": {
+          "__datetime__": "2026-11-05T09:03:39.573709+09:00"
+        },
+        "first_threshold": 24350.0,
+        "first_price": 24700.0,
+        "first_atr": 1171.0,
+        "status": "추적중",
+        "outcome": "미주문",
+        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        "outcome_at": {
+          "__datetime__": "2026-11-05T09:03:50.889183+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "f89b8d0c1e8b4f75a3dccac70f73b81e",
+      "owner": "41938393718:1",
+      "events": [
+        "38f65874ab3f450589e9b414d8578f0e",
+        "7d28f9d3de4e4344b22884428281b842"
+      ],
+      "record": {
+        "event_id": "38f65874ab3f450589e9b414d8578f0e",
+        "ticker": "032640",
+        "name": "LG유플러스",
+        "first_detected_at": {
+          "__datetime__": "2026-11-05T09:03:39.573709+09:00"
+        },
+        "first_threshold": 15950.0,
+        "first_price": 16090.0,
+        "first_atr": 493.0,
+        "status": "추적중",
+        "outcome": "미주문",
+        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        "outcome_at": {
+          "__datetime__": "2026-11-05T09:03:50.912628+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "38f65874ab3f450589e9b414d8578f0e",
+        "ticker": "032640",
+        "name": "LG유플러스",
+        "first_detected_at": {
+          "__datetime__": "2026-11-05T09:03:39.573709+09:00"
+        },
+        "first_threshold": 15950.0,
+        "first_price": 16090.0,
+        "first_atr": 493.0,
+        "status": "추적중",
+        "outcome": "미주문",
+        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        "outcome_at": {
+          "__datetime__": "2026-11-05T09:03:50.912628+09:00"
+        }
+      },
+      "state": "queued"
+    }
+  ],
+  "prepare_cursor": "7d28f9d3de4e4344b22884428281b842",
   "deliver_cursor": "9493a967fd6b4a5487a7259ee2b1f413",
   "excluded_events": [
     {
@@ -12415,6 +12729,90 @@
       },
       "reason": "held_without_active_track",
       "resolved_by": "41592691667:1"
+    },
+    {
+      "event": {
+        "id": "b8c71b60c81b453f85bb473048864d45",
+        "operation": "record_breakout",
+        "args": [
+          {
+            "ticker": "326030",
+            "name": "SK바이오팜",
+            "high20": 81700.0,
+            "price": 87800.0,
+            "atr20": 3130.0
+          },
+          {
+            "__datetime__": "2026-11-05T09:03:39.573709+09:00"
+          }
+        ],
+        "kwargs": {}
+      },
+      "reason": "held_without_active_track",
+      "resolved_by": "41938393718:1"
+    },
+    {
+      "event": {
+        "id": "296222cdcdcf497e9032dc86ee212cbb",
+        "operation": "record_breakout",
+        "args": [
+          {
+            "ticker": "006280",
+            "name": "녹십자",
+            "high20": 139800.0,
+            "price": 144000.0,
+            "atr20": 4770.0
+          },
+          {
+            "__datetime__": "2026-11-05T09:03:39.573709+09:00"
+          }
+        ],
+        "kwargs": {}
+      },
+      "reason": "held_without_active_track",
+      "resolved_by": "41938393718:1"
+    },
+    {
+      "event": {
+        "id": "05df5f727537454babf4a621bb8daf46",
+        "operation": "_set_outcome",
+        "args": [
+          "326030",
+          "미주문",
+          "추격 구간(+1.95N) - 매수 대상 제외",
+          {
+            "__datetime__": "2026-11-05T09:03:39.573709+09:00"
+          }
+        ],
+        "kwargs": {
+          "order_no": "",
+          "order_day": null,
+          "identity": null
+        }
+      },
+      "reason": "held_without_active_track",
+      "resolved_by": "41938393718:1"
+    },
+    {
+      "event": {
+        "id": "d608eda8f5db45bdb8f0e519299dd0ad",
+        "operation": "_set_outcome",
+        "args": [
+          "006280",
+          "미주문",
+          "추격 구간(+0.88N) - 매수 대상 제외",
+          {
+            "__datetime__": "2026-11-05T09:03:39.573709+09:00"
+          }
+        ],
+        "kwargs": {
+          "order_no": "",
+          "order_day": null,
+          "identity": null
+        }
+      },
+      "reason": "held_without_active_track",
+      "resolved_by": "41938393718:1"
     }
   ]
 }
