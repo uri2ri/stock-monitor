@@ -150,6 +150,21 @@
       "value_avg_5": 52498725300.0,
       "vol_active_days": 3,
       "status": "진입가능"
+    },
+    "035250": {
+      "time": "09:33",
+      "name": "강원랜드",
+      "sector": "오락·문화",
+      "market": "KOSPI",
+      "price": 14580.0,
+      "high20": 14560.0,
+      "atr20": 268.0,
+      "gap_atr": 0.075,
+      "unit_shares": 1865,
+      "value_avg_20": 4102313510.0,
+      "value_avg_5": 3920737456.0,
+      "vol_active_days": 2,
+      "status": "진입가능"
     }
   }
 }
