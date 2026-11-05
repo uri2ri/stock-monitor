@@ -1,8 +1,87 @@
 {
   "version": 1,
-  "events": [],
-  "plans": [],
-  "prepare_cursor": "4c04ec476161424f842531c4988f20b9",
+  "events": [
+    {
+      "id": "4e798c9d733543709e64355318e96a07",
+      "operation": "_set_outcome",
+      "args": [
+        "092730",
+        "자금부족",
+        "현금 부족(필요 1,062,100원 · 가용 1,017,080원)",
+        {
+          "__datetime__": "2026-11-05T12:04:14.904964+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    }
+  ],
+  "plans": [
+    {
+      "id": "2bfee1c0f8f040e0bbbc9daceb38b6d2",
+      "owner": "41959104592:1",
+      "events": [
+        "4e798c9d733543709e64355318e96a07"
+      ],
+      "record": {
+        "account_type": "",
+        "account_key": "",
+        "order_side": "",
+        "order_qty": null,
+        "filled_qty": null,
+        "unverified_qty": null,
+        "execution_price": null,
+        "execution_state": "",
+        "execution_checked_at": null,
+        "event_id": "080e94375f96486bad8653d9a1228b06",
+        "order_no": "",
+        "order_day": null,
+        "key": "40f0fc3e-53fc-81e7-aeb1-c30e02978e65",
+        "page_id": "40f0fc3e-53fc-81e7-aeb1-c30e02978e65",
+        "name": "네오팜",
+        "ticker": "092730",
+        "first_detected_at": {
+          "__datetime__": "2026-11-05T09:03:00+09:00"
+        },
+        "first_threshold": 24350.0,
+        "first_price": 24700.0,
+        "first_atr": 1171.0,
+        "status": "추적중",
+        "closed_reason": "",
+        "closed_at": null,
+        "outcome": "자금부족",
+        "outcome_reason": "현금 부족(필요 1,062,100원 · 가용 1,017,080원)",
+        "outcome_at": {
+          "__datetime__": "2026-11-05T12:04:14.904964+09:00"
+        },
+        "latest_close": null,
+        "latest_date": null,
+        "latest_atr": null,
+        "latest_line": null,
+        "change_pct": null,
+        "atr_mult": null,
+        "dist_to_line": null,
+        "dist_to_line_atr": null,
+        "level_state": "",
+        "new_breakout": "",
+        "refresh_state": "",
+        "refresh_note": "",
+        "user_memo": ""
+      },
+      "page_id": "40f0fc3e-53fc-81e7-aeb1-c30e02978e65",
+      "fields": {
+        "outcome_reason": "현금 부족(필요 1,062,100원 · 가용 1,017,080원)",
+        "outcome_at": {
+          "__datetime__": "2026-11-05T12:04:14.904964+09:00"
+        }
+      },
+      "state": "queued"
+    }
+  ],
+  "prepare_cursor": "4e798c9d733543709e64355318e96a07",
   "deliver_cursor": "4e73f5a251914fe881e17f9e66f1084d",
   "excluded_events": [
     {
