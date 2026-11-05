@@ -1,8 +1,166 @@
 {
   "version": 1,
-  "events": [],
-  "plans": [],
-  "prepare_cursor": "5b866337215b45569a4aa0a7e5edd662",
+  "events": [
+    {
+      "id": "2aee73f9b3804899946f67161fe5576f",
+      "operation": "_set_outcome",
+      "args": [
+        "089860",
+        "자금부족",
+        "현금 부족(필요 1,452,600원 · 가용 1,017,080원)",
+        {
+          "__datetime__": "2026-11-05T14:04:46.584404+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "26425c990c1d42f685b6b536c5ffbabc",
+      "operation": "_set_outcome",
+      "args": [
+        "032640",
+        "자금부족",
+        "현금 부족(필요 1,657,270원 · 가용 1,017,080원)",
+        {
+          "__datetime__": "2026-11-05T14:04:46.602751+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    }
+  ],
+  "plans": [
+    {
+      "id": "36f3ebe0731b464f9febd4a66a3999a3",
+      "owner": "41971524765:1",
+      "events": [
+        "2aee73f9b3804899946f67161fe5576f"
+      ],
+      "record": {
+        "account_type": "",
+        "account_key": "",
+        "order_side": "",
+        "order_qty": null,
+        "filled_qty": null,
+        "unverified_qty": null,
+        "execution_price": null,
+        "execution_state": "",
+        "execution_checked_at": null,
+        "event_id": "11e3c2eeb80144cb9d4e45965536498b",
+        "order_no": "",
+        "order_day": null,
+        "key": "40d0fc3e-53fc-8113-92ed-e51cd9c905ba",
+        "page_id": "40d0fc3e-53fc-8113-92ed-e51cd9c905ba",
+        "name": "롯데렌탈",
+        "ticker": "089860",
+        "first_detected_at": {
+          "__datetime__": "2026-11-03T11:13:00+09:00"
+        },
+        "first_threshold": 52900.0,
+        "first_price": 53000.0,
+        "first_atr": 1838.0,
+        "status": "추적중",
+        "closed_reason": "",
+        "closed_at": null,
+        "outcome": "자금부족",
+        "outcome_reason": "현금 부족(필요 1,452,600원 · 가용 1,017,080원)",
+        "outcome_at": {
+          "__datetime__": "2026-11-05T14:04:46.584404+09:00"
+        },
+        "latest_close": 53000.0,
+        "latest_date": {
+          "__date__": "2026-11-04"
+        },
+        "latest_atr": 1833.0,
+        "latest_line": 53500.0,
+        "change_pct": 0.19,
+        "atr_mult": 0.05,
+        "dist_to_line": 500.0,
+        "dist_to_line_atr": 0.27,
+        "level_state": "최초선위",
+        "new_breakout": "미해당",
+        "refresh_state": "갱신됨",
+        "refresh_note": "",
+        "user_memo": ""
+      },
+      "page_id": "40d0fc3e-53fc-8113-92ed-e51cd9c905ba",
+      "fields": {
+        "outcome_reason": "현금 부족(필요 1,452,600원 · 가용 1,017,080원)",
+        "outcome_at": {
+          "__datetime__": "2026-11-05T14:04:46.584404+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "e6f417cb2f2e49eba81ab4ce1e0e7179",
+      "owner": "41971524765:1",
+      "events": [
+        "26425c990c1d42f685b6b536c5ffbabc"
+      ],
+      "record": {
+        "account_type": "",
+        "account_key": "",
+        "order_side": "",
+        "order_qty": null,
+        "filled_qty": null,
+        "unverified_qty": null,
+        "execution_price": null,
+        "execution_state": "",
+        "execution_checked_at": null,
+        "event_id": "38f65874ab3f450589e9b414d8578f0e",
+        "order_no": "",
+        "order_day": null,
+        "key": "40f0fc3e-53fc-8122-b54d-ce2f5c2bc80e",
+        "page_id": "40f0fc3e-53fc-8122-b54d-ce2f5c2bc80e",
+        "name": "LG유플러스",
+        "ticker": "032640",
+        "first_detected_at": {
+          "__datetime__": "2026-11-05T09:03:00+09:00"
+        },
+        "first_threshold": 15950.0,
+        "first_price": 16090.0,
+        "first_atr": 493.0,
+        "status": "추적중",
+        "closed_reason": "",
+        "closed_at": null,
+        "outcome": "자금부족",
+        "outcome_reason": "현금 부족(필요 1,657,270원 · 가용 1,017,080원)",
+        "outcome_at": {
+          "__datetime__": "2026-11-05T14:04:46.602751+09:00"
+        },
+        "latest_close": null,
+        "latest_date": null,
+        "latest_atr": null,
+        "latest_line": null,
+        "change_pct": null,
+        "atr_mult": null,
+        "dist_to_line": null,
+        "dist_to_line_atr": null,
+        "level_state": "",
+        "new_breakout": "",
+        "refresh_state": "",
+        "refresh_note": "",
+        "user_memo": ""
+      },
+      "page_id": "40f0fc3e-53fc-8122-b54d-ce2f5c2bc80e",
+      "fields": {
+        "outcome_reason": "현금 부족(필요 1,657,270원 · 가용 1,017,080원)",
+        "outcome_at": {
+          "__datetime__": "2026-11-05T14:04:46.602751+09:00"
+        }
+      },
+      "state": "queued"
+    }
+  ],
+  "prepare_cursor": "a6d96447374643eab5c8fed2c84c95ff",
   "deliver_cursor": "57b9d44aa9d941a8884f33f86ca78e62",
   "excluded_events": [
     {
