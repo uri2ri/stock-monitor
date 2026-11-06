@@ -1,0 +1,20 @@
+{
+  "date": "20261106",
+  "alerted": {
+    "089860": {
+      "time": "09:03",
+      "name": "롯데렌탈",
+      "sector": "일반서비스",
+      "market": "KOSPI",
+      "price": 58400.0,
+      "high20": 54100.0,
+      "atr20": 1817.0,
+      "gap_atr": 2.367,
+      "unit_shares": 275,
+      "value_avg_20": 6699149885.0,
+      "value_avg_5": 7828876100.0,
+      "vol_active_days": 3,
+      "status": "추격금지"
+    }
+  }
+}
