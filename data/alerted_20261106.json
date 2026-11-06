@@ -62,6 +62,36 @@
       "value_avg_5": 22401623480.0,
       "vol_active_days": 2,
       "status": "진입가능"
+    },
+    "032640": {
+      "time": "12:13",
+      "name": "LG유플러스",
+      "sector": "통신",
+      "market": "KOSPI",
+      "price": 16160.0,
+      "high20": 16140.0,
+      "atr20": 499.0,
+      "gap_atr": 0.04,
+      "unit_shares": 1002,
+      "value_avg_20": 15238500993.0,
+      "value_avg_5": 22420589402.0,
+      "vol_active_days": 3,
+      "status": "진입가능"
+    },
+    "035420": {
+      "time": "12:13",
+      "name": "NAVER",
+      "sector": "IT 서비스",
+      "market": "KOSPI",
+      "price": 188700.0,
+      "high20": 188400.0,
+      "atr20": 7199.0,
+      "gap_atr": 0.042,
+      "unit_shares": 69,
+      "value_avg_20": 119062170865.0,
+      "value_avg_5": 131574446540.0,
+      "vol_active_days": 1,
+      "status": "진입가능"
     }
   }
 }
