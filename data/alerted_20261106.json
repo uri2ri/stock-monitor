@@ -14,7 +14,9 @@
       "value_avg_20": 6699149885.0,
       "value_avg_5": 7828876100.0,
       "vol_active_days": 3,
-      "status": "추격금지"
+      "status": "추격금지",
+      "price_10am": 58400.0,
+      "time_10am": "10:03"
     }
   }
 }
