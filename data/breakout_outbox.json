@@ -1,90 +1,9 @@
 {
   "version": 1,
-  "events": [
-    {
-      "id": "73639fd291654750ae1dcfa0fa4f6551",
-      "operation": "_set_outcome",
-      "args": [
-        "030190",
-        "자금부족",
-        "현금 부족(필요 1,777,050원 · 가용 1,091,161원)",
-        {
-          "__datetime__": "2026-11-06T13:44:16.367516+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    }
-  ],
-  "plans": [
-    {
-      "id": "971fb35f412047c3b0d4e43c79cf84cd",
-      "owner": "42164139524:1",
-      "events": [
-        "73639fd291654750ae1dcfa0fa4f6551"
-      ],
-      "record": {
-        "account_type": "",
-        "account_key": "",
-        "order_side": "",
-        "order_qty": null,
-        "filled_qty": null,
-        "unverified_qty": null,
-        "execution_price": null,
-        "execution_state": "",
-        "execution_checked_at": null,
-        "event_id": "d452637d01164c0aaec54b48f0db4324",
-        "order_no": "",
-        "order_day": null,
-        "key": "3fb0fc3e-53fc-81f1-a44e-e5c71d3c27ed",
-        "page_id": "3fb0fc3e-53fc-81f1-a44e-e5c71d3c27ed",
-        "name": "NICE평가정보",
-        "ticker": "030190",
-        "first_detected_at": {
-          "__datetime__": "2026-10-16T09:13:00+09:00"
-        },
-        "first_threshold": 17050.0,
-        "first_price": 17190.0,
-        "first_atr": 511.0,
-        "status": "추적중",
-        "closed_reason": "",
-        "closed_at": null,
-        "outcome": "자금부족",
-        "outcome_reason": "현금 부족(필요 1,777,050원 · 가용 1,091,161원)",
-        "outcome_at": {
-          "__datetime__": "2026-11-06T13:44:16.367516+09:00"
-        },
-        "latest_close": 17610.0,
-        "latest_date": {
-          "__date__": "2026-11-05"
-        },
-        "latest_atr": 511.0,
-        "latest_line": 17890.0,
-        "change_pct": 3.28,
-        "atr_mult": 1.1,
-        "dist_to_line": 280.0,
-        "dist_to_line_atr": 0.55,
-        "level_state": "최초선위",
-        "new_breakout": "미해당",
-        "refresh_state": "갱신됨",
-        "refresh_note": "",
-        "user_memo": ""
-      },
-      "page_id": "3fb0fc3e-53fc-81f1-a44e-e5c71d3c27ed",
-      "fields": {
-        "outcome_reason": "현금 부족(필요 1,777,050원 · 가용 1,091,161원)",
-        "outcome_at": {
-          "__datetime__": "2026-11-06T13:44:16.367516+09:00"
-        }
-      },
-      "state": "queued"
-    }
-  ],
+  "events": [],
+  "plans": [],
   "prepare_cursor": "73639fd291654750ae1dcfa0fa4f6551",
-  "deliver_cursor": "14a11e3456534fe18ed4c11920a12e14",
+  "deliver_cursor": "971fb35f412047c3b0d4e43c79cf84cd",
   "excluded_events": [
     {
       "event": {
