@@ -47,6 +47,21 @@
       "value_avg_5": 1162193984.0,
       "vol_active_days": 1,
       "status": "진입가능"
+    },
+    "030200": {
+      "time": "12:03",
+      "name": "KT",
+      "sector": "통신",
+      "market": "KOSPI",
+      "price": 52200.0,
+      "high20": 52100.0,
+      "atr20": 1393.0,
+      "gap_atr": 0.072,
+      "unit_shares": 358,
+      "value_avg_20": 21519523310.0,
+      "value_avg_5": 22401623480.0,
+      "vol_active_days": 2,
+      "status": "진입가능"
     }
   }
 }
