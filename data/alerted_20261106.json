@@ -17,6 +17,21 @@
       "status": "추격금지",
       "price_10am": 58400.0,
       "time_10am": "10:03"
+    },
+    "302440": {
+      "time": "10:23",
+      "name": "SK바이오사이언스",
+      "sector": "제약",
+      "market": "KOSPI",
+      "price": 38200.0,
+      "high20": 37550.0,
+      "atr20": 1433.0,
+      "gap_atr": 0.454,
+      "unit_shares": 348,
+      "value_avg_20": 2933532575.0,
+      "value_avg_5": 3760241180.0,
+      "vol_active_days": 3,
+      "status": "진입가능"
     }
   }
 }
