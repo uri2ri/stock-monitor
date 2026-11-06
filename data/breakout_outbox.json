@@ -102,11 +102,11 @@
         "account_key": "d534c8d981289493d2f84a1e888ebc32d53dfd1df60dcd620d6e4707f0cc4a87",
         "order_side": "매수"
       },
-      "state": "queued"
+      "state": "creating"
     }
   ],
   "prepare_cursor": "5ffe9b790bb844a89e6fb28e73bf8bcd",
-  "deliver_cursor": "30d84af5cf99489ba408ab5f8aa50eae",
+  "deliver_cursor": "29a1f20622ce49789cf509f74725c669",
   "excluded_events": [
     {
       "event": {
