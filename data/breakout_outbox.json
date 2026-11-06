@@ -96,7 +96,7 @@
           "__datetime__": "2026-11-06T12:14:07.071502+09:00"
         }
       },
-      "state": "queued"
+      "state": "creating"
     },
     {
       "id": "c13fb92c25634fa595725654d129d959",
@@ -163,7 +163,7 @@
     }
   ],
   "prepare_cursor": "b178bb647fca49adabad761e894aefed",
-  "deliver_cursor": "467005053ffa4e31a93be90d2e93ebd0",
+  "deliver_cursor": "a4f48babf77f4bae96e294dc255ba7dd",
   "excluded_events": [
     {
       "event": {
