@@ -1,8 +1,89 @@
 {
   "version": 1,
-  "events": [],
-  "plans": [],
-  "prepare_cursor": "14dbe29285114b2ab5dd0a124ba0980b",
+  "events": [
+    {
+      "id": "b7fb6cbd7cdb48e79bd9290750697be3",
+      "operation": "_set_outcome",
+      "args": [
+        "089860",
+        "미주문",
+        "추격 구간(+2.37N) - 매수 대상 제외",
+        {
+          "__datetime__": "2026-11-06T09:03:40.257751+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    }
+  ],
+  "plans": [
+    {
+      "id": "30d84af5cf99489ba408ab5f8aa50eae",
+      "owner": "42133949664:1",
+      "events": [
+        "b7fb6cbd7cdb48e79bd9290750697be3"
+      ],
+      "record": {
+        "account_type": "",
+        "account_key": "",
+        "order_side": "",
+        "order_qty": null,
+        "filled_qty": null,
+        "unverified_qty": null,
+        "execution_price": null,
+        "execution_state": "",
+        "execution_checked_at": null,
+        "event_id": "11e3c2eeb80144cb9d4e45965536498b",
+        "order_no": "",
+        "order_day": null,
+        "key": "40d0fc3e-53fc-8113-92ed-e51cd9c905ba",
+        "page_id": "40d0fc3e-53fc-8113-92ed-e51cd9c905ba",
+        "name": "롯데렌탈",
+        "ticker": "089860",
+        "first_detected_at": {
+          "__datetime__": "2026-11-03T11:13:00+09:00"
+        },
+        "first_threshold": 52900.0,
+        "first_price": 53000.0,
+        "first_atr": 1838.0,
+        "status": "추적중",
+        "closed_reason": "",
+        "closed_at": null,
+        "outcome": "미주문",
+        "outcome_reason": "추격 구간(+2.37N) - 매수 대상 제외",
+        "outcome_at": {
+          "__datetime__": "2026-11-06T09:03:40.257751+09:00"
+        },
+        "latest_close": 53100.0,
+        "latest_date": {
+          "__date__": "2026-11-05"
+        },
+        "latest_atr": 1817.0,
+        "latest_line": 54100.0,
+        "change_pct": 0.38,
+        "atr_mult": 0.11,
+        "dist_to_line": 1000.0,
+        "dist_to_line_atr": 0.55,
+        "level_state": "최초선위",
+        "new_breakout": "미해당",
+        "refresh_state": "갱신됨",
+        "refresh_note": "",
+        "user_memo": ""
+      },
+      "page_id": "40d0fc3e-53fc-8113-92ed-e51cd9c905ba",
+      "fields": {
+        "outcome_reason": "추격 구간(+2.37N) - 매수 대상 제외",
+        "outcome_at": {
+          "__datetime__": "2026-11-06T09:03:40.257751+09:00"
+        }
+      },
+      "state": "queued"
+    }
+  ],
+  "prepare_cursor": "b7fb6cbd7cdb48e79bd9290750697be3",
   "deliver_cursor": "1aab326125ef4ddba08c4e7a6831f064",
   "excluded_events": [
     {
