@@ -14,7 +14,9 @@
       "value_avg_20": 30280990690.0,
       "value_avg_5": 34687216742.0,
       "vol_active_days": 3,
-      "status": "진입가능"
+      "status": "진입가능",
+      "price_10am": 16910.0,
+      "time_10am": "10:03"
     }
   }
 }
