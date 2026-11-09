@@ -1,0 +1,20 @@
+{
+  "date": "20261109",
+  "alerted": {
+    "328130": {
+      "time": "09:33",
+      "name": "루닛",
+      "sector": "IT 서비스",
+      "market": "KOSDAQ",
+      "price": 16360.0,
+      "high20": 16290.0,
+      "atr20": 1286.0,
+      "gap_atr": 0.054,
+      "unit_shares": 388,
+      "value_avg_20": 30280990690.0,
+      "value_avg_5": 34687216742.0,
+      "vol_active_days": 3,
+      "status": "진입가능"
+    }
+  }
+}
