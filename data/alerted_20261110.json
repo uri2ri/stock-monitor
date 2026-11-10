@@ -1,0 +1,35 @@
+{
+  "date": "20261110",
+  "alerted": {
+    "241560": {
+      "time": "09:03",
+      "name": "두산밥캣",
+      "sector": "기계·장비",
+      "market": "KOSPI",
+      "price": 53500.0,
+      "high20": 53200.0,
+      "atr20": 2045.0,
+      "gap_atr": 0.147,
+      "unit_shares": 244,
+      "value_avg_20": 8288577298.0,
+      "value_avg_5": 11953007460.0,
+      "vol_active_days": 3,
+      "status": "진입가능"
+    },
+    "006360": {
+      "time": "09:03",
+      "name": "GS건설",
+      "sector": "건설",
+      "market": "KOSPI",
+      "price": 31550.0,
+      "high20": 31500.0,
+      "atr20": 2250.0,
+      "gap_atr": 0.022,
+      "unit_shares": 222,
+      "value_avg_20": 27686445098.0,
+      "value_avg_5": 37795858430.0,
+      "vol_active_days": 3,
+      "status": "진입가능"
+    }
+  }
+}
