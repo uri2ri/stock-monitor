@@ -2,23 +2,6 @@
   "version": 1,
   "events": [
     {
-      "id": "f643f7cf5043419fbbbc38cdc98073f8",
-      "operation": "record_breakout",
-      "args": [
-        {
-          "ticker": "241560",
-          "name": "두산밥캣",
-          "high20": 53200.0,
-          "price": 53500.0,
-          "atr20": 2045.0
-        },
-        {
-          "__datetime__": "2026-11-10T09:03:38.416932+09:00"
-        }
-      ],
-      "kwargs": {}
-    },
-    {
       "id": "b39f7f15ee2748a2a65a30ec2e1b26dc",
       "operation": "record_breakout",
       "args": [
@@ -34,23 +17,6 @@
         }
       ],
       "kwargs": {}
-    },
-    {
-      "id": "900569d6398446819dc860a967d6f9b2",
-      "operation": "_set_outcome",
-      "args": [
-        "241560",
-        "미주문",
-        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        {
-          "__datetime__": "2026-11-10T09:03:43.317522+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
     },
     {
       "id": "15972ab2c337463ba9e1de48e14e8fb2",
@@ -71,50 +37,6 @@
     }
   ],
   "plans": [
-    {
-      "id": "6108116bf1fc493f887dd51aa6f42b01",
-      "owner": "42725273435:1",
-      "events": [
-        "f643f7cf5043419fbbbc38cdc98073f8",
-        "900569d6398446819dc860a967d6f9b2"
-      ],
-      "record": {
-        "event_id": "f643f7cf5043419fbbbc38cdc98073f8",
-        "ticker": "241560",
-        "name": "두산밥캣",
-        "first_detected_at": {
-          "__datetime__": "2026-11-10T09:03:38.416932+09:00"
-        },
-        "first_threshold": 53200.0,
-        "first_price": 53500.0,
-        "first_atr": 2045.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        "outcome_at": {
-          "__datetime__": "2026-11-10T09:03:43.317522+09:00"
-        }
-      },
-      "page_id": null,
-      "fields": {
-        "event_id": "f643f7cf5043419fbbbc38cdc98073f8",
-        "ticker": "241560",
-        "name": "두산밥캣",
-        "first_detected_at": {
-          "__datetime__": "2026-11-10T09:03:38.416932+09:00"
-        },
-        "first_threshold": 53200.0,
-        "first_price": 53500.0,
-        "first_atr": 2045.0,
-        "status": "추적중",
-        "outcome": "미주문",
-        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
-        "outcome_at": {
-          "__datetime__": "2026-11-10T09:03:43.317522+09:00"
-        }
-      },
-      "state": "creating"
-    },
     {
       "id": "592ba51e9efc4d74afbe35f93d69a1bd",
       "owner": "42725273435:1",
@@ -157,11 +79,11 @@
           "__datetime__": "2026-11-10T09:03:43.331278+09:00"
         }
       },
-      "state": "queued"
+      "state": "creating"
     }
   ],
   "prepare_cursor": "15972ab2c337463ba9e1de48e14e8fb2",
-  "deliver_cursor": "6108116bf1fc493f887dd51aa6f42b01",
+  "deliver_cursor": "592ba51e9efc4d74afbe35f93d69a1bd",
   "excluded_events": [
     {
       "event": {
