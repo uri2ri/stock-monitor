@@ -1,90 +1,9 @@
 {
   "version": 1,
-  "events": [
-    {
-      "id": "e1d457f271a04e5084d68f03ca1e97b4",
-      "operation": "_set_outcome",
-      "args": [
-        "002350",
-        "자금부족",
-        "현금 부족(필요 1,379,250원 · 가용 450,921원)",
-        {
-          "__datetime__": "2026-11-10T14:34:24.236789+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    }
-  ],
-  "plans": [
-    {
-      "id": "e4db6cbc1c054f5bb0ccd518864790be",
-      "owner": "42762828540:1",
-      "events": [
-        "e1d457f271a04e5084d68f03ca1e97b4"
-      ],
-      "record": {
-        "account_type": "",
-        "account_key": "",
-        "order_side": "",
-        "order_qty": null,
-        "filled_qty": null,
-        "unverified_qty": null,
-        "execution_price": null,
-        "execution_state": "",
-        "execution_checked_at": null,
-        "event_id": "94e378bac4b3449f944b713963f7d6f9",
-        "order_no": "",
-        "order_day": null,
-        "key": "3fb0fc3e-53fc-818a-9310-f3a31e3eb79c",
-        "page_id": "3fb0fc3e-53fc-818a-9310-f3a31e3eb79c",
-        "name": "넥센타이어",
-        "ticker": "002350",
-        "first_detected_at": {
-          "__datetime__": "2026-10-16T09:03:00+09:00"
-        },
-        "first_threshold": 5890.0,
-        "first_price": 5900.0,
-        "first_atr": 180.0,
-        "status": "추적중",
-        "closed_reason": "",
-        "closed_at": null,
-        "outcome": "자금부족",
-        "outcome_reason": "현금 부족(필요 1,379,250원 · 가용 450,921원)",
-        "outcome_at": {
-          "__datetime__": "2026-11-10T14:34:24.236789+09:00"
-        },
-        "latest_close": 6000.0,
-        "latest_date": {
-          "__date__": "2026-11-09"
-        },
-        "latest_atr": 224.0,
-        "latest_line": 6120.0,
-        "change_pct": 1.87,
-        "atr_mult": 0.61,
-        "dist_to_line": 120.0,
-        "dist_to_line_atr": 0.54,
-        "level_state": "최초선위",
-        "new_breakout": "미해당",
-        "refresh_state": "갱신됨",
-        "refresh_note": "",
-        "user_memo": ""
-      },
-      "page_id": "3fb0fc3e-53fc-818a-9310-f3a31e3eb79c",
-      "fields": {
-        "outcome_reason": "현금 부족(필요 1,379,250원 · 가용 450,921원)",
-        "outcome_at": {
-          "__datetime__": "2026-11-10T14:34:24.236789+09:00"
-        }
-      },
-      "state": "queued"
-    }
-  ],
+  "events": [],
+  "plans": [],
   "prepare_cursor": "5e57ec0dec104842a6c80acbcc854a43",
-  "deliver_cursor": "9bfe57da86a44a0ab2daff3d96679193",
+  "deliver_cursor": "e4db6cbc1c054f5bb0ccd518864790be",
   "excluded_events": [
     {
       "event": {
