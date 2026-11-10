@@ -60,6 +60,36 @@
       "value_avg_5": 809026049.0,
       "vol_active_days": 3,
       "status": "진입가능"
+    },
+    "002350": {
+      "time": "09:23",
+      "name": "넥센타이어",
+      "sector": "화학",
+      "market": "KOSPI",
+      "price": 6130.0,
+      "high20": 6120.0,
+      "atr20": 224.0,
+      "gap_atr": 0.045,
+      "unit_shares": 2232,
+      "value_avg_20": 875703712.0,
+      "value_avg_5": 1466255018.0,
+      "vol_active_days": 5,
+      "status": "진입가능"
+    },
+    "328130": {
+      "time": "09:23",
+      "name": "루닛",
+      "sector": "IT 서비스",
+      "market": "KOSDAQ",
+      "price": 17390.0,
+      "high20": 17100.0,
+      "atr20": 1344.0,
+      "gap_atr": 0.216,
+      "unit_shares": 372,
+      "value_avg_20": 32723543154.0,
+      "value_avg_5": 41129284416.0,
+      "vol_active_days": 3,
+      "status": "진입가능"
     }
   }
 }
