@@ -14,7 +14,9 @@
       "value_avg_20": 8288577298.0,
       "value_avg_5": 11953007460.0,
       "vol_active_days": 3,
-      "status": "진입가능"
+      "status": "진입가능",
+      "price_10am": 53800.0,
+      "time_10am": "10:03"
     },
     "006360": {
       "time": "09:03",
@@ -29,7 +31,9 @@
       "value_avg_20": 27686445098.0,
       "value_avg_5": 37795858430.0,
       "vol_active_days": 3,
-      "status": "진입가능"
+      "status": "진입가능",
+      "price_10am": 31250.0,
+      "time_10am": "10:03"
     },
     "064400": {
       "time": "09:13",
@@ -44,7 +48,9 @@
       "value_avg_20": 67474093960.0,
       "value_avg_5": 76747912840.0,
       "vol_active_days": 2,
-      "status": "진입가능"
+      "status": "진입가능",
+      "price_10am": 80200.0,
+      "time_10am": "10:03"
     },
     "186230": {
       "time": "09:13",
@@ -59,7 +65,9 @@
       "value_avg_20": 490289598.0,
       "value_avg_5": 809026049.0,
       "vol_active_days": 3,
-      "status": "진입가능"
+      "status": "진입가능",
+      "price_10am": 4240.0,
+      "time_10am": "10:03"
     },
     "002350": {
       "time": "09:23",
@@ -74,7 +82,9 @@
       "value_avg_20": 875703712.0,
       "value_avg_5": 1466255018.0,
       "vol_active_days": 5,
-      "status": "진입가능"
+      "status": "진입가능",
+      "price_10am": 6090.0,
+      "time_10am": "10:03"
     },
     "328130": {
       "time": "09:23",
@@ -89,7 +99,9 @@
       "value_avg_20": 32723543154.0,
       "value_avg_5": 41129284416.0,
       "vol_active_days": 3,
-      "status": "진입가능"
+      "status": "진입가능",
+      "price_10am": 16700.0,
+      "time_10am": "10:03"
     }
   }
 }
