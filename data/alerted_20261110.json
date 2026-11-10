@@ -30,6 +30,36 @@
       "value_avg_5": 37795858430.0,
       "vol_active_days": 3,
       "status": "진입가능"
+    },
+    "064400": {
+      "time": "09:13",
+      "name": "LG씨엔에스",
+      "sector": "IT 서비스",
+      "market": "KOSPI",
+      "price": 82000.0,
+      "high20": 80400.0,
+      "atr20": 4668.0,
+      "gap_atr": 0.343,
+      "unit_shares": 107,
+      "value_avg_20": 67474093960.0,
+      "value_avg_5": 76747912840.0,
+      "vol_active_days": 2,
+      "status": "진입가능"
+    },
+    "186230": {
+      "time": "09:13",
+      "name": "그린플러스",
+      "sector": "금속",
+      "market": "KOSDAQ",
+      "price": 4470.0,
+      "high20": 4400.0,
+      "atr20": 300.0,
+      "gap_atr": 0.233,
+      "unit_shares": 1666,
+      "value_avg_20": 490289598.0,
+      "value_avg_5": 809026049.0,
+      "vol_active_days": 3,
+      "status": "진입가능"
     }
   }
 }
