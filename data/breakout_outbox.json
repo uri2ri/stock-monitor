@@ -1,8 +1,88 @@
 {
   "version": 1,
-  "events": [],
-  "plans": [],
-  "prepare_cursor": "57ce003ad3d94e7a92e006548bd988b6",
+  "events": [
+    {
+      "id": "0ce819ddc9c24994a45ee012cfe3402f",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "053030",
+          "name": "바이넥스",
+          "high20": 6600.0,
+          "price": 6630.0,
+          "atr20": 312.0
+        },
+        {
+          "__datetime__": "2026-11-11T09:03:40.380941+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "4a2e91ace43348088349d32473646138",
+      "operation": "_set_outcome",
+      "args": [
+        "053030",
+        "미주문",
+        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        {
+          "__datetime__": "2026-11-11T09:03:47.474472+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    }
+  ],
+  "plans": [
+    {
+      "id": "7417bc89e49b4e02bd2ea1d062b6912c",
+      "owner": "42928248461:1",
+      "events": [
+        "0ce819ddc9c24994a45ee012cfe3402f",
+        "4a2e91ace43348088349d32473646138"
+      ],
+      "record": {
+        "event_id": "0ce819ddc9c24994a45ee012cfe3402f",
+        "ticker": "053030",
+        "name": "바이넥스",
+        "first_detected_at": {
+          "__datetime__": "2026-11-11T09:03:40.380941+09:00"
+        },
+        "first_threshold": 6600.0,
+        "first_price": 6630.0,
+        "first_atr": 312.0,
+        "status": "추적중",
+        "outcome": "미주문",
+        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        "outcome_at": {
+          "__datetime__": "2026-11-11T09:03:47.474472+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "0ce819ddc9c24994a45ee012cfe3402f",
+        "ticker": "053030",
+        "name": "바이넥스",
+        "first_detected_at": {
+          "__datetime__": "2026-11-11T09:03:40.380941+09:00"
+        },
+        "first_threshold": 6600.0,
+        "first_price": 6630.0,
+        "first_atr": 312.0,
+        "status": "추적중",
+        "outcome": "미주문",
+        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        "outcome_at": {
+          "__datetime__": "2026-11-11T09:03:47.474472+09:00"
+        }
+      },
+      "state": "queued"
+    }
+  ],
+  "prepare_cursor": "4a2e91ace43348088349d32473646138",
   "deliver_cursor": "bc8578d554ae4e0bb278a5e1e1ea3ddf",
   "excluded_events": [
     {
