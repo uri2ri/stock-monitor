@@ -45,6 +45,21 @@
       "value_avg_5": 1760297926.0,
       "vol_active_days": 3,
       "status": "진입가능"
+    },
+    "035420": {
+      "time": "09:23",
+      "name": "NAVER",
+      "sector": "IT 서비스",
+      "market": "KOSPI",
+      "price": 197400.0,
+      "high20": 197300.0,
+      "atr20": 8130.0,
+      "gap_atr": 0.012,
+      "unit_shares": 61,
+      "value_avg_20": 137338571710.0,
+      "value_avg_5": 233250183200.0,
+      "vol_active_days": 4,
+      "status": "진입가능"
     }
   }
 }
