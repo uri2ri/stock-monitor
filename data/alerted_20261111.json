@@ -1,0 +1,35 @@
+{
+  "date": "20261111",
+  "alerted": {
+    "0088M0": {
+      "time": "09:03",
+      "name": "메쥬",
+      "sector": "의료·정밀기기",
+      "market": "KOSDAQ",
+      "price": 17180.0,
+      "high20": 16940.0,
+      "atr20": 1390.0,
+      "gap_atr": 0.173,
+      "unit_shares": 359,
+      "value_avg_20": 4262526958.0,
+      "value_avg_5": 5502201534.0,
+      "vol_active_days": 4,
+      "status": "진입가능"
+    },
+    "053030": {
+      "time": "09:03",
+      "name": "바이넥스",
+      "sector": "제약",
+      "market": "KOSDAQ",
+      "price": 6630.0,
+      "high20": 6600.0,
+      "atr20": 312.0,
+      "gap_atr": 0.096,
+      "unit_shares": 1602,
+      "value_avg_20": 637622424.0,
+      "value_avg_5": 1169943412.0,
+      "vol_active_days": 2,
+      "status": "진입가능"
+    }
+  }
+}
