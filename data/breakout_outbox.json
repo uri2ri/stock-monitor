@@ -1,8 +1,166 @@
 {
   "version": 1,
-  "events": [],
-  "plans": [],
-  "prepare_cursor": "b372c947eab5425595777c2e70e82425",
+  "events": [
+    {
+      "id": "719d2b5dc7ea4e10bf8d91abfed4a9ff",
+      "operation": "_set_outcome",
+      "args": [
+        "030190",
+        "자금부족",
+        "현금 부족(필요 1,564,850원 · 가용 450,921원)",
+        {
+          "__datetime__": "2026-11-11T10:05:00.199788+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "53e98e2ba03f4079b91b180f68e16252",
+      "operation": "_set_outcome",
+      "args": [
+        "053030",
+        "자금부족",
+        "현금 부족(필요 1,080,690원 · 가용 450,921원)",
+        {
+          "__datetime__": "2026-11-11T10:05:00.216773+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    }
+  ],
+  "plans": [
+    {
+      "id": "3412da3c59294b69ba7f51c2ffdbcb10",
+      "owner": "42936043808:1",
+      "events": [
+        "719d2b5dc7ea4e10bf8d91abfed4a9ff"
+      ],
+      "record": {
+        "account_type": "",
+        "account_key": "",
+        "order_side": "",
+        "order_qty": null,
+        "filled_qty": null,
+        "unverified_qty": null,
+        "execution_price": null,
+        "execution_state": "",
+        "execution_checked_at": null,
+        "event_id": "d452637d01164c0aaec54b48f0db4324",
+        "order_no": "",
+        "order_day": null,
+        "key": "3fb0fc3e-53fc-81f1-a44e-e5c71d3c27ed",
+        "page_id": "3fb0fc3e-53fc-81f1-a44e-e5c71d3c27ed",
+        "name": "NICE평가정보",
+        "ticker": "030190",
+        "first_detected_at": {
+          "__datetime__": "2026-10-16T09:13:00+09:00"
+        },
+        "first_threshold": 17050.0,
+        "first_price": 17190.0,
+        "first_atr": 511.0,
+        "status": "추적중",
+        "closed_reason": "",
+        "closed_at": null,
+        "outcome": "자금부족",
+        "outcome_reason": "현금 부족(필요 1,564,850원 · 가용 450,921원)",
+        "outcome_at": {
+          "__datetime__": "2026-11-11T10:05:00.199788+09:00"
+        },
+        "latest_close": 17990.0,
+        "latest_date": {
+          "__date__": "2026-11-10"
+        },
+        "latest_atr": 594.0,
+        "latest_line": 18400.0,
+        "change_pct": 5.51,
+        "atr_mult": 1.84,
+        "dist_to_line": 410.0,
+        "dist_to_line_atr": 0.69,
+        "level_state": "최초선위",
+        "new_breakout": "미해당",
+        "refresh_state": "갱신됨",
+        "refresh_note": "",
+        "user_memo": ""
+      },
+      "page_id": "3fb0fc3e-53fc-81f1-a44e-e5c71d3c27ed",
+      "fields": {
+        "outcome_reason": "현금 부족(필요 1,564,850원 · 가용 450,921원)",
+        "outcome_at": {
+          "__datetime__": "2026-11-11T10:05:00.199788+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "1b4127fa0fc04531b64a91402c7146f4",
+      "owner": "42936043808:1",
+      "events": [
+        "53e98e2ba03f4079b91b180f68e16252"
+      ],
+      "record": {
+        "account_type": "",
+        "account_key": "",
+        "order_side": "",
+        "order_qty": null,
+        "filled_qty": null,
+        "unverified_qty": null,
+        "execution_price": null,
+        "execution_state": "",
+        "execution_checked_at": null,
+        "event_id": "0ce819ddc9c24994a45ee012cfe3402f",
+        "order_no": "",
+        "order_day": null,
+        "key": "4150fc3e-53fc-81be-91a7-c782a86c7370",
+        "page_id": "4150fc3e-53fc-81be-91a7-c782a86c7370",
+        "name": "바이넥스",
+        "ticker": "053030",
+        "first_detected_at": {
+          "__datetime__": "2026-11-11T09:03:00+09:00"
+        },
+        "first_threshold": 6600.0,
+        "first_price": 6630.0,
+        "first_atr": 312.0,
+        "status": "추적중",
+        "closed_reason": "",
+        "closed_at": null,
+        "outcome": "자금부족",
+        "outcome_reason": "현금 부족(필요 1,080,690원 · 가용 450,921원)",
+        "outcome_at": {
+          "__datetime__": "2026-11-11T10:05:00.216773+09:00"
+        },
+        "latest_close": null,
+        "latest_date": null,
+        "latest_atr": null,
+        "latest_line": null,
+        "change_pct": null,
+        "atr_mult": null,
+        "dist_to_line": null,
+        "dist_to_line_atr": null,
+        "level_state": "",
+        "new_breakout": "",
+        "refresh_state": "",
+        "refresh_note": "",
+        "user_memo": ""
+      },
+      "page_id": "4150fc3e-53fc-81be-91a7-c782a86c7370",
+      "fields": {
+        "outcome_reason": "현금 부족(필요 1,080,690원 · 가용 450,921원)",
+        "outcome_at": {
+          "__datetime__": "2026-11-11T10:05:00.216773+09:00"
+        }
+      },
+      "state": "queued"
+    }
+  ],
+  "prepare_cursor": "52c5e52e5bbf4f76aa21166cc209443f",
   "deliver_cursor": "227ff8736dfa49048f0b843a045079c7",
   "excluded_events": [
     {
