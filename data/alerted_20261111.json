@@ -30,6 +30,21 @@
       "value_avg_5": 1169943412.0,
       "vol_active_days": 2,
       "status": "진입가능"
+    },
+    "030190": {
+      "time": "09:13",
+      "name": "NICE평가정보",
+      "sector": "IT 서비스",
+      "market": "KOSPI",
+      "price": 18410.0,
+      "high20": 18400.0,
+      "atr20": 594.0,
+      "gap_atr": 0.017,
+      "unit_shares": 841,
+      "value_avg_20": 1376744708.0,
+      "value_avg_5": 1760297926.0,
+      "vol_active_days": 3,
+      "status": "진입가능"
     }
   }
 }
