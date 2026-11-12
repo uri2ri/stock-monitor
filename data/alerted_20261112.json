@@ -32,6 +32,21 @@
       "value_avg_5": 3222117880.0,
       "vol_active_days": 5,
       "status": "진입가능"
+    },
+    "121600": {
+      "time": "10:43",
+      "name": "나노신소재",
+      "sector": "화학",
+      "market": "KOSDAQ",
+      "price": 77200.0,
+      "high20": 77000.0,
+      "atr20": 5297.0,
+      "gap_atr": 0.038,
+      "unit_shares": 94,
+      "value_avg_20": 11401503160.0,
+      "value_avg_5": 18693592520.0,
+      "vol_active_days": 3,
+      "status": "진입가능"
     }
   }
 }
