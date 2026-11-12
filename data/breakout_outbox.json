@@ -1,8 +1,90 @@
 {
   "version": 1,
-  "events": [],
-  "plans": [],
-  "prepare_cursor": "a6384c850279428e9255debf8c6fc11a",
+  "events": [
+    {
+      "id": "95ead62a4dba456b81e176da8438e936",
+      "operation": "_set_outcome",
+      "args": [
+        "006120",
+        "자금부족",
+        "현금 부족(필요 908,700원 · 가용 436,894원)",
+        {
+          "__datetime__": "2026-11-12T10:34:12.144990+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    }
+  ],
+  "plans": [
+    {
+      "id": "e0825c9a8beb4a4ab08d6d76610cf542",
+      "owner": "43135264689:1",
+      "events": [
+        "95ead62a4dba456b81e176da8438e936"
+      ],
+      "record": {
+        "account_type": "",
+        "account_key": "",
+        "order_side": "",
+        "order_qty": null,
+        "filled_qty": null,
+        "unverified_qty": null,
+        "execution_price": null,
+        "execution_state": "",
+        "execution_checked_at": null,
+        "event_id": "785abf4515a54dd2a89e6c2c45eaf949",
+        "order_no": "",
+        "order_day": null,
+        "key": "3e40fc3e-53fc-81b6-a808-c3439fc09533",
+        "page_id": "3e40fc3e-53fc-81b6-a808-c3439fc09533",
+        "name": "SK디스커버리",
+        "ticker": "006120",
+        "first_detected_at": {
+          "__datetime__": "2026-09-23T09:23:00+09:00"
+        },
+        "first_threshold": 58700.0,
+        "first_price": 58800.0,
+        "first_atr": 2545.0,
+        "status": "추적중",
+        "closed_reason": "",
+        "closed_at": null,
+        "outcome": "자금부족",
+        "outcome_reason": "현금 부족(필요 908,700원 · 가용 436,894원)",
+        "outcome_at": {
+          "__datetime__": "2026-11-12T10:34:12.144990+09:00"
+        },
+        "latest_close": 67800.0,
+        "latest_date": {
+          "__date__": "2026-11-11"
+        },
+        "latest_atr": 3721.0,
+        "latest_line": 69800.0,
+        "change_pct": 15.5,
+        "atr_mult": 3.58,
+        "dist_to_line": 2000.0,
+        "dist_to_line_atr": 0.54,
+        "level_state": "최초선위",
+        "new_breakout": "미해당",
+        "refresh_state": "갱신됨",
+        "refresh_note": "",
+        "user_memo": ""
+      },
+      "page_id": "3e40fc3e-53fc-81b6-a808-c3439fc09533",
+      "fields": {
+        "outcome": "자금부족",
+        "outcome_reason": "현금 부족(필요 908,700원 · 가용 436,894원)",
+        "outcome_at": {
+          "__datetime__": "2026-11-12T10:34:12.144990+09:00"
+        }
+      },
+      "state": "queued"
+    }
+  ],
+  "prepare_cursor": "95ead62a4dba456b81e176da8438e936",
   "deliver_cursor": "b0de1aa3e0d046889e3fbd8c061b92a2",
   "excluded_events": [
     {
