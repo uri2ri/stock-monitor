@@ -1,8 +1,111 @@
 {
   "version": 1,
-  "events": [],
-  "plans": [],
-  "prepare_cursor": "5ab3dc41e8d74f95b9bb6134352759f3",
+  "events": [
+    {
+      "id": "28a345697bb7463097bef0ffd6c7441c",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "218410",
+          "name": "RFHIC",
+          "high20": 55500.0,
+          "price": 56400.0,
+          "atr20": 5049.0
+        },
+        {
+          "__datetime__": "2026-11-12T09:23:35.057992+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "a6384c850279428e9255debf8c6fc11a",
+      "operation": "_set_outcome",
+      "args": [
+        "218410",
+        "주문접수",
+        "주문 접수(주문번호 0000009712)",
+        {
+          "__datetime__": "2026-11-12T09:24:05.790231+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "0000009712",
+        "order_day": {
+          "__date__": "2026-11-12"
+        },
+        "identity": {
+          "order_qty": 9,
+          "account_type": "모의",
+          "account_key": "d534c8d981289493d2f84a1e888ebc32d53dfd1df60dcd620d6e4707f0cc4a87",
+          "order_side": "매수"
+        }
+      }
+    }
+  ],
+  "plans": [
+    {
+      "id": "b0de1aa3e0d046889e3fbd8c061b92a2",
+      "owner": "43126872919:1",
+      "events": [
+        "28a345697bb7463097bef0ffd6c7441c",
+        "a6384c850279428e9255debf8c6fc11a"
+      ],
+      "record": {
+        "event_id": "28a345697bb7463097bef0ffd6c7441c",
+        "ticker": "218410",
+        "name": "RFHIC",
+        "first_detected_at": {
+          "__datetime__": "2026-11-12T09:23:35.057992+09:00"
+        },
+        "first_threshold": 55500.0,
+        "first_price": 56400.0,
+        "first_atr": 5049.0,
+        "status": "추적중",
+        "outcome": "주문접수",
+        "outcome_reason": "주문 접수(주문번호 0000009712)",
+        "outcome_at": {
+          "__datetime__": "2026-11-12T09:24:05.790231+09:00"
+        },
+        "order_no": "0000009712",
+        "order_day": {
+          "__date__": "2026-11-12"
+        },
+        "order_qty": 9,
+        "account_type": "모의",
+        "account_key": "d534c8d981289493d2f84a1e888ebc32d53dfd1df60dcd620d6e4707f0cc4a87",
+        "order_side": "매수"
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "28a345697bb7463097bef0ffd6c7441c",
+        "ticker": "218410",
+        "name": "RFHIC",
+        "first_detected_at": {
+          "__datetime__": "2026-11-12T09:23:35.057992+09:00"
+        },
+        "first_threshold": 55500.0,
+        "first_price": 56400.0,
+        "first_atr": 5049.0,
+        "status": "추적중",
+        "outcome": "주문접수",
+        "outcome_reason": "주문 접수(주문번호 0000009712)",
+        "outcome_at": {
+          "__datetime__": "2026-11-12T09:24:05.790231+09:00"
+        },
+        "order_no": "0000009712",
+        "order_day": {
+          "__date__": "2026-11-12"
+        },
+        "order_qty": 9,
+        "account_type": "모의",
+        "account_key": "d534c8d981289493d2f84a1e888ebc32d53dfd1df60dcd620d6e4707f0cc4a87",
+        "order_side": "매수"
+      },
+      "state": "queued"
+    }
+  ],
+  "prepare_cursor": "a6384c850279428e9255debf8c6fc11a",
   "deliver_cursor": "d0d4b372f7d647fbbf6532c43a6a58d8",
   "excluded_events": [
     {
