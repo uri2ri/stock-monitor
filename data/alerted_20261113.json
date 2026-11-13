@@ -1,0 +1,20 @@
+{
+  "date": "20261113",
+  "alerted": {
+    "042500": {
+      "time": "09:13",
+      "name": "링네트",
+      "sector": "IT 서비스",
+      "market": "KOSDAQ",
+      "price": 4430.0,
+      "high20": 4395.0,
+      "atr20": 140.0,
+      "gap_atr": 0.25,
+      "unit_shares": 3571,
+      "value_avg_20": 467598079.0,
+      "value_avg_5": 534079942.0,
+      "vol_active_days": 3,
+      "status": "진입가능"
+    }
+  }
+}
