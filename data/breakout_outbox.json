@@ -1,8 +1,166 @@
 {
   "version": 1,
-  "events": [],
-  "plans": [],
-  "prepare_cursor": "d5c539f0a80a4f9389ab19643cc80d40",
+  "events": [
+    {
+      "id": "59e389f8da30408e83b6c286d9762348",
+      "operation": "_set_outcome",
+      "args": [
+        "017670",
+        "미주문",
+        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        {
+          "__datetime__": "2026-11-13T15:23:41.635883+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    },
+    {
+      "id": "eec89f005e4f4553a274c6f5e53fcb7a",
+      "operation": "_set_outcome",
+      "args": [
+        "298050",
+        "미주문",
+        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        {
+          "__datetime__": "2026-11-13T15:23:41.723415+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    }
+  ],
+  "plans": [
+    {
+      "id": "ddb9ea14ba734760b9caf01531c7bc2e",
+      "owner": "43378315025:1",
+      "events": [
+        "59e389f8da30408e83b6c286d9762348"
+      ],
+      "record": {
+        "account_type": "",
+        "account_key": "",
+        "order_side": "",
+        "order_qty": null,
+        "filled_qty": null,
+        "unverified_qty": null,
+        "execution_price": null,
+        "execution_state": "",
+        "execution_checked_at": null,
+        "event_id": "18826acd02304ed498fe22ca7be68c89",
+        "order_no": "",
+        "order_day": null,
+        "key": "4170fc3e-53fc-8167-a2ae-e15d298e095e",
+        "page_id": "4170fc3e-53fc-8167-a2ae-e15d298e095e",
+        "name": "SK텔레콤",
+        "ticker": "017670",
+        "first_detected_at": {
+          "__datetime__": "2026-11-13T09:23:00+09:00"
+        },
+        "first_threshold": 83900.0,
+        "first_price": 84600.0,
+        "first_atr": 3932.0,
+        "status": "추적중",
+        "closed_reason": "",
+        "closed_at": null,
+        "outcome": "미주문",
+        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        "outcome_at": {
+          "__datetime__": "2026-11-13T15:23:41.635883+09:00"
+        },
+        "latest_close": null,
+        "latest_date": null,
+        "latest_atr": null,
+        "latest_line": null,
+        "change_pct": null,
+        "atr_mult": null,
+        "dist_to_line": null,
+        "dist_to_line_atr": null,
+        "level_state": "",
+        "new_breakout": "",
+        "refresh_state": "",
+        "refresh_note": "",
+        "user_memo": ""
+      },
+      "page_id": "4170fc3e-53fc-8167-a2ae-e15d298e095e",
+      "fields": {
+        "outcome": "미주문",
+        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        "outcome_at": {
+          "__datetime__": "2026-11-13T15:23:41.635883+09:00"
+        }
+      },
+      "state": "queued"
+    },
+    {
+      "id": "45d8f2654fca4f3f9ee8b23fe205d64b",
+      "owner": "43378315025:1",
+      "events": [
+        "eec89f005e4f4553a274c6f5e53fcb7a"
+      ],
+      "record": {
+        "account_type": "",
+        "account_key": "",
+        "order_side": "",
+        "order_qty": null,
+        "filled_qty": null,
+        "unverified_qty": null,
+        "execution_price": null,
+        "execution_state": "",
+        "execution_checked_at": null,
+        "event_id": "32adf84ab1b8404a9ad3783de1469514",
+        "order_no": "",
+        "order_day": null,
+        "key": "4170fc3e-53fc-81ba-9910-eba69220be44",
+        "page_id": "4170fc3e-53fc-81ba-9910-eba69220be44",
+        "name": "HS효성첨단소재",
+        "ticker": "298050",
+        "first_detected_at": {
+          "__datetime__": "2026-11-13T11:13:00+09:00"
+        },
+        "first_threshold": 165300.0,
+        "first_price": 167500.0,
+        "first_atr": 7444.0,
+        "status": "추적중",
+        "closed_reason": "",
+        "closed_at": null,
+        "outcome": "미주문",
+        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        "outcome_at": {
+          "__datetime__": "2026-11-13T15:23:41.723415+09:00"
+        },
+        "latest_close": null,
+        "latest_date": null,
+        "latest_atr": null,
+        "latest_line": null,
+        "change_pct": null,
+        "atr_mult": null,
+        "dist_to_line": null,
+        "dist_to_line_atr": null,
+        "level_state": "",
+        "new_breakout": "",
+        "refresh_state": "",
+        "refresh_note": "",
+        "user_memo": ""
+      },
+      "page_id": "4170fc3e-53fc-81ba-9910-eba69220be44",
+      "fields": {
+        "outcome": "미주문",
+        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        "outcome_at": {
+          "__datetime__": "2026-11-13T15:23:41.723415+09:00"
+        }
+      },
+      "state": "queued"
+    }
+  ],
+  "prepare_cursor": "eec89f005e4f4553a274c6f5e53fcb7a",
   "deliver_cursor": "e8cb44be693041bab2bbcb5ad46ec843",
   "excluded_events": [
     {
