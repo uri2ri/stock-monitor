@@ -14,7 +14,9 @@
       "value_avg_20": 467598079.0,
       "value_avg_5": 534079942.0,
       "vol_active_days": 3,
-      "status": "진입가능"
+      "status": "진입가능",
+      "price_10am": 4455.0,
+      "time_10am": "10:03"
     },
     "017670": {
       "time": "09:23",
@@ -29,7 +31,9 @@
       "value_avg_20": 63187581110.0,
       "value_avg_5": 98636223980.0,
       "vol_active_days": 5,
-      "status": "진입가능"
+      "status": "진입가능",
+      "price_10am": 85300.0,
+      "time_10am": "10:03"
     },
     "03473K": {
       "time": "09:53",
@@ -44,7 +48,9 @@
       "value_avg_20": 491107025.0,
       "value_avg_5": 532364500.0,
       "vol_active_days": 2,
-      "status": "진입가능"
+      "status": "진입가능",
+      "price_10am": 395500.0,
+      "time_10am": "10:03"
     }
   }
 }
