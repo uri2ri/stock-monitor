@@ -30,6 +30,21 @@
       "value_avg_5": 98636223980.0,
       "vol_active_days": 5,
       "status": "진입가능"
+    },
+    "03473K": {
+      "time": "09:53",
+      "name": "SK우",
+      "sector": "미분류",
+      "market": "KOSPI",
+      "price": 395500.0,
+      "high20": 392500.0,
+      "atr20": 20953.0,
+      "gap_atr": 0.143,
+      "unit_shares": 23,
+      "value_avg_20": 491107025.0,
+      "value_avg_5": 532364500.0,
+      "vol_active_days": 2,
+      "status": "진입가능"
     }
   }
 }
