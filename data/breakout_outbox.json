@@ -1,8 +1,88 @@
 {
   "version": 1,
-  "events": [],
-  "plans": [],
-  "prepare_cursor": "eec43d4bbc064cbc9d8074aa39364c09",
+  "events": [
+    {
+      "id": "32adf84ab1b8404a9ad3783de1469514",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "298050",
+          "name": "HS효성첨단소재",
+          "high20": 165300.0,
+          "price": 167500.0,
+          "atr20": 7444.0
+        },
+        {
+          "__datetime__": "2026-11-13T11:13:38.115872+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "b3900f2334a04a658d8fdf80fb8f0800",
+      "operation": "_set_outcome",
+      "args": [
+        "298050",
+        "자금부족",
+        "현금 부족(필요 1,005,000원 · 가용 436,894원)",
+        {
+          "__datetime__": "2026-11-13T11:14:23.247338+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    }
+  ],
+  "plans": [
+    {
+      "id": "e8cb44be693041bab2bbcb5ad46ec843",
+      "owner": "43350556741:1",
+      "events": [
+        "32adf84ab1b8404a9ad3783de1469514",
+        "b3900f2334a04a658d8fdf80fb8f0800"
+      ],
+      "record": {
+        "event_id": "32adf84ab1b8404a9ad3783de1469514",
+        "ticker": "298050",
+        "name": "HS효성첨단소재",
+        "first_detected_at": {
+          "__datetime__": "2026-11-13T11:13:38.115872+09:00"
+        },
+        "first_threshold": 165300.0,
+        "first_price": 167500.0,
+        "first_atr": 7444.0,
+        "status": "추적중",
+        "outcome": "자금부족",
+        "outcome_reason": "현금 부족(필요 1,005,000원 · 가용 436,894원)",
+        "outcome_at": {
+          "__datetime__": "2026-11-13T11:14:23.247338+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "32adf84ab1b8404a9ad3783de1469514",
+        "ticker": "298050",
+        "name": "HS효성첨단소재",
+        "first_detected_at": {
+          "__datetime__": "2026-11-13T11:13:38.115872+09:00"
+        },
+        "first_threshold": 165300.0,
+        "first_price": 167500.0,
+        "first_atr": 7444.0,
+        "status": "추적중",
+        "outcome": "자금부족",
+        "outcome_reason": "현금 부족(필요 1,005,000원 · 가용 436,894원)",
+        "outcome_at": {
+          "__datetime__": "2026-11-13T11:14:23.247338+09:00"
+        }
+      },
+      "state": "queued"
+    }
+  ],
+  "prepare_cursor": "b3900f2334a04a658d8fdf80fb8f0800",
   "deliver_cursor": "e5fce50205a64b63ab37e91840da1297",
   "excluded_events": [
     {
