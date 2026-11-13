@@ -15,6 +15,21 @@
       "value_avg_5": 534079942.0,
       "vol_active_days": 3,
       "status": "진입가능"
+    },
+    "017670": {
+      "time": "09:23",
+      "name": "SK텔레콤",
+      "sector": "통신",
+      "market": "KOSPI",
+      "price": 84600.0,
+      "high20": 83900.0,
+      "atr20": 3932.0,
+      "gap_atr": 0.178,
+      "unit_shares": 127,
+      "value_avg_20": 63187581110.0,
+      "value_avg_5": 98636223980.0,
+      "vol_active_days": 5,
+      "status": "진입가능"
     }
   }
 }
