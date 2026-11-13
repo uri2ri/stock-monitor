@@ -51,6 +51,21 @@
       "status": "진입가능",
       "price_10am": 395500.0,
       "time_10am": "10:03"
+    },
+    "298050": {
+      "time": "11:13",
+      "name": "HS효성첨단소재",
+      "sector": "화학",
+      "market": "KOSPI",
+      "price": 167500.0,
+      "high20": 165300.0,
+      "atr20": 7444.0,
+      "gap_atr": 0.296,
+      "unit_shares": 67,
+      "value_avg_20": 1426974010.0,
+      "value_avg_5": 1703066040.0,
+      "vol_active_days": 3,
+      "status": "진입가능"
     }
   }
 }
