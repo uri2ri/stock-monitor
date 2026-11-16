@@ -2,7 +2,7 @@
   "version": 1,
   "events": [],
   "plans": [],
-  "prepare_cursor": "234e91c6c0eb428c93635a10e7ce6f91",
+  "prepare_cursor": "dfb78711e24146e784d00a04b3d113f6",
   "deliver_cursor": "b11f566aa2454db7810388e3186159d9",
   "excluded_events": [
     {
@@ -13654,6 +13654,27 @@
       },
       "reason": "held_without_active_track",
       "resolved_by": "43792851581:1"
+    },
+    {
+      "event": {
+        "id": "1cc7484cd974432ea1f211e642fb8d77",
+        "operation": "_set_outcome",
+        "args": [
+          "218410",
+          "자금부족",
+          "현금 부족(필요 580,000원 · 가용 436,894원)",
+          {
+            "__datetime__": "2026-11-16T11:43:58.308589+09:00"
+          }
+        ],
+        "kwargs": {
+          "order_no": "",
+          "order_day": null,
+          "identity": null
+        }
+      },
+      "reason": "held_without_active_track",
+      "resolved_by": "43793839178:1"
     }
   ]
 }
