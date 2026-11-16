@@ -2,7 +2,7 @@
   "version": 1,
   "events": [],
   "plans": [],
-  "prepare_cursor": "e9af20722e994690a80a7636a97bbfe0",
+  "prepare_cursor": "7a67a99692424f5490b0fbc8488f635e",
   "deliver_cursor": "72e2c7c02b7743d0a2f202e6c6668160",
   "excluded_events": [
     {
@@ -14158,6 +14158,27 @@
       },
       "reason": "held_without_active_track",
       "resolved_by": "43817506536:1"
+    },
+    {
+      "event": {
+        "id": "ef90ada9fdc44ba984565eb91f94aea2",
+        "operation": "_set_outcome",
+        "args": [
+          "218410",
+          "미주문",
+          "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+          {
+            "__datetime__": "2026-11-16T15:43:42.723042+09:00"
+          }
+        ],
+        "kwargs": {
+          "order_no": "",
+          "order_day": null,
+          "identity": null
+        }
+      },
+      "reason": "held_without_active_track",
+      "resolved_by": "43818679930:1"
     }
   ]
 }
