@@ -1,8 +1,88 @@
 {
   "version": 1,
-  "events": [],
-  "plans": [],
-  "prepare_cursor": "acc2e3d629f24e839d60bae94ee27408",
+  "events": [
+    {
+      "id": "e18d3dd7376642adb5761590edf63322",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "064960",
+          "name": "SNT모티브",
+          "high20": 26000.0,
+          "price": 26100.0,
+          "atr20": 1108.0
+        },
+        {
+          "__datetime__": "2026-11-16T09:23:37.287167+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "61c711f5218543c2862c2788c9027254",
+      "operation": "_set_outcome",
+      "args": [
+        "064960",
+        "자금부족",
+        "현금 부족(필요 1,174,500원 · 가용 436,894원)",
+        {
+          "__datetime__": "2026-11-16T09:24:05.287573+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    }
+  ],
+  "plans": [
+    {
+      "id": "b11f566aa2454db7810388e3186159d9",
+      "owner": "43780038041:1",
+      "events": [
+        "e18d3dd7376642adb5761590edf63322",
+        "61c711f5218543c2862c2788c9027254"
+      ],
+      "record": {
+        "event_id": "e18d3dd7376642adb5761590edf63322",
+        "ticker": "064960",
+        "name": "SNT모티브",
+        "first_detected_at": {
+          "__datetime__": "2026-11-16T09:23:37.287167+09:00"
+        },
+        "first_threshold": 26000.0,
+        "first_price": 26100.0,
+        "first_atr": 1108.0,
+        "status": "추적중",
+        "outcome": "자금부족",
+        "outcome_reason": "현금 부족(필요 1,174,500원 · 가용 436,894원)",
+        "outcome_at": {
+          "__datetime__": "2026-11-16T09:24:05.287573+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "e18d3dd7376642adb5761590edf63322",
+        "ticker": "064960",
+        "name": "SNT모티브",
+        "first_detected_at": {
+          "__datetime__": "2026-11-16T09:23:37.287167+09:00"
+        },
+        "first_threshold": 26000.0,
+        "first_price": 26100.0,
+        "first_atr": 1108.0,
+        "status": "추적중",
+        "outcome": "자금부족",
+        "outcome_reason": "현금 부족(필요 1,174,500원 · 가용 436,894원)",
+        "outcome_at": {
+          "__datetime__": "2026-11-16T09:24:05.287573+09:00"
+        }
+      },
+      "state": "queued"
+    }
+  ],
+  "prepare_cursor": "61c711f5218543c2862c2788c9027254",
   "deliver_cursor": "45d8f2654fca4f3f9ee8b23fe205d64b",
   "excluded_events": [
     {
