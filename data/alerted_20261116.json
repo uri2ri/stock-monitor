@@ -34,6 +34,21 @@
       "status": "진입가능",
       "price_10am": 56800.0,
       "time_10am": "10:03"
+    },
+    "175330": {
+      "time": "12:03",
+      "name": "JB금융지주",
+      "sector": "금융",
+      "market": "KOSPI",
+      "price": 27425.0,
+      "high20": 27400.0,
+      "atr20": 1190.0,
+      "gap_atr": 0.021,
+      "unit_shares": 420,
+      "value_avg_20": 8804331742.0,
+      "value_avg_5": 9164763500.0,
+      "vol_active_days": 2,
+      "status": "진입가능"
     }
   }
 }
