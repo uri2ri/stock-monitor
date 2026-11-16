@@ -2,7 +2,7 @@
   "version": 1,
   "events": [],
   "plans": [],
-  "prepare_cursor": "61c711f5218543c2862c2788c9027254",
+  "prepare_cursor": "61adcd50cfe64c4aa4df7cdd56bc0f23",
   "deliver_cursor": "b11f566aa2454db7810388e3186159d9",
   "excluded_events": [
     {
@@ -13360,6 +13360,48 @@
       },
       "reason": "held_without_active_track",
       "resolved_by": "42771483835:1"
+    },
+    {
+      "event": {
+        "id": "425a5db00ba643129f6f5ec0cc71ead8",
+        "operation": "record_breakout",
+        "args": [
+          {
+            "ticker": "218410",
+            "name": "RFHIC",
+            "high20": 57600.0,
+            "price": 58000.0,
+            "atr20": 4887.0
+          },
+          {
+            "__datetime__": "2026-11-16T09:33:30.946961+09:00"
+          }
+        ],
+        "kwargs": {}
+      },
+      "reason": "held_without_active_track",
+      "resolved_by": "43781033472:1"
+    },
+    {
+      "event": {
+        "id": "0e310dad543445ef9971bb38be4c14d2",
+        "operation": "_set_outcome",
+        "args": [
+          "218410",
+          "자금부족",
+          "현금 부족(필요 580,000원 · 가용 436,894원)",
+          {
+            "__datetime__": "2026-11-16T09:34:01.019365+09:00"
+          }
+        ],
+        "kwargs": {
+          "order_no": "",
+          "order_day": null,
+          "identity": null
+        }
+      },
+      "reason": "held_without_active_track",
+      "resolved_by": "43781033472:1"
     }
   ]
 }
