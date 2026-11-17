@@ -1,0 +1,20 @@
+{
+  "date": "20261117",
+  "alerted": {
+    "225190": {
+      "time": "09:13",
+      "name": "LK삼양",
+      "sector": "의료·정밀기기",
+      "market": "KOSDAQ",
+      "price": 5160.0,
+      "high20": 5100.0,
+      "atr20": 508.0,
+      "gap_atr": 0.118,
+      "unit_shares": 984,
+      "value_avg_20": 3955566817.0,
+      "value_avg_5": 3794076409.0,
+      "vol_active_days": 1,
+      "status": "진입가능"
+    }
+  }
+}
