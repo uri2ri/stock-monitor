@@ -32,6 +32,21 @@
       "value_avg_5": 6286636080.0,
       "vol_active_days": 0,
       "status": "진입가능"
+    },
+    "003090": {
+      "time": "10:23",
+      "name": "대웅",
+      "sector": "제약",
+      "market": "KOSPI",
+      "price": 16820.0,
+      "high20": 16730.0,
+      "atr20": 638.0,
+      "gap_atr": 0.141,
+      "unit_shares": 783,
+      "value_avg_20": 970819553.0,
+      "value_avg_5": 925723462.0,
+      "vol_active_days": 1,
+      "status": "진입가능"
     }
   }
 }
