@@ -1,90 +1,9 @@
 {
   "version": 1,
-  "events": [
-    {
-      "id": "b3f162df2dc44b569fa965501673ac3f",
-      "operation": "_set_outcome",
-      "args": [
-        "003090",
-        "자금부족",
-        "현금 부족(필요 1,328,780원 · 가용 436,894원)",
-        {
-          "__datetime__": "2026-11-17T10:34:01.889404+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    }
-  ],
-  "plans": [
-    {
-      "id": "c14014239a1d43819187eda05eba806c",
-      "owner": "43996425639:1",
-      "events": [
-        "b3f162df2dc44b569fa965501673ac3f"
-      ],
-      "record": {
-        "account_type": "",
-        "account_key": "",
-        "order_side": "",
-        "order_qty": null,
-        "filled_qty": null,
-        "unverified_qty": null,
-        "execution_price": null,
-        "execution_state": "",
-        "execution_checked_at": null,
-        "event_id": "362ce3c13a5a45ff82fbf95cd8ea8e64",
-        "order_no": "",
-        "order_day": null,
-        "key": "40f0fc3e-53fc-81f7-a466-d9c2aed3569e",
-        "page_id": "40f0fc3e-53fc-81f7-a466-d9c2aed3569e",
-        "name": "대웅",
-        "ticker": "003090",
-        "first_detected_at": {
-          "__datetime__": "2026-11-05T09:03:00+09:00"
-        },
-        "first_threshold": 16180.0,
-        "first_price": 16310.0,
-        "first_atr": 586.0,
-        "status": "추적중",
-        "closed_reason": "",
-        "closed_at": null,
-        "outcome": "자금부족",
-        "outcome_reason": "현금 부족(필요 1,328,780원 · 가용 436,894원)",
-        "outcome_at": {
-          "__datetime__": "2026-11-17T10:34:01.889404+09:00"
-        },
-        "latest_close": 16150.0,
-        "latest_date": {
-          "__date__": "2026-11-16"
-        },
-        "latest_atr": 638.0,
-        "latest_line": 16730.0,
-        "change_pct": -0.19,
-        "atr_mult": -0.05,
-        "dist_to_line": 580.0,
-        "dist_to_line_atr": 0.91,
-        "level_state": "최초선아래",
-        "new_breakout": "미해당",
-        "refresh_state": "갱신됨",
-        "refresh_note": "",
-        "user_memo": ""
-      },
-      "page_id": "40f0fc3e-53fc-81f7-a466-d9c2aed3569e",
-      "fields": {
-        "outcome_reason": "현금 부족(필요 1,328,780원 · 가용 436,894원)",
-        "outcome_at": {
-          "__datetime__": "2026-11-17T10:34:01.889404+09:00"
-        }
-      },
-      "state": "queued"
-    }
-  ],
+  "events": [],
+  "plans": [],
   "prepare_cursor": "b3f162df2dc44b569fa965501673ac3f",
-  "deliver_cursor": "90f39d3ed4484a619148af2262948561",
+  "deliver_cursor": "c14014239a1d43819187eda05eba806c",
   "excluded_events": [
     {
       "event": {
