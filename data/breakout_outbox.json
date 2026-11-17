@@ -1,88 +1,9 @@
 {
   "version": 1,
-  "events": [
-    {
-      "id": "7ff5cf581ce541f4b53be56db679f59d",
-      "operation": "_set_outcome",
-      "args": [
-        "225190",
-        "자금부족",
-        "현금 부족(필요 516,000원 · 가용 436,894원)",
-        {
-          "__datetime__": "2026-11-17T09:44:03.398907+09:00"
-        }
-      ],
-      "kwargs": {
-        "order_no": "",
-        "order_day": null,
-        "identity": null
-      }
-    }
-  ],
-  "plans": [
-    {
-      "id": "0ffc4d49ec78494199464a79398be4ae",
-      "owner": "43989862344:1",
-      "events": [
-        "7ff5cf581ce541f4b53be56db679f59d"
-      ],
-      "record": {
-        "account_type": "",
-        "account_key": "",
-        "order_side": "",
-        "order_qty": null,
-        "filled_qty": null,
-        "unverified_qty": null,
-        "execution_price": null,
-        "execution_state": "",
-        "execution_checked_at": null,
-        "event_id": "ca3d688d3bae4e6699788c2adb3c2747",
-        "order_no": "",
-        "order_day": null,
-        "key": "41b0fc3e-53fc-81a8-829a-c7ea75cf59cb",
-        "page_id": "41b0fc3e-53fc-81a8-829a-c7ea75cf59cb",
-        "name": "LK삼양",
-        "ticker": "225190",
-        "first_detected_at": {
-          "__datetime__": "2026-11-17T09:13:00+09:00"
-        },
-        "first_threshold": 5100.0,
-        "first_price": 5160.0,
-        "first_atr": 508.0,
-        "status": "추적중",
-        "closed_reason": "",
-        "closed_at": null,
-        "outcome": "자금부족",
-        "outcome_reason": "현금 부족(필요 516,000원 · 가용 436,894원)",
-        "outcome_at": {
-          "__datetime__": "2026-11-17T09:44:03.398907+09:00"
-        },
-        "latest_close": null,
-        "latest_date": null,
-        "latest_atr": null,
-        "latest_line": null,
-        "change_pct": null,
-        "atr_mult": null,
-        "dist_to_line": null,
-        "dist_to_line_atr": null,
-        "level_state": "",
-        "new_breakout": "",
-        "refresh_state": "",
-        "refresh_note": "",
-        "user_memo": ""
-      },
-      "page_id": "41b0fc3e-53fc-81a8-829a-c7ea75cf59cb",
-      "fields": {
-        "outcome_reason": "현금 부족(필요 516,000원 · 가용 436,894원)",
-        "outcome_at": {
-          "__datetime__": "2026-11-17T09:44:03.398907+09:00"
-        }
-      },
-      "state": "queued"
-    }
-  ],
+  "events": [],
+  "plans": [],
   "prepare_cursor": "7ff5cf581ce541f4b53be56db679f59d",
-  "deliver_cursor": "aea70b72d68242878667020eb133f6f1",
+  "deliver_cursor": "0ffc4d49ec78494199464a79398be4ae",
   "excluded_events": [
     {
       "event": {
