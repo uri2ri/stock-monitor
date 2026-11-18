@@ -1,0 +1,20 @@
+{
+  "date": "20261118",
+  "alerted": {
+    "012200": {
+      "time": "09:03",
+      "name": "계양전기",
+      "sector": "기계·장비",
+      "market": "KOSPI",
+      "price": 3210.0,
+      "high20": 2962.0,
+      "atr20": 261.0,
+      "gap_atr": 0.95,
+      "unit_shares": 1915,
+      "value_avg_20": 2248135435.0,
+      "value_avg_5": 6156551289.0,
+      "vol_active_days": 3,
+      "status": "추격금지"
+    }
+  }
+}
