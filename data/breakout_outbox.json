@@ -2,7 +2,7 @@
   "version": 1,
   "events": [],
   "plans": [],
-  "prepare_cursor": "906f7d3a16e347978fb24f73a98032ad",
+  "prepare_cursor": "c43f293d9deb4708a83436317a4d8aab",
   "deliver_cursor": "8d43d2da796f46a4b128ae3cae55e003",
   "excluded_events": [
     {
@@ -14200,6 +14200,27 @@
       },
       "reason": "held_without_active_track",
       "resolved_by": "43819845431:1"
+    },
+    {
+      "event": {
+        "id": "c43f293d9deb4708a83436317a4d8aab",
+        "operation": "record_breakout",
+        "args": [
+          {
+            "ticker": "218410",
+            "name": "RFHIC",
+            "high20": 58500.0,
+            "price": 58600.0,
+            "atr20": 4907.0
+          },
+          {
+            "__datetime__": "2026-11-18T09:43:32.842836+09:00"
+          }
+        ],
+        "kwargs": {}
+      },
+      "reason": "held_without_active_track",
+      "resolved_by": "44210089966:1"
     }
   ]
 }
