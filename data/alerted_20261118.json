@@ -15,6 +15,21 @@
       "value_avg_5": 6156551289.0,
       "vol_active_days": 3,
       "status": "추격금지"
+    },
+    "218410": {
+      "time": "09:43",
+      "name": "RFHIC",
+      "sector": "전기전자",
+      "market": "KOSDAQ",
+      "price": 58600.0,
+      "high20": 58500.0,
+      "atr20": 4907.0,
+      "gap_atr": 0.02,
+      "unit_shares": 101,
+      "value_avg_20": 27377812292.0,
+      "value_avg_5": 31599976300.0,
+      "vol_active_days": 4,
+      "status": "진입가능"
     }
   }
 }
