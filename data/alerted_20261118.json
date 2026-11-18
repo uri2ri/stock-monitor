@@ -34,6 +34,21 @@
       "status": "진입가능",
       "price_10am": 58100.0,
       "time_10am": "10:03"
+    },
+    "000120": {
+      "time": "12:53",
+      "name": "CJ대한통운",
+      "sector": "운송·창고",
+      "market": "KOSPI",
+      "price": 70000.0,
+      "high20": 69900.0,
+      "atr20": 1927.0,
+      "gap_atr": 0.052,
+      "unit_shares": 259,
+      "value_avg_20": 3008131370.0,
+      "value_avg_5": 3531100200.0,
+      "vol_active_days": 3,
+      "status": "진입가능"
     }
   }
 }
