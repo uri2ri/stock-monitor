@@ -1,8 +1,62 @@
 {
   "version": 1,
-  "events": [],
-  "plans": [],
-  "prepare_cursor": "c43f293d9deb4708a83436317a4d8aab",
+  "events": [
+    {
+      "id": "94bdee35d427407dbbf13c41eb4d609b",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "000120",
+          "name": "CJ대한통운",
+          "high20": 69900.0,
+          "price": 70000.0,
+          "atr20": 1927.0
+        },
+        {
+          "__datetime__": "2026-11-18T12:53:28.834963+09:00"
+        }
+      ],
+      "kwargs": {}
+    }
+  ],
+  "plans": [
+    {
+      "id": "a293e5eb9e4149819d62ec122e6748c0",
+      "owner": "44233485036:1",
+      "events": [
+        "94bdee35d427407dbbf13c41eb4d609b"
+      ],
+      "record": {
+        "event_id": "94bdee35d427407dbbf13c41eb4d609b",
+        "ticker": "000120",
+        "name": "CJ대한통운",
+        "first_detected_at": {
+          "__datetime__": "2026-11-18T12:53:28.834963+09:00"
+        },
+        "first_threshold": 69900.0,
+        "first_price": 70000.0,
+        "first_atr": 1927.0,
+        "status": "추적중",
+        "outcome": ""
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "94bdee35d427407dbbf13c41eb4d609b",
+        "ticker": "000120",
+        "name": "CJ대한통운",
+        "first_detected_at": {
+          "__datetime__": "2026-11-18T12:53:28.834963+09:00"
+        },
+        "first_threshold": 69900.0,
+        "first_price": 70000.0,
+        "first_atr": 1927.0,
+        "status": "추적중",
+        "outcome": ""
+      },
+      "state": "queued"
+    }
+  ],
+  "prepare_cursor": "94bdee35d427407dbbf13c41eb4d609b",
   "deliver_cursor": "8d43d2da796f46a4b128ae3cae55e003",
   "excluded_events": [
     {
