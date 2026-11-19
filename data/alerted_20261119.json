@@ -30,6 +30,36 @@
       "value_avg_5": 8175773560.0,
       "vol_active_days": 3,
       "status": "진입가능"
+    },
+    "476080": {
+      "time": "10:43",
+      "name": "M83",
+      "sector": "오락·문화",
+      "market": "KOSDAQ",
+      "price": 5930.0,
+      "high20": 5520.0,
+      "atr20": 410.0,
+      "gap_atr": 1.0,
+      "unit_shares": 1219,
+      "value_avg_20": 681240474.0,
+      "value_avg_5": 2465710488.0,
+      "vol_active_days": 4,
+      "status": "추격금지"
+    },
+    "002350": {
+      "time": "10:43",
+      "name": "넥센타이어",
+      "sector": "화학",
+      "market": "KOSPI",
+      "price": 6190.0,
+      "high20": 6180.0,
+      "atr20": 225.0,
+      "gap_atr": 0.044,
+      "unit_shares": 2222,
+      "value_avg_20": 1026473772.0,
+      "value_avg_5": 956657526.0,
+      "vol_active_days": 2,
+      "status": "진입가능"
     }
   }
 }
