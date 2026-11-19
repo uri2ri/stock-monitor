@@ -1,8 +1,89 @@
 {
   "version": 1,
-  "events": [],
-  "plans": [],
-  "prepare_cursor": "c075f989a2cd4509a59c50d1e4b3733d",
+  "events": [
+    {
+      "id": "3bdea6c3f20440f9862c9219bd3ae928",
+      "operation": "_set_outcome",
+      "args": [
+        "097950",
+        "미주문",
+        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        {
+          "__datetime__": "2026-11-19T15:23:44.272740+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    }
+  ],
+  "plans": [
+    {
+      "id": "8b7072e7923540a6b6664d791430c1a1",
+      "owner": "44471756000:1",
+      "events": [
+        "3bdea6c3f20440f9862c9219bd3ae928"
+      ],
+      "record": {
+        "account_type": "",
+        "account_key": "",
+        "order_side": "",
+        "order_qty": null,
+        "filled_qty": null,
+        "unverified_qty": null,
+        "execution_price": null,
+        "execution_state": "",
+        "execution_checked_at": null,
+        "event_id": "7962695647b049eb92593c3f5b385adb",
+        "order_no": "",
+        "order_day": null,
+        "key": "3f30fc3e-53fc-8168-8b90-d9477aa621d8",
+        "page_id": "3f30fc3e-53fc-8168-8b90-d9477aa621d8",
+        "name": "CJ제일제당",
+        "ticker": "097950",
+        "first_detected_at": {
+          "__datetime__": "2026-10-08T10:03:00+09:00"
+        },
+        "first_threshold": 184500.0,
+        "first_price": 184800.0,
+        "first_atr": 4024.0,
+        "status": "추적중",
+        "closed_reason": "",
+        "closed_at": null,
+        "outcome": "미주문",
+        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        "outcome_at": {
+          "__datetime__": "2026-11-19T15:23:44.272740+09:00"
+        },
+        "latest_close": 183500.0,
+        "latest_date": {
+          "__date__": "2026-11-18"
+        },
+        "latest_atr": 5227.0,
+        "latest_line": 186200.0,
+        "change_pct": -0.54,
+        "atr_mult": -0.25,
+        "dist_to_line": 2700.0,
+        "dist_to_line_atr": 0.52,
+        "level_state": "최초선아래",
+        "new_breakout": "미해당",
+        "refresh_state": "갱신됨",
+        "refresh_note": "",
+        "user_memo": ""
+      },
+      "page_id": "3f30fc3e-53fc-8168-8b90-d9477aa621d8",
+      "fields": {
+        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        "outcome_at": {
+          "__datetime__": "2026-11-19T15:23:44.272740+09:00"
+        }
+      },
+      "state": "queued"
+    }
+  ],
+  "prepare_cursor": "17d30f7c171d4c6fb2adc2a38e1a6e42",
   "deliver_cursor": "5c32f38f0b674f42b6b408ef2e2a2030",
   "excluded_events": [
     {
