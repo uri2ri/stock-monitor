@@ -79,11 +79,11 @@
           "__datetime__": "2026-11-19T10:43:41.082332+09:00"
         }
       },
-      "state": "queued"
+      "state": "creating"
     }
   ],
   "prepare_cursor": "dc85da10f09d463594ffd11928ee37e7",
-  "deliver_cursor": "677dd172db55488288deaa7a85e9e3d2",
+  "deliver_cursor": "5c32f38f0b674f42b6b408ef2e2a2030",
   "excluded_events": [
     {
       "event": {
