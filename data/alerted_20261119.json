@@ -15,6 +15,21 @@
       "value_avg_5": 3375790740.0,
       "vol_active_days": 3,
       "status": "진입가능"
+    },
+    "097950": {
+      "time": "10:33",
+      "name": "CJ제일제당",
+      "sector": "음식료·담배",
+      "market": "KOSPI",
+      "price": 187100.0,
+      "high20": 186200.0,
+      "atr20": 5227.0,
+      "gap_atr": 0.172,
+      "unit_shares": 95,
+      "value_avg_20": 7838066870.0,
+      "value_avg_5": 8175773560.0,
+      "vol_active_days": 3,
+      "status": "진입가능"
     }
   }
 }
