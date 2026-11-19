@@ -60,6 +60,21 @@
       "value_avg_5": 956657526.0,
       "vol_active_days": 2,
       "status": "진입가능"
+    },
+    "323350": {
+      "time": "14:33",
+      "name": "다원넥스뷰",
+      "sector": "기계·장비",
+      "market": "KOSDAQ",
+      "price": 15070.0,
+      "high20": 14770.0,
+      "atr20": 1447.0,
+      "gap_atr": 0.207,
+      "unit_shares": 345,
+      "value_avg_20": 1774285044.0,
+      "value_avg_5": 2487329712.0,
+      "vol_active_days": 3,
+      "status": "진입가능"
     }
   }
 }
