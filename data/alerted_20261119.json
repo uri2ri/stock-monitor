@@ -1,0 +1,20 @@
+{
+  "date": "20261119",
+  "alerted": {
+    "000120": {
+      "time": "10:03",
+      "name": "CJ대한통운",
+      "sector": "운송·창고",
+      "market": "KOSPI",
+      "price": 70700.0,
+      "high20": 70300.0,
+      "atr20": 1971.0,
+      "gap_atr": 0.203,
+      "unit_shares": 253,
+      "value_avg_20": 2931597420.0,
+      "value_avg_5": 3375790740.0,
+      "vol_active_days": 3,
+      "status": "진입가능"
+    }
+  }
+}
