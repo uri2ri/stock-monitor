@@ -1,8 +1,88 @@
 {
   "version": 1,
-  "events": [],
-  "plans": [],
-  "prepare_cursor": "be895686b1364d68aee9b9ff374de11d",
+  "events": [
+    {
+      "id": "e64f92b72c2c49e98c65c9c9e4e58307",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "280360",
+          "name": "롯데웰푸드",
+          "high20": 141500.0,
+          "price": 144200.0,
+          "atr20": 6478.0
+        },
+        {
+          "__datetime__": "2026-11-20T09:03:40.831564+09:00"
+        }
+      ],
+      "kwargs": {}
+    },
+    {
+      "id": "6b1725ac643b4f819d3d204bf8488715",
+      "operation": "_set_outcome",
+      "args": [
+        "280360",
+        "미주문",
+        "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        {
+          "__datetime__": "2026-11-20T09:03:49.646556+09:00"
+        }
+      ],
+      "kwargs": {
+        "order_no": "",
+        "order_day": null,
+        "identity": null
+      }
+    }
+  ],
+  "plans": [
+    {
+      "id": "ea1425a20bd24185b0d39891ca83dcd2",
+      "owner": "44642650469:1",
+      "events": [
+        "e64f92b72c2c49e98c65c9c9e4e58307",
+        "6b1725ac643b4f819d3d204bf8488715"
+      ],
+      "record": {
+        "event_id": "e64f92b72c2c49e98c65c9c9e4e58307",
+        "ticker": "280360",
+        "name": "롯데웰푸드",
+        "first_detected_at": {
+          "__datetime__": "2026-11-20T09:03:40.831564+09:00"
+        },
+        "first_threshold": 141500.0,
+        "first_price": 144200.0,
+        "first_atr": 6478.0,
+        "status": "추적중",
+        "outcome": "미주문",
+        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        "outcome_at": {
+          "__datetime__": "2026-11-20T09:03:49.646556+09:00"
+        }
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "e64f92b72c2c49e98c65c9c9e4e58307",
+        "ticker": "280360",
+        "name": "롯데웰푸드",
+        "first_detected_at": {
+          "__datetime__": "2026-11-20T09:03:40.831564+09:00"
+        },
+        "first_threshold": 141500.0,
+        "first_price": 144200.0,
+        "first_atr": 6478.0,
+        "status": "추적중",
+        "outcome": "미주문",
+        "outcome_reason": "거래 시간(09:10~15:20) 밖 - 자동매수 건너뜀",
+        "outcome_at": {
+          "__datetime__": "2026-11-20T09:03:49.646556+09:00"
+        }
+      },
+      "state": "queued"
+    }
+  ],
+  "prepare_cursor": "6b1725ac643b4f819d3d204bf8488715",
   "deliver_cursor": "8b7072e7923540a6b6664d791430c1a1",
   "excluded_events": [
     {
