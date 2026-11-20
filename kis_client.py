@@ -939,6 +939,34 @@ def _parse_account(account: str) -> tuple[str, str]:
     return account[:8], account[8:10]
 
 
+def mask_account_in_ci_logs() -> None:
+    """GitHub Actions 로그에 계좌번호가 찍히면 자동으로 가리게 등록한다.
+
+    저장소(uri2ri/stock-monitor)는 공개다. GitHub은 저장소 시크릿 값을
+    로그에서 자동으로 가리지만, `-`를 떼어 만든 CANO처럼 시크릿에서
+    **가공된 값**은 자동 마스킹 대상이 아니라 그대로 찍혔다 - 2026-11-20
+    balance_check 실행(44685725060)이 `CANO: 50201912`를 남긴 경로다.
+
+    그래서 계좌번호를 해석하는 이 모듈에서, Actions 안에서만
+    `::add-mask::`를 걸어 둔다. 이 줄 뒤로는 어떤 코드가 무엇을 찍든
+    (예외 트레이스백·요청 URL·디버그 print) 그 값이 로그에서 `***`로
+    대체된다 - 호출하는 쪽을 일일이 고치지 않아도 되는 안전망이다.
+
+    로컬 실행(GITHUB_ACTIONS 없음)에서는 아무 것도 하지 않는다.
+    """
+    # Actions 러너에서만 동작한다. 로컬·테스트 실행에 출력이 섞이지 않게.
+    if (os.environ.get("GITHUB_ACTIONS") or "").lower() != "true":
+        return
+    account = (os.environ.get("KIS_ACCOUNT") or "").strip()
+    if not account:
+        return
+    cano, _ = _parse_account(account)
+    # 원문("12345678-01")과 가공값(CANO) 둘 다. set으로 중복을 없앤다.
+    for value in {account, cano}:
+        if value:
+            print(f"::add-mask::{value}", flush=True)
+
+
 def _get_hashkey(app_key: str, app_secret: str, body: dict) -> str:
     resp = requests.post(
         f"{BASE_URL}/uapi/hashkey",
@@ -2868,6 +2896,12 @@ def _record_holding_after_buy(access_token: str, c: dict, order_no: str) -> None
                f"손으로 넣지 않으면 자동매도 대상에서 빠집니다: {e}")
         logger.error(msg)
         _notify_failure(msg)
+
+
+# import 시점에 한 번 건다. 워크플로 단계가 `import kis_client`를 하는 순간
+# 이미 마스킹이 걸려 있어야, 그 뒤에 이어지는 출력이 무엇이든 가려진다.
+# 함수 안에서 GITHUB_ACTIONS 여부를 보므로 로컬 실행에는 영향이 없다.
+mask_account_in_ci_logs()
 
 
 if __name__ == "__main__":
