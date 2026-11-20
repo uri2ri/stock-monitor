@@ -2040,6 +2040,34 @@ def _tracking_execution_row(row, expected, day):
 
 # ── 자금 게이트 ─────────────────────────────────────────────
 
+def _balance_error_detail(data) -> str:
+    """잔고조회 실패 응답에서 원인 판별에 필요한 값만 뽑는다.
+
+    KIS 응답 원문이나 output 안의 값(보유종목·평가금액·계좌번호)을 통째로
+    남기면 로그에 계좌 정보가 실린다. 여기서는 오류 코드와 구조(타입·건수)만
+    남기고, 이 문자열은 그대로 예외 메시지에도 들어가므로 둘 다 같은 규칙이다.
+    """
+    if not isinstance(data, dict):
+        return f"응답 형식={type(data).__name__}"
+
+    def _shape(key: str) -> str:
+        # 키가 아예 빠진 응답과 None으로 온 응답은 다르다 - 둘을 뭉뚱그리면
+        # 다음에 같은 로그를 보고 또 헤매게 된다.
+        if key not in data:
+            return "없음"
+        value = data[key]
+        if isinstance(value, list):
+            return f"list({len(value)}건)"
+        if isinstance(value, dict):
+            return "dict"
+        return type(value).__name__
+
+    msg1 = str(data.get("msg1") or "").replace("\n", " ").strip()[:200]
+    return (f"rt_cd={data.get('rt_cd')!r} msg_cd={data.get('msg_cd')!r} "
+            f"msg1={msg1!r} output1={_shape('output1')} "
+            f"output2={_shape('output2')}")
+
+
 def get_account_balance(access_token: str) -> dict:
     """모의투자 잔고조회 API로 계좌평가액·가용현금·보유종목을 실시간 조회한다.
 
@@ -2100,8 +2128,15 @@ def get_account_balance(access_token: str) -> dict:
     data = resp.json()
 
     # 오류/불완전 응답을 빈 잔고로 해석하면 청산을 잘못 확정할 수 있다.
-    if data.get('rt_cd') != '0' or not isinstance(data.get('output1'), list) or not data.get('output2'):
-        raise RuntimeError('잔고 조회 응답이 유효하지 않습니다')
+    if (not isinstance(data, dict) or data.get('rt_cd') != '0'
+            or not isinstance(data.get('output1'), list)
+            or not data.get('output2')):
+        # 실패 사유를 남긴다. 예전에는 "유효하지 않습니다" 한 줄뿐이라 KIS가
+        # 무엇을 돌려줬는지 알 수 없었다(2026-11-18부터 매 회차 이 줄로
+        # 자동매수·자동매도가 통째로 보류됐는데도 원인 판별이 안 됐다).
+        detail = _balance_error_detail(data)
+        logger.error("잔고 조회 응답 검증 실패 - %s", detail)
+        raise RuntimeError(f'잔고 조회 응답이 유효하지 않습니다 ({detail})')
     if resp.headers.get('tr_cont', '') in ('F', 'M'):
         raise RuntimeError('잔고 연속조회 필요 - 전체 잔고 확인 전 처리 보류')
     output2 = data.get("output2") or [{}]
