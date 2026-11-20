@@ -1,0 +1,20 @@
+{
+  "date": "20261120",
+  "alerted": {
+    "280360": {
+      "time": "09:03",
+      "name": "롯데웰푸드",
+      "sector": "음식료·담배",
+      "market": "KOSPI",
+      "price": 144200.0,
+      "high20": 141500.0,
+      "atr20": 6478.0,
+      "gap_atr": 0.417,
+      "unit_shares": 77,
+      "value_avg_20": 2870984670.0,
+      "value_avg_5": 3829225640.0,
+      "vol_active_days": 3,
+      "status": "진입가능"
+    }
+  }
+}
