@@ -1,8 +1,62 @@
 {
   "version": 1,
-  "events": [],
-  "plans": [],
-  "prepare_cursor": "9dc5932f0ade4475bae0a46257529d90",
+  "events": [
+    {
+      "id": "f1857e2b86a543cca7a7d4afd0b45c8a",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "003570",
+          "name": "SNT다이내믹스",
+          "high20": 30700.0,
+          "price": 30850.0,
+          "atr20": 1799.0
+        },
+        {
+          "__datetime__": "2026-11-24T14:53:45.707373+09:00"
+        }
+      ],
+      "kwargs": {}
+    }
+  ],
+  "plans": [
+    {
+      "id": "226626cac22342a2a79b17c7f898eb00",
+      "owner": "45336411178:1",
+      "events": [
+        "f1857e2b86a543cca7a7d4afd0b45c8a"
+      ],
+      "record": {
+        "event_id": "f1857e2b86a543cca7a7d4afd0b45c8a",
+        "ticker": "003570",
+        "name": "SNT다이내믹스",
+        "first_detected_at": {
+          "__datetime__": "2026-11-24T14:53:45.707373+09:00"
+        },
+        "first_threshold": 30700.0,
+        "first_price": 30850.0,
+        "first_atr": 1799.0,
+        "status": "추적중",
+        "outcome": ""
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "f1857e2b86a543cca7a7d4afd0b45c8a",
+        "ticker": "003570",
+        "name": "SNT다이내믹스",
+        "first_detected_at": {
+          "__datetime__": "2026-11-24T14:53:45.707373+09:00"
+        },
+        "first_threshold": 30700.0,
+        "first_price": 30850.0,
+        "first_atr": 1799.0,
+        "status": "추적중",
+        "outcome": ""
+      },
+      "state": "queued"
+    }
+  ],
+  "prepare_cursor": "f1857e2b86a543cca7a7d4afd0b45c8a",
   "deliver_cursor": "d092cc69acd44a418ab027bc4b7ef2a9",
   "excluded_events": [
     {
