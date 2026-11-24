@@ -1,61 +1,7 @@
 {
   "version": 1,
-  "events": [
-    {
-      "id": "d70b7809d0b143a19df05fceb7423a25",
-      "operation": "record_breakout",
-      "args": [
-        {
-          "ticker": "093050",
-          "name": "LF",
-          "high20": 22700.0,
-          "price": 22750.0,
-          "atr20": 914.0
-        },
-        {
-          "__datetime__": "2026-11-24T12:33:41.006297+09:00"
-        }
-      ],
-      "kwargs": {}
-    }
-  ],
-  "plans": [
-    {
-      "id": "d092cc69acd44a418ab027bc4b7ef2a9",
-      "owner": "45320293440:1",
-      "events": [
-        "d70b7809d0b143a19df05fceb7423a25"
-      ],
-      "record": {
-        "event_id": "d70b7809d0b143a19df05fceb7423a25",
-        "ticker": "093050",
-        "name": "LF",
-        "first_detected_at": {
-          "__datetime__": "2026-11-24T12:33:41.006297+09:00"
-        },
-        "first_threshold": 22700.0,
-        "first_price": 22750.0,
-        "first_atr": 914.0,
-        "status": "추적중",
-        "outcome": ""
-      },
-      "page_id": null,
-      "fields": {
-        "event_id": "d70b7809d0b143a19df05fceb7423a25",
-        "ticker": "093050",
-        "name": "LF",
-        "first_detected_at": {
-          "__datetime__": "2026-11-24T12:33:41.006297+09:00"
-        },
-        "first_threshold": 22700.0,
-        "first_price": 22750.0,
-        "first_atr": 914.0,
-        "status": "추적중",
-        "outcome": ""
-      },
-      "state": "creating"
-    }
-  ],
+  "events": [],
+  "plans": [],
   "prepare_cursor": "d70b7809d0b143a19df05fceb7423a25",
   "deliver_cursor": "d092cc69acd44a418ab027bc4b7ef2a9",
   "excluded_events": [

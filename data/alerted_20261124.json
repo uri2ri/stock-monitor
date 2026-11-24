@@ -34,6 +34,21 @@
       "status": "진입가능",
       "price_10am": 458000.0,
       "time_10am": "10:03"
+    },
+    "093050": {
+      "time": "12:33",
+      "name": "LF",
+      "sector": "섬유·의류",
+      "market": "KOSPI",
+      "price": 22750.0,
+      "high20": 22700.0,
+      "atr20": 914.0,
+      "gap_atr": 0.055,
+      "unit_shares": 547,
+      "value_avg_20": 675051678.0,
+      "value_avg_5": 720585040.0,
+      "vol_active_days": 2,
+      "status": "진입가능"
     }
   }
 }
