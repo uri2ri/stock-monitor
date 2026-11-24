@@ -1,8 +1,62 @@
 {
   "version": 1,
-  "events": [],
-  "plans": [],
-  "prepare_cursor": "f28e065053214f15b52bbd44de303d96",
+  "events": [
+    {
+      "id": "de391600aba041a69648f5efa1bf6cd4",
+      "operation": "record_breakout",
+      "args": [
+        {
+          "ticker": "277810",
+          "name": "레인보우로보틱스",
+          "high20": 432000.0,
+          "price": 437500.0,
+          "atr20": 30592.0
+        },
+        {
+          "__datetime__": "2026-11-24T09:13:38.232036+09:00"
+        }
+      ],
+      "kwargs": {}
+    }
+  ],
+  "plans": [
+    {
+      "id": "6fa65a70341046ce8bb1c69d646fe858",
+      "owner": "45295336812:1",
+      "events": [
+        "de391600aba041a69648f5efa1bf6cd4"
+      ],
+      "record": {
+        "event_id": "de391600aba041a69648f5efa1bf6cd4",
+        "ticker": "277810",
+        "name": "레인보우로보틱스",
+        "first_detected_at": {
+          "__datetime__": "2026-11-24T09:13:38.232036+09:00"
+        },
+        "first_threshold": 432000.0,
+        "first_price": 437500.0,
+        "first_atr": 30592.0,
+        "status": "추적중",
+        "outcome": ""
+      },
+      "page_id": null,
+      "fields": {
+        "event_id": "de391600aba041a69648f5efa1bf6cd4",
+        "ticker": "277810",
+        "name": "레인보우로보틱스",
+        "first_detected_at": {
+          "__datetime__": "2026-11-24T09:13:38.232036+09:00"
+        },
+        "first_threshold": 432000.0,
+        "first_price": 437500.0,
+        "first_atr": 30592.0,
+        "status": "추적중",
+        "outcome": ""
+      },
+      "state": "queued"
+    }
+  ],
+  "prepare_cursor": "de391600aba041a69648f5efa1bf6cd4",
   "deliver_cursor": "ea1425a20bd24185b0d39891ca83dcd2",
   "excluded_events": [
     {
@@ -14305,6 +14359,27 @@
       },
       "reason": "held_without_active_track",
       "resolved_by": "44254633096:1"
+    },
+    {
+      "event": {
+        "id": "1edb154bdd8b49f0be2f785b014e00e3",
+        "operation": "record_breakout",
+        "args": [
+          {
+            "ticker": "218410",
+            "name": "RFHIC",
+            "high20": 59100.0,
+            "price": 59200.0,
+            "atr20": 5099.0
+          },
+          {
+            "__datetime__": "2026-11-24T09:13:38.232036+09:00"
+          }
+        ],
+        "kwargs": {}
+      },
+      "reason": "held_without_active_track",
+      "resolved_by": "45295336812:1"
     }
   ]
 }
