@@ -64,6 +64,21 @@
       "value_avg_5": 1920773790.0,
       "vol_active_days": 2,
       "status": "진입가능"
+    },
+    "003570": {
+      "time": "14:53",
+      "name": "SNT다이내믹스",
+      "sector": "운송장비·부품",
+      "market": "KOSPI",
+      "price": 30850.0,
+      "high20": 30700.0,
+      "atr20": 1799.0,
+      "gap_atr": 0.083,
+      "unit_shares": 277,
+      "value_avg_20": 2568510905.0,
+      "value_avg_5": 1664846840.0,
+      "vol_active_days": 1,
+      "status": "진입가능"
     }
   }
 }
