@@ -53,11 +53,11 @@
         "status": "추적중",
         "outcome": ""
       },
-      "state": "queued"
+      "state": "creating"
     }
   ],
   "prepare_cursor": "f1857e2b86a543cca7a7d4afd0b45c8a",
-  "deliver_cursor": "d092cc69acd44a418ab027bc4b7ef2a9",
+  "deliver_cursor": "226626cac22342a2a79b17c7f898eb00",
   "excluded_events": [
     {
       "event": {
